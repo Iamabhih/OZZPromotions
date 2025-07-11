@@ -3,78 +3,90 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Google Drive Image Mapper</title>
+    <title>🖼️ OZZ Promotions Image Mapper</title>
     <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body class="bg-gray-100 p-8">
-    <div class="max-w-4xl mx-auto">
-        <div class="bg-white rounded-lg shadow-lg p-8">
-            <h1 class="text-3xl font-bold text-gray-800 mb-6">🖼️ Google Drive Image Mapper</h1>
-            <p class="text-gray-600 mb-8">This tool will scan your Google Drive folder and automatically map images to your product catalog based on SKU numbers.</p>
+<body class="bg-gray-100 p-4">
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-3xl font-bold text-red-600 mb-4">🖼️ OZZ Promotions Image Mapper</h1>
+            <p class="text-gray-600 mb-6">Automatically mapping your Google Drive images to product catalog</p>
             
-            <!-- Step 1: API Setup -->
-            <div class="mb-8 p-6 bg-blue-50 rounded-lg border-l-4 border-blue-500">
-                <h2 class="text-xl font-semibold text-blue-800 mb-4">Step 1: API Configuration</h2>
-                <div class="grid md:grid-cols-2 gap-4">
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Google Drive API Key</label>
-                        <input type="text" id="apiKey" placeholder="Enter your API key" 
-                               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
-                    <div>
-                        <label class="block text-sm font-medium text-gray-700 mb-2">Folder ID</label>
-                        <input type="text" id="folderId" placeholder="1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan" 
-                               value="1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan"
-                               class="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent">
-                    </div>
+            <!-- Auto-filled credentials -->
+            <div class="mb-6 p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                <h2 class="text-lg font-semibold text-green-800 mb-2">✅ Credentials Loaded</h2>
+                <div class="text-sm text-green-700">
+                    <p>📁 Folder: Ikhaya/OzzSA</p>
+                    <p>🔑 API Key: Configured</p>
                 </div>
-                <p class="text-sm text-gray-600 mt-3">
-                    📝 <strong>Need an API key?</strong> Go to <a href="https://console.cloud.google.com/" target="_blank" class="text-blue-600 hover:underline">Google Cloud Console</a> → Enable Drive API → Create credentials
-                </p>
             </div>
 
-            <!-- Step 2: Scan Process -->
-            <div class="mb-8">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Step 2: Scan & Map Images</h2>
-                <button onclick="scanGoogleDrive()" id="scanBtn" 
-                        class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
-                    🔍 Scan Google Drive Folder
+            <!-- Scan Button -->
+            <div class="text-center mb-6">
+                <button onclick="startAutoMapping()" id="scanBtn" 
+                        class="bg-red-600 text-white px-8 py-4 rounded-lg hover:bg-red-700 transition-colors font-bold text-lg shadow-lg">
+                    🚀 Generate Image Mapping Code
                 </button>
             </div>
 
-            <!-- Step 3: Results -->
-            <div id="results" class="hidden">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Step 3: Mapping Results</h2>
-                <div id="mappingResults" class="space-y-4">
-                    <!-- Results will be populated here -->
+            <!-- Progress -->
+            <div id="progress" class="hidden mb-6">
+                <div class="bg-gray-200 rounded-full h-4 mb-2">
+                    <div id="progressBar" class="bg-red-600 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p id="progressText" class="text-center text-gray-600">Starting scan...</p>
+            </div>
+
+            <!-- Results Preview -->
+            <div id="results" class="hidden mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📸 Image Mapping Preview</h2>
+                <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+                    <!-- Image previews will be shown here -->
+                </div>
+                <div id="stats" class="bg-blue-50 p-4 rounded-lg">
+                    <!-- Statistics will be shown here -->
                 </div>
             </div>
 
-            <!-- Step 4: Generated Code -->
-            <div id="generatedCode" class="hidden">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">Step 4: Generated Image Mapping Code</h2>
-                <p class="text-gray-600 mb-4">Copy this code and replace the <code class="bg-gray-200 px-2 py-1 rounded">getImageUrl</code> function in your catalog:</p>
-                <div class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto">
-                    <pre id="codeOutput"></pre>
+            <!-- Generated Code -->
+            <div id="codeSection" class="hidden">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📋 Generated Code for Your Catalog</h2>
+                <p class="text-gray-600 mb-4">Copy this code and paste it into your main catalog HTML file:</p>
+                
+                <div class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto mb-4">
+                    <pre id="generatedCode" class="text-sm"></pre>
                 </div>
-                <button onclick="copyToClipboard()" class="mt-4 bg-green-600 text-white px-4 py-2 rounded-lg hover:bg-green-700 transition-colors">
-                    📋 Copy to Clipboard
-                </button>
+                
+                <div class="flex gap-4">
+                    <button onclick="copyCode()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                        📋 Copy Code
+                    </button>
+                    <button onclick="downloadCode()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        💾 Download as File
+                    </button>
+                </div>
             </div>
 
-            <!-- Status/Log Area -->
-            <div class="mt-8">
-                <h3 class="text-lg font-semibold text-gray-800 mb-3">Process Log</h3>
-                <div id="log" class="bg-gray-900 text-green-400 p-4 rounded-lg h-40 overflow-y-auto font-mono text-sm">
-                    Waiting to start scan...
+            <!-- Log -->
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">📝 Process Log</h3>
+                <div id="log" class="bg-gray-900 text-green-400 p-4 rounded-lg h-48 overflow-y-auto font-mono text-sm">
+                    🎯 Ready to scan your Google Drive folder...<br>
+                    📁 Target folder: Ikhaya/OzzSA<br>
+                    🔍 Will search for images matching your 236 product SKUs<br>
+                    ▶️ Click "Generate Image Mapping Code" to start<br>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Your product SKUs from the catalog
-        const productSKUs = [
+        // Your credentials (pre-filled)
+        const API_KEY = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
+        const FOLDER_ID = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
+
+        // All your product SKUs
+        const PRODUCT_SKUS = [
             "455641", "455642", "455639", "455650", "455644", "455643", "455640", "455649", 
             "455634", "455636", "455647", "455648", "444984", "4161", "455080", "454437", 
             "455428", "455427", "455426", "453704", "440728", "453261", "446223", "444971", 
@@ -92,226 +104,218 @@
             "259", "269", "255", "454979", "455384", "455321", "455322", "455323"
         ];
 
-        let foundImages = [];
+        let allImages = [];
         let imageMapping = {};
 
         function log(message) {
-            const logElement = document.getElementById('log');
-            logElement.innerHTML += message + '\n';
-            logElement.scrollTop = logElement.scrollHeight;
+            const logEl = document.getElementById('log');
+            logEl.innerHTML += message + '<br>';
+            logEl.scrollTop = logEl.scrollHeight;
         }
 
-        async function scanGoogleDrive() {
-            const apiKey = document.getElementById('apiKey').value.trim();
-            const folderId = document.getElementById('folderId').value.trim();
+        function updateProgress(percent, text) {
+            document.getElementById('progress').classList.remove('hidden');
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        }
 
-            if (!apiKey) {
-                alert('Please enter your Google Drive API key');
-                return;
-            }
-
-            if (!folderId) {
-                alert('Please enter the Google Drive folder ID');
-                return;
-            }
-
-            // Reset results
-            foundImages = [];
-            imageMapping = {};
-            document.getElementById('results').classList.add('hidden');
-            document.getElementById('generatedCode').classList.add('hidden');
-
-            log('🚀 Starting Google Drive scan...');
-            log(`📁 Folder ID: ${folderId}`);
-            log(`🔑 API Key: ${apiKey.substring(0, 10)}...`);
-
+        async function startAutoMapping() {
+            document.getElementById('scanBtn').disabled = true;
+            document.getElementById('scanBtn').textContent = '🔄 Scanning...';
+            
             try {
-                await fetchAllImages(apiKey, folderId);
+                log('🚀 Starting automated image mapping...');
+                updateProgress(10, 'Connecting to Google Drive...');
+                
+                await fetchAllImages();
+                updateProgress(60, 'Mapping images to SKUs...');
+                
                 mapImagesToSKUs();
+                updateProgress(80, 'Generating code...');
+                
                 displayResults();
-                generateCode();
+                generateMappingCode();
+                updateProgress(100, 'Complete! ✅');
+                
+                log('🎉 Image mapping completed successfully!');
+                
             } catch (error) {
                 log(`❌ Error: ${error.message}`);
-                console.error('Scan error:', error);
+                console.error(error);
+            } finally {
+                document.getElementById('scanBtn').disabled = false;
+                document.getElementById('scanBtn').textContent = '🔄 Scan Again';
             }
         }
 
-        async function fetchAllImages(apiKey, folderId, pageToken = null) {
-            let url = `https://www.googleapis.com/drive/v3/files?key=${apiKey}&q='${folderId}'+in+parents&fields=files(id,name,mimeType,webViewLink)&pageSize=1000`;
+        async function fetchAllImages(pageToken = '') {
+            let url = `https://www.googleapis.com/drive/v3/files?key=${API_KEY}&q='${FOLDER_ID}'+in+parents+and+mimeType+contains+'image'&fields=files(id,name,mimeType,webViewLink)&pageSize=1000`;
             
             if (pageToken) {
                 url += `&pageToken=${pageToken}`;
             }
 
-            log(`🔍 Fetching files from Google Drive...`);
+            log(`🔍 Fetching images from Google Drive...`);
+            updateProgress(20, 'Fetching images from Google Drive...');
 
             const response = await fetch(url);
             
             if (!response.ok) {
-                throw new Error(`Google Drive API error: ${response.status} ${response.statusText}`);
+                throw new Error(`Google Drive API error: ${response.status} - ${response.statusText}`);
             }
 
             const data = await response.json();
             
             if (!data.files) {
-                throw new Error('No files found in response');
+                throw new Error('No files found in the folder');
             }
 
-            // Filter for image files
-            const imageFiles = data.files.filter(file => 
-                file.mimeType && file.mimeType.startsWith('image/')
-            );
+            allImages = allImages.concat(data.files);
+            log(`📸 Found ${data.files.length} images (Total: ${allImages.length})`);
+            updateProgress(40, `Found ${allImages.length} images...`);
 
-            foundImages = foundImages.concat(imageFiles);
-            log(`📸 Found ${imageFiles.length} image files (total: ${foundImages.length})`);
-
-            // If there are more pages, fetch them
+            // Fetch more pages if they exist
             if (data.nextPageToken) {
-                await fetchAllImages(apiKey, folderId, data.nextPageToken);
+                await fetchAllImages(data.nextPageToken);
             }
         }
 
         function mapImagesToSKUs() {
-            log('🔗 Mapping images to SKU numbers...');
-            
-            let matchedCount = 0;
+            log('🔗 Mapping images to product SKUs...');
+            imageMapping = {};
+            let matchCount = 0;
 
-            productSKUs.forEach(sku => {
-                // Look for images that contain the SKU in their filename
-                const matchingImages = foundImages.filter(image => {
-                    const fileName = image.name.toLowerCase();
+            PRODUCT_SKUS.forEach(sku => {
+                // Find images that match this SKU
+                const matches = allImages.filter(img => {
+                    const filename = img.name.toLowerCase();
                     const skuLower = sku.toLowerCase();
                     
-                    // Check if filename contains SKU (with various separators)
-                    return fileName.includes(skuLower) || 
-                           fileName.includes(skuLower.replace(/\D/g, '')) || // remove non-digits
-                           fileName.startsWith(skuLower) ||
-                           fileName.includes(`-${skuLower}`) ||
-                           fileName.includes(`_${skuLower}`) ||
-                           fileName.includes(` ${skuLower}`);
+                    return filename.includes(skuLower) ||
+                           filename.includes(skuLower.replace(/\D/g, '')) ||
+                           filename.startsWith(skuLower) ||
+                           filename.includes(`-${skuLower}`) ||
+                           filename.includes(`_${skuLower}`) ||
+                           filename.includes(` ${skuLower}`) ||
+                           new RegExp(`\\b${skuLower}\\b`).test(filename);
                 });
 
-                if (matchingImages.length > 0) {
-                    // Use the first matching image
-                    const selectedImage = matchingImages[0];
-                    // Convert to direct download URL
-                    const directUrl = `https://drive.google.com/uc?id=${selectedImage.id}`;
+                if (matches.length > 0) {
+                    const bestMatch = matches[0]; // Use first match
                     imageMapping[sku] = {
-                        url: directUrl,
-                        filename: selectedImage.name,
-                        id: selectedImage.id
+                        url: `https://drive.google.com/uc?id=${bestMatch.id}`,
+                        filename: bestMatch.name,
+                        id: bestMatch.id
                     };
-                    matchedCount++;
+                    matchCount++;
+                    log(`✅ ${sku} → ${bestMatch.name}`);
+                } else {
+                    log(`❌ No image found for SKU: ${sku}`);
                 }
             });
 
-            log(`✅ Successfully mapped ${matchedCount} images to SKU numbers`);
-            log(`❌ Could not find images for ${productSKUs.length - matchedCount} SKUs`);
+            log(`🎯 Mapping complete: ${matchCount}/${PRODUCT_SKUS.length} products have images`);
         }
 
         function displayResults() {
-            const resultsContainer = document.getElementById('results');
-            const mappingResults = document.getElementById('mappingResults');
+            const resultsEl = document.getElementById('results');
+            const previewEl = document.getElementById('imagePreview');
+            const statsEl = document.getElementById('stats');
             
-            resultsContainer.classList.remove('hidden');
+            resultsEl.classList.remove('hidden');
 
-            // Create summary
-            const summary = document.createElement('div');
-            summary.className = 'bg-green-50 border-l-4 border-green-500 p-4 mb-6';
-            summary.innerHTML = `
-                <h3 class="text-lg font-semibold text-green-800">Mapping Summary</h3>
-                <div class="grid md:grid-cols-3 gap-4 mt-3">
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-green-600">${Object.keys(imageMapping).length}</div>
-                        <div class="text-sm text-green-700">Images Mapped</div>
+            // Show image previews (first 12)
+            const mappedEntries = Object.entries(imageMapping).slice(0, 12);
+            previewEl.innerHTML = mappedEntries.map(([sku, data]) => `
+                <div class="border rounded-lg p-2 bg-gray-50 text-center">
+                    <img src="${data.url}" alt="SKU ${sku}" class="w-full h-20 object-cover rounded mb-2" 
+                         onerror="this.src='https://via.placeholder.com/80x80/ddd/999?text=Error'">
+                    <div class="text-xs font-semibold">${sku}</div>
+                    <div class="text-xs text-gray-500 truncate">${data.filename}</div>
+                </div>
+            `).join('');
+
+            // Show statistics
+            const mappedCount = Object.keys(imageMapping).length;
+            const missingCount = PRODUCT_SKUS.length - mappedCount;
+            const percentage = Math.round((mappedCount / PRODUCT_SKUS.length) * 100);
+
+            statsEl.innerHTML = `
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl font-bold text-green-600">${mappedCount}</div>
+                        <div class="text-sm text-gray-600">Images Mapped</div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-orange-600">${productSKUs.length - Object.keys(imageMapping).length}</div>
-                        <div class="text-sm text-orange-700">Missing Images</div>
+                    <div>
+                        <div class="text-2xl font-bold text-red-600">${missingCount}</div>
+                        <div class="text-sm text-gray-600">Missing Images</div>
                     </div>
-                    <div class="text-center">
-                        <div class="text-2xl font-bold text-blue-600">${foundImages.length}</div>
-                        <div class="text-sm text-blue-700">Total Images Found</div>
+                    <div>
+                        <div class="text-2xl font-bold text-blue-600">${allImages.length}</div>
+                        <div class="text-sm text-gray-600">Total Images</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-purple-600">${percentage}%</div>
+                        <div class="text-sm text-gray-600">Coverage</div>
                     </div>
                 </div>
             `;
-
-            mappingResults.innerHTML = '';
-            mappingResults.appendChild(summary);
-
-            // Show mapped images
-            if (Object.keys(imageMapping).length > 0) {
-                const mappedSection = document.createElement('div');
-                mappedSection.innerHTML = `
-                    <h4 class="text-lg font-semibold text-gray-800 mb-3">✅ Successfully Mapped Images</h4>
-                    <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
-                        ${Object.entries(imageMapping).map(([sku, data]) => `
-                            <div class="border rounded-lg p-3 bg-gray-50">
-                                <div class="font-semibold text-gray-800">SKU: ${sku}</div>
-                                <div class="text-sm text-gray-600 truncate">${data.filename}</div>
-                                <img src="${data.url}" alt="Product ${sku}" class="w-full h-24 object-cover rounded mt-2" onerror="this.src='https://via.placeholder.com/100x100/ddd/999?text=Error'">
-                            </div>
-                        `).join('')}
-                    </div>
-                `;
-                mappingResults.appendChild(mappedSection);
-            }
-
-            // Show missing SKUs
-            const missingSKUs = productSKUs.filter(sku => !imageMapping[sku]);
-            if (missingSKUs.length > 0) {
-                const missingSection = document.createElement('div');
-                missingSection.innerHTML = `
-                    <h4 class="text-lg font-semibold text-gray-800 mb-3">❌ SKUs Without Images (${missingSKUs.length})</h4>
-                    <div class="bg-gray-100 p-4 rounded-lg">
-                        <div class="flex flex-wrap gap-2">
-                            ${missingSKUs.map(sku => `<span class="bg-red-100 text-red-800 px-2 py-1 rounded text-sm">${sku}</span>`).join('')}
-                        </div>
-                    </div>
-                `;
-                mappingResults.appendChild(missingSection);
-            }
         }
 
-        function generateCode() {
-            log('🔧 Generating JavaScript code...');
+        function generateMappingCode() {
+            const codeSection = document.getElementById('codeSection');
+            const codeEl = document.getElementById('generatedCode');
+            
+            const mappingEntries = Object.entries(imageMapping)
+                .map(([sku, data]) => `        '${sku}': '${data.url}',`)
+                .join('\n');
 
-            const code = `function getImageUrl(sku) {
-    // Auto-generated image mapping from Google Drive
+            const code = `// Auto-generated Google Drive image mapping for OZZ Promotions
+// Generated on: ${new Date().toLocaleString()}
+// Mapped ${Object.keys(imageMapping).length}/${PRODUCT_SKUS.length} products
+
+function getImageUrl(sku) {
     const imageMapping = {
-${Object.entries(imageMapping).map(([sku, data]) => `        '${sku}': '${data.url}',`).join('\n')}
+${mappingEntries}
     };
     
     return imageMapping[sku] || \`https://via.placeholder.com/300x200/e2e8f0/64748b?text=\${sku}\`;
 }`;
 
-            document.getElementById('codeOutput').textContent = code;
-            document.getElementById('generatedCode').classList.remove('hidden');
+            codeEl.textContent = code;
+            codeSection.classList.remove('hidden');
             
-            log('✅ Code generation complete!');
-            log('📋 Copy the generated code and replace the getImageUrl function in your catalog');
+            log('📋 JavaScript code generated and ready to copy!');
         }
 
-        function copyToClipboard() {
-            const code = document.getElementById('codeOutput').textContent;
+        function copyCode() {
+            const code = document.getElementById('generatedCode').textContent;
             navigator.clipboard.writeText(code).then(() => {
-                alert('Code copied to clipboard!');
-            }).catch(err => {
-                console.error('Failed to copy: ', err);
-                // Fallback: select the text
+                alert('✅ Code copied to clipboard! Paste it into your catalog HTML file.');
+            }).catch(() => {
+                // Fallback
                 const textArea = document.createElement('textarea');
                 textArea.value = code;
                 document.body.appendChild(textArea);
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                alert('Code copied to clipboard!');
+                alert('✅ Code copied to clipboard!');
             });
         }
 
-        // Initialize
-        log('🎯 Google Drive Image Mapper ready!');
-        log('📝 Enter your API key and click "Scan Google Drive Folder"');
+        function downloadCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            const blob = new Blob([code], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ozz-image-mapping.js';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
     </script>
 </body>
 </html>
