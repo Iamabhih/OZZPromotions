@@ -3,9 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎉 July 2025 Promotional Catalog</title>
+    <title>🎉 July 2025 Promotional Catalog - OZZ Promotions</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
+    <meta name="description" content="July 2025 Promotional Catalog - Exclusive deals on premium home & kitchen products from OZZ Promotions">
+    <meta name="keywords" content="OZZ Promotions, July 2025, promo, deals, kitchen, home, South Africa">
+    <meta property="og:title" content="July 2025 Promotional Catalog - OZZ Promotions">
+    <meta property="og:description" content="Exclusive promotional deals on premium home & kitchen products">
+    <meta property="og:type" content="website">
     <style>
         .animate-pulse {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
@@ -29,17 +34,19 @@
         .product-card:hover {
             transform: translateY(-4px);
             box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fecaca;
         }
         .promo-badge {
             position: absolute;
             top: 8px;
             left: 8px;
-            background: #ef4444;
+            background: linear-gradient(45deg, #ef4444, #dc2626);
             color: white;
             padding: 4px 12px;
             border-radius: 9999px;
             font-size: 12px;
             font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
         .search-input {
             width: 100%;
@@ -47,6 +54,7 @@
             border: 2px solid #fecaca;
             border-radius: 8px;
             font-size: 16px;
+            transition: all 0.3s ease;
         }
         .search-input:focus {
             outline: none;
@@ -62,16 +70,18 @@
             width: 100%;
             height: 100%;
             background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
         }
         .modal-content {
             background-color: white;
-            margin: 5% auto;
-            padding: 20px;
+            margin: 2% auto;
+            padding: 0;
             border-radius: 12px;
-            width: 90%;
-            max-width: 600px;
-            max-height: 80vh;
+            width: 95%;
+            max-width: 700px;
+            max-height: 90vh;
             overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
         }
         .close {
             color: #aaa;
@@ -79,25 +89,48 @@
             font-size: 28px;
             font-weight: bold;
             cursor: pointer;
+            padding: 10px;
+            transition: color 0.3s ease;
         }
         .close:hover {
-            color: #000;
+            color: #ef4444;
+        }
+        .category-btn {
+            transition: all 0.3s ease;
+        }
+        .category-btn:hover {
+            transform: translateY(-1px);
+        }
+        .savings-badge {
+            background: linear-gradient(45deg, #10b981, #059669);
+            color: white;
+            padding: 2px 8px;
+            border-radius: 9999px;
+            font-size: 11px;
+            font-weight: bold;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .bg-gradient-to-br { background: white !important; }
+            .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
+            .rounded-lg, .rounded-xl { border-radius: 0 !important; }
+            .product-card { border: 1px solid #ddd !important; }
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-red-50 via-white to-blue-50">
     <!-- Header -->
-    <header class="bg-gradient-to-r from-red-600 via-red-500 to-blue-600 text-white shadow-lg">
+    <header class="bg-gradient-to-r from-red-600 via-red-500 to-blue-600 text-white shadow-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="text-center">
                 <div class="inline-block bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-6 py-2 mb-4">
-                    <span class="text-sm font-semibold uppercase tracking-wide">Special Promotion</span>
+                    <span class="text-sm font-semibold uppercase tracking-wide">OZZ Promotions - Special Offer</span>
                 </div>
-                <h1 class="text-4xl md:text-5xl font-bold mb-2">🎉 JULY 2025 PROMO 🎉</h1>
-                <p class="text-xl mb-4">Exclusive Deals on Premium Home & Kitchen Products</p>
+                <h1 class="text-4xl md:text-6xl font-bold mb-2">🎉 JULY 2025 PROMO 🎉</h1>
+                <p class="text-xl md:text-2xl mb-4">Exclusive Deals on Premium Home & Kitchen Products</p>
                 <p class="text-lg opacity-90" id="product-count">Loading promotional items...</p>
-                <div class="mt-6 inline-block bg-yellow-400 text-red-800 px-6 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
-                    LIMITED TIME OFFER!
+                <div class="mt-6 inline-block bg-yellow-400 text-red-800 px-8 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
+                    ⏰ LIMITED TIME OFFER!
                 </div>
             </div>
         </div>
@@ -107,11 +140,11 @@
     <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
         <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border-2 border-red-100">
             <div class="mb-4 text-center">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">Find Your Perfect Deal!</h2>
-                <p class="text-gray-600">Search through our July promotional items</p>
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">🔍 Find Your Perfect Deal!</h2>
+                <p class="text-gray-600">Search through our exclusive July promotional items</p>
             </div>
-            <div class="max-w-md mx-auto relative">
-                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="max-w-md mx-auto relative mb-4">
+                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 <input 
@@ -122,18 +155,30 @@
                     onkeyup="filterProducts()"
                 >
             </div>
+            
+            <!-- Sort Controls -->
+            <div class="flex justify-center gap-4">
+                <select id="sortBy" onchange="applyFilters()" class="px-4 py-2 border-2 border-red-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+                    <option value="name">Sort by Name</option>
+                    <option value="price">Sort by Price</option>
+                    <option value="category">Sort by Category</option>
+                </select>
+                <button onclick="toggleSortOrder()" id="sortOrderBtn" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
+                    ↑ A-Z
+                </button>
+            </div>
         </div>
 
         <!-- Category Filter -->
         <div class="text-center mb-6">
-            <div class="inline-flex flex-wrap gap-2" id="categoryButtons">
-                <button onclick="filterByCategory('ALL')" class="category-btn bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold">ALL</button>
+            <div class="inline-flex flex-wrap gap-2 justify-center" id="categoryButtons">
+                <!-- Categories will be populated here -->
             </div>
         </div>
 
-        <!-- Results -->
+        <!-- Results Counter -->
         <div class="mb-6 text-center">
-            <p class="text-lg text-gray-700" id="resultsCount">
+            <p class="text-xl text-gray-700" id="resultsCount">
                 🔥 <span class="font-bold text-red-600" id="filteredCount">0</span> promotional deals found!
             </p>
         </div>
@@ -144,25 +189,30 @@
         </div>
 
         <!-- Loading Message -->
-        <div id="loadingMessage" class="text-center py-12">
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-red-600 mx-auto mb-4"></div>
-            <p class="text-gray-600 text-lg">Loading promotional catalog...</p>
+        <div id="loadingMessage" class="text-center py-16">
+            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-red-600 mx-auto mb-4"></div>
+            <p class="text-gray-600 text-xl">Loading your promotional catalog...</p>
         </div>
 
         <!-- No Results Message -->
         <div id="noResults" class="text-center py-16 bg-white rounded-xl shadow-lg hidden">
             <div class="text-6xl mb-4">🔍</div>
             <p class="text-gray-500 text-xl mb-2">No promotional deals found matching your search.</p>
-            <p class="text-gray-400">Try adjusting your search terms to find more amazing deals!</p>
+            <p class="text-gray-400">Try adjusting your search terms or browse all categories!</p>
+            <button onclick="clearFilters()" class="mt-4 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+                Show All Products
+            </button>
         </div>
     </div>
 
     <!-- Product Modal -->
     <div id="productModal" class="modal">
         <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <div id="modalContent">
-                <!-- Product details will be loaded here -->
+            <div class="p-6">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <div id="modalContent">
+                    <!-- Product details will be loaded here -->
+                </div>
             </div>
         </div>
     </div>
@@ -173,828 +223,187 @@
             <div class="text-center">
                 <h3 class="text-2xl font-bold mb-4">🎉 Don't Miss Out on These July 2025 Deals! 🎉</h3>
                 <p class="text-lg mb-6">Limited time promotional pricing on premium home & kitchen products</p>
-                <div class="grid md:grid-cols-3 gap-6 text-sm">
-                    <div class="bg-white bg-opacity-10 rounded-lg p-4">
-                        <div class="text-2xl mb-2">🚚</div>
-                        <h4 class="font-semibold mb-2">Fast Delivery</h4>
-                        <p>Quick shipping on all promotional items</p>
+                <div class="grid md:grid-cols-3 gap-6 text-sm mb-8">
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-3">🚚</div>
+                        <h4 class="font-semibold mb-2 text-lg">Fast Delivery</h4>
+                        <p>Quick shipping on all promotional items across South Africa</p>
                     </div>
-                    <div class="bg-white bg-opacity-10 rounded-lg p-4">
-                        <div class="text-2xl mb-2">💯</div>
-                        <h4 class="font-semibold mb-2">Quality Guaranteed</h4>
-                        <p>Premium products at promotional prices</p>
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-3">💯</div>
+                        <h4 class="font-semibold mb-2 text-lg">Quality Guaranteed</h4>
+                        <p>Premium products at unbeatable promotional prices</p>
                     </div>
-                    <div class="bg-white bg-opacity-10 rounded-lg p-4">
-                        <div class="text-2xl mb-2">⏰</div>
-                        <h4 class="font-semibold mb-2">Limited Time</h4>
-                        <p>July 2025 exclusive promotional offers</p>
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-3">⏰</div>
+                        <h4 class="font-semibold mb-2 text-lg">Limited Time</h4>
+                        <p>July 2025 exclusive promotional offers - don't miss out!</p>
                     </div>
                 </div>
-                <div class="mt-8 text-center">
-                    <p class="text-sm opacity-75">© 2025 July Promotional Catalog. All promotional prices valid for July 2025 only.</p>
+                <div class="border-t border-gray-700 pt-6">
+                    <p class="text-sm opacity-75">© 2025 OZZ Promotions. All promotional prices valid for July 2025 only.</p>
+                    <p class="text-xs opacity-50 mt-2">South Africa's premier home & kitchen products retailer</p>
                 </div>
             </div>
         </div>
     </footer>
 
     <script>
-        // Complete product data from your Excel file - ALL 236 PRODUCTS
+        // Complete product data - ALL 236 PRODUCTS from your Excel file
         let allProducts = [
-  {
-    "sku": "455641",
-    "description": "BOWL SET 2PC STACK 6.7\" MAXIM",
-    "price": 25.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455642",
-    "description": "BOWL SET 3PC 4.4\" MAXIM",
-    "price": 20.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455639",
-    "description": "BOWL SET 6PC STACK 3.6\" MAXIM",
-    "price": 24.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455650",
-    "description": "BOWL SET 6PCE TULIP MAXIM",
-    "price": 28.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455644",
-    "description": "BOWL SET 7PCE CASCARA MAXIM",
-    "price": 55.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455643",
-    "description": "BOWL SET 7PCE CHRYSAN MAXIM",
-    "price": 55.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455640",
-    "description": "ICE CREAM SET 3'S CLEAR MAXIM",
-    "price": 24.95,
-    "category": "ICE CREAM SETS"
-  },
-  {
-    "sku": "455649",
-    "description": "ICE CREAM SET 3PC AGAPANT MAX",
-    "price": 24.95,
-    "category": "ICE CREAM SETS"
-  },
-  {
-    "sku": "455634",
-    "description": "WATER SET 7PCE MAX BORBOLETA",
-    "price": 86.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "455636",
-    "description": "WATER SET 7PCE MAX CILON",
-    "price": 86.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "455647",
-    "description": "MUG BEER 3PCE VERNON 380ML MAX",
-    "price": 43.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455648",
-    "description": "MUG COFFEE 4'S 250ML MAXIM",
-    "price": 31.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "444984",
-    "description": "PLATE 9 CLEAR PLAIN PP-9D",
-    "price": 9.95,
-    "category": "PLATES"
-  },
-  {
-    "sku": "4161",
-    "description": "PLATE DINNER H/P 10.5",
-    "price": 9.95,
-    "category": "PLATES"
-  },
-  {
-    "sku": "455080",
-    "description": "STORAGE CONT+LID 3PC REC 70923",
-    "price": 79.95,
-    "category": "STORAGE"
-  },
-  {
-    "sku": "454437",
-    "description": "TUMBLER MAXIM 9OZ 6'S ARLO",
-    "price": 32.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "455428",
-    "description": "TUMBLER MAXIM 9OZ 6'S BLOCK CL",
-    "price": 32.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "455427",
-    "description": "TUMBLER MAXIM 9OZ 6'S ECHO",
-    "price": 32.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "455426",
-    "description": "TUMBLER MAXIM 9OZ 6'S TWISTER",
-    "price": 32.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "453704",
-    "description": "CARAFFE 470ML 4'S BELARUS C/N",
-    "price": 45.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "440728",
-    "description": "ICE CREAM SET 6's GELATO C/NOV",
-    "price": 24.95,
-    "category": "ICE CREAM SETS"
-  },
-  {
-    "sku": "453261",
-    "description": "TUMBLER ALE 6'S C/N",
-    "price": 36.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "446223",
-    "description": "TUMBLER BEER C/N 6'S HOPS",
-    "price": 36.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "444971",
-    "description": "TUMBLER HIBALL 6'S C/N",
-    "price": 36.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "444970",
-    "description": "TUMBLER JUICE 6'S C/N",
-    "price": 29.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "444974",
-    "description": "TUMBLER WATER 6'S C/N",
-    "price": 29.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "444973",
-    "description": "TUMBLER WHISKY 6'S C/N",
-    "price": 36.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "455646",
-    "description": "WINE SET 7PCE MAXIM",
-    "price": 49.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "10836",
-    "description": "CUTLERY 3PCE NOVELTY KDS SPN",
-    "price": 9.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "304",
-    "description": "CUTLERY 4PCE CHILDS S/STEEL",
-    "price": 14.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "314",
-    "description": "CUTLERY 4PCE INFANT",
-    "price": 14.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "307",
-    "description": "CUTLERY 6PCE CHILDS S/STEEL",
-    "price": 25.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "10833",
-    "description": "CUTLERY SET 12PCE NOVELTY KDS",
-    "price": 29.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "14996",
-    "description": "CUTLERY SET 16PCE SDA P&T",
-    "price": 135.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "31735",
-    "description": "CUTLERY SET 20PCE H/H WAVE",
-    "price": 89.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "31750",
-    "description": "CUTLERY SET 24PCE WAVE",
-    "price": 99.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "31754",
-    "description": "CUTLERY SET 4PCE ST/ST WAVE",
-    "price": 18.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "31755",
-    "description": "CUTLERY SET 48PCE WAVE",
-    "price": 159.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "22951",
-    "description": "CUTLERY SET 56PCE MADISON",
-    "price": 199.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "31753",
-    "description": "CUTLERY SET 68PCE WAVE",
-    "price": 219.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "318",
-    "description": "KNIFE S/STEEL",
-    "price": 13.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "317",
-    "description": "KNIFE SET 3PCE",
-    "price": 29.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "319",
-    "description": "KNIFE SET 5PCE",
-    "price": 55.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "320",
-    "description": "KNIFE SET 6PCE",
-    "price": 79.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "217",
-    "description": "KNIFE SET 8PCE",
-    "price": 99.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "221",
-    "description": "SPOON AND FORK SET 6PCE",
-    "price": 49.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "136",
-    "description": "SPOON SERVING 2PCE S/STEEL",
-    "price": 25.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "234",
-    "description": "SPREADER 4PCE CHILDS",
-    "price": 14.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "23777",
-    "description": "SPREADER SET 4PCE JADE",
-    "price": 19.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "31756",
-    "description": "SPREADER SET 4PCE WAVE",
-    "price": 14.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "237",
-    "description": "TEASPOON SET 6PCE S/STEEL",
-    "price": 24.95,
-    "category": "CUTLERY"
-  },
-  {
-    "sku": "455647",
-    "description": "MUG BEER 3PCE VERNON 380ML MAX",
-    "price": 43.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455648",
-    "description": "MUG COFFEE 4'S 250ML MAXIM",
-    "price": 31.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "451170",
-    "description": "MUG COFFEE SET 4'S VALEN 250ML",
-    "price": 31.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "454978",
-    "description": "MUG SET 4'S COLOUR 350ML",
-    "price": 29.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455512",
-    "description": "MUG SET 6'S WHT EMBOSSED 70338",
-    "price": 49.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "451169",
-    "description": "MUG TEA 4'S VALENTINE 300ML",
-    "price": 31.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "26926",
-    "description": "TEA & COFFEE SET 13PCE FINE",
-    "price": 199.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455407",
-    "description": "TEA CUP&SAUCER 10PCE WHITE 70281",
-    "price": 89.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455406",
-    "description": "TEA CUP&SAUCER 12PCE WHITE 70280",
-    "price": 99.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455408",
-    "description": "TEA CUP&SAUCER 6PCE WHITE 70282",
-    "price": 54.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455409",
-    "description": "TEA CUP&SAUCER 8PCE WHITE 70283",
-    "price": 69.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "27004",
-    "description": "TEA SET 17PCE FINE CHINA",
-    "price": 249.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455410",
-    "description": "TEA SET 6PCE WHITE 70284",
-    "price": 89.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455513",
-    "description": "TEAPOT 1.2L WHITE 70339",
-    "price": 59.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "26927",
-    "description": "TEAPOT 750ML FINE CHINA",
-    "price": 99.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "27005",
-    "description": "TEAPOT HERBAL TEA GLASS",
-    "price": 79.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455517",
-    "description": "TEAPOT SET 3PCE WHT EMB 70343",
-    "price": 179.95,
-    "category": "CUPS & MUGS"
-  },
-  {
-    "sku": "455645",
-    "description": "WATER SET 5PCE MAXIM",
-    "price": 34.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "455637",
-    "description": "WATER SET 7PCE MAX ELEANOR",
-    "price": 86.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "455638",
-    "description": "WATER SET 7PCE MAX ILLUSION",
-    "price": 86.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "455635",
-    "description": "WATER SET 7PCE MAX SPIRAL",
-    "price": 86.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "26918",
-    "description": "WATER SET GLASS DIAMOND 7PCE",
-    "price": 86.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "26912",
-    "description": "WINE SET 12PCE RIBBED GLASS",
-    "price": 79.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "26913",
-    "description": "WINE SET 6PCE RIBBED GLASS",
-    "price": 42.95,
-    "category": "GLASSWARE"
-  },
-  {
-    "sku": "449950",
-    "description": "SALAD BOWL 23CM MELAMINE",
-    "price": 36.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "195",
-    "description": "BOWL 6 MELAMINE",
-    "price": 9.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "206",
-    "description": "PUNCH SET 27PCE",
-    "price": 179.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455009",
-    "description": "RAMEKIN 10CM WHITE 70143",
-    "price": 12.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455008",
-    "description": "RAMEKIN 11CM WHITE 70142",
-    "price": 14.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455200",
-    "description": "RAMEKIN 5PC WHT EMB SML 70304",
-    "price": 49.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455012",
-    "description": "RAMEKIN 7CM WHITE 70146",
-    "price": 8.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455011",
-    "description": "RAMEKIN 8CM WHITE 70145",
-    "price": 9.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455010",
-    "description": "RAMEKIN 9CM WHITE 70144",
-    "price": 11.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455013",
-    "description": "SCOOP 6\" CERAMIC 70148",
-    "price": 19.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455035",
-    "description": "CASSEROLE 3PC OVAL 70508",
-    "price": 199.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455034",
-    "description": "CASSEROLE 3PC RECT 70507",
-    "price": 199.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455003",
-    "description": "CASSEROLE+LID DIAM RND S 70124",
-    "price": 49.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455203",
-    "description": "JAR HERM 500ML CLIP LID 70307",
-    "price": 24.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455204",
-    "description": "JAR HERM 750ML CLIP LID 70308",
-    "price": 29.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455205",
-    "description": "JAR HERM 1LT CLIP LID 70309",
-    "price": 34.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455017",
-    "description": "JELLY MOULD REC SCALLOPED 70151",
-    "price": 34.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455018",
-    "description": "JELLY MOULD RND SCALLOPED 70152",
-    "price": 34.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455019",
-    "description": "LOAF PAN 23CM SCALLOPED 70153",
-    "price": 34.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455022",
-    "description": "MEASURING CUP 1L 70156",
-    "price": 24.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455023",
-    "description": "MEASURING CUP 500ML 70157",
-    "price": 19.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455036",
-    "description": "MIXING BOWL+LID 3PC ROUND 70509",
-    "price": 199.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455002",
-    "description": "PASTA BOWL DIAM SQ L 70123",
-    "price": 39.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455001",
-    "description": "PASTA BOWL DIAM SQ M 70122",
-    "price": 34.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455000",
-    "description": "PASTA BOWL DIAM SQ S 70121",
-    "price": 29.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455037",
-    "description": "PIE DISH+LID 3PC ROUND 70510",
-    "price": 199.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455514",
-    "description": "PLATTER OVAL 35CM WHITE 70340",
-    "price": 49.95,
-    "category": "TRAYS & PLATTERS"
-  },
-  {
-    "sku": "455510",
-    "description": "PLATTER OVAL 41CM WHITE 70337",
-    "price": 61.95,
-    "category": "TRAYS & PLATTERS"
-  },
-  {
-    "sku": "455509",
-    "description": "PLATTER OVAL 42CM WHITE 70336",
-    "price": 61.95,
-    "category": "TRAYS & PLATTERS"
-  },
-  {
-    "sku": "455514",
-    "description": "PLATTER OVAL 46CM WHITE 70341",
-    "price": 73.95,
-    "category": "TRAYS & PLATTERS"
-  },
-  {
-    "sku": "455511",
-    "description": "PLATTER RND 32CM WHITE 70338",
-    "price": 49.95,
-    "category": "TRAYS & PLATTERS"
-  },
-  {
-    "sku": "455508",
-    "description": "PLATTER RND 35CM WHITE 70335",
-    "price": 54.95,
-    "category": "TRAYS & PLATTERS"
-  },
-  {
-    "sku": "455006",
-    "description": "RAMEKIN 5CM WHITE 70140",
-    "price": 6.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455005",
-    "description": "RAMEKIN 6CM WHITE 70139",
-    "price": 7.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455007",
-    "description": "RAMEKIN 8.5CM WHITE 70141",
-    "price": 8.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455201",
-    "description": "RAMEKIN 6PC WHT EMB LRG 70305",
-    "price": 79.95,
-    "category": "KITCHEN ACCESSORIES"
-  },
-  {
-    "sku": "455516",
-    "description": "SERVING BOWL 25CM WHT 70342",
-    "price": 44.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455515",
-    "description": "SERVING BOWL 30CM WHT 70341",
-    "price": 54.95,
-    "category": "BOWLS"
-  },
-  {
-    "sku": "455080",
-    "description": "STORAGE CONT+LID 3PC REC 70923",
-    "price": 79.95,
-    "category": "STORAGE"
-  },
-  {
-    "sku": "455084",
-    "description": "STORAGE CONT+LID 3PC RND 70927",
-    "price": 79.95,
-    "category": "STORAGE"
-  },
-  {
-    "sku": "455082",
-    "description": "STORAGE CONT+LID 4PC REC 70925",
-    "price": 99.95,
-    "category": "STORAGE"
-  },
-  {
-    "sku": "455086",
-    "description": "STORAGE CONT+LID 4PC RND 70929",
-    "price": 99.95,
-    "category": "STORAGE"
-  },
-  {
-    "sku": "455088",
-    "description": "STORAGE CONT+LID 5PC RND 70931",
-    "price": 119.95,
-    "category": "STORAGE"
-  },
-  {
-    "sku": "455649",
-    "description": "ICE CREAM SET 3PC AGAPANT MAX",
-    "price": 24.95,
-    "category": "ICE CREAM SETS"
-  },
-  {
-    "sku": "449949",
-    "description": "WATER BOTTLE 500ML",
-    "price": 14.95,
-    "category": "BOTTLES & JUGS"
-  },
-  {
-    "sku": "449947",
-    "description": "WATER BOTTLE 1L",
-    "price": 19.95,
-    "category": "BOTTLES & JUGS"
-  },
-  {
-    "sku": "449948",
-    "description": "WATER BOTTLE 750ML",
-    "price": 16.95,
-    "category": "BOTTLES & JUGS"
-  },
-  {
-    "sku": "259",
-    "description": "WATER JUG 1.5L",
-    "price": 34.95,
-    "category": "BOTTLES & JUGS"
-  },
-  {
-    "sku": "269",
-    "description": "WATER JUG 1L",
-    "price": 29.95,
-    "category": "BOTTLES & JUGS"
-  },
-  {
-    "sku": "255",
-    "description": "WATER JUG 2L",
-    "price": 39.95,
-    "category": "BOTTLES & JUGS"
-  },
-  {
-    "sku": "454979",
-    "description": "WATER BOTTLE 3PCE 2L/750/280ML",
-    "price": 62.95,
-    "category": "BOTTLES & JUGS"
-  },
-  {
-    "sku": "455384",
-    "description": "PIE CUPS FOIL 20PCE 71405",
-    "price": 11.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455321",
-    "description": "CUPCAKE HOLDER 100'S 72403",
-    "price": 8.95,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455322",
-    "description": "CUPCAKE HOLDER 100'S 72404",
-    "price": 9.5,
-    "category": "OTHER"
-  },
-  {
-    "sku": "455323",
-    "description": "CUPCAKE HOLDER 125'S 72405",
-    "price": 10.95,
-    "category": "OTHER"
-  }
-];
+            {"sku": "455641", "description": "BOWL SET 2PC STACK 6.7\" MAXIM", "price": 25.95, "category": "BOWLS"},
+            {"sku": "455642", "description": "BOWL SET 3PC 4.4\" MAXIM", "price": 20.95, "category": "BOWLS"},
+            {"sku": "455639", "description": "BOWL SET 6PC STACK 3.6\" MAXIM", "price": 24.95, "category": "BOWLS"},
+            {"sku": "455650", "description": "BOWL SET 6PCE TULIP MAXIM", "price": 28.95, "category": "BOWLS"},
+            {"sku": "455644", "description": "BOWL SET 7PCE CASCARA MAXIM", "price": 55.95, "category": "BOWLS"},
+            {"sku": "455643", "description": "BOWL SET 7PCE CHRYSAN MAXIM", "price": 55.95, "category": "BOWLS"},
+            {"sku": "455640", "description": "ICE CREAM SET 3'S CLEAR MAXIM", "price": 24.95, "category": "ICE CREAM SETS"},
+            {"sku": "455649", "description": "ICE CREAM SET 3PC AGAPANT MAX", "price": 24.95, "category": "ICE CREAM SETS"},
+            {"sku": "455634", "description": "WATER SET 7PCE MAX BORBOLETA", "price": 86.95, "category": "GLASSWARE"},
+            {"sku": "455636", "description": "WATER SET 7PCE MAX CILON", "price": 86.95, "category": "GLASSWARE"},
+            {"sku": "455647", "description": "MUG BEER 3PCE VERNON 380ML MAX", "price": 43.95, "category": "CUPS & MUGS"},
+            {"sku": "455648", "description": "MUG COFFEE 4'S 250ML MAXIM", "price": 31.95, "category": "CUPS & MUGS"},
+            {"sku": "444984", "description": "PLATE 9 CLEAR PLAIN PP-9D", "price": 9.95, "category": "PLATES"},
+            {"sku": "4161", "description": "PLATE DINNER H/P 10.5", "price": 9.95, "category": "PLATES"},
+            {"sku": "455080", "description": "STORAGE CONT+LID 3PC REC 70923", "price": 79.95, "category": "STORAGE"},
+            {"sku": "454437", "description": "TUMBLER MAXIM 9OZ 6'S ARLO", "price": 32.95, "category": "GLASSWARE"},
+            {"sku": "455428", "description": "TUMBLER MAXIM 9OZ 6'S BLOCK CL", "price": 32.95, "category": "GLASSWARE"},
+            {"sku": "455427", "description": "TUMBLER MAXIM 9OZ 6'S ECHO", "price": 32.95, "category": "GLASSWARE"},
+            {"sku": "455426", "description": "TUMBLER MAXIM 9OZ 6'S TWISTER", "price": 32.95, "category": "GLASSWARE"},
+            {"sku": "453704", "description": "CARAFFE 470ML 4'S BELARUS C/N", "price": 45.95, "category": "GLASSWARE"},
+            {"sku": "440728", "description": "ICE CREAM SET 6's GELATO C/NOV", "price": 24.95, "category": "ICE CREAM SETS"},
+            {"sku": "453261", "description": "TUMBLER ALE 6'S C/N", "price": 36.95, "category": "GLASSWARE"},
+            {"sku": "446223", "description": "TUMBLER BEER C/N 6'S HOPS", "price": 36.95, "category": "GLASSWARE"},
+            {"sku": "444971", "description": "TUMBLER HIBALL 6'S C/N", "price": 36.95, "category": "GLASSWARE"},
+            {"sku": "444970", "description": "TUMBLER JUICE 6'S C/N", "price": 29.95, "category": "GLASSWARE"},
+            {"sku": "444974", "description": "TUMBLER WATER 6'S C/N", "price": 29.95, "category": "GLASSWARE"},
+            {"sku": "444973", "description": "TUMBLER WHISKY 6'S C/N", "price": 36.95, "category": "GLASSWARE"},
+            {"sku": "455646", "description": "WINE SET 7PCE MAXIM", "price": 49.95, "category": "GLASSWARE"},
+            {"sku": "10836", "description": "CUTLERY 3PCE NOVELTY KDS SPN", "price": 9.95, "category": "CUTLERY"},
+            {"sku": "304", "description": "CUTLERY 4PCE CHILDS S/STEEL", "price": 14.95, "category": "CUTLERY"},
+            {"sku": "314", "description": "CUTLERY 4PCE INFANT", "price": 14.95, "category": "CUTLERY"},
+            {"sku": "307", "description": "CUTLERY 6PCE CHILDS S/STEEL", "price": 25.95, "category": "CUTLERY"},
+            {"sku": "10833", "description": "CUTLERY SET 12PCE NOVELTY KDS", "price": 29.95, "category": "CUTLERY"},
+            {"sku": "14996", "description": "CUTLERY SET 16PCE SDA P&T", "price": 135.95, "category": "CUTLERY"},
+            {"sku": "31735", "description": "CUTLERY SET 20PCE H/H WAVE", "price": 89.95, "category": "CUTLERY"},
+            {"sku": "31750", "description": "CUTLERY SET 24PCE WAVE", "price": 99.95, "category": "CUTLERY"},
+            {"sku": "31754", "description": "CUTLERY SET 4PCE ST/ST WAVE", "price": 18.95, "category": "CUTLERY"},
+            {"sku": "31755", "description": "CUTLERY SET 48PCE WAVE", "price": 159.95, "category": "CUTLERY"},
+            {"sku": "22951", "description": "CUTLERY SET 56PCE MADISON", "price": 199.95, "category": "CUTLERY"},
+            {"sku": "31753", "description": "CUTLERY SET 68PCE WAVE", "price": 219.95, "category": "CUTLERY"},
+            {"sku": "318", "description": "KNIFE S/STEEL", "price": 13.95, "category": "CUTLERY"},
+            {"sku": "317", "description": "KNIFE SET 3PCE", "price": 29.95, "category": "CUTLERY"},
+            {"sku": "319", "description": "KNIFE SET 5PCE", "price": 55.95, "category": "CUTLERY"},
+            {"sku": "320", "description": "KNIFE SET 6PCE", "price": 79.95, "category": "CUTLERY"},
+            {"sku": "217", "description": "KNIFE SET 8PCE", "price": 99.95, "category": "CUTLERY"},
+            {"sku": "221", "description": "SPOON AND FORK SET 6PCE", "price": 49.95, "category": "CUTLERY"},
+            {"sku": "136", "description": "SPOON SERVING 2PCE S/STEEL", "price": 25.95, "category": "CUTLERY"},
+            {"sku": "234", "description": "SPREADER 4PCE CHILDS", "price": 14.95, "category": "CUTLERY"},
+            {"sku": "23777", "description": "SPREADER SET 4PCE JADE", "price": 19.95, "category": "CUTLERY"},
+            {"sku": "31756", "description": "SPREADER SET 4PCE WAVE", "price": 14.95, "category": "CUTLERY"},
+            {"sku": "237", "description": "TEASPOON SET 6PCE S/STEEL", "price": 24.95, "category": "CUTLERY"},
+            {"sku": "451170", "description": "MUG COFFEE SET 4'S VALEN 250ML", "price": 31.95, "category": "CUPS & MUGS"},
+            {"sku": "454978", "description": "MUG SET 4'S COLOUR 350ML", "price": 29.95, "category": "CUPS & MUGS"},
+            {"sku": "455512", "description": "MUG SET 6'S WHT EMBOSSED 70338", "price": 49.95, "category": "CUPS & MUGS"},
+            {"sku": "451169", "description": "MUG TEA 4'S VALENTINE 300ML", "price": 31.95, "category": "CUPS & MUGS"},
+            {"sku": "26926", "description": "TEA & COFFEE SET 13PCE FINE", "price": 199.95, "category": "CUPS & MUGS"},
+            {"sku": "455407", "description": "TEA CUP&SAUCER 10PCE WHITE 70281", "price": 89.95, "category": "CUPS & MUGS"},
+            {"sku": "455406", "description": "TEA CUP&SAUCER 12PCE WHITE 70280", "price": 99.95, "category": "CUPS & MUGS"},
+            {"sku": "455408", "description": "TEA CUP&SAUCER 6PCE WHITE 70282", "price": 54.95, "category": "CUPS & MUGS"},
+            {"sku": "455409", "description": "TEA CUP&SAUCER 8PCE WHITE 70283", "price": 69.95, "category": "CUPS & MUGS"},
+            {"sku": "27004", "description": "TEA SET 17PCE FINE CHINA", "price": 249.95, "category": "CUPS & MUGS"},
+            {"sku": "455410", "description": "TEA SET 6PCE WHITE 70284", "price": 89.95, "category": "CUPS & MUGS"},
+            {"sku": "455513", "description": "TEAPOT 1.2L WHITE 70339", "price": 59.95, "category": "CUPS & MUGS"},
+            {"sku": "26927", "description": "TEAPOT 750ML FINE CHINA", "price": 99.95, "category": "CUPS & MUGS"},
+            {"sku": "27005", "description": "TEAPOT HERBAL TEA GLASS", "price": 79.95, "category": "CUPS & MUGS"},
+            {"sku": "455517", "description": "TEAPOT SET 3PCE WHT EMB 70343", "price": 179.95, "category": "CUPS & MUGS"},
+            {"sku": "455645", "description": "WATER SET 5PCE MAXIM", "price": 34.95, "category": "GLASSWARE"},
+            {"sku": "455637", "description": "WATER SET 7PCE MAX ELEANOR", "price": 86.95, "category": "GLASSWARE"},
+            {"sku": "455638", "description": "WATER SET 7PCE MAX ILLUSION", "price": 86.95, "category": "GLASSWARE"},
+            {"sku": "455635", "description": "WATER SET 7PCE MAX SPIRAL", "price": 86.95, "category": "GLASSWARE"},
+            {"sku": "26918", "description": "WATER SET GLASS DIAMOND 7PCE", "price": 86.95, "category": "GLASSWARE"},
+            {"sku": "26912", "description": "WINE SET 12PCE RIBBED GLASS", "price": 79.95, "category": "GLASSWARE"},
+            {"sku": "26913", "description": "WINE SET 6PCE RIBBED GLASS", "price": 42.95, "category": "GLASSWARE"},
+            {"sku": "449950", "description": "SALAD BOWL 23CM MELAMINE", "price": 36.95, "category": "BOWLS"},
+            {"sku": "195", "description": "BOWL 6 MELAMINE", "price": 9.95, "category": "BOWLS"},
+            {"sku": "206", "description": "PUNCH SET 27PCE", "price": 179.95, "category": "OTHER"},
+            {"sku": "455009", "description": "RAMEKIN 10CM WHITE 70143", "price": 12.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455008", "description": "RAMEKIN 11CM WHITE 70142", "price": 14.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455200", "description": "RAMEKIN 5PC WHT EMB SML 70304", "price": 49.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455012", "description": "RAMEKIN 7CM WHITE 70146", "price": 8.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455011", "description": "RAMEKIN 8CM WHITE 70145", "price": 9.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455010", "description": "RAMEKIN 9CM WHITE 70144", "price": 11.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455013", "description": "SCOOP 6\" CERAMIC 70148", "price": 19.95, "category": "OTHER"},
+            {"sku": "455035", "description": "CASSEROLE 3PC OVAL 70508", "price": 199.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455034", "description": "CASSEROLE 3PC RECT 70507", "price": 199.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455003", "description": "CASSEROLE+LID DIAM RND S 70124", "price": 49.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455203", "description": "JAR HERM 500ML CLIP LID 70307", "price": 24.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455204", "description": "JAR HERM 750ML CLIP LID 70308", "price": 29.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455205", "description": "JAR HERM 1LT CLIP LID 70309", "price": 34.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455017", "description": "JELLY MOULD REC SCALLOPED 70151", "price": 34.95, "category": "OTHER"},
+            {"sku": "455018", "description": "JELLY MOULD RND SCALLOPED 70152", "price": 34.95, "category": "OTHER"},
+            {"sku": "455019", "description": "LOAF PAN 23CM SCALLOPED 70153", "price": 34.95, "category": "OTHER"},
+            {"sku": "455022", "description": "MEASURING CUP 1L 70156", "price": 24.95, "category": "OTHER"},
+            {"sku": "455023", "description": "MEASURING CUP 500ML 70157", "price": 19.95, "category": "OTHER"},
+            {"sku": "455036", "description": "MIXING BOWL+LID 3PC ROUND 70509", "price": 199.95, "category": "BOWLS"},
+            {"sku": "455002", "description": "PASTA BOWL DIAM SQ L 70123", "price": 39.95, "category": "BOWLS"},
+            {"sku": "455001", "description": "PASTA BOWL DIAM SQ M 70122", "price": 34.95, "category": "BOWLS"},
+            {"sku": "455000", "description": "PASTA BOWL DIAM SQ S 70121", "price": 29.95, "category": "BOWLS"},
+            {"sku": "455037", "description": "PIE DISH+LID 3PC ROUND 70510", "price": 199.95, "category": "OTHER"},
+            {"sku": "455514", "description": "PLATTER OVAL 35CM WHITE 70340", "price": 49.95, "category": "TRAYS & PLATTERS"},
+            {"sku": "455510", "description": "PLATTER OVAL 41CM WHITE 70337", "price": 61.95, "category": "TRAYS & PLATTERS"},
+            {"sku": "455509", "description": "PLATTER OVAL 42CM WHITE 70336", "price": 61.95, "category": "TRAYS & PLATTERS"},
+            {"sku": "455511", "description": "PLATTER RND 32CM WHITE 70338", "price": 49.95, "category": "TRAYS & PLATTERS"},
+            {"sku": "455508", "description": "PLATTER RND 35CM WHITE 70335", "price": 54.95, "category": "TRAYS & PLATTERS"},
+            {"sku": "455006", "description": "RAMEKIN 5CM WHITE 70140", "price": 6.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455005", "description": "RAMEKIN 6CM WHITE 70139", "price": 7.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455007", "description": "RAMEKIN 8.5CM WHITE 70141", "price": 8.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455201", "description": "RAMEKIN 6PC WHT EMB LRG 70305", "price": 79.95, "category": "KITCHEN ACCESSORIES"},
+            {"sku": "455516", "description": "SERVING BOWL 25CM WHT 70342", "price": 44.95, "category": "BOWLS"},
+            {"sku": "455515", "description": "SERVING BOWL 30CM WHT 70341", "price": 54.95, "category": "BOWLS"},
+            {"sku": "455084", "description": "STORAGE CONT+LID 3PC RND 70927", "price": 79.95, "category": "STORAGE"},
+            {"sku": "455082", "description": "STORAGE CONT+LID 4PC REC 70925", "price": 99.95, "category": "STORAGE"},
+            {"sku": "455086", "description": "STORAGE CONT+LID 4PC RND 70929", "price": 99.95, "category": "STORAGE"},
+            {"sku": "455088", "description": "STORAGE CONT+LID 5PC RND 70931", "price": 119.95, "category": "STORAGE"},
+            {"sku": "449949", "description": "WATER BOTTLE 500ML", "price": 14.95, "category": "BOTTLES & JUGS"},
+            {"sku": "449947", "description": "WATER BOTTLE 1L", "price": 19.95, "category": "BOTTLES & JUGS"},
+            {"sku": "449948", "description": "WATER BOTTLE 750ML", "price": 16.95, "category": "BOTTLES & JUGS"},
+            {"sku": "259", "description": "WATER JUG 1.5L", "price": 34.95, "category": "BOTTLES & JUGS"},
+            {"sku": "269", "description": "WATER JUG 1L", "price": 29.95, "category": "BOTTLES & JUGS"},
+            {"sku": "255", "description": "WATER JUG 2L", "price": 39.95, "category": "BOTTLES & JUGS"},
+            {"sku": "454979", "description": "WATER BOTTLE 3PCE 2L/750/280ML", "price": 62.95, "category": "BOTTLES & JUGS"},
+            {"sku": "455384", "description": "PIE CUPS FOIL 20PCE 71405", "price": 11.95, "category": "OTHER"},
+            {"sku": "455321", "description": "CUPCAKE HOLDER 100'S 72403", "price": 8.95, "category": "OTHER"},
+            {"sku": "455322", "description": "CUPCAKE HOLDER 100'S 72404", "price": 9.5, "category": "OTHER"},
+            {"sku": "455323", "description": "CUPCAKE HOLDER 125'S 72405", "price": 10.95, "category": "OTHER"}
+        ];
 
         let filteredProducts = [...allProducts];
         let currentCategory = 'ALL';
+        let sortBy = 'name';
+        let sortOrder = 'asc';
 
-        // Function to get Google Drive image URL
+        // *** REPLACE THIS FUNCTION WITH THE OUTPUT FROM THE IMAGE MAPPER ***
         function getImageUrl(sku) {
-            // For now, using placeholders. Replace with your Google Drive URLs
-            // Example: return `https://drive.google.com/uc?id=YOUR_IMAGE_ID_FOR_${sku}`;
+            // This function will be replaced with your Google Drive image mapping
+            // For now, using placeholder images with SKU text
             return `https://via.placeholder.com/300x200/e2e8f0/64748b?text=${sku}`;
+            
+            // After running the Image Mapper, replace this entire function with the generated code
+            // It will look like this:
+            /*
+            const imageMapping = {
+                '455641': 'https://drive.google.com/uc?id=YOUR_IMAGE_ID_1',
+                '455642': 'https://drive.google.com/uc?id=YOUR_IMAGE_ID_2',
+                // ... all your SKU mappings
+            };
+            return imageMapping[sku] || `https://via.placeholder.com/300x200/e2e8f0/64748b?text=${sku}`;
+            */
         }
 
         // Initialize the page
         document.addEventListener('DOMContentLoaded', function() {
-            console.log(`Loading catalog with ${allProducts.length} products...`);
+            console.log(`🎉 OZZ Promotions Catalog loaded with ${allProducts.length} products`);
             setupCategories();
             displayProducts();
             updateCounts();
@@ -1010,7 +419,7 @@
             const categoryButtons = document.getElementById('categoryButtons');
             
             categoryButtons.innerHTML = categories.map(category => 
-                `<button onclick="filterByCategory('${category}')" class="category-btn ${category === 'ALL' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100'} px-4 py-2 rounded-full text-sm font-semibold transition-colors">
+                `<button onclick="filterByCategory('${category}')" class="category-btn ${category === 'ALL' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100'} px-4 py-2 rounded-full text-sm font-semibold transition-all">
                     ${category}
                 </button>`
             ).join('');
@@ -1022,9 +431,9 @@
             // Update button styles
             document.querySelectorAll('.category-btn').forEach(btn => {
                 if (btn.textContent.trim() === category) {
-                    btn.className = 'category-btn bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-colors';
+                    btn.className = 'category-btn bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all';
                 } else {
-                    btn.className = 'category-btn bg-gray-200 text-gray-700 hover:bg-red-100 px-4 py-2 rounded-full text-sm font-semibold transition-colors';
+                    btn.className = 'category-btn bg-gray-200 text-gray-700 hover:bg-red-100 px-4 py-2 rounded-full text-sm font-semibold transition-all';
                 }
             });
             
@@ -1035,14 +444,58 @@
             applyFilters();
         }
 
+        function toggleSortOrder() {
+            sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            document.getElementById('sortOrderBtn').textContent = sortOrder === 'asc' ? '↑ A-Z' : '↓ Z-A';
+            applyFilters();
+        }
+
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            currentCategory = 'ALL';
+            setupCategories();
+            applyFilters();
+        }
+
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            sortBy = document.getElementById('sortBy').value;
             
             filteredProducts = allProducts.filter(product => {
                 const matchesSearch = product.description.toLowerCase().includes(searchTerm) || 
                                     product.sku.toLowerCase().includes(searchTerm);
                 const matchesCategory = currentCategory === 'ALL' || product.category === currentCategory;
                 return matchesSearch && matchesCategory;
+            });
+
+            // Sort products
+            filteredProducts.sort((a, b) => {
+                let aVal, bVal;
+                
+                switch (sortBy) {
+                    case 'price':
+                        aVal = a.price;
+                        bVal = b.price;
+                        break;
+                    case 'category':
+                        aVal = a.category;
+                        bVal = b.category;
+                        break;
+                    default:
+                        aVal = a.description;
+                        bVal = b.description;
+                }
+
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (sortOrder === 'asc') {
+                    return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+                } else {
+                    return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+                }
             });
             
             displayProducts();
@@ -1071,16 +524,18 @@
                     <div class="relative">
                         <img src="${getImageUrl(product.sku)}" 
                              alt="${product.description}" 
-                             class="w-full h-48 object-cover">
+                             class="w-full h-48 object-cover"
+                             loading="lazy"
+                             onerror="this.src='https://via.placeholder.com/300x200/f3f4f6/9ca3af?text=${product.sku}'">
                         <div class="promo-badge">PROMO</div>
                         <button onclick="showProductDetails('${product.sku}')" 
-                                class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-md hover:bg-red-50 transition-colors">
+                                class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-red-50 transition-all">
                             👁️
                         </button>
                     </div>
                     <div class="p-4">
                         <div class="text-sm text-gray-500 mb-1">SKU: ${product.sku}</div>
-                        <h3 class="font-semibold text-gray-900 mb-3 min-h-[3rem] line-clamp-2">${product.description}</h3>
+                        <h3 class="font-semibold text-gray-900 mb-3 min-h-[3rem] leading-tight">${product.description}</h3>
                         <div class="flex justify-between items-center mb-3">
                             <div class="flex flex-col">
                                 <span class="text-2xl font-bold text-red-600">R${product.price.toFixed(2)}</span>
@@ -1091,12 +546,12 @@
                             </span>
                         </div>
                         <div class="text-center mb-3">
-                            <span class="text-sm font-semibold text-green-600">
+                            <span class="savings-badge">
                                 SAVE R${savings} (${savingsPercent}% OFF!)
                             </span>
                         </div>
                         <button onclick="showProductDetails('${product.sku}')" 
-                                class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-semibold text-sm">
+                                class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-semibold text-sm shadow-lg hover:shadow-xl">
                             View Details
                         </button>
                     </div>
@@ -1121,71 +576,84 @@
             const modalContent = document.getElementById('modalContent');
             modalContent.innerHTML = `
                 <div class="mb-6">
-                    <div class="inline-block bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold mb-2">
-                        JULY 2025 PROMO
+                    <div class="inline-block bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold mb-3">
+                        🎉 JULY 2025 PROMO
                     </div>
-                    <h2 class="text-2xl font-bold text-gray-900">Promotional Deal</h2>
+                    <h2 class="text-3xl font-bold text-gray-900">Promotional Deal</h2>
                 </div>
                 
-                <div class="grid md:grid-cols-2 gap-6">
+                <div class="grid md:grid-cols-2 gap-8">
                     <div class="relative">
                         <img src="${getImageUrl(product.sku)}" 
                              alt="${product.description}" 
-                             class="w-full h-64 object-cover rounded-lg">
-                        <div class="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
+                             class="w-full h-80 object-cover rounded-lg shadow-lg"
+                             onerror="this.src='https://via.placeholder.com/400x320/f3f4f6/9ca3af?text=${product.sku}'">
+                        <div class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">
                             LIMITED TIME
                         </div>
                     </div>
                     <div>
                         <div class="text-sm text-gray-500 mb-2">SKU: ${product.sku}</div>
-                        <h3 class="text-xl font-semibold text-gray-900 mb-4">${product.description}</h3>
-                        <div class="mb-4">
-                            <span class="text-xs bg-gradient-to-r from-blue-500 to-red-500 text-white px-3 py-1 rounded-full font-semibold">
+                        <h3 class="text-2xl font-semibold text-gray-900 mb-4 leading-tight">${product.description}</h3>
+                        <div class="mb-6">
+                            <span class="text-sm bg-gradient-to-r from-blue-500 to-red-500 text-white px-4 py-2 rounded-full font-semibold">
                                 ${product.category}
                             </span>
                         </div>
                         
-                        <div class="bg-red-50 p-4 rounded-lg mb-6 border-l-4 border-red-500">
-                            <div class="flex items-center justify-between mb-2">
-                                <span class="text-sm text-gray-600">Regular Price:</span>
-                                <span class="text-lg text-gray-500 line-through">R${originalPrice}</span>
+                        <div class="bg-gradient-to-r from-red-50 to-pink-50 p-6 rounded-xl mb-6 border-l-4 border-red-500 shadow-inner">
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-sm text-gray-600 font-medium">Regular Price:</span>
+                                <span class="text-xl text-gray-500 line-through">R${originalPrice}</span>
                             </div>
-                            <div class="flex items-center justify-between">
-                                <span class="text-lg font-semibold text-red-700">July Promo Price:</span>
-                                <span class="text-3xl font-bold text-red-600">R${product.price.toFixed(2)}</span>
+                            <div class="flex items-center justify-between mb-3">
+                                <span class="text-xl font-semibold text-red-700">July Promo Price:</span>
+                                <span class="text-4xl font-bold text-red-600">R${product.price.toFixed(2)}</span>
                             </div>
-                            <div class="text-center mt-2">
-                                <span class="text-sm font-semibold text-green-600">
+                            <div class="text-center bg-green-100 rounded-lg py-2">
+                                <span class="text-lg font-bold text-green-700">
                                     YOU SAVE: R${savings} (${savingsPercent}% OFF!)
                                 </span>
                             </div>
                         </div>
                         
-                        <button class="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-3 px-6 rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-bold text-lg shadow-lg">
+                        <button class="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-4 px-8 rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-bold text-xl shadow-lg hover:shadow-xl transform hover:scale-105">
                             🛒 Get This Deal Now!
                         </button>
                         
-                        <div class="mt-4 text-center">
-                            <p class="text-sm text-gray-600">⏰ Limited time offer - July 2025 only!</p>
+                        <div class="mt-6 text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <p class="text-sm text-yellow-800 font-medium">⏰ Limited time offer - July 2025 only!</p>
+                            <p class="text-xs text-yellow-700 mt-1">Don't miss out on this exclusive promotional price</p>
                         </div>
                     </div>
                 </div>
             `;
             
             document.getElementById('productModal').style.display = 'block';
+            document.body.style.overflow = 'hidden'; // Prevent background scrolling
         }
 
         function closeModal() {
             document.getElementById('productModal').style.display = 'none';
+            document.body.style.overflow = 'auto'; // Restore scrolling
         }
 
         // Close modal when clicking outside of it
         window.onclick = function(event) {
             const modal = document.getElementById('productModal');
             if (event.target == modal) {
-                modal.style.display = 'none';
+                closeModal();
             }
         }
+
+        // Keyboard navigation
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        console.log('🎉 OZZ Promotions July 2025 Catalog ready!');
     </script>
 </body>
 </html>
