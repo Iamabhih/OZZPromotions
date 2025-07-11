@@ -73,7 +73,7 @@
                 <div id="log" class="bg-gray-900 text-green-400 p-4 rounded-lg h-48 overflow-y-auto font-mono text-sm">
                     🎯 Ready to scan your Google Drive folder...<br>
                     📁 Target folder: Ikhaya/OzzSA<br>
-                    🔍 Will search for images matching your product SKUs<br>
+                    🔍 Will search for images matching your 236 product SKUs<br>
                     ▶️ Click "Generate Image Mapping Code" to start<br>
                 </div>
             </div>
@@ -85,7 +85,7 @@
         const API_KEY = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
         const FOLDER_ID = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
 
-        // All your product SKUs from the Excel file
+        // All your product SKUs
         const PRODUCT_SKUS = [
             "455641", "455642", "455639", "455650", "455644", "455643", "455640", "455649", 
             "455634", "455636", "455647", "455648", "444984", "4161", "455080", "454437", 
@@ -101,19 +101,7 @@
             "455023", "455036", "455002", "455001", "455000", "455037", "455514", "455510", 
             "455509", "455511", "455508", "455006", "455005", "455007", "455201", "455516", 
             "455515", "455084", "455082", "455086", "455088", "449949", "449947", "449948", 
-            "259", "269", "255", "454979", "455384", "455321", "455322", "455323",
-            "455315", "455316", "455318", "455319", "455320", "444982", "444985", "443946",
-            "445093", "445094", "445095", "445096", "10835", "455632", "455633", "455651",
-            "443896", "443897", "443898", "443899", "454859", "454860", "454861", "454862",
-            "454863", "454864", "454865", "454866", "454867", "454868", "455652", "455653",
-            "455654", "455655", "455656", "455657", "454869", "454870", "454871", "454872",
-            "454873", "454874", "454875", "454876", "454877", "454878", "455658", "455659",
-            "455660", "455661", "455662", "454879", "454880", "454881", "454882", "454883",
-            "454884", "454885", "454886", "454887", "454888", "454889", "454890", "445088",
-            "445089", "445090", "445091", "445092", "126", "205", "179", "219", "193",
-            "446216", "446217", "446218", "446219", "446220", "446221", "446222", "446224",
-            "442627", "443944", "443945", "444980", "444972", "3133", "451095", "451096",
-            "440727", "444975", "455323", "455322", "455321"
+            "259", "269", "255", "454979", "455384", "455321", "455322", "455323"
         ];
 
         let allImages = [];
@@ -203,28 +191,17 @@
                     const filename = img.name.toLowerCase();
                     const skuLower = sku.toLowerCase();
                     
-                    // Try multiple matching patterns
                     return filename.includes(skuLower) ||
                            filename.includes(skuLower.replace(/\D/g, '')) ||
                            filename.startsWith(skuLower) ||
-                           filename.endsWith(skuLower) ||
                            filename.includes(`-${skuLower}`) ||
                            filename.includes(`_${skuLower}`) ||
                            filename.includes(` ${skuLower}`) ||
-                           filename.includes(`${skuLower}.`) ||
-                           filename.includes(`${skuLower}_`) ||
-                           filename.includes(`${skuLower}-`) ||
                            new RegExp(`\\b${skuLower}\\b`).test(filename);
                 });
 
                 if (matches.length > 0) {
-                    // Prioritize exact matches
-                    const exactMatch = matches.find(img => {
-                        const name = img.name.toLowerCase().replace(/\.[^/.]+$/, '');
-                        return name === sku.toLowerCase();
-                    });
-                    
-                    const bestMatch = exactMatch || matches[0];
+                    const bestMatch = matches[0]; // Use first match
                     imageMapping[sku] = {
                         url: `https://drive.google.com/uc?id=${bestMatch.id}`,
                         filename: bestMatch.name,
@@ -254,7 +231,7 @@
                     <img src="${data.url}" alt="SKU ${sku}" class="w-full h-20 object-cover rounded mb-2" 
                          onerror="this.src='https://via.placeholder.com/80x80/ddd/999?text=Error'">
                     <div class="text-xs font-semibold">${sku}</div>
-                    <div class="text-xs text-gray-500 truncate" title="${data.filename}">${data.filename}</div>
+                    <div class="text-xs text-gray-500 truncate">${data.filename}</div>
                 </div>
             `).join('');
 
@@ -290,19 +267,20 @@
             const codeEl = document.getElementById('generatedCode');
             
             const mappingEntries = Object.entries(imageMapping)
-                .map(([sku, data]) => `    '${sku}': '${data.id}',`)
+                .map(([sku, data]) => `        '${sku}': '${data.url}',`)
                 .join('\n');
 
             const code = `// Auto-generated Google Drive image mapping for OZZ Promotions
 // Generated on: ${new Date().toLocaleString()}
 // Mapped ${Object.keys(imageMapping).length}/${PRODUCT_SKUS.length} products
 
-const imageMapping = {
+function getImageUrl(sku) {
+    const imageMapping = {
 ${mappingEntries}
-};
-
-// Copy this entire block and paste it into your index.html
-// Replace the existing empty imageMapping object`;
+    };
+    
+    return imageMapping[sku] || \`https://via.placeholder.com/300x200/e2e8f0/64748b?text=\${sku}\`;
+}`;
 
             codeEl.textContent = code;
             codeSection.classList.remove('hidden');
