@@ -222,18 +222,18 @@
             </div>
             
             <div class="space-y-2 text-left">
-                <div id="step1" class="loading-step">📊 Loading product data from GitHub...</div>
-                <div id="step2" class="loading-step">📸 Setting up product images...</div>
-                <div id="step3" class="loading-step">📄 Configuring pagination system...</div>
-                <div id="step4" class="loading-step">🔧 Setting up search and filters...</div>
+                <div id="step1" class="loading-step">📊 Loading product data from Excel...</div>
+                <div id="step2" class="loading-step">🔗 Initializing Google Drive API...</div>
+                <div id="step3" class="loading-step">📸 Scanning Google Drive for images...</div>
+                <div id="step4" class="loading-step">🗂️ Building image mapping cache...</div>
                 <div id="step5" class="loading-step">✨ Almost ready!</div>
             </div>
             
             <!-- Image Notice -->
             <div class="mt-8 bg-green-900 bg-opacity-30 p-4 rounded-lg text-sm max-w-md mx-auto">
-                <p>📸 <strong>Real product images loading!</strong></p>
-                <p>Enhanced catalog with pagination • 20 products per page</p>
-                <p class="text-xs mt-2 opacity-75">Images served from Google Drive</p>
+                <p>📸 <strong>Dynamic image loading from Google Drive!</strong></p>
+                <p>Real product photos • Smart caching • Auto-mapping</p>
+                <p class="text-xs mt-2 opacity-75">Images cached for 24 hours for fast loading</p>
             </div>
         </div>
     </div>
@@ -258,6 +258,13 @@
                 <p class="text-lg opacity-90" id="product-count">Loading promotional items...</p>
                 <div class="mt-6 inline-block bg-yellow-400 text-red-800 px-8 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
                     ⏰ LIMITED TIME OFFER!
+                </div>
+                
+                <!-- Image System Status -->
+                <div class="mt-4">
+                    <div id="imageSystemStatus" class="text-sm opacity-75">
+                        🔄 Initializing image system...
+                    </div>
                 </div>
             </div>
         </div>
@@ -292,6 +299,9 @@
                 </select>
                 <button onclick="toggleSortOrder()" id="sortOrderBtn" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
                     ↑ A-Z
+                </button>
+                <button onclick="refreshImageCache()" id="refreshBtn" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                    🔄 Refresh Images
                 </button>
             </div>
         </div>
@@ -380,84 +390,290 @@
     </footer>
 
     <script>
-        // GitHub Pages compatible configuration
-        const CONFIG = {
-            GITHUB_REPO: './JULY PROMO.xlsx',
-            PRODUCTS_PER_PAGE: 20 // NEW: Pagination setting
-        };
+        // Enhanced Google Drive Image Manager with Caching
+        class DriveImageManager {
+            constructor() {
+                this.imageCache = new Map();
+                this.folderCache = new Map();
+                this.isInitialized = false;
+                this.cacheVersion = '1.0';
+                this.cacheExpiryHours = 24;
+                
+                // Your specific folder ID from Google Drive
+                this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
+                this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
+            }
 
-        // Enhanced Google Drive image mapping (69 products with real photos)
-        const imageMapping = {
-            '136': 'https://drive.google.com/uc?id=1FuMqiX05ByfoGPNNpjmJC7R4FJhL-dzj',
-            '195': 'https://drive.google.com/uc?id=1YtjxxGec8njXwucGFew39FiZc8vawZl6',
-            '206': 'https://drive.google.com/uc?id=14vWEKHUmpKBLHzJe9d4mAOLAvOeef7R7',
-            '217': 'https://drive.google.com/uc?id=1mQ5fEdry6w1os7RHPNe32U_YvSOLkq8G',
-            '221': 'https://drive.google.com/uc?id=19Jf4rpNGquGIovcBTkp757OXRGyhSIzi',
-            '234': 'https://drive.google.com/uc?id=1MsNBEIuafdkbzVHQEjylCFnVR--ysX6D',
-            '237': 'https://drive.google.com/uc?id=1VbfRr5hwhPQT0oG7GBP6yTvrJ1ntya4N',
-            '255': 'https://drive.google.com/uc?id=1F4z9t6rMkGai542fH7HI3C0-atIR6bcy',
-            '259': 'https://drive.google.com/uc?id=18kCqxgpT5Z5-SFiPurx9FNK0TiNmYlxo',
-            '269': 'https://drive.google.com/uc?id=1RvR5UuogFSgpCWhideO-bTftphv5780p',
-            '304': 'https://drive.google.com/uc?id=1XrunkJ_THR9PYX_x3Z7BVS1ezx6CqpEz',
-            '307': 'https://drive.google.com/uc?id=1a4dCVezeg-TD-iZPVd1AgtfSMBbfe0AB',
-            '314': 'https://drive.google.com/uc?id=1ONgOOZ0_iv_lgtCzrQTLSIkYnMOclQr8',
-            '317': 'https://drive.google.com/uc?id=1jT0W5SxIwwHFA4aKhZbQur5CRRlBF3eU',
-            '318': 'https://drive.google.com/uc?id=1jT0W5SxIwwHFA4aKhZbQur5CRRlBF3eU',
-            '319': 'https://drive.google.com/uc?id=18EFVixwt3RC46RLb726u-XjD69sOR2kN',
-            '320': 'https://drive.google.com/uc?id=1BOyIEHihmC0NuJ3vvF1zshu5nN3D7skw',
-            '4161': 'https://drive.google.com/uc?id=1fplfukq3HjfIT8p5Uv5-e6JyMK3IJyr0',
-            '31754': 'https://drive.google.com/uc?id=1XYZ83RdANXPR3A79lAVHrQYUY8ybLE5E',
-            '31755': 'https://drive.google.com/uc?id=1LfYl4KU5iCkibQmO23coYGkuxEbg7zYb',
-            '446223': 'https://drive.google.com/uc?id=1eWA2nN_iARKv35-4J0o2bG1zVpQOjA7y',
-            '453261': 'https://drive.google.com/uc?id=1-s6AHDIzywboqwHhz_4GwZIHC6Q-6oZ6',
-            '453704': 'https://drive.google.com/uc?id=1Gy3YXTcsbUBcbhfxj8SiSNUkwNgISXWh',
-            '454437': 'https://drive.google.com/uc?id=1FwKibfrcikWPnJrpKuD3xl_P3T9snBkx',
-            '455000': 'https://drive.google.com/uc?id=1nBxO36A2oih8ssQKUOH-yTwIPt4zIs-P',
-            '455001': 'https://drive.google.com/uc?id=1nBxO36A2oih8ssQKUOH-yTwIPt4zIs-P',
-            '455002': 'https://drive.google.com/uc?id=1nBxO36A2oih8ssQKUOH-yTwIPt4zIs-P',
-            '455003': 'https://drive.google.com/uc?id=15-paEYh1w2m09w0RjwK_4aJbyLabZbMY',
-            '455005': 'https://drive.google.com/uc?id=15-paEYh1w2m09w0RjwK_4aJbyLabZbMY',
-            '455007': 'https://drive.google.com/uc?id=1qTKaveWhmg3NSoeWrGkdrU8iBT_n9WKs',
-            '455008': 'https://drive.google.com/uc?id=1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
-            '455009': 'https://drive.google.com/uc?id=1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
-            '455010': 'https://drive.google.com/uc?id=1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
-            '455011': 'https://drive.google.com/uc?id=1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
-            '455012': 'https://drive.google.com/uc?id=1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
-            '455013': 'https://drive.google.com/uc?id=1ZxCHPWiS-dYRbzaUJIxARiMpa5cVOkWU',
-            '455017': 'https://drive.google.com/uc?id=1VzVk6d_z4LPVntOXl8wi7ZnJFH1loZN-',
-            '455018': 'https://drive.google.com/uc?id=1VzVk6d_z4LPVntOXl8wi7ZnJFH1loZN-',
-            '455019': 'https://drive.google.com/uc?id=1VzVk6d_z4LPVntOXl8wi7ZnJFH1loZN-',
-            '455022': 'https://drive.google.com/uc?id=11XxqVMAXfdMURZcyMGB3l3IsdWNnsZiw',
-            '455023': 'https://drive.google.com/uc?id=11XxqVMAXfdMURZcyMGB3l3IsdWNnsZiw',
-            '455036': 'https://drive.google.com/uc?id=1ujIlgH2QPgyHU5R8cjYqM_H6THFkzII_',
-            '455037': 'https://drive.google.com/uc?id=1t9HxcxCKSThPLHSCA-6TwQqAerGUnjaN',
-            '455084': 'https://drive.google.com/uc?id=1PiRYQIKgQqC1V4Tb7tNNlx2b9rz2Wa40',
-            '455086': 'https://drive.google.com/uc?id=1-_MZXpBNtRYlPCse3i77rBIDocG5AUoY',
-            '455088': 'https://drive.google.com/uc?id=1UOCaNujQGjOVEa-gOpScAA6lMx_COCwB',
-            '455200': 'https://drive.google.com/uc?id=1eWW5UR_YOZakT43AGEadmualu7HPFp2W',
-            '455201': 'https://drive.google.com/uc?id=1eWW5UR_YOZakT43AGEadmualu7HPFp2W',
-            '455203': 'https://drive.google.com/uc?id=14vWEKHUmpKBLHzJe9d4mAOLAvOeef7R7',
-            '455204': 'https://drive.google.com/uc?id=14vWEKHUmpKBLHzJe9d4mAOLAvOeef7R7',
-            '455205': 'https://drive.google.com/uc?id=14vWEKHUmpKBLHzJe9d4mAOLAvOeef7R7',
-            '455321': 'https://drive.google.com/uc?id=1I4PBp7Lpv5vz09ePaRzum9Pxf9L7G8Gu',
-            '455322': 'https://drive.google.com/uc?id=11FenbXK_prDbujA8RrWCBeiRVJqC4hXg',
-            '455323': 'https://drive.google.com/uc?id=17jpQS3EA6uR2XZLjsNfrzi9FOLPTxv_W',
-            '455406': 'https://drive.google.com/uc?id=1eAIT58QrqcoBKahZuy8Q_HDf38SJCy78',
-            '455410': 'https://drive.google.com/uc?id=1osnHYkcS1xmPh-KORM499QDeD94rT0v8',
-            '455426': 'https://drive.google.com/uc?id=1O5haH1M_fkEBi_BRV_mLVjXrYt24DVh9',
-            '455427': 'https://drive.google.com/uc?id=1u3P48cMvhkXHuH5NxY1tLZaCTb9Pj_nL',
-            '455428': 'https://drive.google.com/uc?id=1nVYV3xL65uRt0UVY8pTDZrLo6YKgIPbP',
-            '455508': 'https://drive.google.com/uc?id=1-wOkNJWAPh2ui3advilWOG6ifi4XqKo-',
-            '455509': 'https://drive.google.com/uc?id=1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
-            '455510': 'https://drive.google.com/uc?id=1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
-            '455511': 'https://drive.google.com/uc?id=1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
-            '455512': 'https://drive.google.com/uc?id=1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
-            '455513': 'https://drive.google.com/uc?id=1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
-            '455514': 'https://drive.google.com/uc?id=1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
-            '455515': 'https://drive.google.com/uc?id=1-wOkNJWAPh2ui3advilWOG6ifi4XqKo-',
-            '455516': 'https://drive.google.com/uc?id=1-wOkNJWAPh2ui3advilWOG6ifi4XqKo-',
-            '455517': 'https://drive.google.com/uc?id=1-wOkNJWAPh2ui3advilWOG6ifi4XqKo-'
-        };
+            // Initialize Google Drive API
+            async initializeGAPI() {
+                if (this.isInitialized) return true;
+                
+                try {
+                    // Load Google APIs
+                    await this.loadScript('https://apis.google.com/js/api.js');
+                    await new Promise(resolve => gapi.load('client', resolve));
+                    
+                    await gapi.client.init({
+                        apiKey: this.apiKey,
+                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+                    });
+                    
+                    this.isInitialized = true;
+                    console.log('✅ Google Drive API initialized');
+                    return true;
+                } catch (error) {
+                    console.error('❌ Failed to initialize Google Drive API:', error);
+                    return false;
+                }
+            }
+
+            // Load script helper
+            loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    if (document.querySelector(`script[src="${src}"]`)) {
+                        resolve();
+                        return;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            }
+
+            // Cache management
+            getCacheKey(type) {
+                return `ozz_promo_${type}_v${this.cacheVersion}`;
+            }
+
+            loadCacheFromStorage() {
+                try {
+                    console.log('🔍 Checking for cached image data...');
+                    
+                    const cacheMetaKey = this.getCacheKey('meta');
+                    const cacheMetaStr = localStorage.getItem(cacheMetaKey);
+                    
+                    if (!cacheMetaStr) {
+                        console.log('📝 No cache found, will perform full scan');
+                        return false;
+                    }
+                    
+                    const cacheMeta = JSON.parse(cacheMetaStr);
+                    const cacheAge = Date.now() - cacheMeta.timestamp;
+                    const maxAge = this.cacheExpiryHours * 60 * 60 * 1000;
+                    
+                    if (cacheAge > maxAge) {
+                        console.log(`⏰ Cache expired (${Math.round(cacheAge / (60 * 60 * 1000))} hours old), will refresh`);
+                        this.clearCache();
+                        return false;
+                    }
+                    
+                    const imageCacheKey = this.getCacheKey('images');
+                    const imageCacheStr = localStorage.getItem(imageCacheKey);
+                    
+                    if (!imageCacheStr) {
+                        console.log('📝 Incomplete cache found, will perform full scan');
+                        return false;
+                    }
+                    
+                    const imageData = JSON.parse(imageCacheStr);
+                    this.imageCache = new Map(Object.entries(imageData));
+                    
+                    console.log(`✅ Cache loaded successfully! ${this.imageCache.size} images cached`);
+                    console.log(`📊 Cache age: ${Math.round(cacheAge / (60 * 1000))} minutes`);
+                    
+                    return true;
+                } catch (error) {
+                    console.error('❌ Error loading cache:', error);
+                    this.clearCache();
+                    return false;
+                }
+            }
+
+            saveCacheToStorage() {
+                try {
+                    console.log('💾 Saving image cache to storage...');
+                    
+                    const cacheMeta = {
+                        timestamp: Date.now(),
+                        version: this.cacheVersion,
+                        totalImages: this.imageCache.size
+                    };
+                    
+                    const cacheMetaKey = this.getCacheKey('meta');
+                    localStorage.setItem(cacheMetaKey, JSON.stringify(cacheMeta));
+                    
+                    const imageData = Object.fromEntries(this.imageCache);
+                    const imageCacheKey = this.getCacheKey('images');
+                    localStorage.setItem(imageCacheKey, JSON.stringify(imageData));
+                    
+                    console.log(`✅ Cache saved successfully! ${this.imageCache.size} images cached`);
+                } catch (error) {
+                    console.error('❌ Error saving cache:', error);
+                    this.clearCache();
+                }
+            }
+
+            clearCache() {
+                try {
+                    const keys = ['meta', 'images'];
+                    keys.forEach(key => {
+                        localStorage.removeItem(this.getCacheKey(key));
+                    });
+                    console.log('🗑️ Cache cleared');
+                } catch (error) {
+                    console.error('Error clearing cache:', error);
+                }
+            }
+
+            // Scan folder for images
+            async scanFolderForImages(forceRefresh = false) {
+                if (!forceRefresh && this.loadCacheFromStorage()) {
+                    console.log('🚀 Using cached image data, skipping scan');
+                    return;
+                }
+                
+                console.log('🔍 Scanning Google Drive folder for images...');
+                
+                try {
+                    const images = await this.fetchImagesFromFolder();
+                    this.buildImageMapping(images);
+                    this.saveCacheToStorage();
+                    console.log(`🎯 Total images cached: ${this.imageCache.size}`);
+                } catch (error) {
+                    console.error('❌ Error scanning folder:', error);
+                }
+            }
+
+            async fetchImagesFromFolder(pageToken = null) {
+                try {
+                    const response = await gapi.client.drive.files.list({
+                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
+                        fields: 'nextPageToken, files(id, name, mimeType, parents, webViewLink, thumbnailLink)',
+                        pageSize: 100,
+                        pageToken: pageToken
+                    });
+
+                    let files = response.result.files || [];
+                    
+                    if (response.result.nextPageToken) {
+                        const nextPageFiles = await this.fetchImagesFromFolder(response.result.nextPageToken);
+                        files = files.concat(nextPageFiles);
+                    }
+                    
+                    return files;
+                } catch (error) {
+                    console.error('Error fetching folder contents:', error);
+                    return [];
+                }
+            }
+
+            buildImageMapping(images) {
+                this.imageCache.clear();
+                
+                images.forEach(image => {
+                    const codes = this.extractProductCodes(image.name);
+                    
+                    codes.forEach(code => {
+                        if (!this.imageCache.has(code)) {
+                            this.imageCache.set(code, {
+                                id: image.id,
+                                name: image.name,
+                                thumbnailLink: image.thumbnailLink,
+                                webViewLink: image.webViewLink,
+                                directLink: this.getDirectImageUrl(image.id),
+                                mimeType: image.mimeType
+                            });
+                        }
+                    });
+                });
+            }
+
+            extractProductCodes(filename) {
+                const codes = [];
+                const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
+                
+                // Find numeric codes
+                const numericCodes = nameWithoutExt.match(/\b\d{4,6}\b/g);
+                if (numericCodes) {
+                    codes.push(...numericCodes);
+                }
+                
+                // Find alphanumeric codes
+                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{4,8}\b/gi);
+                if (alphanumericCodes) {
+                    codes.push(...alphanumericCodes.map(code => code.toLowerCase()));
+                }
+                
+                // Split by delimiters
+                const parts = nameWithoutExt.split(/[-_\s\.]+/);
+                parts.forEach(part => {
+                    const cleanPart = part.trim();
+                    if (/^\d{4,6}$/.test(cleanPart) || /^[A-Z0-9]{4,8}$/i.test(cleanPart)) {
+                        codes.push(cleanPart.toLowerCase());
+                    }
+                });
+                
+                return [...new Set(codes)];
+            }
+
+            getDirectImageUrl(fileId) {
+                return `https://lh3.googleusercontent.com/d/${fileId}=w800-h800-c`;
+            }
+
+            getProductImage(productCode) {
+                const normalizedCode = productCode.toString().toLowerCase().trim();
+                const imageData = this.imageCache.get(normalizedCode);
+                
+                if (imageData) {
+                    return {
+                        url: imageData.directLink,
+                        thumbnail: imageData.thumbnailLink,
+                        name: imageData.name,
+                        found: true
+                    };
+                }
+                
+                return {
+                    url: null,
+                    thumbnail: null,
+                    name: null,
+                    found: false
+                };
+            }
+
+            getStats() {
+                const cacheMetaKey = this.getCacheKey('meta');
+                const cacheMetaStr = localStorage.getItem(cacheMetaKey);
+                let cacheInfo = null;
+                
+                if (cacheMetaStr) {
+                    try {
+                        const cacheMeta = JSON.parse(cacheMetaStr);
+                        const cacheAge = Date.now() - cacheMeta.timestamp;
+                        cacheInfo = {
+                            age: Math.round(cacheAge / (60 * 1000)),
+                            timestamp: new Date(cacheMeta.timestamp).toLocaleString()
+                        };
+                    } catch (error) {
+                        console.warn('Could not parse cache metadata');
+                    }
+                }
+                
+                return {
+                    mappedProducts: this.imageCache.size,
+                    cacheInfo: cacheInfo
+                };
+            }
+
+            async forceRefresh() {
+                console.log('🔄 Forcing cache refresh...');
+                this.clearCache();
+                await this.scanFolderForImages(true);
+            }
+        }
 
         // Global variables
         let allProducts = [];
@@ -465,11 +681,17 @@
         let currentCategory = 'ALL';
         let sortBy = 'name';
         let sortOrder = 'asc';
-        
-        // NEW: Pagination variables
         let currentPage = 1;
         let totalPages = 1;
-        let productsPerPage = CONFIG.PRODUCTS_PER_PAGE;
+        let productsPerPage = 20;
+        let driveImageManager = null;
+        let imageSystemReady = false;
+
+        // GitHub Pages compatible configuration
+        const CONFIG = {
+            GITHUB_REPO: './JULY PROMO.xlsx',
+            PRODUCTS_PER_PAGE: 20
+        };
 
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
@@ -478,23 +700,32 @@
 
         async function initializeCatalog() {
             try {
-                updateProgress(20, 1);
+                updateProgress(10, 1);
                 
                 // Step 1: Load Excel data
                 console.log('🚀 Loading product data...');
                 await loadProductsFromExcel();
                 
-                updateProgress(40, 2);
+                updateProgress(30, 2);
                 
-                // Step 2: Setup images
-                console.log('📸 Setting up product images...');
-                setupImages();
+                // Step 2: Initialize Google Drive API
+                console.log('🔗 Initializing Google Drive API...');
+                driveImageManager = new DriveImageManager();
+                const success = await driveImageManager.initializeGAPI();
                 
-                updateProgress(60, 3);
+                updateProgress(50, 3);
                 
-                // Step 3: Setup pagination
-                console.log('📄 Setting up pagination...');
-                setupPagination();
+                // Step 3: Scan Google Drive for images
+                if (success) {
+                    console.log('📸 Scanning Google Drive for images...');
+                    await driveImageManager.scanFolderForImages();
+                    const stats = driveImageManager.getStats();
+                    updateImageSystemStatus(stats);
+                    imageSystemReady = true;
+                } else {
+                    console.warn('⚠️ Google Drive API initialization failed, using fallback');
+                    imageSystemReady = false;
+                }
                 
                 updateProgress(80, 4);
                 
@@ -520,7 +751,6 @@
         function updateProgress(percent, step) {
             document.getElementById('progressFill').style.width = percent + '%';
             
-            // Update step indicators
             for (let i = 1; i <= 5; i++) {
                 const stepEl = document.getElementById('step' + i);
                 if (stepEl) {
@@ -530,6 +760,18 @@
                         stepEl.classList.remove('active');
                     }
                 }
+            }
+        }
+
+        function updateImageSystemStatus(stats) {
+            const statusEl = document.getElementById('imageSystemStatus');
+            if (stats && stats.mappedProducts > 0) {
+                statusEl.innerHTML = `📸 ${stats.mappedProducts} product images mapped from Google Drive`;
+                if (stats.cacheInfo) {
+                    statusEl.innerHTML += ` (cached ${stats.cacheInfo.age}m ago)`;
+                }
+            } else {
+                statusEl.innerHTML = '📸 No images found in Google Drive';
             }
         }
 
@@ -546,7 +788,6 @@
                 const worksheet = workbook.Sheets['Sheet1'];
                 const rawData = XLSX.utils.sheet_to_json(worksheet);
                 
-                // Process and categorize products
                 allProducts = rawData
                     .filter(function(item) {
                         return item.SKU && item['PAGE 1'] && item.PRICE !== undefined && !isNaN(parseFloat(item.PRICE));
@@ -587,33 +828,52 @@
             return 'OTHER';
         }
 
-        function setupImages() {
-            // Images are already mapped in the imageMapping object
-            const mappedCount = Object.keys(imageMapping).length;
-            console.log(`📸 ${mappedCount} products have real images mapped`);
-        }
-
-        function setupPagination() {
-            // Initialize pagination settings
-            currentPage = 1;
-            console.log(`📄 Pagination configured: ${productsPerPage} products per page`);
-        }
-
         function getImageUrl(sku) {
-            return imageMapping[sku] || '';
+            if (!imageSystemReady || !driveImageManager) {
+                return generatePlaceholderSVG(sku, 'Loading...');
+            }
+            
+            const imageData = driveImageManager.getProductImage(sku);
+            
+            if (imageData.found) {
+                return imageData.url;
+            }
+            
+            return generatePlaceholderSVG(sku, 'No image');
+        }
+
+        function generatePlaceholderSVG(sku, message = 'Loading...') {
+            const color = message.includes('Loading') ? '#f59e0b' : '#10b981';
+            const icon = message.includes('Loading') ? '💾' : '📱';
+            
+            return `data:image/svg+xml,${encodeURIComponent(`
+                <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="200" height="200" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+                    <text x="100" y="60" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#1e40af">
+                        ${sku}
+                    </text>
+                    <circle cx="100" cy="110" r="12" fill="${color}" />
+                    <text x="100" y="114" text-anchor="middle" font-family="Arial" font-size="12" fill="white">${icon}</text>
+                    <text x="100" y="135" text-anchor="middle" font-family="Arial" font-size="9" fill="${color}" font-weight="bold">
+                        ${message.toUpperCase()}
+                    </text>
+                    <text x="100" y="155" text-anchor="middle" font-family="Arial" font-size="8" fill="#6b7280">
+                        OZZ Promo
+                    </text>
+                </svg>
+            `)}`;
         }
 
         function setupUI() {
             filteredProducts = allProducts.slice();
             setupCategories();
-            applyFilters(); // This will call displayProducts and update pagination
+            applyFilters();
         }
 
         function setupCategories() {
             const categories = ['ALL'];
             const categorySet = {};
             
-            // Get unique categories
             for (let i = 0; i < allProducts.length; i++) {
                 const cat = allProducts[i].category;
                 if (!categorySet[cat]) {
@@ -639,9 +899,8 @@
 
         function filterByCategory(category) {
             currentCategory = category;
-            currentPage = 1; // Reset to first page when filtering
+            currentPage = 1;
             
-            // Update button styles
             const buttons = document.querySelectorAll('.category-btn');
             for (let i = 0; i < buttons.length; i++) {
                 const btn = buttons[i];
@@ -656,7 +915,7 @@
         }
 
         function filterProducts() {
-            currentPage = 1; // Reset to first page when searching
+            currentPage = 1;
             applyFilters();
         }
 
@@ -685,7 +944,6 @@
                 return matchesSearch && matchesCategory;
             });
 
-            // Sort products
             filteredProducts.sort(function(a, b) {
                 let aVal, bVal;
                 
@@ -720,7 +978,6 @@
             updateCounts();
         }
 
-        // NEW: Pagination functions
         function updatePagination() {
             totalPages = Math.ceil(filteredProducts.length / productsPerPage);
             if (currentPage > totalPages) {
@@ -739,12 +996,10 @@
 
             let paginationHTML = '';
             
-            // Previous button
             paginationHTML += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
                 ← Previous
             </button>`;
             
-            // Page numbers
             const startPage = Math.max(1, currentPage - 2);
             const endPage = Math.min(totalPages, currentPage + 2);
             
@@ -766,7 +1021,6 @@
                 paginationHTML += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
             }
             
-            // Next button
             paginationHTML += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
                 Next →
             </button>`;
@@ -780,8 +1034,6 @@
                 displayProducts();
                 updateCounts();
                 renderPaginationControls();
-                
-                // Scroll to top of products grid
                 document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' });
             }
         }
@@ -798,7 +1050,6 @@
             
             noResults.classList.add('hidden');
             
-            // Calculate products for current page
             const startIndex = (currentPage - 1) * productsPerPage;
             const endIndex = Math.min(startIndex + productsPerPage, filteredProducts.length);
             const currentPageProducts = filteredProducts.slice(startIndex, endIndex);
@@ -813,13 +1064,10 @@
                 return '<div class="product-card">' +
                     '<div class="relative">' +
                         '<div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">' +
-                            (imageUrl ? 
-                                '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
-                                     'class="w-full h-full object-cover" ' +
-                                     'onload="this.parentElement.style.background=\'none\';" ' +
-                                     'onerror="this.style.display=\'none\'; this.parentElement.innerHTML=\'<div class=\\\'text-gray-500 font-bold text-lg\\\'>' + product.sku + '</div>\';">' :
-                                '<div class="text-gray-500 font-bold text-lg">' + product.sku + '</div>'
-                            ) +
+                            '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
+                                 'class="w-full h-full object-cover" ' +
+                                 'onload="this.parentElement.style.background=\'none\';" ' +
+                                 'onerror="this.style.display=\'none\'; this.parentElement.innerHTML=\'<div class=\\\'text-gray-500 font-bold text-lg\\\'>' + product.sku + '</div>\';">' +
                         '</div>' +
                         '<div class="promo-badge">PROMO</div>' +
                         '<button onclick="showProductDetails(\'' + product.sku + '\')" class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-red-50 transition-all">' +
@@ -852,12 +1100,11 @@
         }
 
         function updateCounts() {
-            const imagesCount = Object.keys(imageMapping).length;
+            const mappedCount = driveImageManager ? driveImageManager.getStats().mappedProducts : 0;
             const totalProducts = allProducts.length;
-            document.getElementById('product-count').textContent = `${totalProducts} promotional items available • ${imagesCount} with photos`;
+            document.getElementById('product-count').textContent = `${totalProducts} promotional items available • ${mappedCount} with photos`;
             document.getElementById('filteredCount').textContent = filteredProducts.length;
             
-            // Update page info
             const startItem = (currentPage - 1) * productsPerPage + 1;
             const endItem = Math.min(currentPage * productsPerPage, filteredProducts.length);
             const pageInfoEl = document.getElementById('pageInfo');
@@ -888,13 +1135,10 @@
             '<div class="grid md:grid-cols-2 gap-8">' +
                 '<div class="relative">' +
                     '<div class="w-full h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-lg flex items-center justify-center">' +
-                        (imageUrl ? 
-                            '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
-                                 'class="w-full h-full object-cover rounded-lg" ' +
-                                 'onload="this.parentElement.style.background=\'none\';" ' +
-                                 'onerror="this.style.display=\'none\'; this.parentElement.innerHTML=\'<div class=\\\'text-gray-500 font-bold text-2xl\\\'>' + product.sku + '</div>\';">' :
-                            '<div class="text-gray-500 font-bold text-2xl">' + product.sku + '</div>'
-                        ) +
+                        '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
+                             'class="w-full h-full object-cover rounded-lg" ' +
+                             'onload="this.parentElement.style.background=\'none\';" ' +
+                             'onerror="this.style.display=\'none\'; this.parentElement.innerHTML=\'<div class=\\\'text-gray-500 font-bold text-2xl\\\'>' + product.sku + '</div>\';">' +
                     '</div>' +
                     '<div class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">' +
                         'LIMITED TIME' +
@@ -942,6 +1186,35 @@
             document.body.style.overflow = 'auto';
         }
 
+        async function refreshImageCache() {
+            if (!driveImageManager) return;
+            
+            const refreshBtn = document.getElementById('refreshBtn');
+            refreshBtn.innerHTML = '🔄 Refreshing...';
+            refreshBtn.disabled = true;
+            
+            try {
+                await driveImageManager.forceRefresh();
+                const stats = driveImageManager.getStats();
+                updateImageSystemStatus(stats);
+                updateCounts();
+                displayProducts();
+                
+                refreshBtn.innerHTML = '✅ Refreshed!';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = '🔄 Refresh Images';
+                    refreshBtn.disabled = false;
+                }, 2000);
+            } catch (error) {
+                console.error('Error refreshing image cache:', error);
+                refreshBtn.innerHTML = '❌ Error';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = '🔄 Refresh Images';
+                    refreshBtn.disabled = false;
+                }, 2000);
+            }
+        }
+
         function showError(message) {
             document.getElementById('loadingOverlay').innerHTML = '<div class="text-center">' +
                 '<div class="text-6xl mb-6">❌</div>' +
@@ -967,7 +1240,7 @@
             }
         });
 
-        console.log('🎉 OZZ Promotions Paginated Catalog Ready! 69/236 products have photos.');
+        console.log('🎉 OZZ Promotions Enhanced Catalog with Dynamic Google Drive Integration Ready!');
     </script>
 </body>
 </html>
