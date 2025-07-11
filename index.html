@@ -144,13 +144,21 @@
             border-radius: 4px;
         }
         .image-placeholder {
-            background: linear-gradient(45deg, #f3f4f6, #e5e7eb);
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
             display: flex;
             align-items: center;
             justify-content: center;
-            color: #6b7280;
+            color: #64748b;
             font-weight: bold;
             font-size: 14px;
+            position: relative;
+        }
+        .image-placeholder::before {
+            content: '📦';
+            position: absolute;
+            top: 20px;
+            font-size: 24px;
+            opacity: 0.3;
         }
         @media print {
             .no-print { display: none !important; }
@@ -182,9 +190,10 @@
             </div>
             
             <!-- Image Notice -->
-            <div class="mt-8 bg-blue-900 bg-opacity-30 p-4 rounded-lg text-sm">
-                <p>📸 <strong>Product images will load from your Google Drive</strong></p>
-                <p>For best results, ensure image files are named with their SKU numbers</p>
+            <div class="mt-8 bg-blue-900 bg-opacity-30 p-4 rounded-lg text-sm max-w-md mx-auto">
+                <p>📸 <strong>Product images ready for Google Drive integration</strong></p>
+                <p>Current: SKU placeholders • Upgrade: Add your Google Drive image IDs</p>
+                <p class="text-xs mt-2 opacity-75">No network requests = faster loading!</p>
             </div>
         </div>
     </div>
@@ -445,16 +454,13 @@
         }
 
         function getImageUrl(sku) {
-            // For now, we'll use Google Drive direct links when you provide the file IDs
-            // You can replace this with your actual Google Drive file IDs
-            
             // Check if we have a mapped image
             if (imageMapping[sku]) {
                 return CONFIG.GDRIVE_BASE + imageMapping[sku];
             }
             
-            // Generate a placeholder with SKU
-            return 'https://via.placeholder.com/300x200/e2e8f0/64748b?text=' + encodeURIComponent(sku);
+            // Return empty string to trigger error handling in HTML
+            return '';
         }
 
         function setupUI() {
@@ -589,10 +595,14 @@
                 
                 return '<div class="product-card">' +
                     '<div class="relative">' +
-                        '<div class="image-placeholder w-full h-48" style="background-image: url(\'' + getImageUrl(product.sku) + '\'); background-size: cover; background-position: center;">' +
-                            '<div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-500" style="background-image: url(\'' + getImageUrl(product.sku) + '\'); background-size: cover; background-position: center; background-repeat: no-repeat;">' +
-                                (imageMapping[product.sku] ? '' : product.sku) +
-                            '</div>' +
+                        '<div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">' +
+                            (getImageUrl(product.sku) ? 
+                                '<img src="' + getImageUrl(product.sku) + '" alt="' + product.description + '" ' +
+                                     'class="w-full h-full object-cover" ' +
+                                     'onload="this.parentElement.style.background=\'none\';" ' +
+                                     'onerror="this.style.display=\'none\'; this.parentElement.innerHTML=\'<div class=\\\'text-gray-500 font-bold text-lg\\\'>' + product.sku + '</div>\';">' :
+                                '<div class="text-gray-500 font-bold text-lg">' + product.sku + '</div>'
+                            ) +
                         '</div>' +
                         '<div class="promo-badge">PROMO</div>' +
                         '<button onclick="showProductDetails(\'' + product.sku + '\')" class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-red-50 transition-all">' +
@@ -646,8 +656,14 @@
             '</div>' +
             '<div class="grid md:grid-cols-2 gap-8">' +
                 '<div class="relative">' +
-                    '<div class="w-full h-80 bg-gray-100 rounded-lg shadow-lg flex items-center justify-center" style="background-image: url(\'' + getImageUrl(product.sku) + '\'); background-size: cover; background-position: center; background-repeat: no-repeat;">' +
-                        (imageMapping[product.sku] ? '' : '<span class="text-gray-500 font-bold">' + product.sku + '</span>') +
+                    '<div class="w-full h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-lg flex items-center justify-center">' +
+                        (getImageUrl(product.sku) ? 
+                            '<img src="' + getImageUrl(product.sku) + '" alt="' + product.description + '" ' +
+                                 'class="w-full h-full object-cover rounded-lg" ' +
+                                 'onload="this.parentElement.style.background=\'none\';" ' +
+                                 'onerror="this.style.display=\'none\'; this.parentElement.innerHTML=\'<div class=\\\'text-gray-500 font-bold text-2xl\\\'>' + product.sku + '</div>\';">' :
+                            '<div class="text-gray-500 font-bold text-2xl">' + product.sku + '</div>'
+                        ) +
                     '</div>' +
                     '<div class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">' +
                         'LIMITED TIME' +
