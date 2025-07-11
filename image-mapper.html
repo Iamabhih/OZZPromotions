@@ -5,6 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>🖼️ OZZ Promotions Image Mapper</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .log-entry {
+            animation: fadeIn 0.3s ease-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(5px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        #progressBar {
+            transition: width 0.5s cubic-bezier(0.65, 0, 0.35, 1);
+        }
+    </style>
 </head>
 <body class="bg-gray-100 p-4">
     <div class="max-w-6xl mx-auto">
@@ -21,11 +33,15 @@
                 </div>
             </div>
 
-            <!-- Scan Button -->
-            <div class="text-center mb-6">
+            <!-- Control Buttons -->
+            <div class="flex flex-wrap gap-4 mb-6 justify-center">
                 <button onclick="startAutoMapping()" id="scanBtn" 
-                        class="bg-red-600 text-white px-8 py-4 rounded-lg hover:bg-red-700 transition-colors font-bold text-lg shadow-lg">
+                        class="bg-red-600 text-white px-8 py-4 rounded-lg hover:bg-red-700 transition-colors font-bold text-lg shadow-lg flex-1 min-w-[300px]">
                     🚀 Generate Image Mapping Code
+                </button>
+                <button onclick="clearCache()" id="clearCacheBtn"
+                        class="bg-gray-600 text-white px-6 py-4 rounded-lg hover:bg-gray-700 transition-colors font-bold text-lg shadow-lg">
+                    🧹 Clear Cache
                 </button>
             </div>
 
@@ -39,7 +55,12 @@
 
             <!-- Results Preview -->
             <div id="results" class="hidden mb-6">
-                <h2 class="text-xl font-semibold text-gray-800 mb-4">📸 Image Mapping Preview</h2>
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-xl font-semibold text-gray-800">📸 Image Mapping Preview</h2>
+                    <button onclick="exportMapping()" class="bg-blue-500 text-white px-4 py-2 rounded text-sm hover:bg-blue-600">
+                        📤 Export JSON
+                    </button>
+                </div>
                 <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
                     <!-- Image previews will be shown here -->
                 </div>
@@ -57,11 +78,11 @@
                     <pre id="generatedCode" class="text-sm"></pre>
                 </div>
                 
-                <div class="flex gap-4">
-                    <button onclick="copyCode()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                <div class="flex flex-wrap gap-4 justify-center">
+                    <button onclick="copyCode()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold flex-1">
                         📋 Copy Code
                     </button>
-                    <button onclick="downloadCode()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                    <button onclick="downloadCode()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold flex-1">
                         💾 Download as File
                     </button>
                 </div>
@@ -69,21 +90,32 @@
 
             <!-- Log -->
             <div class="mt-6">
-                <h3 class="text-lg font-semibold text-gray-800 mb-3">📝 Process Log</h3>
+                <div class="flex justify-between items-center mb-3">
+                    <h3 class="text-lg font-semibold text-gray-800">📝 Process Log</h3>
+                    <button onclick="clearLog()" class="text-gray-500 hover:text-gray-700 text-sm">
+                        Clear Log
+                    </button>
+                </div>
                 <div id="log" class="bg-gray-900 text-green-400 p-4 rounded-lg h-48 overflow-y-auto font-mono text-sm">
-                    🎯 Ready to scan your Google Drive folder...<br>
-                    📁 Target folder: Ikhaya/OzzSA<br>
-                    🔍 Will search for images matching your 236 product SKUs<br>
-                    ▶️ Click "Generate Image Mapping Code" to start<br>
+                    <div class="log-entry">🎯 Ready to scan your Google Drive folder...</div>
+                    <div class="log-entry">📁 Target folder: Ikhaya/OzzSA</div>
+                    <div class="log-entry">🔍 Will search for images matching your ${PRODUCT_SKUS.length} product SKUs</div>
+                    <div class="log-entry">▶️ Click "Generate Image Mapping Code" to start</div>
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        // Your credentials (pre-filled)
-        const API_KEY = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
-        const FOLDER_ID = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
+        // Configuration
+        const CONFIG = {
+            API_KEY: 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA',
+            FOLDER_ID: '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan',
+            CACHE_KEY: 'ozz_image_mapping_v2',
+            CACHE_TTL: 24 * 60 * 60 * 1000, // 24 hours
+            PAGE_SIZE: 1000,
+            PREVIEW_LIMIT: 12
+        };
 
         // All your product SKUs
         const PRODUCT_SKUS = [
@@ -104,194 +136,319 @@
             "259", "269", "255", "454979", "455384", "455321", "455322", "455323"
         ];
 
-        let allImages = [];
+        // State
         let imageMapping = {};
+        let scanInProgress = false;
 
-        function log(message) {
-            const logEl = document.getElementById('log');
-            logEl.innerHTML += message + '<br>';
-            logEl.scrollTop = logEl.scrollHeight;
+        // DOM Elements
+        const elements = {
+            scanBtn: document.getElementById('scanBtn'),
+            clearCacheBtn: document.getElementById('clearCacheBtn'),
+            progress: document.getElementById('progress'),
+            progressBar: document.getElementById('progressBar'),
+            progressText: document.getElementById('progressText'),
+            results: document.getElementById('results'),
+            imagePreview: document.getElementById('imagePreview'),
+            stats: document.getElementById('stats'),
+            codeSection: document.getElementById('codeSection'),
+            generatedCode: document.getElementById('generatedCode'),
+            log: document.getElementById('log')
+        };
+
+        // Utility Functions
+        function log(message, type = 'info') {
+            const colors = {
+                info: 'text-green-400',
+                warning: 'text-yellow-400',
+                error: 'text-red-400',
+                success: 'text-green-500'
+            };
+            const logEntry = document.createElement('div');
+            logEntry.className = `log-entry ${colors[type] || 'text-green-400'}`;
+            logEntry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            elements.log.appendChild(logEntry);
+            elements.log.scrollTop = elements.log.scrollHeight;
         }
 
         function updateProgress(percent, text) {
-            document.getElementById('progress').classList.remove('hidden');
-            document.getElementById('progressBar').style.width = percent + '%';
-            document.getElementById('progressText').textContent = text;
+            elements.progress.classList.remove('hidden');
+            elements.progressBar.style.width = percent + '%';
+            elements.progressText.textContent = text;
         }
 
+        function clearLog() {
+            elements.log.innerHTML = '';
+            log('Log cleared', 'info');
+        }
+
+        // Cache Management
+        function loadCache() {
+            try {
+                const cachedData = localStorage.getItem(CONFIG.CACHE_KEY);
+                if (!cachedData) return null;
+                
+                const { data, timestamp } = JSON.parse(cachedData);
+                if (Date.now() - timestamp < CONFIG.CACHE_TTL) {
+                    return data;
+                }
+                log('Cache expired', 'warning');
+            } catch (e) {
+                log('Error loading cache: ' + e.message, 'error');
+            }
+            return null;
+        }
+
+        function saveCache(data) {
+            try {
+                const cacheData = {
+                    data,
+                    timestamp: Date.now()
+                };
+                localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify(cacheData));
+                return true;
+            } catch (e) {
+                log('Error saving cache: ' + e.message, 'error');
+                return false;
+            }
+        }
+
+        function clearCache() {
+            if (scanInProgress) {
+                log('Cannot clear cache during active scan', 'warning');
+                return;
+            }
+            
+            localStorage.removeItem(CONFIG.CACHE_KEY);
+            imageMapping = {};
+            elements.results.classList.add('hidden');
+            elements.codeSection.classList.add('hidden');
+            log('Cache cleared successfully', 'success');
+        }
+
+        // Drive API Functions
+        async function fetchDriveImages(pageToken = '') {
+            const url = new URL('https://www.googleapis.com/drive/v3/files');
+            const params = {
+                key: CONFIG.API_KEY,
+                q: `'${CONFIG.FOLDER_ID}' in parents and mimeType contains 'image/'`,
+                fields: 'files(id,name,mimeType,webViewLink,thumbnailLink),nextPageToken',
+                pageSize: CONFIG.PAGE_SIZE,
+                pageToken: pageToken
+            };
+            
+            Object.entries(params).forEach(([key, value]) => {
+                if (value) url.searchParams.append(key, value);
+            });
+
+            try {
+                const response = await fetch(url);
+                if (!response.ok) {
+                    throw new Error(`API error: ${response.status} ${response.statusText}`);
+                }
+                return await response.json();
+            } catch (error) {
+                log(`Drive API error: ${error.message}`, 'error');
+                throw error;
+            }
+        }
+
+        // Image Matching
+        function findBestImageMatch(images, sku) {
+            const skuLower = sku.toLowerCase();
+            const skuNumeric = skuLower.replace(/\D/g, '');
+            
+            // Score images based on match quality
+            const scoredImages = images.map(img => {
+                const filename = img.name.toLowerCase();
+                let score = 0;
+                
+                // Exact match gets highest score
+                if (filename === skuLower || filename === `${skuLower}.jpg`) score = 100;
+                // Starts with SKU
+                else if (filename.startsWith(skuLower)) score = 80;
+                // Contains SKU with separator
+                else if (filename.includes(`_${skuLower}`) || filename.includes(`-${skuLower}`)) score = 60;
+                // Contains numeric SKU
+                else if (filename.includes(skuNumeric)) score = 40;
+                // Contains part of SKU
+                else if (new RegExp(`\\b${skuLower}\\b`).test(filename)) score = 20;
+                
+                return { ...img, score };
+            }).filter(img => img.score > 0);
+            
+            if (scoredImages.length === 0) return null;
+            
+            // Return highest scored image
+            return scoredImages.reduce((best, current) => 
+                current.score > best.score ? current : best
+            );
+        }
+
+        // Main Functions
         async function startAutoMapping() {
-            document.getElementById('scanBtn').disabled = true;
-            document.getElementById('scanBtn').textContent = '🔄 Scanning...';
+            if (scanInProgress) {
+                log('Scan already in progress', 'warning');
+                return;
+            }
+            
+            scanInProgress = true;
+            elements.scanBtn.disabled = true;
+            elements.scanBtn.textContent = '🔄 Scanning...';
             
             try {
-                log('🚀 Starting automated image mapping...');
+                log('🚀 Starting automated image mapping...', 'info');
+                updateProgress(5, 'Initializing...');
+                
+                // Try to load from cache first
+                const cachedMapping = loadCache();
+                if (cachedMapping) {
+                    imageMapping = cachedMapping;
+                    updateProgress(100, 'Loaded from cache');
+                    displayResults();
+                    generateMappingCode();
+                    log('✅ Loaded mapping from cache', 'success');
+                    return;
+                }
+                
                 updateProgress(10, 'Connecting to Google Drive...');
                 
-                await fetchAllImages();
-                updateProgress(60, 'Mapping images to SKUs...');
+                // Fetch all images
+                let allImages = [];
+                let nextPageToken = '';
+                let pageCount = 0;
                 
-                mapImagesToSKUs();
-                updateProgress(80, 'Generating code...');
+                do {
+                    pageCount++;
+                    const data = await fetchDriveImages(nextPageToken);
+                    allImages = allImages.concat(data.files || []);
+                    nextPageToken = data.nextPageToken || '';
+                    
+                    const progress = 10 + Math.min(60, Math.floor((pageCount * 30) / (allImages.length / CONFIG.PAGE_SIZE));
+                    updateProgress(progress, `Fetched ${allImages.length} images...`);
+                    
+                    log(`📄 Page ${pageCount}: Found ${data.files?.length || 0} images`, 'info');
+                } while (nextPageToken && pageCount < 10); // Safety limit
+                
+                log(`📸 Total images found: ${allImages.length}`, 'info');
+                updateProgress(70, `Mapping ${PRODUCT_SKUS.length} SKUs...`);
+                
+                // Map images to SKUs
+                imageMapping = {};
+                let matchCount = 0;
+                
+                for (const sku of PRODUCT_SKUS) {
+                    const bestMatch = findBestImageMatch(allImages, sku);
+                    if (bestMatch) {
+                        imageMapping[sku] = {
+                            url: `https://drive.google.com/uc?id=${bestMatch.id}`,
+                            filename: bestMatch.name,
+                            id: bestMatch.id,
+                            thumbnail: bestMatch.thumbnailLink
+                        };
+                        matchCount++;
+                        log(`✅ ${sku} → ${bestMatch.name} (score: ${bestMatch.score})`, 'info');
+                    } else {
+                        log(`❌ No image found for SKU: ${sku}`, 'warning');
+                    }
+                    
+                    // Update progress
+                    const progress = 70 + Math.floor(30 * (PRODUCT_SKUS.indexOf(sku) + 1) / PRODUCT_SKUS.length);
+                    updateProgress(progress, `Mapping ${PRODUCT_SKUS.indexOf(sku) + 1}/${PRODUCT_SKUS.length} SKUs...`);
+                }
+                
+                // Save to cache
+                if (saveCache(imageMapping)) {
+                    log('💾 Mapping saved to cache', 'success');
+                }
+                
+                updateProgress(100, 'Mapping complete!');
+                log(`🎯 Mapping complete: ${matchCount}/${PRODUCT_SKUS.length} products matched`, 'success');
                 
                 displayResults();
                 generateMappingCode();
-                updateProgress(100, 'Complete! ✅');
-                
-                log('🎉 Image mapping completed successfully!');
                 
             } catch (error) {
-                log(`❌ Error: ${error.message}`);
-                console.error(error);
+                log(`❌ Scan failed: ${error.message}`, 'error');
+                updateProgress(0, 'Scan failed');
             } finally {
-                document.getElementById('scanBtn').disabled = false;
-                document.getElementById('scanBtn').textContent = '🔄 Scan Again';
+                scanInProgress = false;
+                elements.scanBtn.disabled = false;
+                elements.scanBtn.textContent = '🔄 Scan Again';
             }
-        }
-
-        async function fetchAllImages(pageToken = '') {
-            let url = `https://www.googleapis.com/drive/v3/files?key=${API_KEY}&q='${FOLDER_ID}'+in+parents+and+mimeType+contains+'image'&fields=files(id,name,mimeType,webViewLink)&pageSize=1000`;
-            
-            if (pageToken) {
-                url += `&pageToken=${pageToken}`;
-            }
-
-            log(`🔍 Fetching images from Google Drive...`);
-            updateProgress(20, 'Fetching images from Google Drive...');
-
-            const response = await fetch(url);
-            
-            if (!response.ok) {
-                throw new Error(`Google Drive API error: ${response.status} - ${response.statusText}`);
-            }
-
-            const data = await response.json();
-            
-            if (!data.files) {
-                throw new Error('No files found in the folder');
-            }
-
-            allImages = allImages.concat(data.files);
-            log(`📸 Found ${data.files.length} images (Total: ${allImages.length})`);
-            updateProgress(40, `Found ${allImages.length} images...`);
-
-            // Fetch more pages if they exist
-            if (data.nextPageToken) {
-                await fetchAllImages(data.nextPageToken);
-            }
-        }
-
-        function mapImagesToSKUs() {
-            log('🔗 Mapping images to product SKUs...');
-            imageMapping = {};
-            let matchCount = 0;
-
-            PRODUCT_SKUS.forEach(sku => {
-                // Find images that match this SKU
-                const matches = allImages.filter(img => {
-                    const filename = img.name.toLowerCase();
-                    const skuLower = sku.toLowerCase();
-                    
-                    return filename.includes(skuLower) ||
-                           filename.includes(skuLower.replace(/\D/g, '')) ||
-                           filename.startsWith(skuLower) ||
-                           filename.includes(`-${skuLower}`) ||
-                           filename.includes(`_${skuLower}`) ||
-                           filename.includes(` ${skuLower}`) ||
-                           new RegExp(`\\b${skuLower}\\b`).test(filename);
-                });
-
-                if (matches.length > 0) {
-                    const bestMatch = matches[0]; // Use first match
-                    imageMapping[sku] = {
-                        url: `https://drive.google.com/uc?id=${bestMatch.id}`,
-                        filename: bestMatch.name,
-                        id: bestMatch.id
-                    };
-                    matchCount++;
-                    log(`✅ ${sku} → ${bestMatch.name}`);
-                } else {
-                    log(`❌ No image found for SKU: ${sku}`);
-                }
-            });
-
-            log(`🎯 Mapping complete: ${matchCount}/${PRODUCT_SKUS.length} products have images`);
         }
 
         function displayResults() {
-            const resultsEl = document.getElementById('results');
-            const previewEl = document.getElementById('imagePreview');
-            const statsEl = document.getElementById('stats');
+            elements.results.classList.remove('hidden');
             
-            resultsEl.classList.remove('hidden');
-
-            // Show image previews (first 12)
-            const mappedEntries = Object.entries(imageMapping).slice(0, 12);
-            previewEl.innerHTML = mappedEntries.map(([sku, data]) => `
-                <div class="border rounded-lg p-2 bg-gray-50 text-center">
-                    <img src="${data.url}" alt="SKU ${sku}" class="w-full h-20 object-cover rounded mb-2" 
-                         onerror="this.src='https://via.placeholder.com/80x80/ddd/999?text=Error'">
-                    <div class="text-xs font-semibold">${sku}</div>
-                    <div class="text-xs text-gray-500 truncate">${data.filename}</div>
-                </div>
-            `).join('');
-
+            // Show image previews
+            const previewItems = Object.entries(imageMapping)
+                .slice(0, CONFIG.PREVIEW_LIMIT)
+                .map(([sku, data]) => `
+                    <div class="border rounded-lg p-2 bg-gray-50 text-center hover:shadow-md transition-shadow">
+                        <img src="${data.thumbnail || data.url}" 
+                             alt="SKU ${sku}" 
+                             class="w-full h-20 object-cover rounded mb-2"
+                             onerror="this.src='https://via.placeholder.com/80x80/ddd/999?text=Image+Error'">
+                        <div class="text-xs font-semibold">${sku}</div>
+                        <div class="text-xs text-gray-500 truncate" title="${data.filename}">${data.filename}</div>
+                    </div>
+                `).join('');
+            
+            elements.imagePreview.innerHTML = previewItems;
+            
             // Show statistics
             const mappedCount = Object.keys(imageMapping).length;
             const missingCount = PRODUCT_SKUS.length - mappedCount;
             const percentage = Math.round((mappedCount / PRODUCT_SKUS.length) * 100);
-
-            statsEl.innerHTML = `
+            
+            elements.stats.innerHTML = `
                 <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
-                    <div>
+                    <div class="bg-green-50 p-3 rounded-lg">
                         <div class="text-2xl font-bold text-green-600">${mappedCount}</div>
-                        <div class="text-sm text-gray-600">Images Mapped</div>
+                        <div class="text-sm text-gray-600">Mapped</div>
                     </div>
-                    <div>
+                    <div class="bg-red-50 p-3 rounded-lg">
                         <div class="text-2xl font-bold text-red-600">${missingCount}</div>
-                        <div class="text-sm text-gray-600">Missing Images</div>
+                        <div class="text-sm text-gray-600">Missing</div>
                     </div>
-                    <div>
-                        <div class="text-2xl font-bold text-blue-600">${allImages.length}</div>
-                        <div class="text-sm text-gray-600">Total Images</div>
-                    </div>
-                    <div>
-                        <div class="text-2xl font-bold text-purple-600">${percentage}%</div>
+                    <div class="bg-blue-50 p-3 rounded-lg">
+                        <div class="text-2xl font-bold text-blue-600">${percentage}%</div>
                         <div class="text-sm text-gray-600">Coverage</div>
+                    </div>
+                    <div class="bg-purple-50 p-3 rounded-lg">
+                        <div class="text-2xl font-bold text-purple-600">${PRODUCT_SKUS.length}</div>
+                        <div class="text-sm text-gray-600">Total SKUs</div>
                     </div>
                 </div>
             `;
         }
 
         function generateMappingCode() {
-            const codeSection = document.getElementById('codeSection');
-            const codeEl = document.getElementById('generatedCode');
-            
             const mappingEntries = Object.entries(imageMapping)
-                .map(([sku, data]) => `        '${sku}': '${data.url}',`)
+                .map(([sku, data]) => `    '${sku}': '${data.url}',`)
                 .join('\n');
 
             const code = `// Auto-generated Google Drive image mapping for OZZ Promotions
 // Generated on: ${new Date().toLocaleString()}
 // Mapped ${Object.keys(imageMapping).length}/${PRODUCT_SKUS.length} products
 
-function getImageUrl(sku) {
-    const imageMapping = {
+const IMAGE_MAPPING = {
 ${mappingEntries}
-    };
-    
-    return imageMapping[sku] || \`https://via.placeholder.com/300x200/e2e8f0/64748b?text=\${sku}\`;
+};
+
+function getImageUrl(sku) {
+    return IMAGE_MAPPING[sku] || \`https://via.placeholder.com/300x200/e2e8f0/64748b?text=\${sku}\`;
 }`;
 
-            codeEl.textContent = code;
-            codeSection.classList.remove('hidden');
-            
-            log('📋 JavaScript code generated and ready to copy!');
+            elements.generatedCode.textContent = code;
+            elements.codeSection.classList.remove('hidden');
+            log('📋 JavaScript code generated', 'success');
         }
 
         function copyCode() {
-            const code = document.getElementById('generatedCode').textContent;
+            const code = elements.generatedCode.textContent;
             navigator.clipboard.writeText(code).then(() => {
-                alert('✅ Code copied to clipboard! Paste it into your catalog HTML file.');
+                log('✅ Code copied to clipboard!', 'success');
             }).catch(() => {
                 // Fallback
                 const textArea = document.createElement('textarea');
@@ -300,22 +457,58 @@ ${mappingEntries}
                 textArea.select();
                 document.execCommand('copy');
                 document.body.removeChild(textArea);
-                alert('✅ Code copied to clipboard!');
+                log('✅ Code copied to clipboard (fallback method)', 'success');
             });
         }
 
         function downloadCode() {
-            const code = document.getElementById('generatedCode').textContent;
+            const code = elements.generatedCode.textContent;
             const blob = new Blob([code], { type: 'text/javascript' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
             a.href = url;
-            a.download = 'ozz-image-mapping.js';
+            a.download = `ozz-image-mapping-${new Date().toISOString().split('T')[0]}.js`;
             document.body.appendChild(a);
             a.click();
             document.body.removeChild(a);
             URL.revokeObjectURL(url);
+            log('💾 Code downloaded as file', 'success');
         }
+
+        function exportMapping() {
+            const data = {
+                meta: {
+                    generated: new Date().toISOString(),
+                    skuCount: PRODUCT_SKUS.length,
+                    mappedCount: Object.keys(imageMapping).length,
+                    folderId: CONFIG.FOLDER_ID
+                },
+                mapping: imageMapping
+            };
+            
+            const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `ozz-image-mapping-${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            log('📤 JSON mapping exported', 'success');
+        }
+
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            // Check for cached data on load
+            const cachedMapping = loadCache();
+            if (cachedMapping) {
+                imageMapping = cachedMapping;
+                log('Found cached image mapping', 'info');
+                elements.results.classList.remove('hidden');
+                displayResults();
+            }
+        });
     </script>
 </body>
 </html>
