@@ -7,7 +7,6 @@
     <link rel="icon" href="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" type="image/png">
     <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>" type="image/svg+xml">
     
-    <!-- Use build version of Tailwind CSS for production -->
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
@@ -164,6 +163,42 @@
         .logo-glow {
             filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
         }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
+        }
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+        .pagination button:hover:not(:disabled) {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        .pagination button.active {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .page-info {
+            background: #f3f4f6;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            color: #374151;
+        }
         @media print {
             .no-print { display: none !important; }
             .bg-gradient-to-br { background: white !important; }
@@ -188,15 +223,16 @@
             
             <div class="space-y-2 text-left">
                 <div id="step1" class="loading-step">📊 Loading product data from GitHub...</div>
-                <div id="step2" class="loading-step">📸 Loading real product images...</div>
-                <div id="step3" class="loading-step">🔧 Setting up search and filters...</div>
-                <div id="step4" class="loading-step">✨ Almost ready!</div>
+                <div id="step2" class="loading-step">📸 Setting up product images...</div>
+                <div id="step3" class="loading-step">📄 Configuring pagination system...</div>
+                <div id="step4" class="loading-step">🔧 Setting up search and filters...</div>
+                <div id="step5" class="loading-step">✨ Almost ready!</div>
             </div>
             
             <!-- Image Notice -->
             <div class="mt-8 bg-green-900 bg-opacity-30 p-4 rounded-lg text-sm max-w-md mx-auto">
-                <p>📸 <strong>Real product images now loading!</strong></p>
-                <p>69 products with photos • Remaining: SKU placeholders</p>
+                <p>📸 <strong>Real product images loading!</strong></p>
+                <p>Enhanced catalog with pagination • 20 products per page</p>
                 <p class="text-xs mt-2 opacity-75">Images served from Google Drive</p>
             </div>
         </div>
@@ -267,16 +303,26 @@
             </div>
         </div>
 
-        <!-- Results Counter -->
+        <!-- Results Counter and Pagination Info -->
         <div class="mb-6 text-center">
-            <p class="text-xl text-gray-700" id="resultsCount">
-                🔥 <span class="font-bold text-red-600" id="filteredCount">0</span> promotional deals found!
-            </p>
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-xl text-gray-700" id="resultsCount">
+                    🔥 <span class="font-bold text-red-600" id="filteredCount">0</span> promotional deals found!
+                </p>
+                <div class="page-info" id="pageInfo">
+                    Page 1 of 1 • Showing 1-20 of 0 products
+                </div>
+            </div>
         </div>
 
         <!-- Products Grid -->
         <div class="product-grid" id="productsGrid">
             <!-- Products will be loaded here -->
+        </div>
+
+        <!-- Pagination Controls -->
+        <div class="pagination no-print" id="paginationControls">
+            <!-- Pagination will be populated here -->
         </div>
 
         <!-- No Results Message -->
@@ -336,19 +382,11 @@
     <script>
         // GitHub Pages compatible configuration
         const CONFIG = {
-            GITHUB_REPO: './JULY PROMO.xlsx', // Relative path to Excel file
-            // Google Drive images will be loaded using direct URLs
-            GDRIVE_BASE: 'https://drive.google.com/uc?id='
+            GITHUB_REPO: './JULY PROMO.xlsx',
+            PRODUCTS_PER_PAGE: 20 // NEW: Pagination setting
         };
 
-        // Global variables
-        let allProducts = [];
-        let filteredProducts = [];
-        let currentCategory = 'ALL';
-        let sortBy = 'name';
-        let sortOrder = 'asc';
-
-        // Pre-mapped Google Drive image IDs (69/125 products mapped!)
+        // Enhanced Google Drive image mapping (69 products with real photos)
         const imageMapping = {
             '136': 'https://drive.google.com/uc?id=1FuMqiX05ByfoGPNNpjmJC7R4FJhL-dzj',
             '195': 'https://drive.google.com/uc?id=1YtjxxGec8njXwucGFew39FiZc8vawZl6',
@@ -421,6 +459,18 @@
             '455517': 'https://drive.google.com/uc?id=1-wOkNJWAPh2ui3advilWOG6ifi4XqKo-'
         };
 
+        // Global variables
+        let allProducts = [];
+        let filteredProducts = [];
+        let currentCategory = 'ALL';
+        let sortBy = 'name';
+        let sortOrder = 'asc';
+        
+        // NEW: Pagination variables
+        let currentPage = 1;
+        let totalPages = 1;
+        let productsPerPage = CONFIG.PRODUCTS_PER_PAGE;
+
         // Initialize the application
         document.addEventListener('DOMContentLoaded', function() {
             initializeCatalog();
@@ -428,25 +478,31 @@
 
         async function initializeCatalog() {
             try {
-                updateProgress(25, 1);
+                updateProgress(20, 1);
                 
                 // Step 1: Load Excel data
                 console.log('🚀 Loading product data...');
                 await loadProductsFromExcel();
                 
-                updateProgress(60, 2);
+                updateProgress(40, 2);
                 
-                // Step 2: Setup UI (images are now integrated)
-                console.log('📸 Setting up interface with real product images...');
+                // Step 2: Setup images
+                console.log('📸 Setting up product images...');
+                setupImages();
+                
+                updateProgress(60, 3);
+                
+                // Step 3: Setup pagination
+                console.log('📄 Setting up pagination...');
+                setupPagination();
+                
+                updateProgress(80, 4);
+                
+                // Step 4: Setup UI
+                console.log('🔧 Setting up interface...');
                 setupUI();
                 
-                updateProgress(85, 3);
-                
-                // Step 3: Initialize search and filters
-                console.log('🔧 Configuring search and filters...');
-                setupCategories();
-                
-                updateProgress(100, 4);
+                updateProgress(100, 5);
                 
                 // Hide loading overlay
                 setTimeout(function() {
@@ -465,7 +521,7 @@
             document.getElementById('progressFill').style.width = percent + '%';
             
             // Update step indicators
-            for (let i = 1; i <= 4; i++) {
+            for (let i = 1; i <= 5; i++) {
                 const stepEl = document.getElementById('step' + i);
                 if (stepEl) {
                     if (i <= step) {
@@ -493,7 +549,7 @@
                 // Process and categorize products
                 allProducts = rawData
                     .filter(function(item) {
-                        return item.SKU && item['PAGE 1'] && item.PRICE !== undefined;
+                        return item.SKU && item['PAGE 1'] && item.PRICE !== undefined && !isNaN(parseFloat(item.PRICE));
                     })
                     .map(function(item) {
                         return {
@@ -531,20 +587,26 @@
             return 'OTHER';
         }
 
+        function setupImages() {
+            // Images are already mapped in the imageMapping object
+            const mappedCount = Object.keys(imageMapping).length;
+            console.log(`📸 ${mappedCount} products have real images mapped`);
+        }
+
+        function setupPagination() {
+            // Initialize pagination settings
+            currentPage = 1;
+            console.log(`📄 Pagination configured: ${productsPerPage} products per page`);
+        }
+
         function getImageUrl(sku) {
-            // Check if we have a mapped image
-            if (imageMapping[sku]) {
-                return imageMapping[sku];
-            }
-            
-            // Return empty string to trigger placeholder display
-            return '';
+            return imageMapping[sku] || '';
         }
 
         function setupUI() {
-            filteredProducts = allProducts.slice(); // Copy array
-            displayProducts();
-            updateCounts();
+            filteredProducts = allProducts.slice();
+            setupCategories();
+            applyFilters(); // This will call displayProducts and update pagination
         }
 
         function setupCategories() {
@@ -577,6 +639,7 @@
 
         function filterByCategory(category) {
             currentCategory = category;
+            currentPage = 1; // Reset to first page when filtering
             
             // Update button styles
             const buttons = document.querySelectorAll('.category-btn');
@@ -593,6 +656,7 @@
         }
 
         function filterProducts() {
+            currentPage = 1; // Reset to first page when searching
             applyFilters();
         }
 
@@ -605,6 +669,7 @@
         function clearFilters() {
             document.getElementById('searchInput').value = '';
             currentCategory = 'ALL';
+            currentPage = 1;
             setupCategories();
             applyFilters();
         }
@@ -650,8 +715,75 @@
                 }
             });
             
+            updatePagination();
             displayProducts();
             updateCounts();
+        }
+
+        // NEW: Pagination functions
+        function updatePagination() {
+            totalPages = Math.ceil(filteredProducts.length / productsPerPage);
+            if (currentPage > totalPages) {
+                currentPage = Math.max(1, totalPages);
+            }
+            renderPaginationControls();
+        }
+
+        function renderPaginationControls() {
+            const paginationEl = document.getElementById('paginationControls');
+            
+            if (totalPages <= 1) {
+                paginationEl.innerHTML = '';
+                return;
+            }
+
+            let paginationHTML = '';
+            
+            // Previous button
+            paginationHTML += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                ← Previous
+            </button>`;
+            
+            // Page numbers
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                paginationHTML += `<button onclick="goToPage(1)">1</button>`;
+                if (startPage > 2) {
+                    paginationHTML += `<span class="px-2">...</span>`;
+                }
+            }
+            
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `<button onclick="goToPage(${i})" ${i === currentPage ? 'class="active"' : ''}>${i}</button>`;
+            }
+            
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += `<span class="px-2">...</span>`;
+                }
+                paginationHTML += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
+            }
+            
+            // Next button
+            paginationHTML += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                Next →
+            </button>`;
+            
+            paginationEl.innerHTML = paginationHTML;
+        }
+
+        function goToPage(page) {
+            if (page >= 1 && page <= totalPages && page !== currentPage) {
+                currentPage = page;
+                displayProducts();
+                updateCounts();
+                renderPaginationControls();
+                
+                // Scroll to top of products grid
+                document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' });
+            }
         }
 
         function displayProducts() {
@@ -666,16 +798,23 @@
             
             noResults.classList.add('hidden');
             
-            grid.innerHTML = filteredProducts.map(function(product) {
+            // Calculate products for current page
+            const startIndex = (currentPage - 1) * productsPerPage;
+            const endIndex = Math.min(startIndex + productsPerPage, filteredProducts.length);
+            const currentPageProducts = filteredProducts.slice(startIndex, endIndex);
+            
+            grid.innerHTML = currentPageProducts.map(function(product) {
                 const originalPrice = (product.price * 1.2).toFixed(2);
                 const savings = (originalPrice - product.price).toFixed(2);
                 const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
                 
+                const imageUrl = getImageUrl(product.sku);
+                
                 return '<div class="product-card">' +
                     '<div class="relative">' +
                         '<div class="w-full h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">' +
-                            (getImageUrl(product.sku) ? 
-                                '<img src="' + getImageUrl(product.sku) + '" alt="' + product.description + '" ' +
+                            (imageUrl ? 
+                                '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
                                      'class="w-full h-full object-cover" ' +
                                      'onload="this.parentElement.style.background=\'none\';" ' +
                                      'onerror="this.style.display=\'none\'; this.parentElement.innerHTML=\'<div class=\\\'text-gray-500 font-bold text-lg\\\'>' + product.sku + '</div>\';">' :
@@ -717,6 +856,17 @@
             const totalProducts = allProducts.length;
             document.getElementById('product-count').textContent = `${totalProducts} promotional items available • ${imagesCount} with photos`;
             document.getElementById('filteredCount').textContent = filteredProducts.length;
+            
+            // Update page info
+            const startItem = (currentPage - 1) * productsPerPage + 1;
+            const endItem = Math.min(currentPage * productsPerPage, filteredProducts.length);
+            const pageInfoEl = document.getElementById('pageInfo');
+            
+            if (filteredProducts.length === 0) {
+                pageInfoEl.textContent = 'No products to display';
+            } else {
+                pageInfoEl.textContent = `Page ${currentPage} of ${totalPages} • Showing ${startItem}-${endItem} of ${filteredProducts.length} products`;
+            }
         }
 
         function showProductDetails(sku) {
@@ -726,6 +876,7 @@
             const originalPrice = (product.price * 1.2).toFixed(2);
             const savings = (originalPrice - product.price).toFixed(2);
             const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+            const imageUrl = getImageUrl(product.sku);
             
             const modalContent = document.getElementById('modalContent');
             modalContent.innerHTML = '<div class="mb-6">' +
@@ -737,8 +888,8 @@
             '<div class="grid md:grid-cols-2 gap-8">' +
                 '<div class="relative">' +
                     '<div class="w-full h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg shadow-lg flex items-center justify-center">' +
-                        (getImageUrl(product.sku) ? 
-                            '<img src="' + getImageUrl(product.sku) + '" alt="' + product.description + '" ' +
+                        (imageUrl ? 
+                            '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
                                  'class="w-full h-full object-cover rounded-lg" ' +
                                  'onload="this.parentElement.style.background=\'none\';" ' +
                                  'onerror="this.style.display=\'none\'; this.parentElement.innerHTML=\'<div class=\\\'text-gray-500 font-bold text-2xl\\\'>' + product.sku + '</div>\';">' :
@@ -816,7 +967,7 @@
             }
         });
 
-        console.log('🎉 OZZ Promotions Catalog with Real Images Ready! 69/238 products have photos.');
+        console.log('🎉 OZZ Promotions Paginated Catalog Ready! 69/236 products have photos.');
     </script>
 </body>
 </html>
