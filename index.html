@@ -354,8 +354,8 @@
 </head>
 <body class="bg-gradient-to-br from-red-50 via-white to-blue-50">
     
-    <!-- Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay">
+    <!-- Hidden Loading Overlay (for seamless customer experience) -->
+    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="text-center">
             <div class="text-6xl mb-6">🎉</div>
             <h1 class="text-4xl font-bold mb-4">OZZ Cash & Carry</h1>
@@ -389,8 +389,8 @@
                 <!-- OZZ Logo -->
                 <div class="mb-6">
                     <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
-                         alt="OZZ Promotions" 
-                         class="h-16 md:h-20 mx-auto mb-2 logo-glow"
+                         alt="OZZ Cash & Carry" 
+                         class="h-20 md:h-24 mx-auto mb-2 logo-glow"
                          onerror="this.style.display='none';">
                 </div>
                 
@@ -559,6 +559,9 @@
                     <div class="text-center pt-6 border-t border-gray-700">
                         <p class="text-sm opacity-75">© 2025 OZZ Cash & Carry. All promotional prices valid for July 2025 only.</p>
                         <p class="text-xs opacity-50 mt-2">South Africa's premier home & kitchen products retailer</p>
+                        <p class="text-xs opacity-40 mt-3 border-t border-gray-800 pt-3">
+                            Designed and managed by <a href="https://www.blackorchid.online" target="_blank" class="hover:opacity-60 transition-opacity">Black Orchid Consulting www.blackorchid.online</a>
+                        </p>
                     </div>
                 </div>
             </div>
@@ -869,31 +872,29 @@
             PRODUCTS_PER_PAGE: 20
         };
 
-        // Initialize the application
+        // Initialize the application with seamless loading
         document.addEventListener('DOMContentLoaded', function() {
+            // Start loading immediately without showing overlay
             initializeCatalog();
         });
 
         async function initializeCatalog() {
             try {
-                updateProgress(10, 1);
+                // Silent background initialization for seamless customer experience
+                console.log('🚀 Initializing catalog in background...');
+                
+                // Optional: Show very subtle loading (can be removed for completely seamless experience)
+                // showSimpleLoading();
                 
                 // Step 1: Load promotional products
-                console.log('📊 Loading promotional products...');
                 await loadProductsFromExcel();
                 
-                updateProgress(30, 2);
-                
                 // Step 2: Prepare product images
-                console.log('📸 Preparing product images...');
                 driveImageManager = new DriveImageManager();
                 const success = await driveImageManager.initializeGAPI();
                 
-                updateProgress(50, 3);
-                
                 // Step 3: Organize catalog
                 if (success) {
-                    console.log('🗂️ Organizing catalog...');
                     await driveImageManager.scanFolderForImages();
                     imageSystemReady = true;
                 } else {
@@ -901,39 +902,32 @@
                     imageSystemReady = false;
                 }
                 
-                updateProgress(80, 4);
-                
                 // Step 4: Set up interface
-                console.log('🔧 Setting up interface...');
                 setupUI();
                 
-                updateProgress(100, 5);
-                
-                // Hide loading overlay
-                setTimeout(function() {
-                    document.getElementById('loadingOverlay').style.display = 'none';
-                }, 1000);
-                
-                console.log('✅ Catalog initialization complete!');
+                // hideSimpleLoading();
+                console.log('✅ Catalog ready - seamless customer experience');
                 
             } catch (error) {
                 console.error('Failed to initialize catalog:', error);
-                showError('Failed to load catalog. Please check that JULY PROMO.xlsx is in your repository.');
+                // Show error in a customer-friendly way
+                showError('Unable to load promotional catalog. Please refresh the page or contact us at +27 31 332 7192');
             }
         }
 
-        function updateProgress(percent, step) {
-            document.getElementById('progressFill').style.width = percent + '%';
-            
-            for (let i = 1; i <= 5; i++) {
-                const stepEl = document.getElementById('step' + i);
-                if (stepEl) {
-                    if (i <= step) {
-                        stepEl.classList.add('active');
-                    } else {
-                        stepEl.classList.remove('active');
-                    }
-                }
+        // Simple loading state (hidden from customer view)
+        function showSimpleLoading() {
+            // Add a subtle loading indicator to header if needed
+            const headerEl = document.querySelector('header h1');
+            if (headerEl) {
+                headerEl.innerHTML = '🎉 JULY 2025 PROMO 🎉 <span class="animate-pulse">📦</span>';
+            }
+        }
+
+        function hideSimpleLoading() {
+            const headerEl = document.querySelector('header h1');
+            if (headerEl) {
+                headerEl.innerHTML = '🎉 JULY 2025 PROMO 🎉';
             }
         }
 
@@ -1373,7 +1367,7 @@
             if (!driveImageManager) return;
             
             const refreshBtn = document.getElementById('refreshBtn');
-            refreshBtn.innerHTML = '🔄 Refreshing...';
+            refreshBtn.innerHTML = '🔄 Updating...';
             refreshBtn.disabled = true;
             
             try {
@@ -1381,30 +1375,38 @@
                 updateCounts();
                 displayProducts();
                 
-                refreshBtn.innerHTML = '✅ Refreshed!';
+                refreshBtn.innerHTML = '✅ Updated!';
                 setTimeout(() => {
                     refreshBtn.innerHTML = '🔄 Refresh Images';
                     refreshBtn.disabled = false;
-                }, 2000);
+                }, 1500);
             } catch (error) {
                 console.error('Error refreshing image cache:', error);
-                refreshBtn.innerHTML = '❌ Error';
-                setTimeout(() => {
-                    refreshBtn.innerHTML = '🔄 Refresh Images';
-                    refreshBtn.disabled = false;
-                }, 2000);
+                refreshBtn.innerHTML = '🔄 Refresh Images';
+                refreshBtn.disabled = false;
             }
         }
 
         function showError(message) {
-            document.getElementById('loadingOverlay').innerHTML = '<div class="text-center">' +
-                '<div class="text-6xl mb-6">❌</div>' +
-                '<h1 class="text-4xl font-bold mb-4">Error</h1>' +
-                '<p class="text-xl mb-8">' + message + '</p>' +
-                '<button onclick="location.reload()" class="bg-white text-red-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">' +
-                    'Try Again' +
-                '</button>' +
-            '</div>';
+            // Hide any existing content and show customer-friendly error
+            const body = document.body;
+            body.innerHTML = `
+                <div class="min-h-screen bg-gradient-to-br from-red-50 via-white to-blue-50 flex items-center justify-center p-4">
+                    <div class="text-center max-w-md mx-auto">
+                        <div class="text-6xl mb-6">🏪</div>
+                        <h1 class="text-2xl font-bold text-gray-900 mb-4">OZZ Cash & Carry</h1>
+                        <p class="text-lg text-gray-600 mb-6">${message}</p>
+                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
+                            <h3 class="font-semibold text-blue-900 mb-2">📞 Contact Us</h3>
+                            <p class="text-blue-700">Call: <a href="tel:+27313327192" class="font-bold hover:underline">+27 31 332 7192</a></p>
+                            <p class="text-sm text-blue-600 mt-1">Monday-Friday: 8:00 AM - 5:00 PM</p>
+                        </div>
+                        <button onclick="location.reload()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors">
+                            🔄 Try Again
+                        </button>
+                    </div>
+                </div>
+            `;
         }
 
         // Event handlers
