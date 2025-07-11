@@ -152,6 +152,15 @@
             font-weight: bold;
             font-size: 14px;
         }
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
+        }
+        .product-card:hover .product-image {
+            transform: scale(1.05);
+        }
         @media print {
             .no-print { display: none !important; }
             .bg-gradient-to-br { background: white !important; }
@@ -175,16 +184,16 @@
             </div>
             
             <div class="space-y-2 text-left">
-                <div id="step1" class="loading-step">📊 Loading product data from GitHub...</div>
-                <div id="step2" class="loading-step">🎨 Preparing catalog interface...</div>
+                <div id="step1" class="loading-step">📊 Loading product data from JULY PROMO.xlsx...</div>
+                <div id="step2" class="loading-step">📸 Preparing Google Drive images...</div>
                 <div id="step3" class="loading-step">🔧 Setting up search and filters...</div>
                 <div id="step4" class="loading-step">✨ Almost ready!</div>
             </div>
             
             <!-- Image Notice -->
             <div class="mt-8 bg-blue-900 bg-opacity-30 p-4 rounded-lg text-sm">
-                <p>📸 <strong>Product images will load from your Google Drive</strong></p>
-                <p>For best results, ensure image files are named with their SKU numbers</p>
+                <p>📸 <strong>Product images loading from your Google Drive</strong></p>
+                <p>Folder: Ikhaya/OzzSA</p>
             </div>
         </div>
     </div>
@@ -313,11 +322,12 @@
     </footer>
 
     <script>
-        // GitHub Pages compatible configuration
+        // Configuration
         const CONFIG = {
-            GITHUB_REPO: './JULY PROMO.xlsx', // Relative path to Excel file
-            // Google Drive images will be loaded using direct URLs
-            GDRIVE_BASE: 'https://drive.google.com/uc?id='
+            EXCEL_FILE: './JULY PROMO.xlsx', // Path to Excel file in your GitHub repo
+            GDRIVE_BASE: 'https://drive.google.com/uc?id=',
+            API_KEY: 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA',
+            FOLDER_ID: '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan'
         };
 
         // Global variables
@@ -327,11 +337,128 @@
         let sortBy = 'name';
         let sortOrder = 'asc';
 
-        // Pre-mapped Google Drive image IDs (you'll need to populate this)
+        // ====================================================================
+        // IMPORTANT: PASTE YOUR GENERATED IMAGE MAPPING HERE
+        // Run the image-mapper.html first to generate this mapping
+        // ====================================================================
         const imageMapping = {
-            // Format: 'SKU': 'GOOGLE_DRIVE_FILE_ID'
-            // Example: '455641': '1ABC123xyz...'
-            // For now, we'll use a function to generate proper Google Drive URLs
+          // Auto-generated Google Drive image mapping for OZZ Promotions
+// Generated on: 7/11/2025, 5:21:49 PM
+// Mapped 108/219 products
+
+const imageMapping = {
+    '126': '1-bt7zaHzKEMDo4UfR8OPYHvbxcAZfns-',
+    '136': '1FuMqiX05ByfoGPNNpjmJC7R4FJhL-dzj',
+    '179': '1LTzpi7_sR20K6DIA1U7D8NCuCdPC1dpG',
+    '193': '1XtT6-ogfoudsJJRPYj7R_EdnousPMusK',
+    '195': '1YtjxxGec8njXwucGFew39FiZc8vawZl6',
+    '205': '1wHtlrAltR2avnyOgKFlXBmt5PguFutcE',
+    '206': '14vWEKHUmpKBLHzJe9d4mAOLAvOeef7R7',
+    '217': '1mQ5fEdry6w1os7RHPNe32U_YvSOLkq8G',
+    '219': '147sIFQDfaZBqSwSDWvHTa8dbePuoCUmc',
+    '221': '19Jf4rpNGquGIovcBTkp757OXRGyhSIzi',
+    '234': '1MsNBEIuafdkbzVHQEjylCFnVR--ysX6D',
+    '237': '1VbfRr5hwhPQT0oG7GBP6yTvrJ1ntya4N',
+    '255': '1F4z9t6rMkGai542fH7HI3C0-atIR6bcy',
+    '259': '18kCqxgpT5Z5-SFiPurx9FNK0TiNmYlxo',
+    '269': '1RvR5UuogFSgpCWhideO-bTftphv5780p',
+    '304': '1XrunkJ_THR9PYX_x3Z7BVS1ezx6CqpEz',
+    '307': '1a4dCVezeg-TD-iZPVd1AgtfSMBbfe0AB',
+    '314': '1ONgOOZ0_iv_lgtCzrQTLSIkYnMOclQr8',
+    '317': '1jT0W5SxIwwHFA4aKhZbQur5CRRlBF3eU',
+    '318': '1jT0W5SxIwwHFA4aKhZbQur5CRRlBF3eU',
+    '319': '18EFVixwt3RC46RLb726u-XjD69sOR2kN',
+    '320': '1BOyIEHihmC0NuJ3vvF1zshu5nN3D7skw',
+    '3133': '1GDbnDpa6AAF1P5CbRplzo5cVAOxmBHn6',
+    '4161': '1fplfukq3HjfIT8p5Uv5-e6JyMK3IJyr0',
+    '31754': '1XYZ83RdANXPR3A79lAVHrQYUY8ybLE5E',
+    '31755': '1LfYl4KU5iCkibQmO23coYGkuxEbg7zYb',
+    '446223': '1eWA2nN_iARKv35-4J0o2bG1zVpQOjA7y',
+    '453261': '1-s6AHDIzywboqwHhz_4GwZIHC6Q-6oZ6',
+    '453704': '1Gy3YXTcsbUBcbhfxj8SiSNUkwNgISXWh',
+    '454437': '1FwKibfrcikWPnJrpKuD3xl_P3T9snBkx',
+    '454859': '19Jf4rpNGquGIovcBTkp757OXRGyhSIzi',
+    '454860': '19Jf4rpNGquGIovcBTkp757OXRGyhSIzi',
+    '454861': '1dNtRSpw7JNrL0D2MH5YRbwiKuvqjbR_T',
+    '454862': '1wVVSz4MqKjoly29RlO7rvbz9uEzALSpQ',
+    '454863': '19Jf4rpNGquGIovcBTkp757OXRGyhSIzi',
+    '454865': '1-7Qh5ROIm-mwpzK9eYPLmiCRexTfd-Ae',
+    '454866': '1_dUH5pSFEGsGC6smWL4Rd5IP5qwT6SrJ',
+    '454867': '1f-BlJszS98XVfWFnCxAX7z6FHMwnmMgn',
+    '454868': '1f-BlJszS98XVfWFnCxAX7z6FHMwnmMgn',
+    '454869': '1f-BlJszS98XVfWFnCxAX7z6FHMwnmMgn',
+    '454870': '1f-BlJszS98XVfWFnCxAX7z6FHMwnmMgn',
+    '454874': '1nDPQUWCAGbQDCQqUfj579Hd7DZRqdopu',
+    '454875': '1nDPQUWCAGbQDCQqUfj579Hd7DZRqdopu',
+    '454876': '1nDPQUWCAGbQDCQqUfj579Hd7DZRqdopu',
+    '454877': '1g67b27BplQvYRDQqWFRWTPw6JqKSZQ2I',
+    '454878': '1g67b27BplQvYRDQqWFRWTPw6JqKSZQ2I',
+    '454879': '1g67b27BplQvYRDQqWFRWTPw6JqKSZQ2I',
+    '454880': '1W94_oMs8kIgVdfqMcOkwvLo0EonFR95p',
+    '454881': '1W94_oMs8kIgVdfqMcOkwvLo0EonFR95p',
+    '454882': '1W94_oMs8kIgVdfqMcOkwvLo0EonFR95p',
+    '454883': '1fe5qy37mA9O-lDGXP--EWayn2qeUEuVx',
+    '454884': '1fe5qy37mA9O-lDGXP--EWayn2qeUEuVx',
+    '454885': '1fe5qy37mA9O-lDGXP--EWayn2qeUEuVx',
+    '454886': '1Y_qMf5hg8yqb1obCdT3CJomadINYSL0J',
+    '454887': '1Y_qMf5hg8yqb1obCdT3CJomadINYSL0J',
+    '454888': '1Y_qMf5hg8yqb1obCdT3CJomadINYSL0J',
+    '454889': '1riIChzpHAgLBB2KBwvAbVkgwhpe-2zMT',
+    '454890': '1riIChzpHAgLBB2KBwvAbVkgwhpe-2zMT',
+    '455000': '1nBxO36A2oih8ssQKUOH-yTwIPt4zIs-P',
+    '455001': '1nBxO36A2oih8ssQKUOH-yTwIPt4zIs-P',
+    '455002': '1nBxO36A2oih8ssQKUOH-yTwIPt4zIs-P',
+    '455003': '15-paEYh1w2m09w0RjwK_4aJbyLabZbMY',
+    '455005': '15-paEYh1w2m09w0RjwK_4aJbyLabZbMY',
+    '455007': '1qTKaveWhmg3NSoeWrGkdrU8iBT_n9WKs',
+    '455008': '1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
+    '455009': '1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
+    '455010': '1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
+    '455011': '1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
+    '455012': '1vnjCUDbQP6IL_jGMCpecFJaic71eVdjj',
+    '455013': '1ZxCHPWiS-dYRbzaUJIxARiMpa5cVOkWU',
+    '455017': '1VzVk6d_z4LPVntOXl8wi7ZnJFH1loZN-',
+    '455018': '1VzVk6d_z4LPVntOXl8wi7ZnJFH1loZN-',
+    '455019': '1VzVk6d_z4LPVntOXl8wi7ZnJFH1loZN-',
+    '455022': '11XxqVMAXfdMURZcyMGB3l3IsdWNnsZiw',
+    '455023': '11XxqVMAXfdMURZcyMGB3l3IsdWNnsZiw',
+    '455036': '1ujIlgH2QPgyHU5R8cjYqM_H6THFkzII_',
+    '455037': '1t9HxcxCKSThPLHSCA-6TwQqAerGUnjaN',
+    '455084': '1PiRYQIKgQqC1V4Tb7tNNlx2b9rz2Wa40',
+    '455086': '1-_MZXpBNtRYlPCse3i77rBIDocG5AUoY',
+    '455088': '1UOCaNujQGjOVEa-gOpScAA6lMx_COCwB',
+    '455200': '1eWW5UR_YOZakT43AGEadmualu7HPFp2W',
+    '455201': '1eWW5UR_YOZakT43AGEadmualu7HPFp2W',
+    '455203': '14vWEKHUmpKBLHzJe9d4mAOLAvOeef7R7',
+    '455204': '14vWEKHUmpKBLHzJe9d4mAOLAvOeef7R7',
+    '455205': '14vWEKHUmpKBLHzJe9d4mAOLAvOeef7R7',
+    '455315': '1jT0W5SxIwwHFA4aKhZbQur5CRRlBF3eU',
+    '455316': '1jT0W5SxIwwHFA4aKhZbQur5CRRlBF3eU',
+    '455318': '1jT0W5SxIwwHFA4aKhZbQur5CRRlBF3eU',
+    '455319': '1jT0W5SxIwwHFA4aKhZbQur5CRRlBF3eU',
+    '455320': '1BOyIEHihmC0NuJ3vvF1zshu5nN3D7skw',
+    '455321': '1I4PBp7Lpv5vz09ePaRzum9Pxf9L7G8Gu',
+    '455322': '11FenbXK_prDbujA8RrWCBeiRVJqC4hXg',
+    '455323': '17jpQS3EA6uR2XZLjsNfrzi9FOLPTxv_W',
+    '455406': '1eAIT58QrqcoBKahZuy8Q_HDf38SJCy78',
+    '455410': '1osnHYkcS1xmPh-KORM499QDeD94rT0v8',
+    '455426': '1O5haH1M_fkEBi_BRV_mLVjXrYt24DVh9',
+    '455427': '1u3P48cMvhkXHuH5NxY1tLZaCTb9Pj_nL',
+    '455428': '1nVYV3xL65uRt0UVY8pTDZrLo6YKgIPbP',
+    '455508': '1-wOkNJWAPh2ui3advilWOG6ifi4XqKo-',
+    '455509': '1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
+    '455510': '1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
+    '455511': '1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
+    '455512': '1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
+    '455513': '1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
+    '455514': '1cW4U0ByUP9J_Cal6dHgdQEjZmagD3aIi',
+    '455515': '1-wOkNJWAPh2ui3advilWOG6ifi4XqKo-',
+    '455516': '1-wOkNJWAPh2ui3advilWOG6ifi4XqKo-',
+    '455517': '1-wOkNJWAPh2ui3advilWOG6ifi4XqKo-',
+};
+
+// Copy this entire block and paste it into your index.html
+// Replace the existing empty imageMapping object
         };
 
         // Initialize the application
@@ -392,7 +519,7 @@
 
         async function loadProductsFromExcel() {
             try {
-                const response = await fetch(CONFIG.GITHUB_REPO);
+                const response = await fetch(CONFIG.EXCEL_FILE);
                 
                 if (!response.ok) {
                     throw new Error('Could not load JULY PROMO.xlsx. Make sure the file is in your repository root.');
@@ -445,15 +572,12 @@
         }
 
         function getImageUrl(sku) {
-            // For now, we'll use Google Drive direct links when you provide the file IDs
-            // You can replace this with your actual Google Drive file IDs
-            
             // Check if we have a mapped image
             if (imageMapping[sku]) {
                 return CONFIG.GDRIVE_BASE + imageMapping[sku];
             }
             
-            // Generate a placeholder with SKU
+            // Fallback placeholder
             return 'https://via.placeholder.com/300x200/e2e8f0/64748b?text=' + encodeURIComponent(sku);
         }
 
@@ -586,13 +710,16 @@
                 const originalPrice = (product.price * 1.2).toFixed(2);
                 const savings = (originalPrice - product.price).toFixed(2);
                 const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+                const hasImage = imageMapping[product.sku] ? true : false;
                 
                 return '<div class="product-card">' +
-                    '<div class="relative">' +
-                        '<div class="image-placeholder w-full h-48" style="background-image: url(\'' + getImageUrl(product.sku) + '\'); background-size: cover; background-position: center;">' +
-                            '<div class="w-full h-full bg-gray-100 flex items-center justify-center text-gray-500" style="background-image: url(\'' + getImageUrl(product.sku) + '\'); background-size: cover; background-position: center; background-repeat: no-repeat;">' +
-                                (imageMapping[product.sku] ? '' : product.sku) +
-                            '</div>' +
+                    '<div class="relative overflow-hidden">' +
+                        '<div class="w-full h-48 ' + (hasImage ? '' : 'image-placeholder') + '">' +
+                            '<img src="' + getImageUrl(product.sku) + '" ' +
+                                 'alt="' + product.description + '" ' +
+                                 'class="product-image" ' +
+                                 'loading="lazy" ' +
+                                 'onerror="this.onerror=null;this.src=\'https://via.placeholder.com/300x200/e2e8f0/64748b?text=' + encodeURIComponent(product.sku) + '\'">' +
                         '</div>' +
                         '<div class="promo-badge">PROMO</div>' +
                         '<button onclick="showProductDetails(\'' + product.sku + '\')" class="absolute top-2 right-2 bg-white p-2 rounded-full shadow-lg hover:bg-red-50 transition-all">' +
@@ -636,6 +763,7 @@
             const originalPrice = (product.price * 1.2).toFixed(2);
             const savings = (originalPrice - product.price).toFixed(2);
             const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+            const hasImage = imageMapping[product.sku] ? true : false;
             
             const modalContent = document.getElementById('modalContent');
             modalContent.innerHTML = '<div class="mb-6">' +
@@ -646,8 +774,11 @@
             '</div>' +
             '<div class="grid md:grid-cols-2 gap-8">' +
                 '<div class="relative">' +
-                    '<div class="w-full h-80 bg-gray-100 rounded-lg shadow-lg flex items-center justify-center" style="background-image: url(\'' + getImageUrl(product.sku) + '\'); background-size: cover; background-position: center; background-repeat: no-repeat;">' +
-                        (imageMapping[product.sku] ? '' : '<span class="text-gray-500 font-bold">' + product.sku + '</span>') +
+                    '<div class="w-full h-80 ' + (hasImage ? '' : 'bg-gray-100') + ' rounded-lg shadow-lg overflow-hidden">' +
+                        '<img src="' + getImageUrl(product.sku) + '" ' +
+                             'alt="' + product.description + '" ' +
+                             'class="w-full h-full object-cover" ' +
+                             'onerror="this.onerror=null;this.src=\'https://via.placeholder.com/400x320/e2e8f0/64748b?text=' + encodeURIComponent(product.sku) + '\'">' +
                     '</div>' +
                     '<div class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">' +
                         'LIMITED TIME' +
@@ -720,7 +851,9 @@
             }
         });
 
-        console.log('🎉 OZZ Promotions GitHub Pages Compatible Catalog initialized!');
+        console.log('🎉 OZZ Promotions July 2025 Catalog initialized!');
+        console.log('📸 Images from Google Drive folder:', CONFIG.FOLDER_ID);
+        console.log('📊 Product data from:', CONFIG.EXCEL_FILE);
     </script>
 </body>
 </html>
