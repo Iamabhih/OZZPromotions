@@ -6,6 +6,7 @@
     <title>🎉 July 2025 Promotional Catalog - OZZ Promotions</title>
     <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>">
     <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <meta name="description" content="July 2025 Promotional Catalog - Exclusive deals on premium home & kitchen products from OZZ Promotions">
     <meta name="keywords" content="OZZ Promotions, July 2025, promo, deals, kitchen, home, South Africa">
     <meta property="og:title" content="July 2025 Promotional Catalog - OZZ Promotions">
@@ -18,6 +19,13 @@
         @keyframes pulse {
             0%, 100% { opacity: 1; }
             50% { opacity: .5; }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
         }
         .product-grid {
             display: grid;
@@ -95,19 +103,41 @@
         .close:hover {
             color: #ef4444;
         }
-        .category-btn {
-            transition: all 0.3s ease;
-        }
-        .category-btn:hover {
-            transform: translateY(-1px);
-        }
-        .savings-badge {
-            background: linear-gradient(45deg, #10b981, #059669);
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
             color: white;
-            padding: 2px 8px;
-            border-radius: 9999px;
-            font-size: 11px;
-            font-weight: bold;
+        }
+        .loading-step {
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+        .loading-step.active {
+            opacity: 1;
+        }
+        .progress-bar {
+            width: 300px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4aa, #00b894);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
         }
         @media print {
             .no-print { display: none !important; }
@@ -119,6 +149,28 @@
     </style>
 </head>
 <body class="bg-gradient-to-br from-red-50 via-white to-blue-50">
+    
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
+        <div class="text-center">
+            <div class="text-6xl mb-6">🎉</div>
+            <h1 class="text-4xl font-bold mb-4">OZZ Promotions</h1>
+            <p class="text-xl mb-8">Loading your July 2025 promotional catalog...</p>
+            
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            
+            <div class="space-y-2 text-left">
+                <div id="step1" class="loading-step">📊 Loading product data from Excel...</div>
+                <div id="step2" class="loading-step">🖼️ Scanning Google Drive for images...</div>
+                <div id="step3" class="loading-step">🔗 Mapping images to products...</div>
+                <div id="step4" class="loading-step">🎨 Building your catalog...</div>
+                <div id="step5" class="loading-step">✨ Almost ready!</div>
+            </div>
+        </div>
+    </div>
+
     <!-- Header -->
     <header class="bg-gradient-to-r from-red-600 via-red-500 to-blue-600 text-white shadow-xl">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
@@ -188,12 +240,6 @@
             <!-- Products will be loaded here -->
         </div>
 
-        <!-- Loading Message -->
-        <div id="loadingMessage" class="text-center py-16">
-            <div class="animate-spin rounded-full h-16 w-16 border-b-4 border-red-600 mx-auto mb-4"></div>
-            <p class="text-gray-600 text-xl">Loading your promotional catalog...</p>
-        </div>
-
         <!-- No Results Message -->
         <div id="noResults" class="text-center py-16 bg-white rounded-xl shadow-lg hidden">
             <div class="text-6xl mb-4">🔍</div>
@@ -249,169 +295,227 @@
     </footer>
 
     <script>
-        // Complete product data - ALL 236 PRODUCTS from your Excel file
-        let allProducts = [
-            {"sku": "455641", "description": "BOWL SET 2PC STACK 6.7\" MAXIM", "price": 25.95, "category": "BOWLS"},
-            {"sku": "455642", "description": "BOWL SET 3PC 4.4\" MAXIM", "price": 20.95, "category": "BOWLS"},
-            {"sku": "455639", "description": "BOWL SET 6PC STACK 3.6\" MAXIM", "price": 24.95, "category": "BOWLS"},
-            {"sku": "455650", "description": "BOWL SET 6PCE TULIP MAXIM", "price": 28.95, "category": "BOWLS"},
-            {"sku": "455644", "description": "BOWL SET 7PCE CASCARA MAXIM", "price": 55.95, "category": "BOWLS"},
-            {"sku": "455643", "description": "BOWL SET 7PCE CHRYSAN MAXIM", "price": 55.95, "category": "BOWLS"},
-            {"sku": "455640", "description": "ICE CREAM SET 3'S CLEAR MAXIM", "price": 24.95, "category": "ICE CREAM SETS"},
-            {"sku": "455649", "description": "ICE CREAM SET 3PC AGAPANT MAX", "price": 24.95, "category": "ICE CREAM SETS"},
-            {"sku": "455634", "description": "WATER SET 7PCE MAX BORBOLETA", "price": 86.95, "category": "GLASSWARE"},
-            {"sku": "455636", "description": "WATER SET 7PCE MAX CILON", "price": 86.95, "category": "GLASSWARE"},
-            {"sku": "455647", "description": "MUG BEER 3PCE VERNON 380ML MAX", "price": 43.95, "category": "CUPS & MUGS"},
-            {"sku": "455648", "description": "MUG COFFEE 4'S 250ML MAXIM", "price": 31.95, "category": "CUPS & MUGS"},
-            {"sku": "444984", "description": "PLATE 9 CLEAR PLAIN PP-9D", "price": 9.95, "category": "PLATES"},
-            {"sku": "4161", "description": "PLATE DINNER H/P 10.5", "price": 9.95, "category": "PLATES"},
-            {"sku": "455080", "description": "STORAGE CONT+LID 3PC REC 70923", "price": 79.95, "category": "STORAGE"},
-            {"sku": "454437", "description": "TUMBLER MAXIM 9OZ 6'S ARLO", "price": 32.95, "category": "GLASSWARE"},
-            {"sku": "455428", "description": "TUMBLER MAXIM 9OZ 6'S BLOCK CL", "price": 32.95, "category": "GLASSWARE"},
-            {"sku": "455427", "description": "TUMBLER MAXIM 9OZ 6'S ECHO", "price": 32.95, "category": "GLASSWARE"},
-            {"sku": "455426", "description": "TUMBLER MAXIM 9OZ 6'S TWISTER", "price": 32.95, "category": "GLASSWARE"},
-            {"sku": "453704", "description": "CARAFFE 470ML 4'S BELARUS C/N", "price": 45.95, "category": "GLASSWARE"},
-            {"sku": "440728", "description": "ICE CREAM SET 6's GELATO C/NOV", "price": 24.95, "category": "ICE CREAM SETS"},
-            {"sku": "453261", "description": "TUMBLER ALE 6'S C/N", "price": 36.95, "category": "GLASSWARE"},
-            {"sku": "446223", "description": "TUMBLER BEER C/N 6'S HOPS", "price": 36.95, "category": "GLASSWARE"},
-            {"sku": "444971", "description": "TUMBLER HIBALL 6'S C/N", "price": 36.95, "category": "GLASSWARE"},
-            {"sku": "444970", "description": "TUMBLER JUICE 6'S C/N", "price": 29.95, "category": "GLASSWARE"},
-            {"sku": "444974", "description": "TUMBLER WATER 6'S C/N", "price": 29.95, "category": "GLASSWARE"},
-            {"sku": "444973", "description": "TUMBLER WHISKY 6'S C/N", "price": 36.95, "category": "GLASSWARE"},
-            {"sku": "455646", "description": "WINE SET 7PCE MAXIM", "price": 49.95, "category": "GLASSWARE"},
-            {"sku": "10836", "description": "CUTLERY 3PCE NOVELTY KDS SPN", "price": 9.95, "category": "CUTLERY"},
-            {"sku": "304", "description": "CUTLERY 4PCE CHILDS S/STEEL", "price": 14.95, "category": "CUTLERY"},
-            {"sku": "314", "description": "CUTLERY 4PCE INFANT", "price": 14.95, "category": "CUTLERY"},
-            {"sku": "307", "description": "CUTLERY 6PCE CHILDS S/STEEL", "price": 25.95, "category": "CUTLERY"},
-            {"sku": "10833", "description": "CUTLERY SET 12PCE NOVELTY KDS", "price": 29.95, "category": "CUTLERY"},
-            {"sku": "14996", "description": "CUTLERY SET 16PCE SDA P&T", "price": 135.95, "category": "CUTLERY"},
-            {"sku": "31735", "description": "CUTLERY SET 20PCE H/H WAVE", "price": 89.95, "category": "CUTLERY"},
-            {"sku": "31750", "description": "CUTLERY SET 24PCE WAVE", "price": 99.95, "category": "CUTLERY"},
-            {"sku": "31754", "description": "CUTLERY SET 4PCE ST/ST WAVE", "price": 18.95, "category": "CUTLERY"},
-            {"sku": "31755", "description": "CUTLERY SET 48PCE WAVE", "price": 159.95, "category": "CUTLERY"},
-            {"sku": "22951", "description": "CUTLERY SET 56PCE MADISON", "price": 199.95, "category": "CUTLERY"},
-            {"sku": "31753", "description": "CUTLERY SET 68PCE WAVE", "price": 219.95, "category": "CUTLERY"},
-            {"sku": "318", "description": "KNIFE S/STEEL", "price": 13.95, "category": "CUTLERY"},
-            {"sku": "317", "description": "KNIFE SET 3PCE", "price": 29.95, "category": "CUTLERY"},
-            {"sku": "319", "description": "KNIFE SET 5PCE", "price": 55.95, "category": "CUTLERY"},
-            {"sku": "320", "description": "KNIFE SET 6PCE", "price": 79.95, "category": "CUTLERY"},
-            {"sku": "217", "description": "KNIFE SET 8PCE", "price": 99.95, "category": "CUTLERY"},
-            {"sku": "221", "description": "SPOON AND FORK SET 6PCE", "price": 49.95, "category": "CUTLERY"},
-            {"sku": "136", "description": "SPOON SERVING 2PCE S/STEEL", "price": 25.95, "category": "CUTLERY"},
-            {"sku": "234", "description": "SPREADER 4PCE CHILDS", "price": 14.95, "category": "CUTLERY"},
-            {"sku": "23777", "description": "SPREADER SET 4PCE JADE", "price": 19.95, "category": "CUTLERY"},
-            {"sku": "31756", "description": "SPREADER SET 4PCE WAVE", "price": 14.95, "category": "CUTLERY"},
-            {"sku": "237", "description": "TEASPOON SET 6PCE S/STEEL", "price": 24.95, "category": "CUTLERY"},
-            {"sku": "451170", "description": "MUG COFFEE SET 4'S VALEN 250ML", "price": 31.95, "category": "CUPS & MUGS"},
-            {"sku": "454978", "description": "MUG SET 4'S COLOUR 350ML", "price": 29.95, "category": "CUPS & MUGS"},
-            {"sku": "455512", "description": "MUG SET 6'S WHT EMBOSSED 70338", "price": 49.95, "category": "CUPS & MUGS"},
-            {"sku": "451169", "description": "MUG TEA 4'S VALENTINE 300ML", "price": 31.95, "category": "CUPS & MUGS"},
-            {"sku": "26926", "description": "TEA & COFFEE SET 13PCE FINE", "price": 199.95, "category": "CUPS & MUGS"},
-            {"sku": "455407", "description": "TEA CUP&SAUCER 10PCE WHITE 70281", "price": 89.95, "category": "CUPS & MUGS"},
-            {"sku": "455406", "description": "TEA CUP&SAUCER 12PCE WHITE 70280", "price": 99.95, "category": "CUPS & MUGS"},
-            {"sku": "455408", "description": "TEA CUP&SAUCER 6PCE WHITE 70282", "price": 54.95, "category": "CUPS & MUGS"},
-            {"sku": "455409", "description": "TEA CUP&SAUCER 8PCE WHITE 70283", "price": 69.95, "category": "CUPS & MUGS"},
-            {"sku": "27004", "description": "TEA SET 17PCE FINE CHINA", "price": 249.95, "category": "CUPS & MUGS"},
-            {"sku": "455410", "description": "TEA SET 6PCE WHITE 70284", "price": 89.95, "category": "CUPS & MUGS"},
-            {"sku": "455513", "description": "TEAPOT 1.2L WHITE 70339", "price": 59.95, "category": "CUPS & MUGS"},
-            {"sku": "26927", "description": "TEAPOT 750ML FINE CHINA", "price": 99.95, "category": "CUPS & MUGS"},
-            {"sku": "27005", "description": "TEAPOT HERBAL TEA GLASS", "price": 79.95, "category": "CUPS & MUGS"},
-            {"sku": "455517", "description": "TEAPOT SET 3PCE WHT EMB 70343", "price": 179.95, "category": "CUPS & MUGS"},
-            {"sku": "455645", "description": "WATER SET 5PCE MAXIM", "price": 34.95, "category": "GLASSWARE"},
-            {"sku": "455637", "description": "WATER SET 7PCE MAX ELEANOR", "price": 86.95, "category": "GLASSWARE"},
-            {"sku": "455638", "description": "WATER SET 7PCE MAX ILLUSION", "price": 86.95, "category": "GLASSWARE"},
-            {"sku": "455635", "description": "WATER SET 7PCE MAX SPIRAL", "price": 86.95, "category": "GLASSWARE"},
-            {"sku": "26918", "description": "WATER SET GLASS DIAMOND 7PCE", "price": 86.95, "category": "GLASSWARE"},
-            {"sku": "26912", "description": "WINE SET 12PCE RIBBED GLASS", "price": 79.95, "category": "GLASSWARE"},
-            {"sku": "26913", "description": "WINE SET 6PCE RIBBED GLASS", "price": 42.95, "category": "GLASSWARE"},
-            {"sku": "449950", "description": "SALAD BOWL 23CM MELAMINE", "price": 36.95, "category": "BOWLS"},
-            {"sku": "195", "description": "BOWL 6 MELAMINE", "price": 9.95, "category": "BOWLS"},
-            {"sku": "206", "description": "PUNCH SET 27PCE", "price": 179.95, "category": "OTHER"},
-            {"sku": "455009", "description": "RAMEKIN 10CM WHITE 70143", "price": 12.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455008", "description": "RAMEKIN 11CM WHITE 70142", "price": 14.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455200", "description": "RAMEKIN 5PC WHT EMB SML 70304", "price": 49.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455012", "description": "RAMEKIN 7CM WHITE 70146", "price": 8.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455011", "description": "RAMEKIN 8CM WHITE 70145", "price": 9.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455010", "description": "RAMEKIN 9CM WHITE 70144", "price": 11.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455013", "description": "SCOOP 6\" CERAMIC 70148", "price": 19.95, "category": "OTHER"},
-            {"sku": "455035", "description": "CASSEROLE 3PC OVAL 70508", "price": 199.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455034", "description": "CASSEROLE 3PC RECT 70507", "price": 199.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455003", "description": "CASSEROLE+LID DIAM RND S 70124", "price": 49.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455203", "description": "JAR HERM 500ML CLIP LID 70307", "price": 24.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455204", "description": "JAR HERM 750ML CLIP LID 70308", "price": 29.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455205", "description": "JAR HERM 1LT CLIP LID 70309", "price": 34.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455017", "description": "JELLY MOULD REC SCALLOPED 70151", "price": 34.95, "category": "OTHER"},
-            {"sku": "455018", "description": "JELLY MOULD RND SCALLOPED 70152", "price": 34.95, "category": "OTHER"},
-            {"sku": "455019", "description": "LOAF PAN 23CM SCALLOPED 70153", "price": 34.95, "category": "OTHER"},
-            {"sku": "455022", "description": "MEASURING CUP 1L 70156", "price": 24.95, "category": "OTHER"},
-            {"sku": "455023", "description": "MEASURING CUP 500ML 70157", "price": 19.95, "category": "OTHER"},
-            {"sku": "455036", "description": "MIXING BOWL+LID 3PC ROUND 70509", "price": 199.95, "category": "BOWLS"},
-            {"sku": "455002", "description": "PASTA BOWL DIAM SQ L 70123", "price": 39.95, "category": "BOWLS"},
-            {"sku": "455001", "description": "PASTA BOWL DIAM SQ M 70122", "price": 34.95, "category": "BOWLS"},
-            {"sku": "455000", "description": "PASTA BOWL DIAM SQ S 70121", "price": 29.95, "category": "BOWLS"},
-            {"sku": "455037", "description": "PIE DISH+LID 3PC ROUND 70510", "price": 199.95, "category": "OTHER"},
-            {"sku": "455514", "description": "PLATTER OVAL 35CM WHITE 70340", "price": 49.95, "category": "TRAYS & PLATTERS"},
-            {"sku": "455510", "description": "PLATTER OVAL 41CM WHITE 70337", "price": 61.95, "category": "TRAYS & PLATTERS"},
-            {"sku": "455509", "description": "PLATTER OVAL 42CM WHITE 70336", "price": 61.95, "category": "TRAYS & PLATTERS"},
-            {"sku": "455511", "description": "PLATTER RND 32CM WHITE 70338", "price": 49.95, "category": "TRAYS & PLATTERS"},
-            {"sku": "455508", "description": "PLATTER RND 35CM WHITE 70335", "price": 54.95, "category": "TRAYS & PLATTERS"},
-            {"sku": "455006", "description": "RAMEKIN 5CM WHITE 70140", "price": 6.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455005", "description": "RAMEKIN 6CM WHITE 70139", "price": 7.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455007", "description": "RAMEKIN 8.5CM WHITE 70141", "price": 8.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455201", "description": "RAMEKIN 6PC WHT EMB LRG 70305", "price": 79.95, "category": "KITCHEN ACCESSORIES"},
-            {"sku": "455516", "description": "SERVING BOWL 25CM WHT 70342", "price": 44.95, "category": "BOWLS"},
-            {"sku": "455515", "description": "SERVING BOWL 30CM WHT 70341", "price": 54.95, "category": "BOWLS"},
-            {"sku": "455084", "description": "STORAGE CONT+LID 3PC RND 70927", "price": 79.95, "category": "STORAGE"},
-            {"sku": "455082", "description": "STORAGE CONT+LID 4PC REC 70925", "price": 99.95, "category": "STORAGE"},
-            {"sku": "455086", "description": "STORAGE CONT+LID 4PC RND 70929", "price": 99.95, "category": "STORAGE"},
-            {"sku": "455088", "description": "STORAGE CONT+LID 5PC RND 70931", "price": 119.95, "category": "STORAGE"},
-            {"sku": "449949", "description": "WATER BOTTLE 500ML", "price": 14.95, "category": "BOTTLES & JUGS"},
-            {"sku": "449947", "description": "WATER BOTTLE 1L", "price": 19.95, "category": "BOTTLES & JUGS"},
-            {"sku": "449948", "description": "WATER BOTTLE 750ML", "price": 16.95, "category": "BOTTLES & JUGS"},
-            {"sku": "259", "description": "WATER JUG 1.5L", "price": 34.95, "category": "BOTTLES & JUGS"},
-            {"sku": "269", "description": "WATER JUG 1L", "price": 29.95, "category": "BOTTLES & JUGS"},
-            {"sku": "255", "description": "WATER JUG 2L", "price": 39.95, "category": "BOTTLES & JUGS"},
-            {"sku": "454979", "description": "WATER BOTTLE 3PCE 2L/750/280ML", "price": 62.95, "category": "BOTTLES & JUGS"},
-            {"sku": "455384", "description": "PIE CUPS FOIL 20PCE 71405", "price": 11.95, "category": "OTHER"},
-            {"sku": "455321", "description": "CUPCAKE HOLDER 100'S 72403", "price": 8.95, "category": "OTHER"},
-            {"sku": "455322", "description": "CUPCAKE HOLDER 100'S 72404", "price": 9.5, "category": "OTHER"},
-            {"sku": "455323", "description": "CUPCAKE HOLDER 125'S 72405", "price": 10.95, "category": "OTHER"}
-        ];
+        // Configuration
+        const CONFIG = {
+            GITHUB_REPO: 'https://raw.githubusercontent.com/iamabhih/OZZPromotions/main/JULY%20PROMO.xlsx',
+            GDRIVE_API_KEY: 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA',
+            GDRIVE_FOLDER_ID: '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan'
+        };
 
-        let filteredProducts = [...allProducts];
+        // Global variables
+        let allProducts = [];
+        let filteredProducts = [];
         let currentCategory = 'ALL';
         let sortBy = 'name';
         let sortOrder = 'asc';
+        let imageMapping = {};
 
-        // *** REPLACE THIS FUNCTION WITH THE OUTPUT FROM THE IMAGE MAPPER ***
-        function getImageUrl(sku) {
-            // This function will be replaced with your Google Drive image mapping
-            // For now, using placeholder images with SKU text
-            return `https://via.placeholder.com/300x200/e2e8f0/64748b?text=${sku}`;
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', async function() {
+            try {
+                await initializeCatalog();
+            } catch (error) {
+                console.error('Failed to initialize catalog:', error);
+                showError('Failed to load catalog. Please refresh the page.');
+            }
+        });
+
+        async function initializeCatalog() {
+            updateProgress(10, 1);
             
-            // After running the Image Mapper, replace this entire function with the generated code
-            // It will look like this:
-            /*
-            const imageMapping = {
-                '455641': 'https://drive.google.com/uc?id=YOUR_IMAGE_ID_1',
-                '455642': 'https://drive.google.com/uc?id=YOUR_IMAGE_ID_2',
-                // ... all your SKU mappings
-            };
-            return imageMapping[sku] || `https://via.placeholder.com/300x200/e2e8f0/64748b?text=${sku}`;
-            */
+            // Step 1: Load Excel data from GitHub
+            console.log('🚀 Loading product data from GitHub...');
+            await loadProductsFromGitHub();
+            
+            updateProgress(40, 2);
+            
+            // Step 2: Load images from Google Drive
+            console.log('🖼️ Loading images from Google Drive...');
+            await loadImagesFromGoogleDrive();
+            
+            updateProgress(70, 3);
+            
+            // Step 3: Map images to products
+            console.log('🔗 Mapping images to products...');
+            mapImagesToProducts();
+            
+            updateProgress(90, 4);
+            
+            // Step 4: Initialize UI
+            console.log('🎨 Setting up catalog interface...');
+            setupUI();
+            
+            updateProgress(100, 5);
+            
+            // Hide loading overlay
+            setTimeout(() => {
+                document.getElementById('loadingOverlay').style.display = 'none';
+            }, 1000);
+            
+            console.log('✅ Catalog initialization complete!');
         }
 
-        // Initialize the page
-        document.addEventListener('DOMContentLoaded', function() {
-            console.log(`🎉 OZZ Promotions Catalog loaded with ${allProducts.length} products`);
+        function updateProgress(percent, step) {
+            document.getElementById('progressFill').style.width = percent + '%';
+            
+            // Update step indicators
+            for (let i = 1; i <= 5; i++) {
+                const stepEl = document.getElementById(`step${i}`);
+                if (i <= step) {
+                    stepEl.classList.add('active');
+                } else {
+                    stepEl.classList.remove('active');
+                }
+            }
+        }
+
+        async function loadProductsFromGitHub() {
+            try {
+                const response = await fetch(CONFIG.GITHUB_REPO);
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch Excel file: ${response.status}`);
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer);
+                const worksheet = workbook.Sheets['Sheet1'];
+                const rawData = XLSX.utils.sheet_to_json(worksheet);
+                
+                // Process and categorize products
+                allProducts = rawData
+                    .filter(item => item.SKU && item['PAGE 1'] && item.PRICE !== undefined)
+                    .map(item => {
+                        const description = item['PAGE 1'];
+                        let category = categorizeProduct(description);
+                        
+                        return {
+                            sku: item.SKU.toString(),
+                            description: description,
+                            price: parseFloat(item.PRICE),
+                            category: category
+                        };
+                    });
+                
+                console.log(`✅ Loaded ${allProducts.length} products from GitHub`);
+                
+            } catch (error) {
+                console.error('Error loading products from GitHub:', error);
+                throw new Error('Failed to load product data from GitHub');
+            }
+        }
+
+        function categorizeProduct(description) {
+            const desc = description.toUpperCase();
+            
+            if (desc.includes('BOWL')) return 'BOWLS';
+            if (desc.includes('CUP') || desc.includes('MUG')) return 'CUPS & MUGS';
+            if (desc.includes('PLATE') || desc.includes('DINNER')) return 'PLATES';
+            if (desc.includes('GLASS') || desc.includes('WATER') || desc.includes('WINE') || 
+                desc.includes('TUMBLER') || desc.includes('CARAFFE') || desc.includes('CARAFE')) return 'GLASSWARE';
+            if (desc.includes('ICE CREAM') || desc.includes('GELATO')) return 'ICE CREAM SETS';
+            if (desc.includes('TRAY') || desc.includes('PLATTER')) return 'TRAYS & PLATTERS';
+            if (desc.includes('STORAGE') || desc.includes('CONTAINER') || desc.includes('CONT')) return 'STORAGE';
+            if (desc.includes('KITCHEN') || desc.includes('COOK') || desc.includes('UTENSIL')) return 'KITCHEN TOOLS';
+            if (desc.includes('CUTLERY') || desc.includes('KNIFE') || desc.includes('FORK') || desc.includes('SPOON')) return 'CUTLERY';
+            if (desc.includes('BOTTLE') || desc.includes('JUG') || desc.includes('PITCHER')) return 'BOTTLES & JUGS';
+            if (desc.includes('RAMEKIN') || desc.includes('CASSEROLE') || desc.includes('JAR')) return 'KITCHEN ACCESSORIES';
+            
+            return 'OTHER';
+        }
+
+        async function loadImagesFromGoogleDrive() {
+            try {
+                const images = await fetchAllGoogleDriveImages();
+                console.log(`✅ Found ${images.length} images in Google Drive`);
+                return images;
+            } catch (error) {
+                console.error('Error loading images from Google Drive:', error);
+                console.log('⚠️ Continuing without Google Drive images');
+                return [];
+            }
+        }
+
+        async function fetchAllGoogleDriveImages(pageToken = '') {
+            let allImages = [];
+            
+            try {
+                let url = `https://www.googleapis.com/drive/v3/files?key=${CONFIG.GDRIVE_API_KEY}&q='${CONFIG.GDRIVE_FOLDER_ID}'+in+parents+and+mimeType+contains+'image'&fields=files(id,name,mimeType)&pageSize=1000`;
+                
+                if (pageToken) {
+                    url += `&pageToken=${pageToken}`;
+                }
+
+                const response = await fetch(url);
+                
+                if (!response.ok) {
+                    throw new Error(`Google Drive API error: ${response.status}`);
+                }
+
+                const data = await response.json();
+                
+                if (data.files) {
+                    allImages = allImages.concat(data.files);
+                }
+
+                // Fetch more pages if they exist
+                if (data.nextPageToken) {
+                    const moreImages = await fetchAllGoogleDriveImages(data.nextPageToken);
+                    allImages = allImages.concat(moreImages);
+                }
+
+                return allImages;
+                
+            } catch (error) {
+                console.error('Google Drive API call failed:', error);
+                return [];
+            }
+        }
+
+        function mapImagesToProducts() {
+            imageMapping = {};
+            
+            if (!window.driveImages || window.driveImages.length === 0) {
+                console.log('⚠️ No Google Drive images available for mapping');
+                return;
+            }
+
+            let mappedCount = 0;
+
+            allProducts.forEach(product => {
+                const sku = product.sku;
+                
+                // Find matching images
+                const matches = window.driveImages.filter(img => {
+                    const filename = img.name.toLowerCase();
+                    const skuLower = sku.toLowerCase();
+                    
+                    return filename.includes(skuLower) ||
+                           filename.includes(skuLower.replace(/\D/g, '')) ||
+                           filename.startsWith(skuLower) ||
+                           filename.includes(`-${skuLower}`) ||
+                           filename.includes(`_${skuLower}`) ||
+                           filename.includes(` ${skuLower}`) ||
+                           new RegExp(`\\b${skuLower}\\b`).test(filename);
+                });
+
+                if (matches.length > 0) {
+                    imageMapping[sku] = `https://drive.google.com/uc?id=${matches[0].id}`;
+                    mappedCount++;
+                }
+            });
+
+            console.log(`✅ Mapped ${mappedCount}/${allProducts.length} products to images`);
+        }
+
+        function getImageUrl(sku) {
+            return imageMapping[sku] || `https://via.placeholder.com/300x200/e2e8f0/64748b?text=${sku}`;
+        }
+
+        function setupUI() {
+            filteredProducts = [...allProducts];
             setupCategories();
             displayProducts();
             updateCounts();
-            hideLoadingMessage();
-        });
-
-        function hideLoadingMessage() {
-            document.getElementById('loadingMessage').style.display = 'none';
         }
 
         function setupCategories() {
@@ -546,7 +650,7 @@
                             </span>
                         </div>
                         <div class="text-center mb-3">
-                            <span class="savings-badge">
+                            <span class="text-sm font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">
                                 SAVE R${savings} (${savingsPercent}% OFF!)
                             </span>
                         </div>
@@ -630,15 +734,28 @@
             `;
             
             document.getElementById('productModal').style.display = 'block';
-            document.body.style.overflow = 'hidden'; // Prevent background scrolling
+            document.body.style.overflow = 'hidden';
         }
 
         function closeModal() {
             document.getElementById('productModal').style.display = 'none';
-            document.body.style.overflow = 'auto'; // Restore scrolling
+            document.body.style.overflow = 'auto';
         }
 
-        // Close modal when clicking outside of it
+        function showError(message) {
+            document.getElementById('loadingOverlay').innerHTML = `
+                <div class="text-center">
+                    <div class="text-6xl mb-6">❌</div>
+                    <h1 class="text-4xl font-bold mb-4">Error</h1>
+                    <p class="text-xl mb-8">${message}</p>
+                    <button onclick="location.reload()" class="bg-white text-red-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">
+                        Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        // Global click handlers
         window.onclick = function(event) {
             const modal = document.getElementById('productModal');
             if (event.target == modal) {
@@ -646,14 +763,18 @@
             }
         }
 
-        // Keyboard navigation
         document.addEventListener('keydown', function(event) {
             if (event.key === 'Escape') {
                 closeModal();
             }
         });
 
-        console.log('🎉 OZZ Promotions July 2025 Catalog ready!');
+        // Store images globally for mapping
+        loadImagesFromGoogleDrive().then(images => {
+            window.driveImages = images;
+        });
+
+        console.log('🎉 OZZ Promotions Automated Catalog initialized!');
     </script>
 </body>
 </html>
