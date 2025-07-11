@@ -2,302 +2,320 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>🖼️ OZZ Drive Image Mapper</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🖼️ OZZ Promotions Image Mapper</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="config.js"></script>
-    <style>
-        .log-entry { animation: fadeIn 0.3s ease-out; }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(5px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-    </style>
 </head>
 <body class="bg-gray-100 p-4">
-    <div class="max-w-4xl mx-auto bg-white rounded-lg shadow-lg p-6">
-        <h1 class="text-3xl font-bold text-red-600 mb-4">🖼️ Google Drive Image Mapper</h1>
-        
-        <div class="mb-6 p-4 bg-blue-50 rounded-lg">
-            <h2 class="text-lg font-semibold mb-2">🔑 Configuration</h2>
-            <div class="grid grid-cols-2 gap-2 text-sm">
-                <div>📁 Folder ID: <code class="bg-gray-100 p-1 rounded">${CONFIG.FOLDER_ID}</code></div>
-                <div>🔄 Cache Duration: 24 hours</div>
-                <div>🛒 Products: ${CONFIG.PRODUCT_SKUS.length} SKUs</div>
-            </div>
-        </div>
-
-        <div class="flex gap-4 mb-6">
-            <button id="scanBtn" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700">
-                🚀 Scan Drive Now
-            </button>
-            <button id="clearCacheBtn" class="bg-gray-600 text-white px-6 py-3 rounded-lg hover:bg-gray-700">
-                🧹 Clear Cache
-            </button>
-        </div>
-
-        <div id="progress" class="hidden mb-6">
-            <div class="h-3 bg-gray-200 rounded-full overflow-hidden">
-                <div id="progressBar" class="h-full bg-blue-600 transition-all duration-300" style="width: 0%"></div>
-            </div>
-            <p id="progressText" class="text-center mt-2 text-gray-600">Initializing...</p>
-        </div>
-
-        <div id="results" class="hidden">
-            <h2 class="text-xl font-semibold mb-4">📊 Mapping Results</h2>
-            <div id="stats" class="grid grid-cols-4 gap-4 mb-6"></div>
-            <div id="preview" class="grid grid-cols-2 sm:grid-cols-4 gap-4 mb-6"></div>
+    <div class="max-w-6xl mx-auto">
+        <div class="bg-white rounded-lg shadow-lg p-6">
+            <h1 class="text-3xl font-bold text-red-600 mb-4">🖼️ OZZ Promotions Image Mapper</h1>
+            <p class="text-gray-600 mb-6">Automatically mapping your Google Drive images to product catalog</p>
             
-            <div class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto">
-                <pre id="codeOutput" class="text-sm"></pre>
+            <!-- Auto-filled credentials -->
+            <div class="mb-6 p-4 bg-green-50 rounded-lg border-l-4 border-green-500">
+                <h2 class="text-lg font-semibold text-green-800 mb-2">✅ Credentials Loaded</h2>
+                <div class="text-sm text-green-700">
+                    <p>📁 Folder: Ikhaya/OzzSA</p>
+                    <p>🔑 API Key: Configured</p>
+                </div>
             </div>
-        </div>
 
-        <div class="mt-6">
-            <h3 class="text-lg font-semibold mb-2">📝 Activity Log</h3>
-            <div id="log" class="bg-gray-100 p-4 rounded-lg h-64 overflow-y-auto font-mono text-sm"></div>
+            <!-- Scan Button -->
+            <div class="text-center mb-6">
+                <button onclick="startAutoMapping()" id="scanBtn" 
+                        class="bg-red-600 text-white px-8 py-4 rounded-lg hover:bg-red-700 transition-colors font-bold text-lg shadow-lg">
+                    🚀 Generate Image Mapping Code
+                </button>
+            </div>
+
+            <!-- Progress -->
+            <div id="progress" class="hidden mb-6">
+                <div class="bg-gray-200 rounded-full h-4 mb-2">
+                    <div id="progressBar" class="bg-red-600 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p id="progressText" class="text-center text-gray-600">Starting scan...</p>
+            </div>
+
+            <!-- Results Preview -->
+            <div id="results" class="hidden mb-6">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📸 Image Mapping Preview</h2>
+                <div id="imagePreview" class="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4 mb-6">
+                    <!-- Image previews will be shown here -->
+                </div>
+                <div id="stats" class="bg-blue-50 p-4 rounded-lg">
+                    <!-- Statistics will be shown here -->
+                </div>
+            </div>
+
+            <!-- Generated Code -->
+            <div id="codeSection" class="hidden">
+                <h2 class="text-xl font-semibold text-gray-800 mb-4">📋 Generated Code for Your Catalog</h2>
+                <p class="text-gray-600 mb-4">Copy this code and paste it into your main catalog HTML file:</p>
+                
+                <div class="bg-gray-900 text-green-400 p-4 rounded-lg overflow-x-auto mb-4">
+                    <pre id="generatedCode" class="text-sm"></pre>
+                </div>
+                
+                <div class="flex gap-4">
+                    <button onclick="copyCode()" class="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+                        📋 Copy Code
+                    </button>
+                    <button onclick="downloadCode()" class="bg-blue-600 text-white px-6 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                        💾 Download as File
+                    </button>
+                </div>
+            </div>
+
+            <!-- Log -->
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">📝 Process Log</h3>
+                <div id="log" class="bg-gray-900 text-green-400 p-4 rounded-lg h-48 overflow-y-auto font-mono text-sm">
+                    🎯 Ready to scan your Google Drive folder...<br>
+                    📁 Target folder: Ikhaya/OzzSA<br>
+                    🔍 Will search for images matching your 236 product SKUs<br>
+                    ▶️ Click "Generate Image Mapping Code" to start<br>
+                </div>
+            </div>
         </div>
     </div>
 
     <script>
+        // Your credentials (pre-filled)
+        const API_KEY = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
+        const FOLDER_ID = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
+
+        // All your product SKUs
+        const PRODUCT_SKUS = [
+            "455641", "455642", "455639", "455650", "455644", "455643", "455640", "455649", 
+            "455634", "455636", "455647", "455648", "444984", "4161", "455080", "454437", 
+            "455428", "455427", "455426", "453704", "440728", "453261", "446223", "444971", 
+            "444970", "444974", "444973", "455646", "10836", "304", "314", "307", "10833", 
+            "14996", "31735", "31750", "31754", "31755", "22951", "31753", "318", "317", 
+            "319", "320", "217", "221", "136", "234", "23777", "31756", "237", "451170", 
+            "454978", "455512", "451169", "26926", "455407", "455406", "455408", "455409", 
+            "27004", "455410", "455513", "26927", "27005", "455517", "455645", "455637", 
+            "455638", "455635", "26918", "26912", "26913", "449950", "195", "206", "455009", 
+            "455008", "455200", "455012", "455011", "455010", "455013", "455035", "455034", 
+            "455003", "455203", "455204", "455205", "455017", "455018", "455019", "455022", 
+            "455023", "455036", "455002", "455001", "455000", "455037", "455514", "455510", 
+            "455509", "455511", "455508", "455006", "455005", "455007", "455201", "455516", 
+            "455515", "455084", "455082", "455086", "455088", "449949", "449947", "449948", 
+            "259", "269", "255", "454979", "455384", "455321", "455322", "455323"
+        ];
+
+        let allImages = [];
         let imageMapping = {};
-        let isScanning = false;
 
-        // DOM elements
-        const el = {
-            scanBtn: document.getElementById('scanBtn'),
-            clearCacheBtn: document.getElementById('clearCacheBtn'),
-            progress: document.getElementById('progress'),
-            progressBar: document.getElementById('progressBar'),
-            progressText: document.getElementById('progressText'),
-            results: document.getElementById('results'),
-            stats: document.getElementById('stats'),
-            preview: document.getElementById('preview'),
-            codeOutput: document.getElementById('codeOutput'),
-            log: document.getElementById('log')
-        };
-
-        // Logging system
-        function log(message, type = 'info') {
-            const colors = {
-                info: 'text-gray-800',
-                success: 'text-green-600',
-                warning: 'text-yellow-600',
-                error: 'text-red-600'
-            };
-            const entry = document.createElement('div');
-            entry.className = `log-entry ${colors[type]}`;
-            entry.innerHTML = `[${new Date().toLocaleTimeString()}] ${message}`;
-            el.log.appendChild(entry);
-            el.log.scrollTop = el.log.scrollHeight;
+        function log(message) {
+            const logEl = document.getElementById('log');
+            logEl.innerHTML += message + '<br>';
+            logEl.scrollTop = logEl.scrollHeight;
         }
 
-        // Progress tracking
-        function updateProgress(percent, message) {
-            el.progress.classList.remove('hidden');
-            el.progressBar.style.width = `${percent}%`;
-            el.progressText.textContent = message;
+        function updateProgress(percent, text) {
+            document.getElementById('progress').classList.remove('hidden');
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = text;
         }
 
-        // Cache management
-        function loadCache() {
-            try {
-                const cached = localStorage.getItem(CONFIG.CACHE_KEY);
-                if (!cached) return null;
-                
-                const { data, timestamp } = JSON.parse(cached);
-                if (Date.now() - timestamp < CONFIG.CACHE_TTL) {
-                    return data;
-                }
-            } catch (e) {
-                log('Failed to load cache', 'error');
-            }
-            return null;
-        }
-
-        function saveCache(data) {
-            const cacheData = {
-                data,
-                timestamp: Date.now()
-            };
-            localStorage.setItem(CONFIG.CACHE_KEY, JSON.stringify(cacheData));
-        }
-
-        function clearCache() {
-            localStorage.removeItem(CONFIG.CACHE_KEY);
-            log('Cache cleared successfully', 'success');
-        }
-
-        // Drive API functions
-        async function fetchDriveImages(pageToken = '') {
-            const url = new URL('https://www.googleapis.com/drive/v3/files');
-            url.searchParams.append('key', CONFIG.API_KEY);
-            url.searchParams.append('q', `'${CONFIG.FOLDER_ID}' in parents and mimeType contains 'image/'`);
-            url.searchParams.append('fields', 'files(id,name,thumbnailLink,webViewLink),nextPageToken');
-            url.searchParams.append('pageSize', 1000);
-            if (pageToken) url.searchParams.append('pageToken', pageToken);
-
-            const response = await fetch(url);
-            if (!response.ok) throw new Error(`API error: ${response.status}`);
-            return await response.json();
-        }
-
-        // Image matching algorithm
-        function findBestMatch(images, sku) {
-            const skuLower = sku.toLowerCase();
-            const skuNumeric = skuLower.replace(/\D/g, '');
-            
-            return images.reduce((best, img) => {
-                const fileName = img.name.toLowerCase();
-                let score = 0;
-                
-                // Exact match
-                if (fileName === skuLower || fileName === `${skuLower}.jpg`) score = 100;
-                // Starts with SKU
-                else if (fileName.startsWith(skuLower)) score = 80;
-                // Contains SKU with separator
-                else if (fileName.includes(`_${skuLower}`) || fileName.includes(`-${skuLower}`)) score = 60;
-                // Contains numeric SKU
-                else if (fileName.includes(skuNumeric)) score = 40;
-                
-                return score > best.score ? { ...img, score } : best;
-            }, { score: 0 }).score > 0;
-        }
-
-        // Main scanning function
-        async function scanDrive() {
-            if (isScanning) return;
-            isScanning = true;
-            el.scanBtn.disabled = true;
-            el.scanBtn.textContent = '🔄 Scanning...';
+        async function startAutoMapping() {
+            document.getElementById('scanBtn').disabled = true;
+            document.getElementById('scanBtn').textContent = '🔄 Scanning...';
             
             try {
-                log('Starting Drive scan...');
-                updateProgress(5, 'Initializing scan');
+                log('🚀 Starting automated image mapping...');
+                updateProgress(10, 'Connecting to Google Drive...');
                 
-                // Check cache first
-                const cached = loadCache();
-                if (cached) {
-                    imageMapping = cached;
-                    showResults();
-                    log('Loaded from cache', 'success');
-                    return;
-                }
+                await fetchAllImages();
+                updateProgress(60, 'Mapping images to SKUs...');
                 
-                // Fetch all images
-                let allImages = [];
-                let nextPageToken = '';
-                let page = 0;
+                mapImagesToSKUs();
+                updateProgress(80, 'Generating code...');
                 
-                do {
-                    page++;
-                    const data = await fetchDriveImages(nextPageToken);
-                    allImages = [...allImages, ...(data.files || [])];
-                    nextPageToken = data.nextPageToken || '';
-                    
-                    const progress = Math.min(50, 5 + (page * 45));
-                    updateProgress(progress, `Fetched ${allImages.length} images...`);
-                    log(`Page ${page}: Found ${data.files?.length || 0} images`);
-                } while (nextPageToken && page < 10);
+                displayResults();
+                generateMappingCode();
+                updateProgress(100, 'Complete! ✅');
                 
-                // Map images to SKUs
-                imageMapping = {};
-                let matched = 0;
-                
-                updateProgress(60, 'Matching images to products');
-                
-                for (const sku of CONFIG.PRODUCT_SKUS) {
-                    const match = findBestMatch(allImages, sku);
-                    if (match) {
-                        imageMapping[sku] = {
-                            url: `https://drive.google.com/uc?id=${match.id}`,
-                            thumbnail: match.thumbnailLink,
-                            filename: match.name
-                        };
-                        matched++;
-                        log(`✅ ${sku} → ${match.name} (score: ${match.score})`, 'success');
-                    } else {
-                        log(`⚠️ No match for ${sku}`, 'warning');
-                    }
-                    
-                    updateProgress(60 + (40 * matched / CONFIG.PRODUCT_SKUS.length), 
-                        `Matched ${matched}/${CONFIG.PRODUCT_SKUS.length} SKUs`);
-                }
-                
-                // Save results
-                saveCache(imageMapping);
-                showResults();
-                log(`Scan complete! ${matched} products matched`, 'success');
+                log('🎉 Image mapping completed successfully!');
                 
             } catch (error) {
-                log(`❌ Error: ${error.message}`, 'error');
+                log(`❌ Error: ${error.message}`);
+                console.error(error);
             } finally {
-                isScanning = false;
-                el.scanBtn.disabled = false;
-                el.scanBtn.textContent = '🔄 Scan Again';
+                document.getElementById('scanBtn').disabled = false;
+                document.getElementById('scanBtn').textContent = '🔄 Scan Again';
             }
         }
 
-        // Display results
-        function showResults() {
-            const matched = Object.keys(imageMapping).length;
-            const coverage = Math.round((matched / CONFIG.PRODUCT_SKUS.length) * 100);
+        async function fetchAllImages(pageToken = '') {
+            let url = `https://www.googleapis.com/drive/v3/files?key=${API_KEY}&q='${FOLDER_ID}'+in+parents+and+mimeType+contains+'image'&fields=files(id,name,mimeType,webViewLink)&pageSize=1000`;
             
-            el.stats.innerHTML = `
-                <div class="bg-green-50 p-4 rounded-lg text-center">
-                    <div class="text-2xl font-bold">${matched}</div>
-                    <div class="text-sm">Products Mapped</div>
-                </div>
-                <div class="bg-blue-50 p-4 rounded-lg text-center">
-                    <div class="text-2xl font-bold">${CONFIG.PRODUCT_SKUS.length}</div>
-                    <div class="text-sm">Total Products</div>
-                </div>
-                <div class="bg-purple-50 p-4 rounded-lg text-center">
-                    <div class="text-2xl font-bold">${coverage}%</div>
-                    <div class="text-sm">Coverage</div>
-                </div>
-                <div class="bg-yellow-50 p-4 rounded-lg text-center">
-                    <div class="text-2xl font-bold">${new Date().toLocaleDateString()}</div>
-                    <div class="text-sm">Last Scan</div>
-                </div>
-            `;
+            if (pageToken) {
+                url += `&pageToken=${pageToken}`;
+            }
+
+            log(`🔍 Fetching images from Google Drive...`);
+            updateProgress(20, 'Fetching images from Google Drive...');
+
+            const response = await fetch(url);
             
-            // Show preview of first 8 matches
-            const previewItems = Object.entries(imageMapping).slice(0, 8).map(([sku, data]) => `
-                <div class="border rounded-lg p-2 text-center">
-                    <img src="${data.thumbnail || data.url}" 
-                         alt="${sku}" 
-                         class="w-full h-20 object-contain mb-2"
-                         onerror="this.src='https://via.placeholder.com/150'">
+            if (!response.ok) {
+                throw new Error(`Google Drive API error: ${response.status} - ${response.statusText}`);
+            }
+
+            const data = await response.json();
+            
+            if (!data.files) {
+                throw new Error('No files found in the folder');
+            }
+
+            allImages = allImages.concat(data.files);
+            log(`📸 Found ${data.files.length} images (Total: ${allImages.length})`);
+            updateProgress(40, `Found ${allImages.length} images...`);
+
+            // Fetch more pages if they exist
+            if (data.nextPageToken) {
+                await fetchAllImages(data.nextPageToken);
+            }
+        }
+
+        function mapImagesToSKUs() {
+            log('🔗 Mapping images to product SKUs...');
+            imageMapping = {};
+            let matchCount = 0;
+
+            PRODUCT_SKUS.forEach(sku => {
+                // Find images that match this SKU
+                const matches = allImages.filter(img => {
+                    const filename = img.name.toLowerCase();
+                    const skuLower = sku.toLowerCase();
+                    
+                    return filename.includes(skuLower) ||
+                           filename.includes(skuLower.replace(/\D/g, '')) ||
+                           filename.startsWith(skuLower) ||
+                           filename.includes(`-${skuLower}`) ||
+                           filename.includes(`_${skuLower}`) ||
+                           filename.includes(` ${skuLower}`) ||
+                           new RegExp(`\\b${skuLower}\\b`).test(filename);
+                });
+
+                if (matches.length > 0) {
+                    const bestMatch = matches[0]; // Use first match
+                    imageMapping[sku] = {
+                        url: `https://drive.google.com/uc?id=${bestMatch.id}`,
+                        filename: bestMatch.name,
+                        id: bestMatch.id
+                    };
+                    matchCount++;
+                    log(`✅ ${sku} → ${bestMatch.name}`);
+                } else {
+                    log(`❌ No image found for SKU: ${sku}`);
+                }
+            });
+
+            log(`🎯 Mapping complete: ${matchCount}/${PRODUCT_SKUS.length} products have images`);
+        }
+
+        function displayResults() {
+            const resultsEl = document.getElementById('results');
+            const previewEl = document.getElementById('imagePreview');
+            const statsEl = document.getElementById('stats');
+            
+            resultsEl.classList.remove('hidden');
+
+            // Show image previews (first 12)
+            const mappedEntries = Object.entries(imageMapping).slice(0, 12);
+            previewEl.innerHTML = mappedEntries.map(([sku, data]) => `
+                <div class="border rounded-lg p-2 bg-gray-50 text-center">
+                    <img src="${data.url}" alt="SKU ${sku}" class="w-full h-20 object-cover rounded mb-2" 
+                         onerror="this.src='https://via.placeholder.com/80x80/ddd/999?text=Error'">
                     <div class="text-xs font-semibold">${sku}</div>
                     <div class="text-xs text-gray-500 truncate">${data.filename}</div>
                 </div>
             `).join('');
-            
-            el.preview.innerHTML = previewItems;
-            
-            // Generate code output
-            const code = `// Auto-generated image mapping
-// ${new Date().toLocaleString()}
-// ${matched}/${CONFIG.PRODUCT_SKUS.length} products matched
 
-const IMAGE_MAPPING = {
-${Object.entries(imageMapping).map(([sku, data]) => `    '${sku}': '${data.url}',`).join('\n')}
-};
+            // Show statistics
+            const mappedCount = Object.keys(imageMapping).length;
+            const missingCount = PRODUCT_SKUS.length - mappedCount;
+            const percentage = Math.round((mappedCount / PRODUCT_SKUS.length) * 100);
 
-export default IMAGE_MAPPING;`;
-            
-            el.codeOutput.textContent = code;
-            el.results.classList.remove('hidden');
+            statsEl.innerHTML = `
+                <div class="grid grid-cols-2 md:grid-cols-4 gap-4 text-center">
+                    <div>
+                        <div class="text-2xl font-bold text-green-600">${mappedCount}</div>
+                        <div class="text-sm text-gray-600">Images Mapped</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-red-600">${missingCount}</div>
+                        <div class="text-sm text-gray-600">Missing Images</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-blue-600">${allImages.length}</div>
+                        <div class="text-sm text-gray-600">Total Images</div>
+                    </div>
+                    <div>
+                        <div class="text-2xl font-bold text-purple-600">${percentage}%</div>
+                        <div class="text-sm text-gray-600">Coverage</div>
+                    </div>
+                </div>
+            `;
         }
 
-        // Event listeners
-        el.scanBtn.addEventListener('click', scanDrive);
-        el.clearCacheBtn.addEventListener('click', clearCache);
+        function generateMappingCode() {
+            const codeSection = document.getElementById('codeSection');
+            const codeEl = document.getElementById('generatedCode');
+            
+            const mappingEntries = Object.entries(imageMapping)
+                .map(([sku, data]) => `        '${sku}': '${data.url}',`)
+                .join('\n');
 
-        // Initialize
-        log('Ready to scan Google Drive folder');
-        log(`Target folder: ${CONFIG.FOLDER_ID}`);
-        log(`Will match ${CONFIG.PRODUCT_SKUS.length} product SKUs`);
+            const code = `// Auto-generated Google Drive image mapping for OZZ Promotions
+// Generated on: ${new Date().toLocaleString()}
+// Mapped ${Object.keys(imageMapping).length}/${PRODUCT_SKUS.length} products
+
+function getImageUrl(sku) {
+    const imageMapping = {
+${mappingEntries}
+    };
+    
+    return imageMapping[sku] || \`https://via.placeholder.com/300x200/e2e8f0/64748b?text=\${sku}\`;
+}`;
+
+            codeEl.textContent = code;
+            codeSection.classList.remove('hidden');
+            
+            log('📋 JavaScript code generated and ready to copy!');
+        }
+
+        function copyCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            navigator.clipboard.writeText(code).then(() => {
+                alert('✅ Code copied to clipboard! Paste it into your catalog HTML file.');
+            }).catch(() => {
+                // Fallback
+                const textArea = document.createElement('textarea');
+                textArea.value = code;
+                document.body.appendChild(textArea);
+                textArea.select();
+                document.execCommand('copy');
+                document.body.removeChild(textArea);
+                alert('✅ Code copied to clipboard!');
+            });
+        }
+
+        function downloadCode() {
+            const code = document.getElementById('generatedCode').textContent;
+            const blob = new Blob([code], { type: 'text/javascript' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'ozz-image-mapping.js';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+        }
     </script>
 </body>
 </html>
