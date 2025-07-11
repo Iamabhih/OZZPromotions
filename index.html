@@ -17,6 +17,8 @@
     <meta property="og:type" content="website">
     
     <style>
+        body { visibility: hidden; } /* Prevent flash of unstyled content */
+        
         .animate-pulse {
             animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
         }
@@ -463,8 +465,16 @@
         </div>
 
         <!-- Products Grid -->
-        <div class="product-grid" id="productsGrid">
-            <!-- Products will be loaded here -->
+        <div id="productsGrid">
+            <!-- Initial loading message -->
+            <div class="text-center py-16">
+                <div class="text-4xl mb-4">🎉</div>
+                <p class="text-xl text-gray-700 mb-2">Loading promotional deals...</p>
+                <p class="text-gray-500">July 2025 special offers coming right up!</p>
+                <div class="animate-pulse mt-4">
+                    <div class="w-16 h-2 bg-red-200 rounded mx-auto"></div>
+                </div>
+            </div>
         </div>
 
         <!-- Pagination Controls -->
@@ -872,47 +882,107 @@
             PRODUCTS_PER_PAGE: 20
         };
 
-        // Initialize the application with seamless loading
+        // Initialize the application with immediate content display
         document.addEventListener('DOMContentLoaded', function() {
-            // Start loading immediately without showing overlay
+            // Show layout immediately
+            document.body.style.visibility = 'visible';
+            
+            // Start loading content immediately
             initializeCatalog();
         });
 
         async function initializeCatalog() {
             try {
-                // Silent background initialization for seamless customer experience
-                console.log('🚀 Initializing catalog in background...');
+                console.log('🚀 Loading catalog content immediately...');
                 
-                // Optional: Show very subtle loading (can be removed for completely seamless experience)
-                // showSimpleLoading();
-                
-                // Step 1: Load promotional products
+                // PHASE 1: Load products and show catalog immediately
                 await loadProductsFromExcel();
-                
-                // Step 2: Prepare product images
-                driveImageManager = new DriveImageManager();
-                const success = await driveImageManager.initializeGAPI();
-                
-                // Step 3: Organize catalog
-                if (success) {
-                    await driveImageManager.scanFolderForImages();
-                    imageSystemReady = true;
-                } else {
-                    console.warn('⚠️ Image system initialization failed, using fallback');
-                    imageSystemReady = false;
-                }
-                
-                // Step 4: Set up interface
                 setupUI();
+                displayProducts(); // Show products with placeholders immediately
+                updateCounts();
                 
-                // hideSimpleLoading();
-                console.log('✅ Catalog ready - seamless customer experience');
+                console.log('✅ Catalog content loaded - customers can browse immediately');
+                
+                // PHASE 2: Load images in background (non-blocking)
+                loadImagesInBackground();
                 
             } catch (error) {
                 console.error('Failed to initialize catalog:', error);
-                // Show error in a customer-friendly way
                 showError('Unable to load promotional catalog. Please refresh the page or contact us at +27 31 332 7192');
             }
+        }
+
+        async function loadImagesInBackground() {
+            try {
+                console.log('📸 Loading images in background...');
+                
+                // Initialize Google Drive API in background
+                driveImageManager = new DriveImageManager();
+                const success = await driveImageManager.initializeGAPI();
+                
+                if (success) {
+                    console.log('🗂️ Scanning for product images...');
+                    await driveImageManager.scanFolderForImages();
+                    imageSystemReady = true;
+                    
+                    // Update images smoothly without disrupting user experience
+                    console.log('🎨 Updating products with real images...');
+                    updateProductImages(); // Update existing images
+                    updateCounts(); // Update counts with image info
+                    
+                    // Add subtle notification that images have loaded
+                    showImageLoadedNotification();
+                    
+                    console.log('✅ All images loaded and ready');
+                } else {
+                    console.warn('⚠️ Image system failed, using placeholders');
+                    imageSystemReady = false;
+                }
+            } catch (error) {
+                console.warn('📸 Image loading failed, using placeholders:', error);
+                imageSystemReady = false;
+            }
+        }
+
+        function showImageLoadedNotification() {
+            // Create a subtle notification that images have loaded
+            const notification = document.createElement('div');
+            notification.style.cssText = `
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background: #10b981;
+                color: white;
+                padding: 12px 20px;
+                border-radius: 8px;
+                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                z-index: 1000;
+                font-size: 14px;
+                font-weight: 500;
+                opacity: 0;
+                transform: translateX(100%);
+                transition: all 0.3s ease;
+            `;
+            
+            notification.innerHTML = '📸 Product images loaded!';
+            document.body.appendChild(notification);
+            
+            // Animate in
+            setTimeout(() => {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            // Animate out and remove
+            setTimeout(() => {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(() => {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
         }
 
         // Simple loading state (hidden from customer view)
@@ -986,7 +1056,8 @@
 
         function getImageUrl(sku) {
             if (!imageSystemReady || !driveImageManager) {
-                return generatePlaceholderSVG(sku, 'Loading...');
+                // Show professional placeholder while images load
+                return generatePlaceholderSVG(sku, 'Product Image');
             }
             
             const imageData = driveImageManager.getProductImage(sku);
@@ -995,26 +1066,44 @@
                 return imageData.url;
             }
             
-            return generatePlaceholderSVG(sku, 'No image');
+            // Show "no image" placeholder for products without images
+            return generatePlaceholderSVG(sku, 'No Image');
         }
 
         function generatePlaceholderSVG(sku, message = 'Loading...') {
-            const color = message.includes('Loading') ? '#f59e0b' : '#10b981';
-            const icon = message.includes('Loading') ? '💾' : '📱';
+            const isLoading = message.includes('Product Image');
+            const color = isLoading ? '#3b82f6' : '#9ca3af';
+            const bgColor = isLoading ? '#dbeafe' : '#f3f4f6';
+            const icon = isLoading ? '📦' : '🖼️';
             
             return `data:image/svg+xml,${encodeURIComponent(`
-                <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="200" height="200" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
-                    <text x="100" y="60" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#1e40af">
-                        ${sku}
+                <svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <linearGradient id="grad${sku.replace(/[^a-zA-Z0-9]/g, '')}" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" style="stop-color:${bgColor};stop-opacity:1" />
+                            <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1" />
+                        </linearGradient>
+                    </defs>
+                    <rect width="300" height="200" fill="url(#grad${sku.replace(/[^a-zA-Z0-9]/g, '')})" stroke="${color}" stroke-width="2" rx="8"/>
+                    <circle cx="150" cy="70" r="20" fill="${color}" opacity="0.1"/>
+                    <text x="150" y="77" text-anchor="middle" font-family="Arial" font-size="20" fill="${color}">${icon}</text>
+                    <text x="150" y="105" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="${color}">
+                        SKU: ${sku}
                     </text>
-                    <circle cx="100" cy="110" r="12" fill="${color}" />
-                    <text x="100" y="114" text-anchor="middle" font-family="Arial" font-size="12" fill="white">${icon}</text>
-                    <text x="100" y="135" text-anchor="middle" font-family="Arial" font-size="9" fill="${color}" font-weight="bold">
-                        ${message.toUpperCase()}
+                    <text x="150" y="125" text-anchor="middle" font-family="Arial" font-size="12" fill="${color}" opacity="0.8">
+                        ${message}
                     </text>
-                    <text x="100" y="155" text-anchor="middle" font-family="Arial" font-size="8" fill="#6b7280">
-                        OZZ Promo
+                    ${isLoading ? `
+                        <circle cx="150" cy="145" r="8" fill="none" stroke="${color}" stroke-width="2" opacity="0.3"/>
+                        <circle cx="150" cy="145" r="8" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="8 4" opacity="0.8">
+                            <animateTransform attributeName="transform" type="rotate" values="0 150 145;360 150 145" dur="1s" repeatCount="indefinite"/>
+                        </circle>
+                        <text x="150" y="170" text-anchor="middle" font-family="Arial" font-size="10" fill="${color}" opacity="0.6">
+                            Loading images...
+                        </text>
+                    ` : ''}
+                    <text x="150" y="190" text-anchor="middle" font-family="Arial" font-size="9" fill="${color}" opacity="0.4">
+                        OZZ Cash & Carry
                     </text>
                 </svg>
             `)}`;
@@ -1200,11 +1289,13 @@
             
             if (filteredProducts.length === 0) {
                 grid.innerHTML = '';
+                grid.className = ''; // Remove grid class when empty
                 noResults.classList.remove('hidden');
                 return;
             }
             
             noResults.classList.add('hidden');
+            grid.className = 'product-grid'; // Apply grid layout
             
             const startIndex = (currentPage - 1) * productsPerPage;
             const endIndex = Math.min(startIndex + productsPerPage, filteredProducts.length);
@@ -1224,7 +1315,7 @@
                              'class="product-image" id="img-' + cardId + '" ' +
                              'onload="handleImageLoad(\'' + cardId + '\')" ' +
                              'onerror="handleImageError(\'' + cardId + '\', \'' + product.sku + '\')">' +
-                        '<div class="image-loading" id="loading-' + cardId + '">' +
+                        '<div class="image-loading" id="loading-' + cardId + '" style="display: none;">' +
                             '<div class="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400 mx-auto mb-2"></div>' +
                             'Loading...' +
                         '</div>' +
@@ -1267,7 +1358,10 @@
 
         function updateCounts() {
             const totalProducts = allProducts.length;
-            document.getElementById('product-count').textContent = `${totalProducts} promotional items available`;
+            const imageCount = driveImageManager && imageSystemReady ? driveImageManager.getStats().mappedProducts : 0;
+            const imageStatus = imageSystemReady ? ` • ${imageCount} with photos` : ' • Loading images...';
+            
+            document.getElementById('product-count').textContent = `${totalProducts} promotional items available${imageStatus}`;
             document.getElementById('filteredCount').textContent = filteredProducts.length;
             
             const startItem = (currentPage - 1) * productsPerPage + 1;
@@ -1279,6 +1373,27 @@
             } else {
                 pageInfoEl.textContent = `Page ${currentPage} of ${totalPages} • Showing ${startItem}-${endItem} of ${filteredProducts.length} products`;
             }
+        }
+
+        // Update individual product images as they become available
+        function updateProductImages() {
+            if (!imageSystemReady || !driveImageManager) return;
+            
+            // Update all visible product images
+            const productImages = document.querySelectorAll('.product-image');
+            productImages.forEach(img => {
+                const cardId = img.id.replace('img-', '');
+                const sku = cardId.replace('card-', '').replace(/[^a-zA-Z0-9]/g, '');
+                
+                // Find the actual SKU from the product data
+                const product = allProducts.find(p => p.sku.replace(/[^a-zA-Z0-9]/g, '') === sku);
+                if (product) {
+                    const newImageUrl = getImageUrl(product.sku);
+                    if (img.src !== newImageUrl) {
+                        img.src = newImageUrl;
+                    }
+                }
+            });
         }
 
         function showProductDetails(sku) {
@@ -1364,7 +1479,11 @@
         }
 
         async function refreshImageCache() {
-            if (!driveImageManager) return;
+            if (!driveImageManager) {
+                // If image system hasn't loaded yet, just restart the background loading
+                loadImagesInBackground();
+                return;
+            }
             
             const refreshBtn = document.getElementById('refreshBtn');
             refreshBtn.innerHTML = '🔄 Updating...';
@@ -1372,10 +1491,12 @@
             
             try {
                 await driveImageManager.forceRefresh();
+                updateProductImages(); // Update existing images smoothly
                 updateCounts();
-                displayProducts();
                 
                 refreshBtn.innerHTML = '✅ Updated!';
+                showImageLoadedNotification();
+                
                 setTimeout(() => {
                     refreshBtn.innerHTML = '🔄 Refresh Images';
                     refreshBtn.disabled = false;
@@ -1385,6 +1506,52 @@
                 refreshBtn.innerHTML = '🔄 Refresh Images';
                 refreshBtn.disabled = false;
             }
+        }
+
+        // Ensure filtering and searching work immediately
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            sortBy = document.getElementById('sortBy').value;
+            
+            filteredProducts = allProducts.filter(function(product) {
+                const matchesSearch = product.description.toLowerCase().indexOf(searchTerm) !== -1 || 
+                                    product.sku.toLowerCase().indexOf(searchTerm) !== -1;
+                const matchesCategory = currentCategory === 'ALL' || product.category === currentCategory;
+                return matchesSearch && matchesCategory;
+            });
+
+            filteredProducts.sort(function(a, b) {
+                let aVal, bVal;
+                
+                switch (sortBy) {
+                    case 'price':
+                        aVal = a.price;
+                        bVal = b.price;
+                        break;
+                    case 'category':
+                        aVal = a.category;
+                        bVal = b.category;
+                        break;
+                    default:
+                        aVal = a.description;
+                        bVal = b.description;
+                }
+
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                if (sortOrder === 'asc') {
+                    return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+                } else {
+                    return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+                }
+            });
+            
+            updatePagination();
+            displayProducts(); // This will show content immediately, images will update as available
+            updateCounts();
         }
 
         function showError(message) {
