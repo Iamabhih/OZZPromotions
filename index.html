@@ -3,19 +3,71 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎉 July 2025 Promotional Catalog - OZZ Promotions</title>
+    <title>🎉 July 2025 Promotional Catalog - OZZ Promotions | Premium Home & Kitchen Products</title>
     <link rel="icon" href="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" type="image/png">
+    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>" type="image/svg+xml">
     
     <script src="https://cdn.tailwindcss.com?plugins=forms,typography,aspect-ratio,line-clamp"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
+    <meta name="description" content="July 2025 Promotional Catalog - Exclusive deals on premium home & kitchen products from OZZ Promotions">
+    <meta name="keywords" content="OZZ Promotions, July 2025, promo, deals, kitchen, home, South Africa">
+    <meta property="og:title" content="July 2025 Promotional Catalog - OZZ Promotions">
+    <meta property="og:description" content="Exclusive promotional deals on premium home & kitchen products">
+    <meta property="og:type" content="website">
+    
     <style>
+        .animate-pulse {
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+        @keyframes pulse {
+            0%, 100% { opacity: 1; }
+            50% { opacity: .5; }
+        }
+        .animate-spin {
+            animation: spin 1s linear infinite;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
         .product-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
-        
+        @media (max-width: 640px) {
+            .product-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 1rem;
+            }
+            .product-image-container {
+                height: 180px;
+            }
+            .modal-image-container {
+                height: 300px;
+            }
+        }
+        @media (max-width: 480px) {
+            .product-grid {
+                grid-template-columns: 1fr 1fr;
+                gap: 0.75rem;
+            }
+            .product-image-container {
+                height: 160px;
+            }
+            .modal-image-container {
+                height: 250px;
+            }
+            .image-controls {
+                opacity: 1; /* Always show on mobile */
+            }
+            .image-control-btn {
+                width: 28px;
+                height: 28px;
+                font-size: 12px;
+            }
+        }
         .product-card {
             background: white;
             border-radius: 12px;
@@ -23,24 +75,19 @@
             overflow: hidden;
             transition: all 0.3s ease;
         }
-        
         .product-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+            border: 2px solid #fecaca;
         }
-        
-        /* Enhanced Image Container Styles */
-        .image-container {
+        .product-image-container {
             position: relative;
             width: 100%;
             height: 200px;
-            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%);
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
+            border-radius: 8px 8px 0 0;
         }
-        
         .product-image {
             width: 100%;
             height: 100%;
@@ -49,42 +96,33 @@
             transition: all 0.3s ease;
             background: white;
         }
-        
         .product-image.contain-mode {
             object-fit: contain;
             padding: 8px;
-            background: #f8fafc;
+            background: #fafafa;
         }
-        
-        .image-overlay {
+        .product-image:hover {
+            transform: scale(1.05);
+        }
+        .image-controls {
             position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: rgba(0,0,0,0.5);
+            top: 8px;
+            right: 8px;
             display: flex;
-            align-items: center;
-            justify-content: center;
+            gap: 4px;
             opacity: 0;
             transition: opacity 0.3s ease;
         }
-        
-        .image-container:hover .image-overlay {
+        .product-card:hover .image-controls {
             opacity: 1;
         }
-        
-        .image-controls {
-            display: flex;
-            gap: 8px;
-        }
-        
         .image-control-btn {
-            background: rgba(255,255,255,0.9);
+            background: rgba(0, 0, 0, 0.7);
+            color: white;
             border: none;
+            width: 32px;
+            height: 32px;
             border-radius: 50%;
-            width: 36px;
-            height: 36px;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -92,127 +130,284 @@
             transition: all 0.2s ease;
             font-size: 14px;
         }
-        
         .image-control-btn:hover {
-            background: white;
+            background: rgba(0, 0, 0, 0.9);
             transform: scale(1.1);
         }
-        
-        .loading-shimmer {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: shimmer 1.5s infinite;
-        }
-        
-        @keyframes shimmer {
-            0% { background-position: -200% 0; }
-            100% { background-position: 200% 0; }
-        }
-        
-        .fast-load-indicator {
-            position: fixed;
-            top: 20px;
-            right: 20px;
-            background: rgba(0,0,0,0.8);
-            color: white;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 12px;
-            z-index: 1000;
-            opacity: 0;
-            transition: opacity 0.3s ease;
-        }
-        
-        .fast-load-indicator.show {
-            opacity: 1;
-        }
-        
-        /* Modal improvements */
         .modal-image-container {
             position: relative;
             width: 100%;
             height: 400px;
-            background: #f8fafc;
+            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             border-radius: 12px;
             overflow: hidden;
+            border: 2px solid #e5e7eb;
+        }
+        .modal-image {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            background: white;
+            transition: all 0.3s ease;
+        }
+        .modal-image-controls {
+            position: absolute;
+            bottom: 12px;
+            right: 12px;
+            display: flex;
+            gap: 8px;
+        }
+        .modal-control-btn {
+            background: rgba(0, 0, 0, 0.8);
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        .modal-control-btn:hover {
+            background: rgba(0, 0, 0, 0.95);
+        }
+        .image-loading {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #6b7280;
+            font-size: 12px;
+            text-align: center;
+        }
+        .image-error {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: #9ca3af;
+            font-size: 12px;
+            text-align: center;
+            background: rgba(255, 255, 255, 0.9);
+            padding: 8px;
+            border-radius: 4px;
+        }
+        .promo-badge {
+            position: absolute;
+            top: 8px;
+            left: 8px;
+            background: linear-gradient(45deg, #ef4444, #dc2626);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 9999px;
+            font-size: 12px;
+            font-weight: bold;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        }
+        .search-input {
+            width: 100%;
+            padding: 12px 16px 12px 40px;
+            border: 2px solid #fecaca;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .search-input:focus {
+            outline: none;
+            border-color: #ef4444;
+            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
+        }
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.5);
+            backdrop-filter: blur(4px);
+        }
+        .modal-content {
+            background-color: white;
+            margin: 2% auto;
+            padding: 0;
+            border-radius: 12px;
+            width: 95%;
+            max-width: 700px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            padding: 10px;
+            transition: color 0.3s ease;
+        }
+        .close:hover {
+            color: #ef4444;
+        }
+        .loading-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            color: white;
+        }
+        .loading-step {
+            opacity: 0.5;
+            transition: opacity 0.3s ease;
+        }
+        .loading-step.active {
+            opacity: 1;
+        }
+        .progress-bar {
+            width: 300px;
+            height: 8px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            overflow: hidden;
+            margin: 20px 0;
+        }
+        .progress-fill {
+            height: 100%;
+            background: linear-gradient(90deg, #00d4aa, #00b894);
+            width: 0%;
+            transition: width 0.5s ease;
+            border-radius: 4px;
+        }
+        .image-placeholder {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
             display: flex;
             align-items: center;
             justify-content: center;
+            color: #64748b;
+            font-weight: bold;
+            font-size: 14px;
+            position: relative;
         }
-        
-        .modal-image {
-            max-width: 100%;
-            max-height: 100%;
-            object-fit: contain;
-            border-radius: 8px;
+        .image-placeholder::before {
+            content: '📦';
+            position: absolute;
+            top: 20px;
+            font-size: 24px;
+            opacity: 0.3;
         }
-        
-        /* Loading optimizations */
-        .quick-load {
-            animation: fadeIn 0.3s ease-in;
+        .logo-glow {
+            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
         }
-        
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
+        .pagination {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 0.5rem;
+            margin: 2rem 0;
         }
-        
-        /* Responsive image sizes */
-        @media (max-width: 640px) {
-            .image-container {
-                height: 160px;
-            }
-            .modal-image-container {
-                height: 250px;
-            }
+        .pagination button {
+            padding: 0.5rem 1rem;
+            border: 1px solid #d1d5db;
+            background: white;
+            color: #374151;
+            border-radius: 0.5rem;
+            transition: all 0.2s;
+            font-weight: 500;
         }
-        
-        @media (min-width: 1024px) {
-            .image-container {
-                height: 220px;
-            }
+        .pagination button:hover:not(:disabled) {
+            background: #f3f4f6;
+            border-color: #9ca3af;
+        }
+        .pagination button.active {
+            background: #ef4444;
+            color: white;
+            border-color: #ef4444;
+        }
+        .pagination button:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .page-info {
+            background: #f3f4f6;
+            padding: 0.75rem 1.5rem;
+            border-radius: 2rem;
+            font-weight: 600;
+            color: #374151;
+        }
+        @media print {
+            .no-print { display: none !important; }
+            .bg-gradient-to-br { background: white !important; }
+            .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
+            .rounded-lg, .rounded-xl { border-radius: 0 !important; }
+            .product-card { border: 1px solid #ddd !important; }
         }
     </style>
 </head>
 <body class="bg-gradient-to-br from-red-50 via-white to-blue-50">
     
-    <!-- Fast Load Indicator -->
-    <div id="fastLoadIndicator" class="fast-load-indicator">
-        🚀 Fast mode: Loading catalog first, images second
-    </div>
-
-    <!-- Simplified Loading Screen -->
-    <div id="loadingOverlay" style="position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; z-index: 9999; color: white;">
+    <!-- Loading Overlay -->
+    <div id="loadingOverlay" class="loading-overlay">
         <div class="text-center">
             <div class="text-6xl mb-6">🎉</div>
             <h1 class="text-4xl font-bold mb-4">OZZ Promotions</h1>
-            <div class="animate-spin rounded-full h-12 w-12 border-b-2 border-white mx-auto mb-4"></div>
-            <p class="text-lg">Loading catalog...</p>
-            <p class="text-sm opacity-75 mt-2">Images loading in background</p>
+            <p class="text-xl mb-8">Loading your July 2025 promotional catalog...</p>
+            
+            <div class="progress-bar">
+                <div id="progressFill" class="progress-fill"></div>
+            </div>
+            
+            <div class="space-y-2 text-left">
+                <div id="step1" class="loading-step">📊 Loading product data from Excel...</div>
+                <div id="step2" class="loading-step">🔗 Initializing Google Drive API...</div>
+                <div id="step3" class="loading-step">📸 Scanning Google Drive for images...</div>
+                <div id="step4" class="loading-step">🗂️ Building image mapping cache...</div>
+                <div id="step5" class="loading-step">✨ Almost ready!</div>
+            </div>
+            
+            <!-- Image Notice -->
+            <div class="mt-8 bg-green-900 bg-opacity-30 p-4 rounded-lg text-sm max-w-md mx-auto">
+                <p>📸 <strong>Dynamic image loading from Google Drive!</strong></p>
+                <p>Real product photos • Smart caching • Auto-mapping</p>
+                <p class="text-xs mt-2 opacity-75">Images cached for 24 hours for fast loading</p>
+            </div>
         </div>
     </div>
 
     <!-- Header -->
     <header class="bg-gradient-to-r from-red-600 via-red-500 to-blue-600 text-white shadow-xl">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
             <div class="text-center">
-                <div class="mb-4">
+                <!-- OZZ Logo -->
+                <div class="mb-6">
                     <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
                          alt="OZZ Promotions" 
-                         class="h-12 md:h-16 mx-auto mb-2"
-                         style="filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));"
+                         class="h-16 md:h-20 mx-auto mb-2 logo-glow"
                          onerror="this.style.display='none';">
                 </div>
                 
-                <h1 class="text-3xl md:text-5xl font-bold mb-2">🎉 JULY 2025 PROMO 🎉</h1>
-                <p class="text-lg md:text-xl mb-3">Exclusive Deals on Premium Home & Kitchen Products</p>
-                <p class="text-sm opacity-90" id="product-count">Loading promotional items...</p>
+                <div class="inline-block bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-6 py-2 mb-4">
+                    <span class="text-sm font-semibold uppercase tracking-wide">OZZ Promotions - Special Offer</span>
+                </div>
+                <h1 class="text-4xl md:text-6xl font-bold mb-2">🎉 JULY 2025 PROMO 🎉</h1>
+                <p class="text-xl md:text-2xl mb-4">Exclusive Deals on Premium Home & Kitchen Products</p>
+                <p class="text-lg opacity-90" id="product-count">Loading promotional items...</p>
+                <div class="mt-6 inline-block bg-yellow-400 text-red-800 px-8 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
+                    ⏰ LIMITED TIME OFFER!
+                </div>
                 
                 <!-- Image System Status -->
-                <div class="mt-3">
-                    <div id="imageSystemStatus" class="text-xs opacity-75 flex items-center justify-center gap-2">
-                        <div id="imageStatusIcon" class="w-2 h-2 bg-yellow-400 rounded-full animate-pulse"></div>
-                        <span id="imageStatusText">Loading images...</span>
+                <div class="mt-4">
+                    <div id="imageSystemStatus" class="text-sm opacity-75">
+                        🔄 Initializing image system...
                     </div>
                 </div>
             </div>
@@ -220,81 +415,86 @@
     </header>
 
     <!-- Search Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-        <div class="bg-white rounded-xl shadow-lg p-4 mb-4 border-2 border-red-100">
-            <div class="max-w-md mx-auto relative mb-3">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border-2 border-red-100">
+            <div class="mb-4 text-center">
+                <h2 class="text-2xl font-bold text-gray-800 mb-2">🔍 Find Your Perfect Deal!</h2>
+                <p class="text-gray-600">Search through our exclusive July promotional items</p>
+            </div>
+            <div class="max-w-md mx-auto relative mb-4">
                 <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 <input 
                     type="text" 
                     id="searchInput"
-                    placeholder="Search products or SKU..." 
-                    class="w-full pl-10 pr-4 py-2 border-2 border-red-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    placeholder="Search promo items or SKU..." 
+                    class="search-input"
                     onkeyup="filterProducts()"
                 >
             </div>
             
-            <div class="flex justify-center gap-2 text-sm">
-                <select id="sortBy" onchange="applyFilters()" class="px-3 py-1 border border-gray-300 rounded">
+            <!-- Sort Controls -->
+            <div class="flex justify-center gap-4">
+                <select id="sortBy" onchange="applyFilters()" class="px-4 py-2 border-2 border-red-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
                     <option value="name">Sort by Name</option>
                     <option value="price">Sort by Price</option>
                     <option value="category">Sort by Category</option>
                 </select>
-                <button onclick="toggleSortOrder()" id="sortOrderBtn" class="px-3 py-1 bg-red-100 text-red-700 rounded hover:bg-red-200">
+                <button onclick="toggleSortOrder()" id="sortOrderBtn" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
                     ↑ A-Z
                 </button>
-                <button onclick="refreshImages()" id="refreshBtn" class="px-3 py-1 bg-blue-100 text-blue-700 rounded hover:bg-blue-200">
-                    🔄 Images
+                <button onclick="refreshImageCache()" id="refreshBtn" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                    🔄 Refresh Images
                 </button>
             </div>
         </div>
 
         <!-- Category Filter -->
-        <div class="text-center mb-4">
+        <div class="text-center mb-6">
             <div class="inline-flex flex-wrap gap-2 justify-center" id="categoryButtons">
                 <!-- Categories will be populated here -->
             </div>
         </div>
 
-        <!-- Results Counter -->
-        <div class="mb-4 text-center">
-            <p class="text-lg text-gray-700">
-                🔥 <span class="font-bold text-red-600" id="filteredCount">0</span> promotional deals found!
-            </p>
+        <!-- Results Counter and Pagination Info -->
+        <div class="mb-6 text-center">
+            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
+                <p class="text-xl text-gray-700" id="resultsCount">
+                    🔥 <span class="font-bold text-red-600" id="filteredCount">0</span> promotional deals found!
+                </p>
+                <div class="page-info" id="pageInfo">
+                    Page 1 of 1 • Showing 1-20 of 0 products
+                </div>
+            </div>
         </div>
 
         <!-- Products Grid -->
-        <div class="product-grid quick-load" id="productsGrid">
+        <div class="product-grid" id="productsGrid">
             <!-- Products will be loaded here -->
         </div>
 
-        <!-- Pagination -->
-        <div class="flex justify-center mt-6" id="paginationControls">
+        <!-- Pagination Controls -->
+        <div class="pagination no-print" id="paginationControls">
             <!-- Pagination will be populated here -->
         </div>
 
-        <!-- No Results -->
+        <!-- No Results Message -->
         <div id="noResults" class="text-center py-16 bg-white rounded-xl shadow-lg hidden">
             <div class="text-6xl mb-4">🔍</div>
-            <p class="text-gray-500 text-xl mb-2">No promotional deals found.</p>
-            <button onclick="clearFilters()" class="mt-4 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700">
+            <p class="text-gray-500 text-xl mb-2">No promotional deals found matching your search.</p>
+            <p class="text-gray-400">Try adjusting your search terms or browse all categories!</p>
+            <button onclick="clearFilters()" class="mt-4 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
                 Show All Products
             </button>
         </div>
     </div>
 
-    <!-- Enhanced Product Modal -->
-    <div id="productModal" style="display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; background-color: rgba(0,0,0,0.5);">
-        <div style="background-color: white; margin: 2% auto; padding: 0; border-radius: 12px; width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto;">
+    <!-- Product Modal -->
+    <div id="productModal" class="modal">
+        <div class="modal-content">
             <div class="p-6">
-                <div class="flex justify-between items-start mb-6">
-                    <div class="inline-block bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold">
-                        🎉 JULY 2025 PROMO
-                    </div>
-                    <button onclick="closeModal()" class="text-gray-400 hover:text-red-500 text-2xl font-bold">×</button>
-                </div>
-                
+                <span class="close" onclick="closeModal()">&times;</span>
                 <div id="modalContent">
                     <!-- Product details will be loaded here -->
                 </div>
@@ -302,66 +502,83 @@
         </div>
     </div>
 
+    <!-- Footer -->
+    <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center">
+                <h3 class="text-2xl font-bold mb-4">🎉 Don't Miss Out on These July 2025 Deals! 🎉</h3>
+                <p class="text-lg mb-6">Limited time promotional pricing on premium home & kitchen products</p>
+                <div class="grid md:grid-cols-3 gap-6 text-sm mb-8">
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-3">🚚</div>
+                        <h4 class="font-semibold mb-2 text-lg">Fast Delivery</h4>
+                        <p>Quick shipping on all promotional items across South Africa</p>
+                    </div>
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-3">💯</div>
+                        <h4 class="font-semibold mb-2 text-lg">Quality Guaranteed</h4>
+                        <p>Premium products at unbeatable promotional prices</p>
+                    </div>
+                    <div class="bg-white bg-opacity-10 rounded-lg p-6 hover:bg-opacity-20 transition-all">
+                        <div class="text-3xl mb-3">⏰</div>
+                        <h4 class="font-semibold mb-2 text-lg">Limited Time</h4>
+                        <p>July 2025 exclusive promotional offers - don't miss out!</p>
+                    </div>
+                </div>
+                <div class="border-t border-gray-700 pt-6">
+                    <p class="text-sm opacity-75">© 2025 OZZ Promotions. All promotional prices valid for July 2025 only.</p>
+                    <p class="text-xs opacity-50 mt-2">South Africa's premier home & kitchen products retailer</p>
+                </div>
+            </div>
+        </div>
+    </footer>
+
     <script>
-        // OPTIMIZED GOOGLE DRIVE IMAGE MANAGER - FAST LOADING
-        class FastDriveImageManager {
+        // Enhanced Google Drive Image Manager with Caching
+        class DriveImageManager {
             constructor() {
                 this.imageCache = new Map();
+                this.folderCache = new Map();
                 this.isInitialized = false;
+                this.cacheVersion = '1.0';
+                this.cacheExpiryHours = 24;
+                
+                // Your specific folder ID from Google Drive
                 this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
                 this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
-                this.loadingInBackground = false;
             }
 
-            async initializeInBackground() {
-                if (this.loadingInBackground) return;
-                this.loadingInBackground = true;
+            // Initialize Google Drive API
+            async initializeGAPI() {
+                if (this.isInitialized) return true;
                 
                 try {
-                    // Show fast load indicator
-                    const indicator = document.getElementById('fastLoadIndicator');
-                    indicator.classList.add('show');
-                    setTimeout(() => indicator.classList.remove('show'), 3000);
+                    // Load Google APIs
+                    await this.loadScript('https://apis.google.com/js/api.js');
+                    await new Promise(resolve => gapi.load('client', resolve));
                     
-                    // Try to load from cache first
-                    if (this.loadFromCache()) {
-                        this.updateImageStatus('✅ Loaded from cache', 'green');
-                        this.enhanceImagesInView();
-                        return;
-                    }
+                    await gapi.client.init({
+                        apiKey: this.apiKey,
+                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+                    });
                     
-                    // Initialize API in background
-                    await this.initializeAPI();
-                    await this.scanImages();
-                    this.saveToCache();
-                    this.updateImageStatus(`✅ ${this.imageCache.size} images ready`, 'green');
-                    this.enhanceImagesInView();
-                    
+                    this.isInitialized = true;
+                    console.log('✅ Google Drive API initialized');
+                    return true;
                 } catch (error) {
-                    console.warn('Background image loading failed:', error);
-                    this.updateImageStatus('⚠️ Images unavailable', 'orange');
+                    console.error('❌ Failed to initialize Google Drive API:', error);
+                    return false;
                 }
             }
 
-            async initializeAPI() {
-                if (this.isInitialized) return;
-                
-                await this.loadScript('https://apis.google.com/js/api.js');
-                await new Promise(resolve => gapi.load('client', resolve));
-                await gapi.client.init({
-                    apiKey: this.apiKey,
-                    discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-                });
-                
-                this.isInitialized = true;
-            }
-
+            // Load script helper
             loadScript(src) {
                 return new Promise((resolve, reject) => {
                     if (document.querySelector(`script[src="${src}"]`)) {
                         resolve();
                         return;
                     }
+                    
                     const script = document.createElement('script');
                     script.src = src;
                     script.onload = resolve;
@@ -370,196 +587,239 @@
                 });
             }
 
-            loadFromCache() {
+            // Cache management
+            getCacheKey(type) {
+                return `ozz_promo_${type}_v${this.cacheVersion}`;
+            }
+
+            loadCacheFromStorage() {
                 try {
-                    const cached = localStorage.getItem('ozz_images_cache_v2');
-                    if (!cached) return false;
+                    console.log('🔍 Checking for cached image data...');
                     
-                    const data = JSON.parse(cached);
-                    const age = Date.now() - data.timestamp;
-                    const maxAge = 24 * 60 * 60 * 1000; // 24 hours
+                    const cacheMetaKey = this.getCacheKey('meta');
+                    const cacheMetaStr = localStorage.getItem(cacheMetaKey);
                     
-                    if (age > maxAge) {
-                        localStorage.removeItem('ozz_images_cache_v2');
+                    if (!cacheMetaStr) {
+                        console.log('📝 No cache found, will perform full scan');
                         return false;
                     }
                     
-                    this.imageCache = new Map(Object.entries(data.images));
-                    console.log(`📸 Loaded ${this.imageCache.size} images from cache (${Math.round(age/60000)}m old)`);
+                    const cacheMeta = JSON.parse(cacheMetaStr);
+                    const cacheAge = Date.now() - cacheMeta.timestamp;
+                    const maxAge = this.cacheExpiryHours * 60 * 60 * 1000;
+                    
+                    if (cacheAge > maxAge) {
+                        console.log(`⏰ Cache expired (${Math.round(cacheAge / (60 * 60 * 1000))} hours old), will refresh`);
+                        this.clearCache();
+                        return false;
+                    }
+                    
+                    const imageCacheKey = this.getCacheKey('images');
+                    const imageCacheStr = localStorage.getItem(imageCacheKey);
+                    
+                    if (!imageCacheStr) {
+                        console.log('📝 Incomplete cache found, will perform full scan');
+                        return false;
+                    }
+                    
+                    const imageData = JSON.parse(imageCacheStr);
+                    this.imageCache = new Map(Object.entries(imageData));
+                    
+                    console.log(`✅ Cache loaded successfully! ${this.imageCache.size} images cached`);
+                    console.log(`📊 Cache age: ${Math.round(cacheAge / (60 * 1000))} minutes`);
+                    
                     return true;
                 } catch (error) {
+                    console.error('❌ Error loading cache:', error);
+                    this.clearCache();
                     return false;
                 }
             }
 
-            saveToCache() {
+            saveCacheToStorage() {
                 try {
-                    const data = {
+                    console.log('💾 Saving image cache to storage...');
+                    
+                    const cacheMeta = {
                         timestamp: Date.now(),
-                        images: Object.fromEntries(this.imageCache)
+                        version: this.cacheVersion,
+                        totalImages: this.imageCache.size
                     };
-                    localStorage.setItem('ozz_images_cache_v2', JSON.stringify(data));
+                    
+                    const cacheMetaKey = this.getCacheKey('meta');
+                    localStorage.setItem(cacheMetaKey, JSON.stringify(cacheMeta));
+                    
+                    const imageData = Object.fromEntries(this.imageCache);
+                    const imageCacheKey = this.getCacheKey('images');
+                    localStorage.setItem(imageCacheKey, JSON.stringify(imageData));
+                    
+                    console.log(`✅ Cache saved successfully! ${this.imageCache.size} images cached`);
                 } catch (error) {
-                    console.warn('Failed to save image cache');
+                    console.error('❌ Error saving cache:', error);
+                    this.clearCache();
                 }
             }
 
-            async scanImages() {
-                this.updateImageStatus('🔍 Scanning Google Drive...', 'blue');
+            clearCache() {
+                try {
+                    const keys = ['meta', 'images'];
+                    keys.forEach(key => {
+                        localStorage.removeItem(this.getCacheKey(key));
+                    });
+                    console.log('🗑️ Cache cleared');
+                } catch (error) {
+                    console.error('Error clearing cache:', error);
+                }
+            }
+
+            // Scan folder for images
+            async scanFolderForImages(forceRefresh = false) {
+                if (!forceRefresh && this.loadCacheFromStorage()) {
+                    console.log('🚀 Using cached image data, skipping scan');
+                    return;
+                }
+                
+                console.log('🔍 Scanning Google Drive folder for images...');
                 
                 try {
-                    const response = await gapi.client.drive.files.list({
-                        q: `'${this.folderId}' in parents and (mimeType contains 'image/')`,
-                        fields: 'files(id, name)',
-                        pageSize: 100
-                    });
-
-                    const images = response.result.files || [];
-                    this.buildMapping(images);
-                    
+                    const images = await this.fetchImagesFromFolder();
+                    this.buildImageMapping(images);
+                    this.saveCacheToStorage();
+                    console.log(`🎯 Total images cached: ${this.imageCache.size}`);
                 } catch (error) {
-                    throw new Error('Failed to scan Google Drive folder');
+                    console.error('❌ Error scanning folder:', error);
                 }
             }
 
-            buildMapping(images) {
+            async fetchImagesFromFolder(pageToken = null) {
+                try {
+                    const response = await gapi.client.drive.files.list({
+                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
+                        fields: 'nextPageToken, files(id, name, mimeType, parents, webViewLink, thumbnailLink)',
+                        pageSize: 100,
+                        pageToken: pageToken
+                    });
+
+                    let files = response.result.files || [];
+                    
+                    if (response.result.nextPageToken) {
+                        const nextPageFiles = await this.fetchImagesFromFolder(response.result.nextPageToken);
+                        files = files.concat(nextPageFiles);
+                    }
+                    
+                    return files;
+                } catch (error) {
+                    console.error('Error fetching folder contents:', error);
+                    return [];
+                }
+            }
+
+            buildImageMapping(images) {
                 this.imageCache.clear();
+                
                 images.forEach(image => {
-                    const codes = this.extractCodes(image.name);
+                    const codes = this.extractProductCodes(image.name);
+                    
                     codes.forEach(code => {
                         if (!this.imageCache.has(code)) {
                             this.imageCache.set(code, {
                                 id: image.id,
                                 name: image.name,
-                                url: `https://lh3.googleusercontent.com/d/${image.id}=w400-h400-c`
+                                thumbnailLink: image.thumbnailLink,
+                                webViewLink: image.webViewLink,
+                                directLink: this.getDirectImageUrl(image.id),
+                                mimeType: image.mimeType
                             });
                         }
                     });
                 });
             }
 
-            extractCodes(filename) {
+            extractProductCodes(filename) {
                 const codes = [];
-                const name = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
+                const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
                 
-                // Extract numeric codes
-                const matches = name.match(/\b\d{3,6}\b/g);
-                if (matches) codes.push(...matches);
-                
-                // Extract from parts
-                const parts = name.split(/[-_\s\.]+/);
-                parts.forEach(part => {
-                    const clean = part.trim();
-                    if (/^\d{3,6}$/.test(clean)) {
-                        codes.push(clean);
-                    }
-                });
-                
-                return [...new Set(codes.map(c => c.toLowerCase()))];
-            }
-
-            getImageUrl(sku) {
-                const data = this.imageCache.get(sku.toString().toLowerCase());
-                return data ? data.url : null;
-            }
-
-            updateImageStatus(text, color) {
-                const icon = document.getElementById('imageStatusIcon');
-                const textEl = document.getElementById('imageStatusText');
-                
-                if (icon && textEl) {
-                    icon.className = `w-2 h-2 rounded-full bg-${color}-400`;
-                    textEl.textContent = text;
+                // Find numeric codes
+                const numericCodes = nameWithoutExt.match(/\b\d{4,6}\b/g);
+                if (numericCodes) {
+                    codes.push(...numericCodes);
                 }
-            }
-
-            enhanceImagesInView() {
-                // Replace placeholder images with real ones
-                document.querySelectorAll('.product-image[data-sku]').forEach(img => {
-                    const sku = img.dataset.sku;
-                    const realUrl = this.getImageUrl(sku);
-                    if (realUrl && img.src.includes('data:image/svg+xml')) {
-                        img.src = realUrl;
-                        img.onload = () => {
-                            img.parentElement.style.background = 'none';
-                        };
+                
+                // Find alphanumeric codes
+                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{4,8}\b/gi);
+                if (alphanumericCodes) {
+                    codes.push(...alphanumericCodes.map(code => code.toLowerCase()));
+                }
+                
+                // Split by delimiters
+                const parts = nameWithoutExt.split(/[-_\s\.]+/);
+                parts.forEach(part => {
+                    const cleanPart = part.trim();
+                    if (/^\d{4,6}$/.test(cleanPart) || /^[A-Z0-9]{4,8}$/i.test(cleanPart)) {
+                        codes.push(cleanPart.toLowerCase());
                     }
                 });
+                
+                return [...new Set(codes)];
+            }
+
+            getDirectImageUrl(fileId) {
+                return `https://lh3.googleusercontent.com/d/${fileId}=w800-h800-c`;
+            }
+
+            getProductImage(productCode) {
+                const normalizedCode = productCode.toString().toLowerCase().trim();
+                const imageData = this.imageCache.get(normalizedCode);
+                
+                if (imageData) {
+                    return {
+                        url: imageData.directLink,
+                        thumbnail: imageData.thumbnailLink,
+                        name: imageData.name,
+                        found: true
+                    };
+                }
+                
+                return {
+                    url: null,
+                    thumbnail: null,
+                    name: null,
+                    found: false
+                };
             }
 
             getStats() {
-                return { mappedProducts: this.imageCache.size };
+                const cacheMetaKey = this.getCacheKey('meta');
+                const cacheMetaStr = localStorage.getItem(cacheMetaKey);
+                let cacheInfo = null;
+                
+                if (cacheMetaStr) {
+                    try {
+                        const cacheMeta = JSON.parse(cacheMetaStr);
+                        const cacheAge = Date.now() - cacheMeta.timestamp;
+                        cacheInfo = {
+                            age: Math.round(cacheAge / (60 * 1000)),
+                            timestamp: new Date(cacheMeta.timestamp).toLocaleString()
+                        };
+                    } catch (error) {
+                        console.warn('Could not parse cache metadata');
+                    }
+                }
+                
+                return {
+                    mappedProducts: this.imageCache.size,
+                    cacheInfo: cacheInfo
+                };
+            }
+
+            async forceRefresh() {
+                console.log('🔄 Forcing cache refresh...');
+                this.clearCache();
+                await this.scanFolderForImages(true);
             }
         }
 
-        // Enhanced Image Component
-        function createImageContainer(product) {
-            const imageUrl = imageManager.getImageUrl(product.sku) || generatePlaceholder(product.sku);
-            
-            return `
-                <div class="image-container" onclick="showProductDetails('${product.sku}')">
-                    <img 
-                        src="${imageUrl}" 
-                        alt="${product.description}"
-                        class="product-image" 
-                        data-sku="${product.sku}"
-                        data-original-mode="cover"
-                        onload="this.parentElement.style.background='none'"
-                        onerror="this.src=generatePlaceholder('${product.sku}')"
-                        loading="lazy"
-                    >
-                    <div class="image-overlay">
-                        <div class="image-controls" onclick="event.stopPropagation()">
-                            <button class="image-control-btn" onclick="toggleImageMode(this)" title="Toggle fit mode">
-                                📐
-                            </button>
-                            <button class="image-control-btn" onclick="showProductDetails('${product.sku}')" title="View details">
-                                👁️
-                            </button>
-                        </div>
-                    </div>
-                    <div class="absolute top-2 left-2 bg-red-500 text-white px-2 py-1 rounded-full text-xs font-bold">
-                        PROMO
-                    </div>
-                </div>
-            `;
-        }
-
-        function toggleImageMode(button) {
-            const container = button.closest('.image-container');
-            const img = container.querySelector('.product-image');
-            const currentMode = img.dataset.originalMode || 'cover';
-            
-            if (currentMode === 'cover') {
-                img.classList.add('contain-mode');
-                img.dataset.originalMode = 'contain';
-                button.textContent = '🖼️';
-                button.title = 'Fill frame';
-            } else {
-                img.classList.remove('contain-mode');
-                img.dataset.originalMode = 'cover';
-                button.textContent = '📐';
-                button.title = 'Show full image';
-            }
-        }
-
-        function generatePlaceholder(sku) {
-            return `data:image/svg+xml,${encodeURIComponent(`
-                <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
-                    <rect width="200" height="200" fill="#f1f5f9" stroke="#e2e8f0" stroke-width="2"/>
-                    <text x="100" y="90" text-anchor="middle" font-family="Arial" font-size="14" font-weight="bold" fill="#64748b">
-                        ${sku}
-                    </text>
-                    <text x="100" y="110" text-anchor="middle" font-family="Arial" font-size="10" fill="#94a3b8">
-                        OZZ Promo
-                    </text>
-                    <circle cx="100" cy="130" r="8" fill="#94a3b8"/>
-                    <text x="100" y="134" text-anchor="middle" font-family="Arial" font-size="10" fill="white">📦</text>
-                </svg>
-            `)}`;
-        }
-
-        // MAIN APPLICATION - OPTIMIZED FOR SPEED
+        // Global variables
         let allProducts = [];
         let filteredProducts = [];
         let currentCategory = 'ALL';
@@ -568,31 +828,104 @@
         let currentPage = 1;
         let totalPages = 1;
         let productsPerPage = 20;
-        let imageManager = new FastDriveImageManager();
+        let driveImageManager = null;
+        let imageSystemReady = false;
 
-        // FAST INITIALIZATION - Show catalog immediately, load images in background
-        document.addEventListener('DOMContentLoaded', async function() {
-            try {
-                // Phase 1: Load products immediately (FAST)
-                await loadProducts();
-                setupUI();
-                hideLoadingScreen();
-                
-                // Phase 2: Load images in background (SLOW)
-                setTimeout(() => {
-                    imageManager.initializeInBackground();
-                }, 500);
-                
-            } catch (error) {
-                console.error('Failed to load catalog:', error);
-                showError('Failed to load catalog');
-            }
+        // GitHub Pages compatible configuration
+        const CONFIG = {
+            GITHUB_REPO: './JULY PROMO.xlsx',
+            PRODUCTS_PER_PAGE: 20
+        };
+
+        // Initialize the application
+        document.addEventListener('DOMContentLoaded', function() {
+            initializeCatalog();
         });
 
-        async function loadProducts() {
+        async function initializeCatalog() {
             try {
-                const response = await fetch('./JULY PROMO.xlsx');
-                if (!response.ok) throw new Error('Excel file not found');
+                updateProgress(10, 1);
+                
+                // Step 1: Load Excel data
+                console.log('🚀 Loading product data...');
+                await loadProductsFromExcel();
+                
+                updateProgress(30, 2);
+                
+                // Step 2: Initialize Google Drive API
+                console.log('🔗 Initializing Google Drive API...');
+                driveImageManager = new DriveImageManager();
+                const success = await driveImageManager.initializeGAPI();
+                
+                updateProgress(50, 3);
+                
+                // Step 3: Scan Google Drive for images
+                if (success) {
+                    console.log('📸 Scanning Google Drive for images...');
+                    await driveImageManager.scanFolderForImages();
+                    const stats = driveImageManager.getStats();
+                    updateImageSystemStatus(stats);
+                    imageSystemReady = true;
+                } else {
+                    console.warn('⚠️ Google Drive API initialization failed, using fallback');
+                    imageSystemReady = false;
+                }
+                
+                updateProgress(80, 4);
+                
+                // Step 4: Setup UI
+                console.log('🔧 Setting up interface...');
+                setupUI();
+                
+                updateProgress(100, 5);
+                
+                // Hide loading overlay
+                setTimeout(function() {
+                    document.getElementById('loadingOverlay').style.display = 'none';
+                }, 1000);
+                
+                console.log('✅ Catalog initialization complete!');
+                
+            } catch (error) {
+                console.error('Failed to initialize catalog:', error);
+                showError('Failed to load catalog. Please check that JULY PROMO.xlsx is in your repository.');
+            }
+        }
+
+        function updateProgress(percent, step) {
+            document.getElementById('progressFill').style.width = percent + '%';
+            
+            for (let i = 1; i <= 5; i++) {
+                const stepEl = document.getElementById('step' + i);
+                if (stepEl) {
+                    if (i <= step) {
+                        stepEl.classList.add('active');
+                    } else {
+                        stepEl.classList.remove('active');
+                    }
+                }
+            }
+        }
+
+        function updateImageSystemStatus(stats) {
+            const statusEl = document.getElementById('imageSystemStatus');
+            if (stats && stats.mappedProducts > 0) {
+                statusEl.innerHTML = `📸 ${stats.mappedProducts} product images mapped from Google Drive`;
+                if (stats.cacheInfo) {
+                    statusEl.innerHTML += ` (cached ${stats.cacheInfo.age}m ago)`;
+                }
+            } else {
+                statusEl.innerHTML = '📸 No images found in Google Drive';
+            }
+        }
+
+        async function loadProductsFromExcel() {
+            try {
+                const response = await fetch(CONFIG.GITHUB_REPO);
+                
+                if (!response.ok) {
+                    throw new Error('Could not load JULY PROMO.xlsx. Make sure the file is in your repository root.');
+                }
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer);
@@ -600,15 +933,19 @@
                 const rawData = XLSX.utils.sheet_to_json(worksheet);
                 
                 allProducts = rawData
-                    .filter(item => item.SKU && item['PAGE 1'] && item.PRICE !== undefined)
-                    .map(item => ({
-                        sku: item.SKU.toString(),
-                        description: item['PAGE 1'],
-                        price: parseFloat(item.PRICE),
-                        category: categorizeProduct(item['PAGE 1'])
-                    }));
+                    .filter(function(item) {
+                        return item.SKU && item['PAGE 1'] && item.PRICE !== undefined && !isNaN(parseFloat(item.PRICE));
+                    })
+                    .map(function(item) {
+                        return {
+                            sku: item.SKU.toString(),
+                            description: item['PAGE 1'],
+                            price: parseFloat(item.PRICE),
+                            category: categorizeProduct(item['PAGE 1'])
+                        };
+                    });
                 
-                console.log(`✅ Loaded ${allProducts.length} products`);
+                console.log('✅ Loaded ' + allProducts.length + ' products from Excel');
                 
             } catch (error) {
                 console.error('Error loading products:', error);
@@ -618,164 +955,105 @@
 
         function categorizeProduct(description) {
             const desc = description.toUpperCase();
-            if (desc.includes('BOWL')) return 'BOWLS';
-            if (desc.includes('CUP') || desc.includes('MUG')) return 'CUPS & MUGS';
-            if (desc.includes('PLATE') || desc.includes('DINNER')) return 'PLATES';
-            if (desc.includes('GLASS') || desc.includes('TUMBLER')) return 'GLASSWARE';
-            if (desc.includes('TRAY') || desc.includes('PLATTER')) return 'TRAYS & PLATTERS';
-            if (desc.includes('STORAGE') || desc.includes('CONTAINER')) return 'STORAGE';
-            if (desc.includes('KITCHEN') || desc.includes('COOK')) return 'KITCHEN TOOLS';
-            if (desc.includes('CUTLERY') || desc.includes('KNIFE')) return 'CUTLERY';
+            
+            if (desc.indexOf('BOWL') !== -1) return 'BOWLS';
+            if (desc.indexOf('CUP') !== -1 || desc.indexOf('MUG') !== -1) return 'CUPS & MUGS';
+            if (desc.indexOf('PLATE') !== -1 || desc.indexOf('DINNER') !== -1) return 'PLATES';
+            if (desc.indexOf('GLASS') !== -1 || desc.indexOf('WATER') !== -1 || desc.indexOf('WINE') !== -1 || 
+                desc.indexOf('TUMBLER') !== -1 || desc.indexOf('CARAFFE') !== -1 || desc.indexOf('CARAFE') !== -1) return 'GLASSWARE';
+            if (desc.indexOf('ICE CREAM') !== -1 || desc.indexOf('GELATO') !== -1) return 'ICE CREAM SETS';
+            if (desc.indexOf('TRAY') !== -1 || desc.indexOf('PLATTER') !== -1) return 'TRAYS & PLATTERS';
+            if (desc.indexOf('STORAGE') !== -1 || desc.indexOf('CONTAINER') !== -1 || desc.indexOf('CONT') !== -1) return 'STORAGE';
+            if (desc.indexOf('KITCHEN') !== -1 || desc.indexOf('COOK') !== -1 || desc.indexOf('UTENSIL') !== -1) return 'KITCHEN TOOLS';
+            if (desc.indexOf('CUTLERY') !== -1 || desc.indexOf('KNIFE') !== -1 || desc.indexOf('FORK') !== -1 || desc.indexOf('SPOON') !== -1) return 'CUTLERY';
+            if (desc.indexOf('BOTTLE') !== -1 || desc.indexOf('JUG') !== -1 || desc.indexOf('PITCHER') !== -1) return 'BOTTLES & JUGS';
+            if (desc.indexOf('RAMEKIN') !== -1 || desc.indexOf('CASSEROLE') !== -1 || desc.indexOf('JAR') !== -1) return 'KITCHEN ACCESSORIES';
+            
             return 'OTHER';
+        }
+
+        function getImageUrl(sku) {
+            if (!imageSystemReady || !driveImageManager) {
+                return generatePlaceholderSVG(sku, 'Loading...');
+            }
+            
+            const imageData = driveImageManager.getProductImage(sku);
+            
+            if (imageData.found) {
+                return imageData.url;
+            }
+            
+            return generatePlaceholderSVG(sku, 'No image');
+        }
+
+        function generatePlaceholderSVG(sku, message = 'Loading...') {
+            const color = message.includes('Loading') ? '#f59e0b' : '#10b981';
+            const icon = message.includes('Loading') ? '💾' : '📱';
+            
+            return `data:image/svg+xml,${encodeURIComponent(`
+                <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg">
+                    <rect width="200" height="200" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
+                    <text x="100" y="60" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#1e40af">
+                        ${sku}
+                    </text>
+                    <circle cx="100" cy="110" r="12" fill="${color}" />
+                    <text x="100" y="114" text-anchor="middle" font-family="Arial" font-size="12" fill="white">${icon}</text>
+                    <text x="100" y="135" text-anchor="middle" font-family="Arial" font-size="9" fill="${color}" font-weight="bold">
+                        ${message.toUpperCase()}
+                    </text>
+                    <text x="100" y="155" text-anchor="middle" font-family="Arial" font-size="8" fill="#6b7280">
+                        OZZ Promo
+                    </text>
+                </svg>
+            `)}`;
         }
 
         function setupUI() {
             filteredProducts = allProducts.slice();
             setupCategories();
             applyFilters();
-            updateCounts();
         }
 
         function setupCategories() {
             const categories = ['ALL'];
-            const categorySet = new Set();
+            const categorySet = {};
             
-            allProducts.forEach(product => {
-                if (!categorySet.has(product.category)) {
-                    categorySet.add(product.category);
-                    categories.push(product.category);
+            for (let i = 0; i < allProducts.length; i++) {
+                const cat = allProducts[i].category;
+                if (!categorySet[cat]) {
+                    categorySet[cat] = true;
+                    categories.push(cat);
                 }
-            });
+            }
             
             categories.sort();
             
             const categoryButtons = document.getElementById('categoryButtons');
-            categoryButtons.innerHTML = categories.map(category => {
+            categoryButtons.innerHTML = categories.map(function(category) {
                 const isActive = category === 'ALL';
-                const className = `category-btn px-3 py-1 rounded-full text-sm font-semibold transition-all cursor-pointer ${
-                    isActive ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100'
-                }`;
+                const className = 'category-btn ' + (isActive ? 
+                    'bg-red-600 text-white' : 
+                    'bg-gray-200 text-gray-700 hover:bg-red-100') + 
+                    ' px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer';
                 
-                return `<button onclick="filterByCategory('${category}')" class="${className}">${category}</button>`;
+                return '<button onclick="filterByCategory(\'' + category + '\')" class="' + className + '">' + 
+                       category + '</button>';
             }).join('');
-        }
-
-        function hideLoadingScreen() {
-            document.getElementById('loadingOverlay').style.display = 'none';
-        }
-
-        function displayProducts() {
-            const grid = document.getElementById('productsGrid');
-            const noResults = document.getElementById('noResults');
-            
-            if (filteredProducts.length === 0) {
-                grid.innerHTML = '';
-                noResults.classList.remove('hidden');
-                return;
-            }
-            
-            noResults.classList.add('hidden');
-            
-            const startIndex = (currentPage - 1) * productsPerPage;
-            const endIndex = Math.min(startIndex + productsPerPage, filteredProducts.length);
-            const currentPageProducts = filteredProducts.slice(startIndex, endIndex);
-            
-            grid.innerHTML = currentPageProducts.map(product => {
-                const originalPrice = (product.price * 1.2).toFixed(2);
-                const savings = (originalPrice - product.price).toFixed(2);
-                const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
-                
-                return `
-                    <div class="product-card">
-                        ${createImageContainer(product)}
-                        <div class="p-4">
-                            <div class="text-sm text-gray-500 mb-1">SKU: ${product.sku}</div>
-                            <h3 class="font-semibold text-gray-900 mb-3 min-h-[3rem] leading-tight">${product.description}</h3>
-                            <div class="flex justify-between items-center mb-3">
-                                <div class="flex flex-col">
-                                    <span class="text-2xl font-bold text-red-600">R${product.price.toFixed(2)}</span>
-                                    <span class="text-xs text-gray-400 line-through">R${originalPrice}</span>
-                                </div>
-                                <span class="text-xs bg-gradient-to-r from-blue-500 to-red-500 text-white px-3 py-1 rounded-full font-semibold">
-                                    ${product.category}
-                                </span>
-                            </div>
-                            <div class="text-center mb-3">
-                                <span class="text-sm font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">
-                                    SAVE R${savings} (${savingsPercent}% OFF!)
-                                </span>
-                            </div>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function showProductDetails(sku) {
-            const product = allProducts.find(p => p.sku === sku);
-            if (!product) return;
-            
-            const originalPrice = (product.price * 1.2).toFixed(2);
-            const savings = (originalPrice - product.price).toFixed(2);
-            const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
-            const imageUrl = imageManager.getImageUrl(product.sku) || generatePlaceholder(product.sku);
-            
-            const modalContent = document.getElementById('modalContent');
-            modalContent.innerHTML = `
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="modal-image-container">
-                        <img src="${imageUrl}" alt="${product.description}" class="modal-image">
-                    </div>
-                    <div>
-                        <div class="text-sm text-gray-500 mb-2">SKU: ${product.sku}</div>
-                        <h3 class="text-2xl font-semibold text-gray-900 mb-4">${product.description}</h3>
-                        <div class="mb-6">
-                            <span class="text-sm bg-gradient-to-r from-blue-500 to-red-500 text-white px-4 py-2 rounded-full font-semibold">
-                                ${product.category}
-                            </span>
-                        </div>
-                        <div class="bg-gradient-to-r from-red-50 to-pink-50 p-6 rounded-xl mb-6 border-l-4 border-red-500">
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-sm text-gray-600 font-medium">Regular Price:</span>
-                                <span class="text-xl text-gray-500 line-through">R${originalPrice}</span>
-                            </div>
-                            <div class="flex items-center justify-between mb-3">
-                                <span class="text-xl font-semibold text-red-700">July Promo Price:</span>
-                                <span class="text-4xl font-bold text-red-600">R${product.price.toFixed(2)}</span>
-                            </div>
-                            <div class="text-center bg-green-100 rounded-lg py-2">
-                                <span class="text-lg font-bold text-green-700">
-                                    YOU SAVE: R${savings} (${savingsPercent}% OFF!)
-                                </span>
-                            </div>
-                        </div>
-                        <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                            <p class="text-sm text-yellow-800 font-medium">⏰ Limited time offer - July 2025 only!</p>
-                        </div>
-                    </div>
-                </div>
-            `;
-            
-            document.getElementById('productModal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
-
-        function closeModal() {
-            document.getElementById('productModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
         }
 
         function filterByCategory(category) {
             currentCategory = category;
             currentPage = 1;
             
-            document.querySelectorAll('.category-btn').forEach(btn => {
+            const buttons = document.querySelectorAll('.category-btn');
+            for (let i = 0; i < buttons.length; i++) {
+                const btn = buttons[i];
                 if (btn.textContent.trim() === category) {
-                    btn.className = 'category-btn px-3 py-1 rounded-full text-sm font-semibold transition-all cursor-pointer bg-red-600 text-white';
+                    btn.className = 'category-btn bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer';
                 } else {
-                    btn.className = 'category-btn px-3 py-1 rounded-full text-sm font-semibold transition-all cursor-pointer bg-gray-200 text-gray-700 hover:bg-red-100';
+                    btn.className = 'category-btn bg-gray-200 text-gray-700 hover:bg-red-100 px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer';
                 }
-            });
+            }
             
             applyFilters();
         }
@@ -803,19 +1081,28 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             sortBy = document.getElementById('sortBy').value;
             
-            filteredProducts = allProducts.filter(product => {
-                const matchesSearch = product.description.toLowerCase().includes(searchTerm) || 
-                                    product.sku.toLowerCase().includes(searchTerm);
+            filteredProducts = allProducts.filter(function(product) {
+                const matchesSearch = product.description.toLowerCase().indexOf(searchTerm) !== -1 || 
+                                    product.sku.toLowerCase().indexOf(searchTerm) !== -1;
                 const matchesCategory = currentCategory === 'ALL' || product.category === currentCategory;
                 return matchesSearch && matchesCategory;
             });
 
-            filteredProducts.sort((a, b) => {
+            filteredProducts.sort(function(a, b) {
                 let aVal, bVal;
+                
                 switch (sortBy) {
-                    case 'price': aVal = a.price; bVal = b.price; break;
-                    case 'category': aVal = a.category; bVal = b.category; break;
-                    default: aVal = a.description; bVal = b.description;
+                    case 'price':
+                        aVal = a.price;
+                        bVal = b.price;
+                        break;
+                    case 'category':
+                        aVal = a.category;
+                        bVal = b.category;
+                        break;
+                    default:
+                        aVal = a.description;
+                        bVal = b.description;
                 }
 
                 if (typeof aVal === 'string') {
@@ -823,9 +1110,11 @@
                     bVal = bVal.toLowerCase();
                 }
 
-                return sortOrder === 'asc' ? 
-                    (aVal < bVal ? -1 : aVal > bVal ? 1 : 0) :
-                    (aVal > bVal ? -1 : aVal < bVal ? 1 : 0);
+                if (sortOrder === 'asc') {
+                    return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+                } else {
+                    return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
+                }
             });
             
             updatePagination();
@@ -835,26 +1124,52 @@
 
         function updatePagination() {
             totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-            if (currentPage > totalPages) currentPage = Math.max(1, totalPages);
-            
+            if (currentPage > totalPages) {
+                currentPage = Math.max(1, totalPages);
+            }
+            renderPaginationControls();
+        }
+
+        function renderPaginationControls() {
             const paginationEl = document.getElementById('paginationControls');
+            
             if (totalPages <= 1) {
                 paginationEl.innerHTML = '';
                 return;
             }
 
-            let html = `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''} class="px-3 py-1 border rounded hover:bg-gray-100">← Prev</button>`;
+            let paginationHTML = '';
             
-            const start = Math.max(1, currentPage - 2);
-            const end = Math.min(totalPages, currentPage + 2);
+            paginationHTML += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
+                ← Previous
+            </button>`;
             
-            for (let i = start; i <= end; i++) {
-                html += `<button onclick="goToPage(${i})" class="px-3 py-1 border rounded ${i === currentPage ? 'bg-red-600 text-white' : 'hover:bg-gray-100'}">${i}</button>`;
+            const startPage = Math.max(1, currentPage - 2);
+            const endPage = Math.min(totalPages, currentPage + 2);
+            
+            if (startPage > 1) {
+                paginationHTML += `<button onclick="goToPage(1)">1</button>`;
+                if (startPage > 2) {
+                    paginationHTML += `<span class="px-2">...</span>`;
+                }
             }
             
-            html += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''} class="px-3 py-1 border rounded hover:bg-gray-100">Next →</button>`;
+            for (let i = startPage; i <= endPage; i++) {
+                paginationHTML += `<button onclick="goToPage(${i})" ${i === currentPage ? 'class="active"' : ''}>${i}</button>`;
+            }
             
-            paginationEl.innerHTML = html;
+            if (endPage < totalPages) {
+                if (endPage < totalPages - 1) {
+                    paginationHTML += `<span class="px-2">...</span>`;
+                }
+                paginationHTML += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
+            }
+            
+            paginationHTML += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
+                Next →
+            </button>`;
+            
+            paginationEl.innerHTML = paginationHTML;
         }
 
         function goToPage(page) {
@@ -862,56 +1177,372 @@
                 currentPage = page;
                 displayProducts();
                 updateCounts();
-                updatePagination();
+                renderPaginationControls();
                 document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' });
             }
         }
 
-        function updateCounts() {
-            const stats = imageManager.getStats();
-            const totalProducts = allProducts.length;
-            document.getElementById('product-count').textContent = `${totalProducts} promotional items • ${stats.mappedProducts} with photos`;
-            document.getElementById('filteredCount').textContent = filteredProducts.length;
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
+            }
+            
+            noResults.classList.add('hidden');
+            
+            const startIndex = (currentPage - 1) * productsPerPage;
+            const endIndex = Math.min(startIndex + productsPerPage, filteredProducts.length);
+            const currentPageProducts = filteredProducts.slice(startIndex, endIndex);
+            
+            grid.innerHTML = currentPageProducts.map(function(product) {
+                const originalPrice = (product.price * 1.2).toFixed(2);
+                const savings = (originalPrice - product.price).toFixed(2);
+                const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+                
+                const imageUrl = getImageUrl(product.sku);
+                const cardId = 'card-' + product.sku.replace(/[^a-zA-Z0-9]/g, '');
+                
+                return '<div class="product-card" id="' + cardId + '">' +
+                    '<div class="product-image-container">' +
+                        '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
+                             'class="product-image" id="img-' + cardId + '" ' +
+                             'onload="handleImageLoad(\'' + cardId + '\')" ' +
+                             'onerror="handleImageError(\'' + cardId + '\', \'' + product.sku + '\')">' +
+                        '<div class="image-loading" id="loading-' + cardId + '">' +
+                            '<div class="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400 mx-auto mb-2"></div>' +
+                            'Loading...' +
+                        '</div>' +
+                        '<div class="image-controls">' +
+                            '<button class="image-control-btn" onclick="toggleImageFit(\'' + cardId + '\')" title="Toggle image fit">' +
+                                '🔍' +
+                            '</button>' +
+                            '<button class="image-control-btn" onclick="showProductDetails(\'' + product.sku + '\')" title="View details">' +
+                                '👁️' +
+                            '</button>' +
+                        '</div>' +
+                        '<div class="promo-badge">PROMO</div>' +
+                    '</div>' +
+                    '<div class="p-4">' +
+                        '<div class="text-sm text-gray-500 mb-1">SKU: ' + product.sku + '</div>' +
+                        '<h3 class="font-semibold text-gray-900 mb-3 min-h-[3rem] leading-tight cursor-pointer hover:text-red-600 transition-colors" onclick="showProductDetails(\'' + product.sku + '\')">' + 
+                            product.description + 
+                        '</h3>' +
+                        '<div class="flex justify-between items-center mb-3">' +
+                            '<div class="flex flex-col">' +
+                                '<span class="text-2xl font-bold text-red-600">R' + product.price.toFixed(2) + '</span>' +
+                                '<span class="text-xs text-gray-400 line-through">R' + originalPrice + '</span>' +
+                            '</div>' +
+                            '<span class="text-xs bg-gradient-to-r from-blue-500 to-red-500 text-white px-3 py-1 rounded-full font-semibold">' +
+                                product.category +
+                            '</span>' +
+                        '</div>' +
+                        '<div class="text-center mb-3">' +
+                            '<span class="text-sm font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">' +
+                                'SAVE R' + savings + ' (' + savingsPercent + '% OFF!)' +
+                            '</span>' +
+                        '</div>' +
+                        '<button onclick="showProductDetails(\'' + product.sku + '\')" class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-semibold text-sm shadow-lg hover:shadow-xl">' +
+                            'View Details' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
+            }).join('');
         }
 
-        function refreshImages() {
-            const btn = document.getElementById('refreshBtn');
-            btn.innerHTML = '🔄 Loading...';
-            btn.disabled = true;
+        function updateCounts() {
+            const mappedCount = driveImageManager ? driveImageManager.getStats().mappedProducts : 0;
+            const totalProducts = allProducts.length;
+            document.getElementById('product-count').textContent = `${totalProducts} promotional items available • ${mappedCount} with photos`;
+            document.getElementById('filteredCount').textContent = filteredProducts.length;
             
-            localStorage.removeItem('ozz_images_cache_v2');
-            imageManager = new FastDriveImageManager();
-            imageManager.initializeInBackground().finally(() => {
-                btn.innerHTML = '🔄 Images';
-                btn.disabled = false;
-                displayProducts();
+            const startItem = (currentPage - 1) * productsPerPage + 1;
+            const endItem = Math.min(currentPage * productsPerPage, filteredProducts.length);
+            const pageInfoEl = document.getElementById('pageInfo');
+            
+            if (filteredProducts.length === 0) {
+                pageInfoEl.textContent = 'No products to display';
+            } else {
+                pageInfoEl.textContent = `Page ${currentPage} of ${totalPages} • Showing ${startItem}-${endItem} of ${filteredProducts.length} products`;
+            }
+        }
+
+        function showProductDetails(sku) {
+            const product = allProducts.find(function(p) { return p.sku === sku; });
+            if (!product) return;
+            
+            const originalPrice = (product.price * 1.2).toFixed(2);
+            const savings = (originalPrice - product.price).toFixed(2);
+            const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+            const imageUrl = getImageUrl(product.sku);
+            
+            const modalContent = document.getElementById('modalContent');
+            modalContent.innerHTML = '<div class="mb-6">' +
+                '<div class="inline-block bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold mb-3">' +
+                    '🎉 JULY 2025 PROMO' +
+                '</div>' +
+                '<h2 class="text-3xl font-bold text-gray-900">Promotional Deal</h2>' +
+            '</div>' +
+            '<div class="grid md:grid-cols-2 gap-8">' +
+                '<div class="relative">' +
+                    '<div class="modal-image-container">' +
+                        '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
+                             'class="modal-image" id="modal-img-' + product.sku + '" ' +
+                             'onload="handleModalImageLoad(\'' + product.sku + '\')" ' +
+                             'onerror="handleModalImageError(\'' + product.sku + '\')">' +
+                        '<div class="image-loading" id="modal-loading-' + product.sku + '">' +
+                            '<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto mb-2"></div>' +
+                            'Loading image...' +
+                        '</div>' +
+                        '<div class="modal-image-controls">' +
+                            '<button class="modal-control-btn" onclick="toggleModalImageFit(\'' + product.sku + '\')">' +
+                                '🔍 Toggle Fit' +
+                            '</button>' +
+                            '<button class="modal-control-btn" onclick="openImageFullscreen(\'' + imageUrl + '\')">' +
+                                '⛶ Fullscreen' +
+                            '</button>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">' +
+                        'LIMITED TIME' +
+                    '</div>' +
+                '</div>' +
+                '<div>' +
+                    '<div class="text-sm text-gray-500 mb-2">SKU: ' + product.sku + '</div>' +
+                    '<h3 class="text-2xl font-semibold text-gray-900 mb-4 leading-tight">' + product.description + '</h3>' +
+                    '<div class="mb-6">' +
+                        '<span class="text-sm bg-gradient-to-r from-blue-500 to-red-500 text-white px-4 py-2 rounded-full font-semibold">' +
+                            product.category +
+                        '</span>' +
+                    '</div>' +
+                    '<div class="bg-gradient-to-r from-red-50 to-pink-50 p-6 rounded-xl mb-6 border-l-4 border-red-500 shadow-inner">' +
+                        '<div class="flex items-center justify-between mb-3">' +
+                            '<span class="text-sm text-gray-600 font-medium">Regular Price:</span>' +
+                            '<span class="text-xl text-gray-500 line-through">R' + originalPrice + '</span>' +
+                        '</div>' +
+                        '<div class="flex items-center justify-between mb-3">' +
+                            '<span class="text-xl font-semibold text-red-700">July Promo Price:</span>' +
+                            '<span class="text-4xl font-bold text-red-600">R' + product.price.toFixed(2) + '</span>' +
+                        '</div>' +
+                        '<div class="text-center bg-green-100 rounded-lg py-2">' +
+                            '<span class="text-lg font-bold text-green-700">' +
+                                'YOU SAVE: R' + savings + ' (' + savingsPercent + '% OFF!)' +
+                            '</span>' +
+                        '</div>' +
+                    '</div>' +
+                    '<button class="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-4 px-8 rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-bold text-xl shadow-lg hover:shadow-xl transform hover:scale-105">' +
+                        '🛒 Get This Deal Now!' +
+                    '</button>' +
+                    '<div class="mt-6 text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">' +
+                        '<p class="text-sm text-yellow-800 font-medium">⏰ Limited time offer - July 2025 only!</p>' +
+                        '<p class="text-xs text-yellow-700 mt-1">Don\'t miss out on this exclusive promotional price</p>' +
+                    '</div>' +
+                '</div>' +
+            '</div>';
+            
+            document.getElementById('productModal').style.display = 'block';
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closeModal() {
+            document.getElementById('productModal').style.display = 'none';
+            document.body.style.overflow = 'auto';
+        }
+
+        async function refreshImageCache() {
+            if (!driveImageManager) return;
+            
+            const refreshBtn = document.getElementById('refreshBtn');
+            refreshBtn.innerHTML = '🔄 Refreshing...';
+            refreshBtn.disabled = true;
+            
+            try {
+                await driveImageManager.forceRefresh();
+                const stats = driveImageManager.getStats();
+                updateImageSystemStatus(stats);
                 updateCounts();
-            });
+                displayProducts();
+                
+                refreshBtn.innerHTML = '✅ Refreshed!';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = '🔄 Refresh Images';
+                    refreshBtn.disabled = false;
+                }, 2000);
+            } catch (error) {
+                console.error('Error refreshing image cache:', error);
+                refreshBtn.innerHTML = '❌ Error';
+                setTimeout(() => {
+                    refreshBtn.innerHTML = '🔄 Refresh Images';
+                    refreshBtn.disabled = false;
+                }, 2000);
+            }
         }
 
         function showError(message) {
-            document.getElementById('loadingOverlay').innerHTML = `
-                <div class="text-center">
-                    <div class="text-6xl mb-6">❌</div>
-                    <h1 class="text-4xl font-bold mb-4">Error</h1>
-                    <p class="text-xl mb-8">${message}</p>
-                    <button onclick="location.reload()" class="bg-white text-red-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100">
-                        Try Again
-                    </button>
-                </div>
-            `;
+            document.getElementById('loadingOverlay').innerHTML = '<div class="text-center">' +
+                '<div class="text-6xl mb-6">❌</div>' +
+                '<h1 class="text-4xl font-bold mb-4">Error</h1>' +
+                '<p class="text-xl mb-8">' + message + '</p>' +
+                '<button onclick="location.reload()" class="bg-white text-red-600 px-6 py-3 rounded-lg font-semibold hover:bg-gray-100 transition-colors">' +
+                    'Try Again' +
+                '</button>' +
+            '</div>';
         }
 
         // Event handlers
-        window.onclick = event => {
-            if (event.target.id === 'productModal') closeModal();
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                closeModal();
+            }
         };
 
-        document.addEventListener('keydown', event => {
-            if (event.key === 'Escape') closeModal();
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
         });
 
-        console.log('🚀 OZZ Catalog - Optimized for speed with enhanced images!');
+        // Image handling functions
+        function handleImageLoad(cardId) {
+            const loadingEl = document.getElementById('loading-' + cardId);
+            if (loadingEl) {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        function handleImageError(cardId, sku) {
+            const imgEl = document.getElementById('img-' + cardId);
+            const loadingEl = document.getElementById('loading-' + cardId);
+            
+            if (loadingEl) {
+                loadingEl.innerHTML = '<div class="image-error">' +
+                    '<div class="text-lg mb-1">📦</div>' +
+                    '<div class="font-semibold">' + sku + '</div>' +
+                    '<div class="text-xs">No image</div>' +
+                '</div>';
+            }
+            
+            if (imgEl) {
+                imgEl.style.display = 'none';
+            }
+        }
+
+        function toggleImageFit(cardId) {
+            const imgEl = document.getElementById('img-' + cardId);
+            if (imgEl) {
+                if (imgEl.classList.contains('contain-mode')) {
+                    imgEl.classList.remove('contain-mode');
+                } else {
+                    imgEl.classList.add('contain-mode');
+                }
+            }
+        }
+
+        function handleModalImageLoad(sku) {
+            const loadingEl = document.getElementById('modal-loading-' + sku);
+            if (loadingEl) {
+                loadingEl.style.display = 'none';
+            }
+        }
+
+        function handleModalImageError(sku) {
+            const imgEl = document.getElementById('modal-img-' + sku);
+            const loadingEl = document.getElementById('modal-loading-' + sku);
+            
+            if (loadingEl) {
+                loadingEl.innerHTML = '<div class="text-center">' +
+                    '<div class="text-4xl mb-2">📦</div>' +
+                    '<div class="font-semibold text-lg">' + sku + '</div>' +
+                    '<div class="text-sm text-gray-500">Image not available</div>' +
+                '</div>';
+            }
+            
+            if (imgEl) {
+                imgEl.style.display = 'none';
+            }
+        }
+
+        function toggleModalImageFit(sku) {
+            const imgEl = document.getElementById('modal-img-' + sku);
+            if (imgEl) {
+                if (imgEl.style.objectFit === 'cover') {
+                    imgEl.style.objectFit = 'contain';
+                    imgEl.style.padding = '12px';
+                } else {
+                    imgEl.style.objectFit = 'cover';
+                    imgEl.style.padding = '0';
+                }
+            }
+        }
+
+        function openImageFullscreen(imageUrl) {
+            // Create fullscreen overlay
+            const overlay = document.createElement('div');
+            overlay.style.cssText = `
+                position: fixed;
+                top: 0;
+                left: 0;
+                width: 100%;
+                height: 100%;
+                background: rgba(0, 0, 0, 0.95);
+                z-index: 10000;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: zoom-out;
+            `;
+            
+            const img = document.createElement('img');
+            img.src = imageUrl;
+            img.style.cssText = `
+                max-width: 95%;
+                max-height: 95%;
+                object-fit: contain;
+                border-radius: 8px;
+                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+            `;
+            
+            const closeBtn = document.createElement('button');
+            closeBtn.innerHTML = '✕';
+            closeBtn.style.cssText = `
+                position: absolute;
+                top: 20px;
+                right: 20px;
+                background: rgba(255, 255, 255, 0.2);
+                border: none;
+                color: white;
+                font-size: 24px;
+                width: 40px;
+                height: 40px;
+                border-radius: 50%;
+                cursor: pointer;
+                backdrop-filter: blur(4px);
+            `;
+            
+            overlay.appendChild(img);
+            overlay.appendChild(closeBtn);
+            document.body.appendChild(overlay);
+            
+            // Close handlers
+            const closeFullscreen = () => {
+                document.body.removeChild(overlay);
+                document.body.style.overflow = 'auto';
+            };
+            
+            overlay.addEventListener('click', closeFullscreen);
+            closeBtn.addEventListener('click', closeFullscreen);
+            document.addEventListener('keydown', function(e) {
+                if (e.key === 'Escape') closeFullscreen();
+            });
+            
+            document.body.style.overflow = 'hidden';
+        }
+
+        console.log('🎉 OZZ Promotions Enhanced Catalog with Dynamic Google Drive Integration Ready!');
     </script>
 </body>
 </html>
