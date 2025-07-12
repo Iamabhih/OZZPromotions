@@ -89,6 +89,9 @@
             background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
             overflow: hidden;
             border-radius: 8px 8px 0 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .product-image {
             width: 100%;
@@ -97,6 +100,7 @@
             object-position: center;
             transition: all 0.3s ease;
             background: white;
+            display: block;
         }
         .product-image.contain-mode {
             object-fit: contain;
@@ -928,10 +932,7 @@
                     // Update images smoothly without disrupting user experience
                     console.log('🎨 Updating products with real images...');
                     updateProductImages(); // Update existing images
-                    updateCounts(); // Update counts with image info
-                    
-                    // Add subtle notification that images have loaded
-                    showImageLoadedNotification();
+                    updateCounts(); // Update counts
                     
                     console.log('✅ All images loaded and ready');
                 } else {
@@ -1071,39 +1072,40 @@
         }
 
         function generatePlaceholderSVG(sku, message = 'Loading...') {
-            const isLoading = message.includes('Product Image');
+            const isLoading = message.includes('Product Image') || message.includes('Loading');
             const color = isLoading ? '#3b82f6' : '#9ca3af';
             const bgColor = isLoading ? '#dbeafe' : '#f3f4f6';
-            const icon = isLoading ? '📦' : '🖼️';
+            const icon = isLoading ? '📦' : message.includes('No Image') ? '🖼️' : '📦';
+            
+            // Ensure SKU is properly escaped for SVG
+            const safeSku = sku.replace(/[<>&"']/g, '');
+            const safeMessage = message.replace(/[<>&"']/g, '');
             
             return `data:image/svg+xml,${encodeURIComponent(`
-                <svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
+                <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
                     <defs>
-                        <linearGradient id="grad${sku.replace(/[^a-zA-Z0-9]/g, '')}" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <linearGradient id="grad${safeSku.replace(/[^a-zA-Z0-9]/g, '')}" x1="0%" y1="0%" x2="100%" y2="100%">
                             <stop offset="0%" style="stop-color:${bgColor};stop-opacity:1" />
                             <stop offset="100%" style="stop-color:#ffffff;stop-opacity:1" />
                         </linearGradient>
                     </defs>
-                    <rect width="300" height="200" fill="url(#grad${sku.replace(/[^a-zA-Z0-9]/g, '')})" stroke="${color}" stroke-width="2" rx="8"/>
-                    <circle cx="150" cy="70" r="20" fill="${color}" opacity="0.1"/>
-                    <text x="150" y="77" text-anchor="middle" font-family="Arial" font-size="20" fill="${color}">${icon}</text>
-                    <text x="150" y="105" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="${color}">
-                        SKU: ${sku}
+                    <rect width="400" height="300" fill="url(#grad${safeSku.replace(/[^a-zA-Z0-9]/g, '')})" stroke="${color}" stroke-width="2" rx="8"/>
+                    <circle cx="200" cy="120" r="30" fill="${color}" opacity="0.1"/>
+                    <text x="200" y="130" text-anchor="middle" font-family="Arial" font-size="30" fill="${color}">${icon}</text>
+                    <text x="200" y="170" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold" fill="${color}">
+                        SKU: ${safeSku}
                     </text>
-                    <text x="150" y="125" text-anchor="middle" font-family="Arial" font-size="12" fill="${color}" opacity="0.8">
-                        ${message}
+                    <text x="200" y="195" text-anchor="middle" font-family="Arial" font-size="14" fill="${color}" opacity="0.8">
+                        ${safeMessage}
                     </text>
                     ${isLoading ? `
-                        <circle cx="150" cy="145" r="8" fill="none" stroke="${color}" stroke-width="2" opacity="0.3"/>
-                        <circle cx="150" cy="145" r="8" fill="none" stroke="${color}" stroke-width="2" stroke-dasharray="8 4" opacity="0.8">
-                            <animateTransform attributeName="transform" type="rotate" values="0 150 145;360 150 145" dur="1s" repeatCount="indefinite"/>
+                        <circle cx="200" cy="220" r="12" fill="none" stroke="${color}" stroke-width="3" opacity="0.3"/>
+                        <circle cx="200" cy="220" r="12" fill="none" stroke="${color}" stroke-width="3" stroke-dasharray="12 6" opacity="0.8">
+                            <animateTransform attributeName="transform" type="rotate" values="0 200 220;360 200 220" dur="1.5s" repeatCount="indefinite"/>
                         </circle>
-                        <text x="150" y="170" text-anchor="middle" font-family="Arial" font-size="10" fill="${color}" opacity="0.6">
-                            Loading images...
-                        </text>
                     ` : ''}
-                    <text x="150" y="190" text-anchor="middle" font-family="Arial" font-size="9" fill="${color}" opacity="0.4">
-                        OZZ Cash & Carry
+                    <text x="200" y="280" text-anchor="middle" font-family="Arial" font-size="12" fill="${color}" opacity="0.4">
+                        OZZ Cash &amp; Carry
                     </text>
                 </svg>
             `)}`;
@@ -1313,12 +1315,9 @@
                     '<div class="product-image-container">' +
                         '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
                              'class="product-image" id="img-' + cardId + '" ' +
+                             'style="display: block;" ' +
                              'onload="handleImageLoad(\'' + cardId + '\')" ' +
                              'onerror="handleImageError(\'' + cardId + '\', \'' + product.sku + '\')">' +
-                        '<div class="image-loading" id="loading-' + cardId + '" style="display: none;">' +
-                            '<div class="animate-spin rounded-full h-6 w-6 border-b-2 border-gray-400 mx-auto mb-2"></div>' +
-                            'Loading...' +
-                        '</div>' +
                         '<div class="image-controls">' +
                             '<button class="image-control-btn" onclick="toggleImageFit(\'' + cardId + '\')" title="Toggle image fit">' +
                                 '🔍' +
@@ -1358,10 +1357,9 @@
 
         function updateCounts() {
             const totalProducts = allProducts.length;
-            const imageCount = driveImageManager && imageSystemReady ? driveImageManager.getStats().mappedProducts : 0;
-            const imageStatus = imageSystemReady ? ` • ${imageCount} with photos` : ' • Loading images...';
             
-            document.getElementById('product-count').textContent = `${totalProducts} promotional items available${imageStatus}`;
+            // Clean customer-facing count (no technical details)
+            document.getElementById('product-count').textContent = `${totalProducts} promotional items available`;
             document.getElementById('filteredCount').textContent = filteredProducts.length;
             
             const startItem = (currentPage - 1) * productsPerPage + 1;
@@ -1379,21 +1377,34 @@
         function updateProductImages() {
             if (!imageSystemReady || !driveImageManager) return;
             
+            console.log('🔄 Updating product images with real photos...');
+            
             // Update all visible product images
             const productImages = document.querySelectorAll('.product-image');
+            let updatedCount = 0;
+            
             productImages.forEach(img => {
-                const cardId = img.id.replace('img-', '');
-                const sku = cardId.replace('card-', '').replace(/[^a-zA-Z0-9]/g, '');
+                const cardId = img.id.replace('img-card-', '');
                 
-                // Find the actual SKU from the product data
-                const product = allProducts.find(p => p.sku.replace(/[^a-zA-Z0-9]/g, '') === sku);
+                // Find the product by matching the cardId pattern
+                const product = allProducts.find(p => {
+                    const productCardId = p.sku.replace(/[^a-zA-Z0-9]/g, '');
+                    return cardId === productCardId;
+                });
+                
                 if (product) {
                     const newImageUrl = getImageUrl(product.sku);
-                    if (img.src !== newImageUrl) {
+                    // Only update if the URL has changed and it's not a placeholder
+                    if (img.src !== newImageUrl && !newImageUrl.includes('data:image/svg+xml')) {
                         img.src = newImageUrl;
+                        updatedCount++;
                     }
                 }
             });
+            
+            if (updatedCount > 0) {
+                console.log(`✅ Updated ${updatedCount} product images`);
+            }
         }
 
         function showProductDetails(sku) {
@@ -1495,7 +1506,6 @@
                 updateCounts();
                 
                 refreshBtn.innerHTML = '✅ Updated!';
-                showImageLoadedNotification();
                 
                 setTimeout(() => {
                     refreshBtn.innerHTML = '🔄 Refresh Images';
@@ -1592,26 +1602,16 @@
 
         // Image handling functions
         function handleImageLoad(cardId) {
-            const loadingEl = document.getElementById('loading-' + cardId);
-            if (loadingEl) {
-                loadingEl.style.display = 'none';
-            }
+            // Image loaded successfully - no additional action needed
+            console.log('Image loaded for:', cardId);
         }
 
         function handleImageError(cardId, sku) {
             const imgEl = document.getElementById('img-' + cardId);
-            const loadingEl = document.getElementById('loading-' + cardId);
-            
-            if (loadingEl) {
-                loadingEl.innerHTML = '<div class="image-error">' +
-                    '<div class="text-lg mb-1">📦</div>' +
-                    '<div class="font-semibold">' + sku + '</div>' +
-                    '<div class="text-xs">No image</div>' +
-                '</div>';
-            }
             
             if (imgEl) {
-                imgEl.style.display = 'none';
+                // Replace with a better placeholder if real image fails
+                imgEl.src = generatePlaceholderSVG(sku, 'No Image Available');
             }
         }
 
