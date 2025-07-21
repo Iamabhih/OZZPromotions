@@ -1,50 +1,46 @@
-// OZZ Promotional Catalog Service Worker - CORS Safe Version
-const CACHE_NAME = 'ozz-promo-v1.1';
-const DYNAMIC_CACHE = 'ozz-promo-dynamic-v1.1';
+// OZZ Promotional Catalog Service Worker - GitHub + Custom Domain Optimized
+const CACHE_NAME = 'ozz-github-v1.0';
+const DYNAMIC_CACHE = 'ozz-github-dynamic-v1.0';
 
-// Only cache same-origin resources to avoid CORS issues
+// Only cache same-origin resources (your domain)
 const STATIC_ASSETS = [
     '/',
     '/index.html',
     '/manifest.json'
-    // Removed external CDN resources to avoid CORS issues
 ];
 
-// Resources that should bypass service worker completely
+// External resources to bypass (let browser handle normally)
 const BYPASS_PATTERNS = [
+    'github.com',
+    'githubusercontent.com',
     'googleapis.com',
     'google.com',
     'cdn.tailwindcss.com',
-    'cdnjs.cloudflare.com',
-    'raw.githubusercontent.com'
+    'cdnjs.cloudflare.com'
 ];
 
-// Install event - cache only same-origin static assets
+// Install event - cache only local assets
 self.addEventListener('install', event => {
-    console.log('🔧 Service Worker installing...');
+    console.log('🔧 GitHub Service Worker installing...');
     
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('📦 Caching same-origin assets...');
-                // Only cache same-origin resources
+                console.log('📦 Caching local assets...');
                 return Promise.allSettled(
                     STATIC_ASSETS.map(url => {
-                        return cache.add(new Request(url, { 
-                            mode: 'same-origin',
-                            cache: 'reload'
-                        })).catch(error => {
+                        return cache.add(url).catch(error => {
                             console.warn('Could not cache:', url, error);
                         });
                     })
                 );
             })
             .then(() => {
-                console.log('✅ Same-origin assets cached successfully');
+                console.log('✅ Local assets cached');
                 return self.skipWaiting();
             })
             .catch(error => {
-                console.warn('Cache installation completed with some warnings:', error);
+                console.warn('Cache installation completed with warnings:', error);
                 return self.skipWaiting();
             })
     );
@@ -52,7 +48,7 @@ self.addEventListener('install', event => {
 
 // Activate event - cleanup old caches
 self.addEventListener('activate', event => {
-    console.log('🚀 Service Worker activating...');
+    console.log('🚀 GitHub Service Worker activating...');
     
     event.waitUntil(
         caches.keys()
@@ -60,7 +56,7 @@ self.addEventListener('activate', event => {
                 return Promise.all(
                     cacheNames
                         .filter(cacheName => {
-                            return cacheName.startsWith('ozz-promo-') && 
+                            return cacheName.startsWith('ozz-') && 
                                    cacheName !== CACHE_NAME && 
                                    cacheName !== DYNAMIC_CACHE;
                         })
@@ -71,13 +67,13 @@ self.addEventListener('activate', event => {
                 );
             })
             .then(() => {
-                console.log('✅ Service Worker activated and ready');
+                console.log('✅ GitHub Service Worker ready');
                 return self.clients.claim();
             })
     );
 });
 
-// Fetch event - intelligent caching with CORS handling
+// Fetch event - smart caching for GitHub setup
 self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
@@ -87,22 +83,21 @@ self.addEventListener('fetch', event => {
         return;
     }
     
-    // Bypass external resources that cause CORS issues
+    // Bypass external resources (GitHub, CDNs, APIs)
     if (BYPASS_PATTERNS.some(pattern => url.hostname.includes(pattern))) {
-        return; // Let browser handle these normally
+        return; // Let browser handle normally
     }
     
-    // Only handle same-origin requests or explicitly allowed cross-origin requests
+    // Only handle same-origin requests
     if (url.origin === location.origin) {
-        event.respondWith(handleSameOriginRequest(request));
+        event.respondWith(handleRequest(request));
     }
-    // For cross-origin requests, let browser handle them normally
 });
 
-// Handle same-origin requests with caching
-async function handleSameOriginRequest(request) {
+// Handle requests with caching strategy
+async function handleRequest(request) {
     try {
-        // Try cache first for static assets
+        // For GET requests, try cache first
         if (request.method === 'GET') {
             const cachedResponse = await caches.match(request);
             if (cachedResponse) {
@@ -127,7 +122,7 @@ async function handleSameOriginRequest(request) {
     } catch (error) {
         console.warn('Network request failed:', request.url, error);
         
-        // Try to serve from cache as fallback
+        // Try cache as fallback
         const cachedResponse = await caches.match(request);
         if (cachedResponse) {
             console.log('📋 Serving fallback from cache:', request.url);
@@ -141,7 +136,6 @@ async function handleSameOriginRequest(request) {
             });
         }
         
-        // Return network error for other requests
         return new Response('Network error', { 
             status: 503,
             statusText: 'Service Unavailable'
@@ -153,40 +147,41 @@ async function handleSameOriginRequest(request) {
 self.addEventListener('sync', event => {
     console.log('🔄 Background sync triggered:', event.tag);
     
-    if (event.tag === 'background-sync') {
-        event.waitUntil(syncData());
+    if (event.tag === 'github-sync') {
+        event.waitUntil(syncGitHubData());
     }
 });
 
-// Sync data when connection returns
-async function syncData() {
+// Sync GitHub data when online
+async function syncGitHubData() {
     try {
-        console.log('📊 Syncing product data...');
+        console.log('📊 Syncing GitHub data...');
         
-        const response = await fetch('/JULY PROMO.xlsx');
+        // Try to refresh the Excel file from GitHub
+        const response = await fetch('https://github.com/Iamabhih/OZZPromotions/raw/main/JULY%20PROMO.xlsx');
         if (response.ok) {
             const cache = await caches.open(DYNAMIC_CACHE);
-            await cache.put('/JULY PROMO.xlsx', response.clone());
+            await cache.put('https://github.com/Iamabhih/OZZPromotions/raw/main/JULY%20PROMO.xlsx', response.clone());
             
-            // Notify all clients of updated data
+            // Notify clients of updated data
             const clients = await self.clients.matchAll();
             clients.forEach(client => {
                 client.postMessage({ 
-                    type: 'DATA_UPDATED',
-                    message: 'Product data has been updated' 
+                    type: 'GITHUB_DATA_UPDATED',
+                    message: 'Product data refreshed from GitHub' 
                 });
             });
             
-            console.log('✅ Product data synced successfully');
+            console.log('✅ GitHub data synced');
         }
     } catch (error) {
-        console.warn('Background sync failed:', error);
+        console.warn('GitHub sync failed:', error);
     }
 }
 
 // Message handling from main thread
 self.addEventListener('message', event => {
-    const { type, data } = event.data;
+    const { type, data } = event.data || {};
     
     switch (type) {
         case 'SKIP_WAITING':
@@ -194,12 +189,23 @@ self.addEventListener('message', event => {
             break;
             
         case 'GET_VERSION':
-            event.ports[0].postMessage({ version: '1.1' });
+            if (event.ports && event.ports[0]) {
+                event.ports[0].postMessage({ version: '1.0' });
+            }
             break;
             
         case 'CLEAR_CACHE':
             clearAllCaches().then(() => {
-                event.ports[0].postMessage({ success: true });
+                if (event.ports && event.ports[0]) {
+                    event.ports[0].postMessage({ success: true });
+                }
+            });
+            break;
+            
+        case 'SYNC_GITHUB':
+            // Trigger background sync
+            self.registration.sync.register('github-sync').catch(error => {
+                console.warn('Background sync registration failed:', error);
             });
             break;
             
@@ -208,17 +214,17 @@ self.addEventListener('message', event => {
     }
 });
 
-// Utility function to clear all caches
+// Clear all caches
 async function clearAllCaches() {
     const cacheNames = await caches.keys();
     return Promise.all(
         cacheNames
-            .filter(name => name.startsWith('ozz-promo-'))
+            .filter(name => name.startsWith('ozz-'))
             .map(name => caches.delete(name))
     );
 }
 
-// Offline HTML fallback
+// Offline fallback page
 function getOfflineHTML() {
     return `
         <!DOCTYPE html>
@@ -276,4 +282,4 @@ function getOfflineHTML() {
     `;
 }
 
-console.log('🚀 OZZ Promotional Catalog Service Worker (CORS Safe) loaded successfully');
+console.log('🚀 OZZ GitHub Service Worker loaded successfully');
