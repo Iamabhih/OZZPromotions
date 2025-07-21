@@ -1,49 +1,56 @@
-// OZZ Promotional Catalog Service Worker
-// Version 1.0 - Optimized for performance and offline support
+// OZZ Promotional Catalog Service Worker - CORS Safe Version
+const CACHE_NAME = 'ozz-promo-v1.1';
+const DYNAMIC_CACHE = 'ozz-promo-dynamic-v1.1';
 
-const CACHE_NAME = 'ozz-promo-v1.0';
-const CACHE_VERSION = '1.0';
-
-// Critical resources to cache immediately
+// Only cache same-origin resources to avoid CORS issues
 const STATIC_ASSETS = [
     '/',
     '/index.html',
-    '/manifest.json',
-    'https://cdn.tailwindcss.com',
-    'https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png'
+    '/manifest.json'
+    // Removed external CDN resources to avoid CORS issues
 ];
 
-// Dynamic resources to cache on first request
-const DYNAMIC_CACHE = 'ozz-promo-dynamic-v1.0';
-
-// Resources that should always be fetched from network
-const NETWORK_FIRST = [
-    '/JULY PROMO.xlsx',
+// Resources that should bypass service worker completely
+const BYPASS_PATTERNS = [
     'googleapis.com',
-    'google.com/drive'
+    'google.com',
+    'cdn.tailwindcss.com',
+    'cdnjs.cloudflare.com',
+    'raw.githubusercontent.com'
 ];
 
-// Install event - cache static assets
+// Install event - cache only same-origin static assets
 self.addEventListener('install', event => {
     console.log('🔧 Service Worker installing...');
     
     event.waitUntil(
         caches.open(CACHE_NAME)
             .then(cache => {
-                console.log('📦 Caching static assets...');
-                return cache.addAll(STATIC_ASSETS.map(url => new Request(url, { mode: 'cors' })));
+                console.log('📦 Caching same-origin assets...');
+                // Only cache same-origin resources
+                return Promise.allSettled(
+                    STATIC_ASSETS.map(url => {
+                        return cache.add(new Request(url, { 
+                            mode: 'same-origin',
+                            cache: 'reload'
+                        })).catch(error => {
+                            console.warn('Could not cache:', url, error);
+                        });
+                    })
+                );
             })
             .then(() => {
-                console.log('✅ Static assets cached successfully');
+                console.log('✅ Same-origin assets cached successfully');
                 return self.skipWaiting();
             })
             .catch(error => {
-                console.error('❌ Error caching static assets:', error);
+                console.warn('Cache installation completed with some warnings:', error);
+                return self.skipWaiting();
             })
     );
 });
 
-// Activate event - cleanup old caches and take control
+// Activate event - cleanup old caches
 self.addEventListener('activate', event => {
     console.log('🚀 Service Worker activating...');
     
@@ -53,8 +60,9 @@ self.addEventListener('activate', event => {
                 return Promise.all(
                     cacheNames
                         .filter(cacheName => {
-                            // Delete old caches
-                            return cacheName.startsWith('ozz-promo-') && cacheName !== CACHE_NAME && cacheName !== DYNAMIC_CACHE;
+                            return cacheName.startsWith('ozz-promo-') && 
+                                   cacheName !== CACHE_NAME && 
+                                   cacheName !== DYNAMIC_CACHE;
                         })
                         .map(cacheName => {
                             console.log('🗑️ Deleting old cache:', cacheName);
@@ -69,7 +77,7 @@ self.addEventListener('activate', event => {
     );
 });
 
-// Fetch event - intelligent caching strategy
+// Fetch event - intelligent caching with CORS handling
 self.addEventListener('fetch', event => {
     const { request } = event;
     const url = new URL(request.url);
@@ -79,93 +87,66 @@ self.addEventListener('fetch', event => {
         return;
     }
     
-    // Skip Google APIs (they have their own caching)
-    if (url.hostname.includes('googleapis.com') || url.hostname.includes('google.com')) {
-        return;
+    // Bypass external resources that cause CORS issues
+    if (BYPASS_PATTERNS.some(pattern => url.hostname.includes(pattern))) {
+        return; // Let browser handle these normally
     }
     
-    // Network first for critical dynamic content
-    if (NETWORK_FIRST.some(pattern => request.url.includes(pattern))) {
-        event.respondWith(networkFirst(request));
-        return;
+    // Only handle same-origin requests or explicitly allowed cross-origin requests
+    if (url.origin === location.origin) {
+        event.respondWith(handleSameOriginRequest(request));
     }
-    
-    // Cache first for static assets
-    if (STATIC_ASSETS.some(asset => request.url.includes(asset.replace('https://', '').replace('http://', '')))) {
-        event.respondWith(cacheFirst(request));
-        return;
-    }
-    
-    // Stale while revalidate for everything else
-    event.respondWith(staleWhileRevalidate(request));
+    // For cross-origin requests, let browser handle them normally
 });
 
-// Cache first strategy (for static assets)
-async function cacheFirst(request) {
+// Handle same-origin requests with caching
+async function handleSameOriginRequest(request) {
     try {
-        const cachedResponse = await caches.match(request);
-        if (cachedResponse) {
-            return cachedResponse;
+        // Try cache first for static assets
+        if (request.method === 'GET') {
+            const cachedResponse = await caches.match(request);
+            if (cachedResponse) {
+                console.log('📋 Serving from cache:', request.url);
+                return cachedResponse;
+            }
         }
         
-        const networkResponse = await fetch(request);
-        if (networkResponse.ok) {
-            const cache = await caches.open(CACHE_NAME);
-            cache.put(request, networkResponse.clone());
-        }
-        return networkResponse;
-        
-    } catch (error) {
-        console.error('Cache first failed:', error);
-        return await caches.match('/index.html') || new Response('Offline', { status: 503 });
-    }
-}
-
-// Network first strategy (for dynamic content)
-async function networkFirst(request) {
-    try {
+        // Fetch from network
         const networkResponse = await fetch(request);
         
-        if (networkResponse.ok) {
+        // Cache successful GET responses
+        if (networkResponse.ok && request.method === 'GET') {
             const cache = await caches.open(DYNAMIC_CACHE);
-            cache.put(request, networkResponse.clone());
+            cache.put(request, networkResponse.clone()).catch(error => {
+                console.warn('Could not cache response:', error);
+            });
         }
         
         return networkResponse;
         
     } catch (error) {
-        console.log('Network failed, trying cache:', request.url);
-        const cachedResponse = await caches.match(request);
+        console.warn('Network request failed:', request.url, error);
         
+        // Try to serve from cache as fallback
+        const cachedResponse = await caches.match(request);
         if (cachedResponse) {
+            console.log('📋 Serving fallback from cache:', request.url);
             return cachedResponse;
         }
         
         // Return offline page for navigation requests
         if (request.destination === 'document') {
-            return await caches.match('/index.html') || new Response(
-                getOfflineHTML(), 
-                { headers: { 'Content-Type': 'text/html' } }
-            );
+            return new Response(getOfflineHTML(), {
+                headers: { 'Content-Type': 'text/html' }
+            });
         }
         
-        return new Response('Offline', { status: 503 });
+        // Return network error for other requests
+        return new Response('Network error', { 
+            status: 503,
+            statusText: 'Service Unavailable'
+        });
     }
-}
-
-// Stale while revalidate strategy (for most content)
-async function staleWhileRevalidate(request) {
-    const cache = await caches.open(DYNAMIC_CACHE);
-    const cachedResponse = await cache.match(request);
-    
-    const fetchPromise = fetch(request).then(networkResponse => {
-        if (networkResponse.ok) {
-            cache.put(request, networkResponse.clone());
-        }
-        return networkResponse;
-    }).catch(() => cachedResponse);
-    
-    return cachedResponse || await fetchPromise;
 }
 
 // Background sync for data updates
@@ -199,45 +180,9 @@ async function syncData() {
             console.log('✅ Product data synced successfully');
         }
     } catch (error) {
-        console.error('❌ Background sync failed:', error);
+        console.warn('Background sync failed:', error);
     }
 }
-
-// Push notification support (for future use)
-self.addEventListener('push', event => {
-    if (!event.data) return;
-    
-    const data = event.data.json();
-    const options = {
-        body: data.body || 'New promotional deals available!',
-        icon: 'https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png',
-        badge: 'https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png',
-        vibrate: [200, 100, 200],
-        data: data,
-        actions: [
-            {
-                action: 'view',
-                title: 'View Deals',
-                icon: 'https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png'
-            }
-        ]
-    };
-    
-    event.waitUntil(
-        self.registration.showNotification(data.title || 'OZZ Cash & Carry', options)
-    );
-});
-
-// Handle notification clicks
-self.addEventListener('notificationclick', event => {
-    event.notification.close();
-    
-    if (event.action === 'view') {
-        event.waitUntil(
-            clients.openWindow('/')
-        );
-    }
-});
 
 // Message handling from main thread
 self.addEventListener('message', event => {
@@ -249,7 +194,7 @@ self.addEventListener('message', event => {
             break;
             
         case 'GET_VERSION':
-            event.ports[0].postMessage({ version: CACHE_VERSION });
+            event.ports[0].postMessage({ version: '1.1' });
             break;
             
         case 'CLEAR_CACHE':
@@ -322,7 +267,7 @@ function getOfflineHTML() {
                 <div class="icon">🏪</div>
                 <h1>OZZ Cash & Carry</h1>
                 <h2>You're Offline</h2>
-                <p>It looks like you've lost your internet connection. Don't worry - when you're back online, you'll be able to browse our full July 2025 promotional catalog!</p>
+                <p>It looks like you've lost your internet connection. When you're back online, you'll be able to browse our full July 2025 promotional catalog!</p>
                 <p><strong>Contact us directly:</strong><br>📞 +27 31 332 7192</p>
                 <button onclick="location.reload()">Try Again</button>
             </div>
@@ -331,51 +276,4 @@ function getOfflineHTML() {
     `;
 }
 
-// Performance monitoring
-self.addEventListener('fetch', event => {
-    // Log slow requests for monitoring
-    const start = performance.now();
-    
-    event.respondWith(
-        (async () => {
-            const response = await handleRequest(event.request);
-            const duration = performance.now() - start;
-            
-            if (duration > 2000) {
-                console.warn(`Slow request detected: ${event.request.url} took ${duration.toFixed(2)}ms`);
-            }
-            
-            return response;
-        })()
-    );
-});
-
-// Main request handler
-async function handleRequest(request) {
-    const url = new URL(request.url);
-    
-    // Skip non-HTTP requests
-    if (!request.url.startsWith('http')) {
-        return fetch(request);
-    }
-    
-    // Skip Google APIs
-    if (url.hostname.includes('googleapis.com') || url.hostname.includes('google.com')) {
-        return fetch(request);
-    }
-    
-    // Network first for critical dynamic content
-    if (NETWORK_FIRST.some(pattern => request.url.includes(pattern))) {
-        return networkFirst(request);
-    }
-    
-    // Cache first for static assets
-    if (STATIC_ASSETS.some(asset => request.url.includes(asset.replace('https://', '').replace('http://', '')))) {
-        return cacheFirst(request);
-    }
-    
-    // Stale while revalidate for everything else
-    return staleWhileRevalidate(request);
-}
-
-console.log('🚀 OZZ Promotional Catalog Service Worker loaded successfully');
+console.log('🚀 OZZ Promotional Catalog Service Worker (CORS Safe) loaded successfully');
