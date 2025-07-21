@@ -3,596 +3,131 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎉 July 2025 Promotional Catalog - OZZ Cash & Carry | Premium Home & Kitchen Products</title>
+    <title>🎉 July 2025 Promotional Catalog - OZZ Cash & Carry</title>
     
-    <!-- PWA and Icons -->
-    <link rel="manifest" href="./manifest.json">
+    <!-- Simple favicon -->
     <link rel="icon" href="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" type="image/png">
-    <meta name="theme-color" content="#dc2626">
-    <meta name="apple-mobile-web-app-capable" content="yes">
-    <meta name="apple-mobile-web-app-status-bar-style" content="default">
     
-    <!-- SEO and Social -->
-    <meta name="description" content="July 2025 Promotional Catalog - Exclusive deals on premium home & kitchen products from OZZ Cash & Carry. Save up to 50% on quality items.">
-    <meta name="keywords" content="OZZ Cash & Carry, July 2025, promo, deals, kitchen, home, South Africa, Durban">
-    <meta property="og:title" content="July 2025 Promotional Catalog - OZZ Cash & Carry">
-    <meta property="og:description" content="Exclusive promotional deals on premium home & kitchen products. Limited time offers!">
-    <meta property="og:type" content="website">
-    <meta property="og:image" content="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png">
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
     
-    <!-- Performance Optimizations -->
-    <link rel="preload" href="./JULY PROMO.xlsx" as="fetch" crossorigin>
-    <link rel="dns-prefetch" href="//cdnjs.cloudflare.com">
-    
-    <!-- Load Tailwind CSS with error handling -->
-    <link rel="stylesheet" href="https://cdn.tailwindcss.com" onerror="this.onerror=null; console.warn('Tailwind CSS failed to load, using fallback styles');">
-    
-    <!-- Complete CSS - Inlined with Tailwind-like utilities -->
-    <style>
-        /* Reset and base styles */
-        * {
-            box-sizing: border-box;
-        }
-        
-        body { 
-            margin: 0; 
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-            background: linear-gradient(135deg, #fef2f2 0%, #ffffff 50%, #eff6ff 100%);
-            line-height: 1.6;
-            color: #1f2937;
-        }
-        
-        /* Utility classes */
-        .container { max-width: 1200px; margin: 0 auto; padding: 0 1rem; }
-        .text-center { text-align: center; }
-        .text-left { text-align: left; }
-        .text-right { text-align: right; }
-        .flex { display: flex; }
-        .grid { display: grid; }
-        .hidden { display: none !important; }
-        .block { display: block; }
-        .inline-block { display: inline-block; }
-        .relative { position: relative; }
-        .absolute { position: absolute; }
-        .fixed { position: fixed; }
-        
-        /* Spacing */
-        .p-2 { padding: 0.5rem; }
-        .p-4 { padding: 1rem; }
-        .p-6 { padding: 1.5rem; }
-        .p-8 { padding: 2rem; }
-        .px-2 { padding-left: 0.5rem; padding-right: 0.5rem; }
-        .px-3 { padding-left: 0.75rem; padding-right: 0.75rem; }
-        .px-4 { padding-left: 1rem; padding-right: 1rem; }
-        .px-6 { padding-left: 1.5rem; padding-right: 1.5rem; }
-        .py-2 { padding-top: 0.5rem; padding-bottom: 0.5rem; }
-        .py-3 { padding-top: 0.75rem; padding-bottom: 0.75rem; }
-        .py-4 { padding-top: 1rem; padding-bottom: 1rem; }
-        .py-8 { padding-top: 2rem; padding-bottom: 2rem; }
-        .py-12 { padding-top: 3rem; padding-bottom: 3rem; }
-        
-        .m-2 { margin: 0.5rem; }
-        .m-4 { margin: 1rem; }
-        .mx-auto { margin-left: auto; margin-right: auto; }
-        .mb-2 { margin-bottom: 0.5rem; }
-        .mb-4 { margin-bottom: 1rem; }
-        .mb-6 { margin-bottom: 1.5rem; }
-        .mb-8 { margin-bottom: 2rem; }
-        .mt-4 { margin-top: 1rem; }
-        .mt-6 { margin-top: 1.5rem; }
-        .mt-16 { margin-top: 4rem; }
-        
-        /* Flexbox */
-        .items-center { align-items: center; }
-        .items-start { align-items: flex-start; }
-        .justify-center { justify-content: center; }
-        .justify-between { justify-content: space-between; }
-        .justify-around { justify-content: space-around; }
-        .flex-wrap { flex-wrap: wrap; }
-        .flex-col { flex-direction: column; }
-        
-        /* Grid */
-        .gap-1 { gap: 0.25rem; }
-        .gap-2 { gap: 0.5rem; }
-        .gap-4 { gap: 1rem; }
-        .gap-6 { gap: 1.5rem; }
-        .gap-8 { gap: 2rem; }
-        
-        /* Typography */
-        .text-xs { font-size: 0.75rem; }
-        .text-sm { font-size: 0.875rem; }
-        .text-base { font-size: 1rem; }
-        .text-lg { font-size: 1.125rem; }
-        .text-xl { font-size: 1.25rem; }
-        .text-2xl { font-size: 1.5rem; }
-        .text-3xl { font-size: 1.875rem; }
-        .text-4xl { font-size: 2.25rem; }
-        .text-5xl { font-size: 3rem; }
-        .font-medium { font-weight: 500; }
-        .font-semibold { font-weight: 600; }
-        .font-bold { font-weight: 700; }
-        .leading-tight { line-height: 1.25; }
-        .line-through { text-decoration: line-through; }
-        
-        /* Colors */
-        .text-white { color: #ffffff; }
-        .text-black { color: #000000; }
-        .text-gray-400 { color: #9ca3af; }
-        .text-gray-500 { color: #6b7280; }
-        .text-gray-600 { color: #4b5563; }
-        .text-gray-700 { color: #374151; }
-        .text-gray-800 { color: #1f2937; }
-        .text-gray-900 { color: #111827; }
-        .text-red-600 { color: #dc2626; }
-        .text-red-700 { color: #b91c1c; }
-        .text-red-800 { color: #991b1b; }
-        .text-blue-600 { color: #2563eb; }
-        .text-green-600 { color: #16a34a; }
-        .text-green-700 { color: #15803d; }
-        .text-yellow-700 { color: #a16207; }
-        .text-yellow-800 { color: #92400e; }
-        
-        .bg-white { background-color: #ffffff; }
-        .bg-gray-100 { background-color: #f3f4f6; }
-        .bg-gray-200 { background-color: #e5e7eb; }
-        .bg-gray-800 { background-color: #1f2937; }
-        .bg-red-50 { background-color: #fef2f2; }
-        .bg-red-100 { background-color: #fee2e2; }
-        .bg-red-500 { background-color: #ef4444; }
-        .bg-red-600 { background-color: #dc2626; }
-        .bg-red-700 { background-color: #b91c1c; }
-        .bg-blue-500 { background-color: #3b82f6; }
-        .bg-green-100 { background-color: #dcfce7; }
-        .bg-yellow-50 { background-color: #fefce8; }
-        .bg-yellow-400 { background-color: #facc15; }
-        
-        /* Borders */
-        .border { border-width: 1px; border-style: solid; border-color: #d1d5db; }
-        .border-2 { border-width: 2px; }
-        .border-red-100 { border-color: #fee2e2; }
-        .border-red-500 { border-color: #ef4444; }
-        .border-yellow-200 { border-color: #fde047; }
-        .border-l-4 { border-left-width: 4px; }
-        .rounded { border-radius: 0.25rem; }
-        .rounded-lg { border-radius: 0.5rem; }
-        .rounded-xl { border-radius: 0.75rem; }
-        .rounded-full { border-radius: 9999px; }
-        
-        /* Shadows */
-        .shadow { box-shadow: 0 1px 3px 0 rgba(0, 0, 0, 0.1), 0 1px 2px 0 rgba(0, 0, 0, 0.06); }
-        .shadow-lg { box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05); }
-        
-        /* Sizing */
-        .w-full { width: 100%; }
-        .w-5 { width: 1.25rem; }
-        .h-5 { height: 1.25rem; }
-        .h-16 { height: 4rem; }
-        .h-20 { height: 5rem; }
-        .max-w-md { max-width: 28rem; }
-        .max-w-4xl { max-width: 56rem; }
-        .max-w-6xl { max-width: 72rem; }
-        .min-h-screen { min-height: 100vh; }
-        
-        /* Loading animations */
-        .loading-skeleton {
-            background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
-            background-size: 200% 100%;
-            animation: loading 1.5s infinite;
-            border-radius: 4px;
-        }
-        
-        @keyframes loading {
-            0% { background-position: 200% 0; }
-            100% { background-position: -200% 0; }
-        }
-        
-        .fade-in {
-            opacity: 0;
-            transform: translateY(20px);
-            transition: opacity 0.6s ease, transform 0.6s ease;
-        }
-        
-        .fade-in.visible {
-            opacity: 1;
-            transform: translateY(0);
-        }
-        
-        /* Hero section */
-        .hero-section {
-            background: linear-gradient(135deg, #dc2626 0%, #ef4444 50%, #2563eb 100%);
-            color: white;
-            padding: 2rem 1rem;
-            text-align: center;
-            min-height: 200px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            position: relative;
-            overflow: hidden;
-        }
-        
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-        
-        /* Products grid */
-        .products-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
-            padding: 1rem;
-            max-width: 1400px;
-            margin: 0 auto;
-        }
-        
-        @media (max-width: 768px) {
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 1rem;
-                padding: 0.75rem;
-            }
-        }
-        
-        @media (max-width: 480px) {
-            .products-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 0.75rem;
-                padding: 0.5rem;
-            }
-        }
-        
-        /* Product cards */
-        .product-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-            overflow: hidden;
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-            cursor: pointer;
-        }
-        
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 12px 24px rgba(0,0,0,0.15);
-        }
-        
-        .product-image-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            overflow: hidden;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        
-        @media (max-width: 480px) {
-            .product-image-container {
-                height: 160px;
-            }
-        }
-        
-        .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            transition: all 0.3s ease;
-            position: absolute;
-            top: 0;
-            left: 0;
-        }
-        
-        .product-image:hover {
-            transform: scale(1.05);
-        }
-        
-        .image-skeleton {
-            width: 100%;
-            height: 100%;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            font-size: 1.5rem;
-            background: #f1f5f9;
-        }
-        
-        /* Form elements */
-        .search-input {
-            width: 100%;
-            padding: 12px 16px 12px 40px;
-            border: 2px solid #fecaca;
-            border-radius: 8px;
-            font-size: 16px;
-            background: white;
-            transition: all 0.3s ease;
-        }
-        
-        .search-input:focus {
-            outline: none;
-            border-color: #ef4444;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-        }
-        
-        /* Buttons */
-        .btn {
-            padding: 0.5rem 1rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            transition: all 0.2s ease;
-            cursor: pointer;
-            border: none;
-            font-size: 0.875rem;
-            display: inline-block;
-            text-decoration: none;
-        }
-        
-        .btn:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
-        
-        .btn-primary {
-            background: #dc2626;
-            color: white;
-        }
-        
-        .btn-primary:hover:not(:disabled) {
-            background: #b91c1c;
-            transform: translateY(-1px);
-        }
-        
-        .btn-secondary {
-            background: #f3f4f6;
-            color: #374151;
-            border: 1px solid #d1d5db;
-        }
-        
-        .btn-secondary:hover:not(:disabled) {
-            background: #e5e7eb;
-        }
-        
-        .btn-secondary.active {
-            background: #dc2626;
-            color: white;
-            border-color: #dc2626;
-        }
-        
-        /* Modal */
-        .modal {
-            position: fixed;
-            inset: 0;
-            background: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            padding: 1rem;
-            backdrop-filter: blur(4px);
-            opacity: 0;
-            visibility: hidden;
-            transition: all 0.3s ease;
-        }
-        
-        .modal.active {
-            opacity: 1;
-            visibility: visible;
-        }
-        
-        .modal-content {
-            background: white;
-            border-radius: 12px;
-            max-width: 90vw;
-            max-height: 90vh;
-            overflow-y: auto;
-            width: 100%;
-            max-width: 700px;
-            transform: scale(0.9);
-            transition: transform 0.3s ease;
-        }
-        
-        .modal.active .modal-content {
-            transform: scale(1);
-        }
-        
-        /* Responsive utilities */
-        @media (min-width: 768px) {
-            .md\\:grid-cols-2 { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-            .md\\:text-xl { font-size: 1.25rem; }
-            .md\\:text-3xl { font-size: 1.875rem; }
-            .md\\:text-5xl { font-size: 3rem; }
-        }
-        
-        /* Touch optimizations */
-        button, .clickable {
-            touch-action: manipulation;
-            min-height: 44px;
-            -webkit-tap-highlight-color: transparent;
-        }
-        
-        /* Scrolling optimizations */
-        .products-grid,
-        .modal-content {
-            -webkit-overflow-scrolling: touch;
-            scroll-behavior: smooth;
-        }
-        
-        /* Animations */
-        .animate-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        
-        @keyframes pulse {
-            0%, 100% {
-                opacity: 1;
-            }
-            50% {
-                opacity: 0.5;
-            }
-        }
-        
-        /* Custom component styles */
-        .top-2 { top: 0.5rem; }
-        .left-2 { left: 0.5rem; }
-        .left-3 { left: 0.75rem; }
-        .top-1\\/2 { top: 50%; }
-        .transform { transform: translateX(var(--tw-translate-x)) translateY(var(--tw-translate-y)) rotate(var(--tw-rotate)) skewX(var(--tw-skew-x)) skewY(var(--tw-skew-y)) scaleX(var(--tw-scale-x)) scaleY(var(--tw-scale-y)); }
-        .-translate-y-1\\/2 { --tw-translate-y: -50%; transform: var(--tw-transform); }
-        
-        .stroke-2 { stroke-width: 2; }
-        .stroke-current { stroke: currentColor; }
-        .fill-none { fill: none; }
-        
-        .opacity-50 { opacity: 0.5; }
-        .opacity-75 { opacity: 0.75; }
-        .opacity-90 { opacity: 0.9; }
-        
-        .cursor-pointer { cursor: pointer; }
-        .cursor-not-allowed { cursor: not-allowed; }
-        
-        .transition-colors { transition-property: color, background-color, border-color, fill, stroke; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
-        .transition-all { transition-property: all; transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1); transition-duration: 150ms; }
-        
-        .hover\\:bg-red-700:hover { background-color: #b91c1c; }
-        .hover\\:bg-gray-100:hover { background-color: #f3f4f6; }
-        .hover\\:text-red-600:hover { color: #dc2626; }
-        .hover\\:text-gray-700:hover { color: #374151; }
-        .hover\\:text-yellow-200:hover { color: #fef08a; }
-        .hover\\:opacity-60:hover { opacity: 0.6; }
-    </style>
+    <!-- Load XLSX library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
 </head>
-<body>
-    <!-- Hero Section -->
-    <header class="hero-section">
-        <div class="hero-content">
+<body class="bg-gradient-to-br from-red-50 via-white to-blue-50">
+    
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-red-600 via-red-500 to-blue-600 text-white shadow-xl">
+        <div class="max-w-7xl mx-auto px-4 py-8 text-center">
             <div class="mb-4">
                 <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
                      alt="OZZ Cash & Carry" 
                      class="h-16 md:h-20 mx-auto mb-2"
-                     loading="eager"
-                     onerror="this.style.display='none';"
-                     style="filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));">
+                     onerror="this.style.display='none';">
             </div>
-            <h1 class="text-3xl md:text-5xl font-bold mb-2">🎉 JULY 2025 PROMO 🎉</h1>
-            <p class="text-lg md:text-xl mb-4">Exclusive Deals on Premium Home & Kitchen Products</p>
-            <div id="productCount" class="text-sm mb-4 opacity-90">Loading promotional items...</div>
-            <div class="inline-block bg-yellow-400 text-red-800 px-6 py-2 rounded-full font-bold animate-pulse">
+            <h1 class="text-4xl md:text-6xl font-bold mb-2">🎉 JULY 2025 PROMO 🎉</h1>
+            <p class="text-xl md:text-2xl mb-4">Exclusive Deals on Premium Home & Kitchen Products</p>
+            <p class="text-lg opacity-90" id="product-count">Loading promotional items...</p>
+            <div class="mt-6 inline-block bg-yellow-400 text-red-800 px-8 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
                 ⏰ LIMITED TIME OFFER!
             </div>
         </div>
     </header>
 
     <!-- Search Section -->
-    <div class="container fade-in">
-        <div class="bg-white shadow-lg rounded-xl p-6 mb-6 border-2 border-red-100">
-            <div class="text-center mb-4">
+    <div class="max-w-7xl mx-auto px-4 py-6">
+        <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border-2 border-red-100">
+            <div class="mb-4 text-center">
                 <h2 class="text-2xl font-bold text-gray-800 mb-2">🔍 Find Your Perfect Deal!</h2>
                 <p class="text-gray-600">Search through our exclusive July promotional items</p>
             </div>
-            
             <div class="max-w-md mx-auto relative mb-4">
-                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-600 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 <input 
                     type="text" 
                     id="searchInput"
                     placeholder="Search promo items or SKU..." 
-                    class="search-input"
-                    autocomplete="off"
+                    class="w-full pl-10 pr-4 py-3 border-2 border-red-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500"
+                    onkeyup="filterProducts()"
                 >
             </div>
             
             <!-- Controls -->
-            <div class="flex flex-wrap justify-center gap-4">
-                <select id="sortBy" class="btn btn-secondary">
+            <div class="flex justify-center gap-4 flex-wrap">
+                <select id="sortBy" onchange="applyFilters()" class="px-4 py-2 border-2 border-red-200 rounded-lg focus:ring-2 focus:ring-red-500">
                     <option value="name">Sort by Name</option>
                     <option value="price">Sort by Price</option>
                     <option value="category">Sort by Category</option>
                 </select>
-                <button id="sortOrderBtn" class="btn btn-secondary">
+                <button onclick="toggleSortOrder()" id="sortOrderBtn" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200">
                     ↑ A-Z
                 </button>
-                <button id="refreshBtn" class="btn btn-secondary">
-                    🔄 Refresh
-                </button>
             </div>
         </div>
-    </div>
 
-    <!-- Category Filter -->
-    <div class="text-center mb-6 fade-in">
-        <div id="categoryButtons" class="flex flex-wrap gap-2 justify-center px-4">
-            <!-- Categories will be populated -->
-        </div>
-    </div>
-
-    <!-- Results Counter -->
-    <div class="text-center mb-6 fade-in">
-        <p class="text-xl text-gray-700">
-            🔥 <span class="font-bold text-red-600" id="filteredCount">0</span> promotional deals found!
-        </p>
-        <div class="text-sm text-gray-500 mt-2" id="pageInfo">
-            Loading promotional items...
-        </div>
-    </div>
-
-    <!-- Products Grid -->
-    <div id="productsGrid" class="products-grid fade-in">
-        <!-- Initial loading skeletons -->
-        <div class="product-card">
-            <div class="product-image-container">
-                <div class="image-skeleton loading-skeleton">
-                    <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
-                    <div style="font-size: 0.75rem;">Loading...</div>
-                </div>
-            </div>
-            <div class="p-4">
-                <div class="loading-skeleton" style="height: 1rem; margin-bottom: 0.5rem;"></div>
-                <div class="loading-skeleton" style="height: 1.5rem; margin-bottom: 1rem;"></div>
-                <div class="loading-skeleton" style="height: 2rem;"></div>
+        <!-- Category Filter -->
+        <div class="text-center mb-6">
+            <div class="inline-flex flex-wrap gap-2 justify-center" id="categoryButtons">
+                <!-- Categories will be populated here -->
             </div>
         </div>
-        <!-- Additional skeleton cards -->
-        <div class="product-card"><div class="product-image-container"><div class="image-skeleton loading-skeleton"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div><div style="font-size: 0.75rem;">Loading...</div></div></div><div class="p-4"><div class="loading-skeleton" style="height: 1rem; margin-bottom: 0.5rem;"></div><div class="loading-skeleton" style="height: 1.5rem; margin-bottom: 1rem;"></div><div class="loading-skeleton" style="height: 2rem;"></div></div></div>
-        <div class="product-card"><div class="product-image-container"><div class="image-skeleton loading-skeleton"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div><div style="font-size: 0.75rem;">Loading...</div></div></div><div class="p-4"><div class="loading-skeleton" style="height: 1rem; margin-bottom: 0.5rem;"></div><div class="loading-skeleton" style="height: 1.5rem; margin-bottom: 1rem;"></div><div class="loading-skeleton" style="height: 2rem;"></div></div></div>
-        <div class="product-card"><div class="product-image-container"><div class="image-skeleton loading-skeleton"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div><div style="font-size: 0.75rem;">Loading...</div></div></div><div class="p-4"><div class="loading-skeleton" style="height: 1rem; margin-bottom: 0.5rem;"></div><div class="loading-skeleton" style="height: 1.5rem; margin-bottom: 1rem;"></div><div class="loading-skeleton" style="height: 2rem;"></div></div></div>
-        <div class="product-card"><div class="product-image-container"><div class="image-skeleton loading-skeleton"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div><div style="font-size: 0.75rem;">Loading...</div></div></div><div class="p-4"><div class="loading-skeleton" style="height: 1rem; margin-bottom: 0.5rem;"></div><div class="loading-skeleton" style="height: 1.5rem; margin-bottom: 1rem;"></div><div class="loading-skeleton" style="height: 2rem;"></div></div></div>
-        <div class="product-card"><div class="product-image-container"><div class="image-skeleton loading-skeleton"><div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div><div style="font-size: 0.75rem;">Loading...</div></div></div><div class="p-4"><div class="loading-skeleton" style="height: 1rem; margin-bottom: 0.5rem;"></div><div class="loading-skeleton" style="height: 1.5rem; margin-bottom: 1rem;"></div><div class="loading-skeleton" style="height: 2rem;"></div></div></div>
-    </div>
 
-    <!-- Pagination -->
-    <div class="text-center py-8 fade-in" id="paginationControls">
-        <!-- Pagination will be populated -->
+        <!-- Results Counter -->
+        <div class="mb-6 text-center">
+            <p class="text-xl text-gray-700">
+                🔥 <span class="font-bold text-red-600" id="filteredCount">0</span> promotional deals found!
+            </p>
+        </div>
+
+        <!-- Products Grid -->
+        <div id="productsGrid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+            <!-- Products will be populated here -->
+            <div class="text-center py-16 col-span-full">
+                <div class="text-4xl mb-4">🎉</div>
+                <p class="text-xl text-gray-700 mb-2">Loading promotional deals...</p>
+                <p class="text-gray-500">July 2025 special offers coming right up!</p>
+            </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div id="noResults" class="text-center py-16 bg-white rounded-xl shadow-lg hidden">
+            <div class="text-6xl mb-4">🔍</div>
+            <p class="text-gray-500 text-xl mb-2">No promotional deals found matching your search.</p>
+            <p class="text-gray-400">Try adjusting your search terms or browse all categories!</p>
+            <button onclick="clearFilters()" class="mt-4 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700">
+                Show All Products
+            </button>
+        </div>
     </div>
 
     <!-- Product Modal -->
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <div class="p-6">
-                <div class="flex justify-between items-start mb-4">
-                    <h2 class="text-2xl font-bold">Product Details</h2>
-                    <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl" style="line-height: 1;">&times;</button>
-                </div>
-                <div id="modalContent">
-                    <!-- Modal content will be populated -->
+    <div id="productModal" class="fixed inset-0 bg-black bg-opacity-50 z-50 hidden">
+        <div class="flex items-center justify-center min-h-screen p-4">
+            <div class="bg-white rounded-xl max-w-4xl w-full max-h-screen overflow-y-auto">
+                <div class="p-6">
+                    <div class="flex justify-between items-start mb-4">
+                        <h2 class="text-2xl font-bold">Product Details</h2>
+                        <button onclick="closeModal()" class="text-gray-500 hover:text-gray-700 text-2xl">&times;</button>
+                    </div>
+                    <div id="modalContent">
+                        <!-- Modal content will be populated -->
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <!-- Footer -->
-    <footer class="bg-gray-800 text-white py-12 mt-16 fade-in">
-        <div class="max-w-6xl mx-auto px-4 text-center">
+    <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-12 mt-16">
+        <div class="max-w-7xl mx-auto px-4 text-center">
             <h3 class="text-2xl font-bold mb-4">🎉 Don't Miss Out on These July 2025 Deals! 🎉</h3>
             <p class="text-lg mb-6">Limited time promotional pricing on premium home & kitchen products</p>
             
             <div class="grid md:grid-cols-2 gap-8 mb-8">
                 <div class="bg-white bg-opacity-10 rounded-lg p-6">
-                    <h4 class="font-bold text-yellow-400 mb-2 text-lg">🏪 OZZ CASH & CARRY</h4>
+                    <h4 class="font-bold text-yellow-300 mb-2 text-lg">🏪 OZZ CASH & CARRY</h4>
                     <p class="text-sm">
                         40 Mazeppa & Gull Street<br>
                         Durban, KwaZulu-Natal 4001<br>
@@ -600,8 +135,8 @@
                     </p>
                 </div>
                 <div class="bg-white bg-opacity-10 rounded-lg p-6">
-                    <h4 class="font-bold text-yellow-400 mb-2 text-lg">📞 Contact Us</h4>
-                    <a href="tel:+27313327192" class="text-2xl font-bold text-yellow-400 hover:text-yellow-200">
+                    <h4 class="font-bold text-yellow-300 mb-2 text-lg">📞 Contact Us</h4>
+                    <a href="tel:+27313327192" class="text-2xl font-bold text-yellow-300 hover:text-yellow-200">
                         +27 31 332 7192
                     </a>
                     <p class="text-xs mt-1">Monday-Friday: 8:00 AM - 5:00 PM<br>Saturday: 8:00 AM - 1:00 PM</p>
@@ -618,610 +153,311 @@
         </div>
     </footer>
 
-    <!-- Service Worker Registration with Error Handling -->
+    <!-- Simple JavaScript - No Complex Features -->
     <script>
-        if ('serviceWorker' in navigator) {
-            window.addEventListener('load', () => {
-                navigator.serviceWorker.register('./service-worker.js')
-                    .then(registration => {
-                        console.log('✅ Service Worker registered successfully');
-                    })
-                    .catch(error => {
-                        console.warn('Service Worker registration failed:', error);
-                        // Continue without service worker
-                    });
-            });
-        }
-    </script>
+        // Global variables
+        let allProducts = [];
+        let filteredProducts = [];
+        let currentCategory = 'ALL';
+        let sortBy = 'name';
+        let sortOrder = 'asc';
 
-    <!-- Load external scripts with error handling -->
-    <script>
-        // Load XLSX library with error handling
-        function loadXLSX() {
-            return new Promise((resolve, reject) => {
-                if (window.XLSX) {
-                    resolve();
-                    return;
-                }
-                
-                const script = document.createElement('script');
-                script.src = 'https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js';
-                script.onload = () => {
-                    console.log('✅ XLSX library loaded');
-                    resolve();
-                };
-                script.onerror = () => {
-                    console.error('❌ Failed to load XLSX library');
-                    reject(new Error('XLSX library failed to load'));
-                };
-                document.head.appendChild(script);
-            });
-        }
-    </script>
+        // Initialize when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadProducts();
+        });
 
-    <!-- Main Application Script -->
-    <script>
-        // Performance optimized catalog application
-        class OptimizedOZZCatalog {
-            constructor() {
-                this.products = [];
-                this.filteredProducts = [];
-                this.currentPage = 1;
-                this.productsPerPage = 20;
-                this.currentCategory = 'ALL';
-                this.sortBy = 'name';
-                this.sortOrder = 'asc';
+        // Load products from Excel
+        async function loadProducts() {
+            try {
+                console.log('Loading products...');
                 
-                // Performance tracking
-                this.startTime = performance.now();
-                this.imageObserver = null;
-                this.searchDebounceTimer = null;
-                
-                this.init();
-            }
-            
-            async init() {
-                try {
-                    console.log('🚀 Initializing OZZ Catalog...');
-                    
-                    // Setup intersection observer for lazy loading
-                    this.setupImageObserver();
-                    
-                    // Load products immediately
-                    await this.loadProducts();
-                    
-                    // Setup UI and event listeners
-                    this.setupEventListeners();
-                    this.setupCategories();
-                    this.displayProducts();
-                    this.updateCounts();
-                    this.showContent();
-                    
-                    console.log(`✅ Catalog ready in ${(performance.now() - this.startTime).toFixed(2)}ms`);
-                    
-                } catch (error) {
-                    console.error('Failed to initialize catalog:', error);
-                    this.showError('Unable to load promotional catalog. Please refresh the page.');
-                }
-            }
-            
-            setupImageObserver() {
-                if ('IntersectionObserver' in window) {
-                    this.imageObserver = new IntersectionObserver(
-                        (entries) => {
-                            entries.forEach(entry => {
-                                if (entry.isIntersecting) {
-                                    this.loadImage(entry.target);
-                                    this.imageObserver.unobserve(entry.target);
-                                }
-                            });
-                        },
-                        { 
-                            rootMargin: '50px',
-                            threshold: 0.1 
-                        }
-                    );
-                }
-            }
-            
-            async loadProducts() {
-                try {
-                    console.log('📊 Loading product data...');
-                    
-                    const response = await fetch('./JULY PROMO.xlsx');
-                    if (!response.ok) throw new Error('Could not load product data');
-                    
-                    // Load XLSX library
-                    await loadXLSX();
-                    
-                    const arrayBuffer = await response.arrayBuffer();
-                    const workbook = XLSX.read(arrayBuffer);
-                    const worksheet = workbook.Sheets['Sheet1'];
-                    const rawData = XLSX.utils.sheet_to_json(worksheet);
-                    
-                    this.products = rawData
-                        .filter(item => item.SKU && item['PAGE 1'] && !isNaN(parseFloat(item.PRICE)))
-                        .map(item => ({
-                            sku: item.SKU.toString().trim(),
-                            description: item['PAGE 1'].trim(),
-                            price: parseFloat(item.PRICE),
-                            category: this.categorizeProduct(item['PAGE 1'])
-                        }));
-                    
-                    this.filteredProducts = [...this.products];
-                    console.log(`✅ Loaded ${this.products.length} products`);
-                    
-                } catch (error) {
-                    console.error('Error loading products:', error);
-                    throw error;
-                }
-            }
-            
-            categorizeProduct(description) {
-                const desc = description.toUpperCase();
-                if (desc.includes('BOWL')) return 'BOWLS';
-                if (desc.includes('CUP') || desc.includes('MUG')) return 'CUPS & MUGS';
-                if (desc.includes('PLATE') || desc.includes('DINNER')) return 'PLATES';
-                if (desc.includes('GLASS') || desc.includes('TUMBLER') || desc.includes('WINE')) return 'GLASSWARE';
-                if (desc.includes('STORAGE') || desc.includes('CONTAINER') || desc.includes('CONT')) return 'STORAGE';
-                if (desc.includes('KITCHEN') || desc.includes('UTENSIL')) return 'KITCHEN TOOLS';
-                if (desc.includes('CUTLERY') || desc.includes('KNIFE') || desc.includes('FORK')) return 'CUTLERY';
-                if (desc.includes('TRAY') || desc.includes('PLATTER')) return 'TRAYS & PLATTERS';
-                if (desc.includes('BOTTLE') || desc.includes('JUG')) return 'BOTTLES & JUGS';
-                return 'OTHER';
-            }
-            
-            setupCategories() {
-                const categories = ['ALL', ...new Set(this.products.map(p => p.category))].sort();
-                const container = document.getElementById('categoryButtons');
-                
-                container.innerHTML = categories.map(cat => 
-                    `<button onclick="catalog.filterByCategory('${cat}')" 
-                            class="category-btn btn ${cat === 'ALL' ? 'btn-primary' : 'btn-secondary'}"
-                            data-category="${cat}">
-                        ${cat}
-                    </button>`
-                ).join('');
-            }
-            
-            setupEventListeners() {
-                const searchInput = document.getElementById('searchInput');
-                const sortSelect = document.getElementById('sortBy');
-                const sortOrderBtn = document.getElementById('sortOrderBtn');
-                const refreshBtn = document.getElementById('refreshBtn');
-                
-                // Debounced search
-                searchInput.addEventListener('input', () => {
-                    clearTimeout(this.searchDebounceTimer);
-                    this.searchDebounceTimer = setTimeout(() => {
-                        this.applyFilters();
-                    }, 300);
-                });
-                
-                sortSelect.addEventListener('change', () => {
-                    this.sortBy = sortSelect.value;
-                    this.applyFilters();
-                });
-                
-                sortOrderBtn.addEventListener('click', () => {
-                    this.sortOrder = this.sortOrder === 'asc' ? 'desc' : 'asc';
-                    sortOrderBtn.textContent = this.sortOrder === 'asc' ? '↑ A-Z' : '↓ Z-A';
-                    this.applyFilters();
-                });
-                
-                refreshBtn.addEventListener('click', () => {
-                    this.refreshProducts();
-                });
-                
-                // Modal close handlers
-                document.addEventListener('keydown', (e) => {
-                    if (e.key === 'Escape') this.closeModal();
-                });
-                
-                document.getElementById('productModal').addEventListener('click', (e) => {
-                    if (e.target.id === 'productModal') this.closeModal();
-                });
-            }
-            
-            filterByCategory(category) {
-                this.currentCategory = category;
-                this.currentPage = 1;
-                
-                // Update button styles
-                document.querySelectorAll('.category-btn').forEach(btn => {
-                    if (btn.dataset.category === category) {
-                        btn.className = 'category-btn btn btn-primary';
-                    } else {
-                        btn.className = 'category-btn btn btn-secondary';
-                    }
-                });
-                
-                this.applyFilters();
-            }
-            
-            applyFilters() {
-                const searchTerm = document.getElementById('searchInput').value.toLowerCase().trim();
-                
-                this.filteredProducts = this.products.filter(product => {
-                    const matchesSearch = !searchTerm || 
-                        product.description.toLowerCase().includes(searchTerm) || 
-                        product.sku.toLowerCase().includes(searchTerm);
-                    const matchesCategory = this.currentCategory === 'ALL' || product.category === this.currentCategory;
-                    return matchesSearch && matchesCategory;
-                });
-                
-                this.sortProducts();
-                this.updatePagination();
-                this.displayProducts();
-                this.updateCounts();
-            }
-            
-            sortProducts() {
-                this.filteredProducts.sort((a, b) => {
-                    let aVal = a[this.sortBy];
-                    let bVal = b[this.sortBy];
-                    
-                    if (typeof aVal === 'string') {
-                        aVal = aVal.toLowerCase();
-                        bVal = bVal.toLowerCase();
-                    }
-                    
-                    const result = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-                    return this.sortOrder === 'asc' ? result : -result;
-                });
-            }
-            
-            updatePagination() {
-                const totalPages = Math.ceil(this.filteredProducts.length / this.productsPerPage);
-                if (this.currentPage > totalPages) {
-                    this.currentPage = Math.max(1, totalPages);
-                }
-                this.renderPagination(totalPages);
-            }
-            
-            renderPagination(totalPages) {
-                const container = document.getElementById('paginationControls');
-                
-                if (totalPages <= 1) {
-                    container.innerHTML = '';
-                    return;
+                const response = await fetch('./JULY PROMO.xlsx');
+                if (!response.ok) {
+                    throw new Error('Could not load JULY PROMO.xlsx');
                 }
                 
-                let html = '<div class="flex justify-center items-center gap-2 flex-wrap">';
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer);
+                const worksheet = workbook.Sheets['Sheet1'];
+                const rawData = XLSX.utils.sheet_to_json(worksheet);
                 
-                // Previous button
-                html += `<button onclick="catalog.goToPage(${this.currentPage - 1})" 
-                                ${this.currentPage === 1 ? 'disabled' : ''}
-                                class="btn btn-secondary ${this.currentPage === 1 ? 'opacity-50 cursor-not-allowed' : ''}">
-                    ← Previous
-                </button>`;
+                allProducts = rawData
+                    .filter(item => item.SKU && item['PAGE 1'] && !isNaN(parseFloat(item.PRICE)))
+                    .map(item => ({
+                        sku: item.SKU.toString(),
+                        description: item['PAGE 1'],
+                        price: parseFloat(item.PRICE),
+                        category: categorizeProduct(item['PAGE 1'])
+                    }));
                 
-                // Page numbers
-                const start = Math.max(1, this.currentPage - 2);
-                const end = Math.min(totalPages, this.currentPage + 2);
+                console.log('Loaded', allProducts.length, 'products');
                 
-                for (let i = start; i <= end; i++) {
-                    html += `<button onclick="catalog.goToPage(${i})" 
-                                    class="btn ${i === this.currentPage ? 'btn-primary' : 'btn-secondary'}">
-                        ${i}
-                    </button>`;
+                setupCategories();
+                applyFilters();
+                
+            } catch (error) {
+                console.error('Error loading products:', error);
+                showError('Unable to load product catalog. Please refresh the page.');
+            }
+        }
+
+        // Categorize products
+        function categorizeProduct(description) {
+            const desc = description.toUpperCase();
+            if (desc.includes('BOWL')) return 'BOWLS';
+            if (desc.includes('CUP') || desc.includes('MUG')) return 'CUPS & MUGS';
+            if (desc.includes('PLATE') || desc.includes('DINNER')) return 'PLATES';
+            if (desc.includes('GLASS') || desc.includes('TUMBLER') || desc.includes('WINE')) return 'GLASSWARE';
+            if (desc.includes('STORAGE') || desc.includes('CONTAINER')) return 'STORAGE';
+            if (desc.includes('KITCHEN') || desc.includes('UTENSIL')) return 'KITCHEN TOOLS';
+            if (desc.includes('CUTLERY') || desc.includes('KNIFE') || desc.includes('FORK')) return 'CUTLERY';
+            if (desc.includes('TRAY') || desc.includes('PLATTER')) return 'TRAYS & PLATTERS';
+            if (desc.includes('BOTTLE') || desc.includes('JUG')) return 'BOTTLES & JUGS';
+            return 'OTHER';
+        }
+
+        // Setup category buttons
+        function setupCategories() {
+            const categories = ['ALL', ...new Set(allProducts.map(p => p.category))].sort();
+            const container = document.getElementById('categoryButtons');
+            
+            container.innerHTML = categories.map(cat => 
+                `<button onclick="filterByCategory('${cat}')" 
+                        class="category-btn px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer ${
+                            cat === 'ALL' ? 'bg-red-600 text-white' : 'bg-gray-200 text-gray-700 hover:bg-red-100'
+                        }">${cat}</button>`
+            ).join('');
+        }
+
+        // Filter by category
+        function filterByCategory(category) {
+            currentCategory = category;
+            
+            // Update button styles
+            document.querySelectorAll('.category-btn').forEach(btn => {
+                if (btn.textContent.trim() === category) {
+                    btn.className = 'category-btn px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer bg-red-600 text-white';
+                } else {
+                    btn.className = 'category-btn px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer bg-gray-200 text-gray-700 hover:bg-red-100';
                 }
+            });
+            
+            applyFilters();
+        }
+
+        // Filter products (called by search input)
+        function filterProducts() {
+            applyFilters();
+        }
+
+        // Apply all filters
+        function applyFilters() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            sortBy = document.getElementById('sortBy').value;
+            
+            filteredProducts = allProducts.filter(product => {
+                const matchesSearch = product.description.toLowerCase().includes(searchTerm) || 
+                                    product.sku.toLowerCase().includes(searchTerm);
+                const matchesCategory = currentCategory === 'ALL' || product.category === currentCategory;
+                return matchesSearch && matchesCategory;
+            });
+
+            // Sort products
+            filteredProducts.sort((a, b) => {
+                let aVal = a[sortBy];
+                let bVal = b[sortBy];
                 
-                // Next button
-                html += `<button onclick="catalog.goToPage(${this.currentPage + 1})" 
-                                ${this.currentPage === totalPages ? 'disabled' : ''}
-                                class="btn btn-secondary ${this.currentPage === totalPages ? 'opacity-50 cursor-not-allowed' : ''}">
-                    Next →
-                </button>`;
-                
-                html += '</div>';
-                container.innerHTML = html;
+                if (typeof aVal === 'string') {
+                    aVal = aVal.toLowerCase();
+                    bVal = bVal.toLowerCase();
+                }
+
+                const result = aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
+                return sortOrder === 'asc' ? result : -result;
+            });
+            
+            displayProducts();
+            updateCounts();
+        }
+
+        // Toggle sort order
+        function toggleSortOrder() {
+            sortOrder = sortOrder === 'asc' ? 'desc' : 'asc';
+            document.getElementById('sortOrderBtn').textContent = sortOrder === 'asc' ? '↑ A-Z' : '↓ Z-A';
+            applyFilters();
+        }
+
+        // Display products
+        function displayProducts() {
+            const grid = document.getElementById('productsGrid');
+            const noResults = document.getElementById('noResults');
+            
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = '';
+                noResults.classList.remove('hidden');
+                return;
             }
             
-            goToPage(page) {
-                const totalPages = Math.ceil(this.filteredProducts.length / this.productsPerPage);
-                if (page >= 1 && page <= totalPages && page !== this.currentPage) {
-                    this.currentPage = page;
-                    this.displayProducts();
-                    this.updateCounts();
-                    this.renderPagination(totalPages);
-                    
-                    // Smooth scroll to grid
-                    document.getElementById('productsGrid').scrollIntoView({ 
-                        behavior: 'smooth', 
-                        block: 'start' 
-                    });
-                }
-            }
+            noResults.classList.add('hidden');
             
-            displayProducts() {
-                const grid = document.getElementById('productsGrid');
-                
-                if (this.filteredProducts.length === 0) {
-                    grid.innerHTML = this.getNoResultsHTML();
-                    return;
-                }
-                
-                const startIndex = (this.currentPage - 1) * this.productsPerPage;
-                const endIndex = Math.min(startIndex + this.productsPerPage, this.filteredProducts.length);
-                const pageProducts = this.filteredProducts.slice(startIndex, endIndex);
-                
-                grid.innerHTML = pageProducts.map(product => this.getProductCardHTML(product)).join('');
-                
-                // Setup lazy loading for new images
-                if (this.imageObserver) {
-                    grid.querySelectorAll('.lazy-image').forEach(img => {
-                        this.imageObserver.observe(img);
-                    });
-                }
-            }
-            
-            getProductCardHTML(product) {
+            grid.innerHTML = filteredProducts.map(product => {
                 const originalPrice = (product.price * 1.2).toFixed(2);
                 const savings = (originalPrice - product.price).toFixed(2);
                 const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
                 
                 return `
-                    <div class="product-card" data-sku="${product.sku}">
-                        <div class="product-image-container">
-                            <div class="image-skeleton" id="skeleton-${product.sku}">
-                                <div style="font-size: 2rem; margin-bottom: 0.5rem;">📦</div>
-                                <div style="font-size: 0.75rem; font-weight: 600;">SKU: ${product.sku}</div>
-                                <div style="font-size: 0.625rem; opacity: 0.7;">Loading image...</div>
+                    <div class="bg-white rounded-xl shadow-lg overflow-hidden hover:shadow-xl transition-all duration-300 hover:-translate-y-1">
+                        <div class="relative h-48 bg-gradient-to-br from-gray-100 to-gray-200 flex items-center justify-center">
+                            <div class="text-center text-gray-500">
+                                <div class="text-4xl mb-2">📦</div>
+                                <div class="text-sm font-semibold">SKU: ${product.sku}</div>
+                                <div class="text-xs">Image placeholder</div>
                             </div>
-                            <img class="product-image lazy-image hidden" 
-                                 data-sku="${product.sku}"
-                                 alt="${product.description}"
-                                 loading="lazy">
-                            <div class="absolute top-2 left-2 bg-red-500 text-white px-2 py-2 rounded-full text-xs font-bold">
+                            <div class="absolute top-2 left-2 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold">
                                 PROMO
                             </div>
                         </div>
                         <div class="p-4">
-                            <div class="text-sm text-gray-500 mb-2">SKU: ${product.sku}</div>
-                            <h3 class="font-semibold text-gray-900 mb-3 text-sm leading-tight cursor-pointer hover:text-red-600" 
-                                onclick="catalog.showProductDetails('${product.sku}')">
+                            <div class="text-sm text-gray-500 mb-1">SKU: ${product.sku}</div>
+                            <h3 class="font-semibold text-gray-900 mb-3 leading-tight cursor-pointer hover:text-red-600" 
+                                onclick="showProductDetails('${product.sku}')">
                                 ${product.description}
                             </h3>
                             <div class="flex justify-between items-center mb-3">
                                 <div>
-                                    <span class="text-xl font-bold text-red-600">R${product.price.toFixed(2)}</span>
-                                    <div class="text-xs text-gray-400 line-through">R${originalPrice}</div>
+                                    <span class="text-2xl font-bold text-red-600">R${product.price.toFixed(2)}</span>
+                                    <div class="text-sm text-gray-400 line-through">R${originalPrice}</div>
                                 </div>
-                                <span class="text-xs bg-blue-500 text-white px-2 py-2 rounded-full">
+                                <span class="text-xs bg-blue-500 text-white px-3 py-1 rounded-full">
                                     ${product.category}
                                 </span>
                             </div>
                             <div class="text-center mb-3">
-                                <span class="text-xs font-semibold text-green-600 bg-green-100 px-2 py-2 rounded-full">
+                                <span class="text-sm font-semibold text-green-600 bg-green-100 px-3 py-1 rounded-full">
                                     SAVE R${savings} (${savingsPercent}% OFF!)
                                 </span>
                             </div>
-                            <button onclick="catalog.showProductDetails('${product.sku}')" 
-                                    class="btn btn-primary w-full">
+                            <button onclick="showProductDetails('${product.sku}')" 
+                                    class="w-full bg-red-600 text-white py-2 px-4 rounded-lg hover:bg-red-700 transition-colors font-semibold">
                                 View Details
                             </button>
                         </div>
                     </div>
                 `;
-            }
+            }).join('');
+        }
+
+        // Update counts
+        function updateCounts() {
+            document.getElementById('product-count').textContent = `${allProducts.length} promotional items available`;
+            document.getElementById('filteredCount').textContent = filteredProducts.length;
+        }
+
+        // Show product details
+        function showProductDetails(sku) {
+            const product = allProducts.find(p => p.sku === sku);
+            if (!product) return;
             
-            getNoResultsHTML() {
-                return `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem;">
-                        <div style="font-size: 4rem; margin-bottom: 1rem;">🔍</div>
-                        <p class="text-gray-500 text-lg mb-4">No promotional deals found matching your search.</p>
-                        <p class="text-gray-400 mb-4">Try adjusting your search terms or browse all categories!</p>
-                        <button onclick="catalog.clearFilters()" class="btn btn-primary">
-                            Show All Products
-                        </button>
-                    </div>
-                `;
-            }
+            const originalPrice = (product.price * 1.2).toFixed(2);
+            const savings = (originalPrice - product.price).toFixed(2);
+            const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
             
-            loadImage(imgElement) {
-                const sku = imgElement.dataset.sku;
-                const skeleton = document.getElementById(`skeleton-${sku}`);
-                
-                // Get image URL (placeholder for now)
-                const imageUrl = this.getImageUrl(sku);
-                
-                imgElement.src = imageUrl;
-                imgElement.onload = () => {
-                    if (skeleton) skeleton.style.display = 'none';
-                    imgElement.classList.remove('hidden');
-                };
-                imgElement.onerror = () => {
-                    if (skeleton) {
-                        skeleton.innerHTML = `
-                            <div style="font-size: 2rem; margin-bottom: 0.5rem;">🖼️</div>
-                            <div style="font-size: 0.75rem; font-weight: 600;">SKU: ${sku}</div>
-                            <div style="font-size: 0.625rem; opacity: 0.7;">No image available</div>
-                        `;
-                    }
-                };
-            }
-            
-            getImageUrl(sku) {
-                // Generate optimized SVG placeholder
-                return `data:image/svg+xml,${encodeURIComponent(`
-                    <svg width="400" height="300" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300">
-                        <defs>
-                            <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
-                                <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
-                                <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
-                            </linearGradient>
-                        </defs>
-                        <rect width="400" height="300" fill="url(#grad1)" stroke="#cbd5e1" stroke-width="2" rx="8"/>
-                        <circle cx="200" cy="120" r="30" fill="#3b82f6" opacity="0.1"/>
-                        <text x="200" y="130" text-anchor="middle" font-family="Arial" font-size="28" fill="#3b82f6">📦</text>
-                        <text x="200" y="170" text-anchor="middle" font-family="Arial" font-size="16" font-weight="bold" fill="#1e40af">SKU: ${sku}</text>
-                        <text x="200" y="195" text-anchor="middle" font-family="Arial" font-size="12" fill="#64748b" opacity="0.8">OZZ Cash &amp; Carry</text>
-                        <text x="200" y="215" text-anchor="middle" font-family="Arial" font-size="10" fill="#64748b" opacity="0.6">July 2025 Promo</text>
-                    </svg>
-                `)}`;
-            }
-            
-            updateCounts() {
-                document.getElementById('filteredCount').textContent = this.filteredProducts.length;
-                document.getElementById('productCount').textContent = `${this.products.length} promotional items available`;
-                
-                const startItem = (this.currentPage - 1) * this.productsPerPage + 1;
-                const endItem = Math.min(this.currentPage * this.productsPerPage, this.filteredProducts.length);
-                const totalPages = Math.ceil(this.filteredProducts.length / this.productsPerPage);
-                
-                document.getElementById('pageInfo').textContent = 
-                    this.filteredProducts.length === 0 ? 'No products found' :
-                    `Page ${this.currentPage} of ${totalPages} • Showing ${startItem}-${endItem} of ${this.filteredProducts.length} products`;
-            }
-            
-            showProductDetails(sku) {
-                const product = this.products.find(p => p.sku === sku);
-                if (!product) return;
-                
-                const originalPrice = (product.price * 1.2).toFixed(2);
-                const savings = (originalPrice - product.price).toFixed(2);
-                const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
-                
-                document.getElementById('modalContent').innerHTML = `
-                    <div class="grid md:grid-cols-2 gap-6">
-                        <div class="text-center">
-                            <img src="${this.getImageUrl(product.sku)}" 
-                                 alt="${product.description}" 
-                                 class="w-full max-w-sm mx-auto rounded-lg border shadow-lg"
-                                 style="max-height: 400px; object-fit: contain;">
+            document.getElementById('modalContent').innerHTML = `
+                <div class="grid md:grid-cols-2 gap-6">
+                    <div class="text-center">
+                        <div class="w-full h-80 bg-gradient-to-br from-gray-100 to-gray-200 rounded-lg flex items-center justify-center">
+                            <div class="text-center text-gray-500">
+                                <div class="text-6xl mb-4">📦</div>
+                                <div class="text-lg font-semibold">SKU: ${product.sku}</div>
+                                <div class="text-sm">Image placeholder</div>
+                            </div>
                         </div>
-                        <div>
-                            <div class="text-sm text-gray-500 mb-2">SKU: ${product.sku}</div>
-                            <h3 class="text-2xl font-bold text-gray-900 mb-4 leading-tight">${product.description}</h3>
-                            
-                            <div class="mb-4">
-                                <span class="text-sm bg-blue-500 text-white px-3 py-2 rounded-full font-semibold">
-                                    ${product.category}
+                    </div>
+                    <div>
+                        <div class="text-sm text-gray-500 mb-2">SKU: ${product.sku}</div>
+                        <h3 class="text-2xl font-bold text-gray-900 mb-4">${product.description}</h3>
+                        
+                        <div class="mb-4">
+                            <span class="text-sm bg-blue-500 text-white px-3 py-1 rounded-full">
+                                ${product.category}
+                            </span>
+                        </div>
+                        
+                        <div class="bg-red-50 p-6 rounded-xl mb-6 border-l-4 border-red-500">
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-gray-600">Regular Price:</span>
+                                <span class="text-lg text-gray-500 line-through">R${originalPrice}</span>
+                            </div>
+                            <div class="flex justify-between items-center mb-3">
+                                <span class="text-lg font-semibold text-red-700">July Promo Price:</span>
+                                <span class="text-3xl font-bold text-red-600">R${product.price.toFixed(2)}</span>
+                            </div>
+                            <div class="text-center bg-green-100 rounded-lg py-2">
+                                <span class="text-lg font-bold text-green-700">
+                                    YOU SAVE: R${savings} (${savingsPercent}% OFF!)
                                 </span>
                             </div>
-                            
-                            <div class="bg-red-50 p-6 rounded-xl mb-6 border-l-4 border-red-500">
-                                <div class="flex justify-between items-center mb-3">
-                                    <span class="text-gray-600 font-medium">Regular Price:</span>
-                                    <span class="text-lg text-gray-500 line-through">R${originalPrice}</span>
-                                </div>
-                                <div class="flex justify-between items-center mb-3">
-                                    <span class="text-lg font-semibold text-red-700">July Promo Price:</span>
-                                    <span class="text-3xl font-bold text-red-600">R${product.price.toFixed(2)}</span>
-                                </div>
-                                <div class="text-center bg-green-100 rounded-lg py-3">
-                                    <span class="text-lg font-bold text-green-700">
-                                        YOU SAVE: R${savings} (${savingsPercent}% OFF!)
-                                    </span>
-                                </div>
-                            </div>
-                            
-                            <button class="btn btn-primary w-full text-lg py-3 mb-4" style="font-size: 1.125rem;">
-                                🛒 Get This Deal Now!
-                            </button>
-                            
-                            <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
-                                <p class="text-sm text-yellow-800 font-medium">⏰ Limited time offer - July 2025 only!</p>
-                                <p class="text-xs text-yellow-700 mt-2">Contact us at +27 31 332 7192 to place your order</p>
-                            </div>
+                        </div>
+                        
+                        <button class="w-full bg-red-600 text-white py-3 px-6 rounded-lg hover:bg-red-700 font-bold text-lg mb-4">
+                            🛒 Get This Deal Now!
+                        </button>
+                        
+                        <div class="text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">
+                            <p class="text-sm text-yellow-800">⏰ Limited time offer - July 2025 only!</p>
+                            <p class="text-xs text-yellow-700 mt-1">Contact us at +27 31 332 7192 to place your order</p>
                         </div>
                     </div>
-                `;
-                
-                const modal = document.getElementById('productModal');
-                modal.classList.add('active');
-                document.body.style.overflow = 'hidden';
-            }
+                </div>
+            `;
             
-            closeModal() {
-                const modal = document.getElementById('productModal');
-                modal.classList.remove('active');
-                document.body.style.overflow = 'auto';
-            }
-            
-            clearFilters() {
-                document.getElementById('searchInput').value = '';
-                this.currentCategory = 'ALL';
-                this.currentPage = 1;
-                this.setupCategories();
-                this.applyFilters();
-            }
-            
-            showContent() {
-                // Show content with smooth animations
-                setTimeout(() => {
-                    document.querySelectorAll('.fade-in').forEach((el, index) => {
-                        setTimeout(() => {
-                            el.classList.add('visible');
-                        }, index * 100);
-                    });
-                }, 100);
-            }
-            
-            refreshProducts() {
-                const btn = document.getElementById('refreshBtn');
-                btn.textContent = '🔄 Refreshing...';
-                btn.disabled = true;
-                
-                // Simulate refresh
-                setTimeout(() => {
-                    btn.textContent = '🔄 Refresh';
-                    btn.disabled = false;
-                    console.log('Products refreshed');
-                }, 1000);
-            }
-            
-            showError(message) {
-                document.getElementById('productsGrid').innerHTML = `
-                    <div style="grid-column: 1 / -1; text-align: center; padding: 4rem 1rem;">
-                        <div style="font-size: 4rem; margin-bottom: 1rem;">🏪</div>
-                        <h2 class="text-xl font-bold text-gray-900 mb-2">OZZ Cash & Carry</h2>
-                        <p class="text-gray-600 mb-4">${message}</p>
-                        <p class="text-sm text-gray-500 mb-4">Please try refreshing the page or contact us for assistance.</p>
-                        <div class="flex justify-center gap-4">
-                            <button onclick="location.reload()" class="btn btn-primary">
-                                🔄 Refresh Page
-                            </button>
-                            <a href="tel:+27313327192" class="btn btn-secondary">
-                                📞 Call Us
-                            </a>
-                        </div>
-                    </div>
-                `;
-            }
+            document.getElementById('productModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
         }
-        
-        // Global instance
-        let catalog;
-        
-        // Initialize when DOM is ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => {
-                catalog = new OptimizedOZZCatalog();
-            });
-        } else {
-            catalog = new OptimizedOZZCatalog();
-        }
-        
-        // Global helper functions for onclick handlers
+
+        // Close modal
         function closeModal() {
-            if (catalog) catalog.closeModal();
+            document.getElementById('productModal').classList.add('hidden');
+            document.body.style.overflow = 'auto';
         }
-        
-        // Performance monitoring
-        window.addEventListener('load', () => {
-            const loadTime = performance.now();
-            console.log(`📊 Total page load time: ${loadTime.toFixed(2)}ms`);
-            
-            if (loadTime < 2000) {
-                console.log('🚀 Excellent performance!');
-            } else if (loadTime < 4000) {
-                console.log('✅ Good performance');
-            } else {
-                console.log('⚠️ Consider further optimizations');
+
+        // Clear filters
+        function clearFilters() {
+            document.getElementById('searchInput').value = '';
+            currentCategory = 'ALL';
+            setupCategories();
+            applyFilters();
+        }
+
+        // Show error
+        function showError(message) {
+            document.getElementById('productsGrid').innerHTML = `
+                <div class="col-span-full text-center py-16">
+                    <div class="text-4xl mb-4">⚠️</div>
+                    <p class="text-xl text-gray-700 mb-4">${message}</p>
+                    <button onclick="location.reload()" class="bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700">
+                        🔄 Try Again
+                    </button>
+                </div>
+            `;
+        }
+
+        // Modal close on outside click
+        document.getElementById('productModal').addEventListener('click', function(e) {
+            if (e.target === this) {
+                closeModal();
             }
         });
+
+        // Escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if (e.key === 'Escape') {
+                closeModal();
+            }
+        });
+
+        console.log('Simple OZZ Catalog loaded successfully');
     </script>
 </body>
 </html>
