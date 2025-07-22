@@ -1,4 +1,4 @@
- <!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -730,7 +730,129 @@
                 </div>
             `;
 
-            page.innerHTML = header + `<div class="grid ${gridClass} mb-12">${productsHTML}</div>` + footer;
+            page.innerHTML = header + content + footer;
+            return page;
+        }
+
+        function renderProductGrid(products, layout, options) {
+            // Determine grid class
+            let gridClass;
+            if (layout === 'compact') {
+                gridClass = 'grid grid-cols-6 gap-2';
+            } else if (layout === 'list') {
+                gridClass = 'grid grid-cols-1 gap-3';
+            } else {
+                gridClass = 'grid grid-cols-4 gap-3';
+            }
+
+            const productsHTML = products.map(product => 
+                renderProductCard(product, layout, options)
+            ).join('');
+
+            return `<div class="${gridClass} mb-4">${productsHTML}</div>`;
+        }
+
+        function renderProductCard(product, layout, options) {
+            const imageUrl = driveImageManager ? driveImageManager.getImageUrl(product.sku) : null;
+            const originalPrice = (product.price * 1.2).toFixed(2);
+            const savings = (originalPrice - product.price).toFixed(2);
+            const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+
+            if (layout === 'list') {
+                return `
+                    <div class="border border-gray-200 rounded p-3 flex items-center product-card-print">
+                        ${options.includeImages ? `
+                            <div class="h-20 w-20 mr-4 flex-shrink-0">
+                                ${imageUrl ? 
+                                    `<img src="${imageUrl}" alt="${product.description}" class="w-full h-full object-contain border rounded">` :
+                                    `<div class="w-full h-full bg-gray-100 border rounded flex items-center justify-center text-xs text-gray-400 font-mono">${product.sku}</div>`
+                                }
+                            </div>
+                        ` : ''}
+                        <div class="flex-1 min-w-0">
+                            <div class="product-sku">SKU: ${product.sku}</div>
+                            <div class="product-description">${product.description}</div>
+                            ${options.includePrices ? `
+                                <div class="flex items-center gap-3 mt-1">
+                                    <span class="product-price">R${product.price.toFixed(2)}</span>
+                                    <span class="text-sm text-gray-400 line-through">R${originalPrice}</span>
+                                    <span class="text-xs text-green-600 font-bold bg-green-100 px-2 py-0.5 rounded">SAVE ${savingsPercent}%</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            } else {
+                const truncateLength = layout === 'compact' ? 40 : 65;
+                const displayDescription = product.description.length > truncateLength ? 
+                    product.description.substring(0, truncateLength) + '...' : 
+                    product.description;
+
+                return `
+                    <div class="border border-gray-200 rounded p-3 text-center product-card-print">
+                        ${options.includeImages ? `
+                            <div class="mb-2 ${layout === 'compact' ? 'h-16' : 'h-24'} mx-auto flex items-center justify-center">
+                                ${imageUrl ? 
+                                    `<img src="${imageUrl}" alt="${product.description}" class="w-full h-full object-contain">` :
+                                    `<div class="w-full h-full bg-gray-100 border rounded flex items-center justify-center ${layout === 'compact' ? 'text-xs' : 'text-sm'} text-gray-400 font-mono leading-tight p-1">${product.sku}</div>`
+                                }
+                            </div>
+                        ` : ''}
+                        <div class="space-y-1">
+                            <div class="product-sku">SKU: ${product.sku}</div>
+                            <div class="product-description ${layout === 'compact' ? 'min-h-[2.5rem]' : 'min-h-[3rem]'} flex items-center justify-center text-center px-1">
+                                ${displayDescription}
+                            </div>
+                            ${options.includePrices ? `
+                                <div class="space-y-0.5">
+                                    <div class="product-price">R${product.price.toFixed(2)}</div>
+                                    <div class="text-xs text-gray-400 line-through">R${originalPrice}</div>
+                                    <div class="text-xs text-green-600 font-bold">SAVE ${savingsPercent}%</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
+        function createProductPage(products, layout, options, pageNumber, totalPages) {
+            const page = document.createElement('div');
+            page.className = 'print-page bg-white p-6 shadow-lg rounded-lg mb-6';
+
+            // Page header
+            const header = `
+                <div class="flex justify-between items-center mb-4 border-b pb-3">
+                    <div class="flex items-center">
+                        <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
+                             alt="OZZ" class="h-8 mr-3">
+                        <h2 class="text-lg font-bold text-gray-800">July 2025 Promotional Catalog</h2>
+                    </div>
+                    <span class="text-gray-600 font-semibold">Page ${pageNumber} of ${totalPages}</span>
+                </div>
+            `;
+
+            const productsHTML = renderProductGrid(products, layout, options);
+
+            // Footer
+            const footer = `
+                <div class="page-footer">
+                    <div class="flex items-center">
+                        <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
+                             alt="OZZ" class="footer-logo mr-2">
+                        <div>
+                            <div class="font-semibold">OZZ Cash & Carry</div>
+                            <div>40 Mazeppa & Gull Street, Durban 4001 • +27 31 332 7192</div>
+                        </div>
+                    </div>
+                    <div class="text-right">
+                        <div class="font-semibold">Limited Time Offer - July 2025</div>
+                        <div>Designed by Black Orchid Consulting</div>
+                    </div>
+                </div>
+            `;
+
+            page.innerHTML = header + productsHTML + footer;
             return page;
         }
     </script>
