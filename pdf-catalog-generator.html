@@ -643,11 +643,16 @@
 
                 // Process each category
                 Object.entries(categoryGroups).forEach(([category, categoryProducts], categoryIndex) => {
+                    // For problematic categories with long descriptions, reduce items per page
+                    const problematicCategories = ['GLASSWARE', 'STONEWARE', 'KITCHENWARE'];
+                    const adjustedProductsPerPage = problematicCategories.includes(category) && layout === 'grid' ? 
+                        9 : productsPerPage; // Only 9 items (3x3) for these categories
+                    
                     // Check if we should start a new page for each category
                     const startNewPage = options.newPagePerCategory && categoryIndex > 0;
                     
                     // Split category products into pages
-                    for (let i = 0; i < categoryProducts.length; i += productsPerPage) {
+                    for (let i = 0; i < categoryProducts.length; i += adjustedProductsPerPage) {
                         const pageItems = [];
                         
                         // Add category header only on first page of category
@@ -655,8 +660,8 @@
                             pageItems.push({ type: 'header', category });
                         }
                         
-                        // Add products for this page (max productsPerPage)
-                        const pageProducts = categoryProducts.slice(i, i + productsPerPage);
+                        // Add products for this page (max adjustedProductsPerPage)
+                        const pageProducts = categoryProducts.slice(i, i + adjustedProductsPerPage);
                         pageProducts.forEach(product => {
                             pageItems.push({ type: 'product', ...product });
                         });
