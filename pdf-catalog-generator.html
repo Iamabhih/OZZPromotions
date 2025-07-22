@@ -272,6 +272,10 @@
                             <input type="checkbox" id="groupByCategory" checked class="mr-3">
                             <span>Group products by category</span>
                         </label>
+                        <label class="flex items-center cursor-pointer hover:bg-gray-100 p-2 rounded">
+                            <input type="checkbox" id="newPagePerCategory" checked class="mr-3">
+                            <span>Start each category on new page</span>
+                        </label>
                     </div>
                 </div>
             </div>
@@ -578,12 +582,14 @@
                 const includeImages = document.getElementById('includeImages').checked;
                 const includePrices = document.getElementById('includePrices').checked;
                 const groupByCategory = document.getElementById('groupByCategory').checked;
+                const newPagePerCategory = document.getElementById('newPagePerCategory').checked;
 
                 // Generate PDF content
                 generatePDFContent(filteredProducts, layout, {
                     includeImages,
                     includePrices,
                     groupByCategory,
+                    newPagePerCategory,
                     selectedCategories
                 });
 
@@ -630,50 +636,52 @@
                     categoryGroups[product.category].push(product);
                 });
 
-                // Calculate products per page
-                const productsPerPage = calculateProductsPerPage(layout, options);
+                // Calculate products per page - STRICT LIMIT
+                const productsPerPage = layout === 'grid' ? 12 : 
+                                      layout === 'compact' ? 24 : 
+                                      7; // list layout
 
                 // Process each category
-                let currentPageItems = [];
-                
-                Object.entries(categoryGroups).forEach(([category, categoryProducts]) => {
-                    // Add category header
-                    currentPageItems.push({ type: 'header', category });
-
-                    // Add products
-                    categoryProducts.forEach(product => {
-                        currentPageItems.push({ type: 'product', ...product });
-
-                        // Check if we need a new page
-                        const productCount = currentPageItems.filter(item => item.type === 'product').length;
-                        if (productCount >= productsPerPage) {
-                            const page = createProductPage(currentPageItems, layout, options, pageNumber++);
-                            container.appendChild(page);
-                            currentPageItems = [];
+                Object.entries(categoryGroups).forEach(([category, categoryProducts], categoryIndex) => {
+                    // Check if we should start a new page for each category
+                    const startNewPage = options.newPagePerCategory && categoryIndex > 0;
+                    
+                    // Split category products into pages
+                    for (let i = 0; i < categoryProducts.length; i += productsPerPage) {
+                        const pageItems = [];
+                        
+                        // Add category header only on first page of category
+                        if (i === 0) {
+                            pageItems.push({ type: 'header', category });
                         }
-                    });
+                        
+                        // Add products for this page (max productsPerPage)
+                        const pageProducts = categoryProducts.slice(i, i + productsPerPage);
+                        pageProducts.forEach(product => {
+                            pageItems.push({ type: 'product', ...product });
+                        });
+                        
+                        // Create the page
+                        const page = createProductPage(pageItems, layout, options, pageNumber++);
+                        if (startNewPage && i === 0) {
+                            page.classList.add('force-page-break');
+                        }
+                        container.appendChild(page);
+                    }
                 });
-
-                // Create final page if there are remaining items
-                if (currentPageItems.length > 0) {
-                    const page = createProductPage(currentPageItems, layout, options, pageNumber++);
-                    container.appendChild(page);
-                }
 
             } else {
-                // Regular layout without categories
-                const productsPerPage = calculateProductsPerPage(layout, options);
-                const chunks = [];
+                // Regular layout without categories - strict 12 per page for grid
+                const productsPerPage = layout === 'grid' ? 12 : 
+                                      layout === 'compact' ? 24 : 
+                                      7; // list layout
                 
                 for (let i = 0; i < products.length; i += productsPerPage) {
-                    chunks.push(products.slice(i, i + productsPerPage));
-                }
-                
-                chunks.forEach(chunk => {
-                    const items = chunk.map(product => ({ type: 'product', ...product }));
+                    const pageProducts = products.slice(i, i + productsPerPage);
+                    const items = pageProducts.map(product => ({ type: 'product', ...product }));
                     const page = createProductPage(items, layout, options, pageNumber++);
                     container.appendChild(page);
-                });
+                }
             }
 
             // Update total pages
@@ -686,23 +694,7 @@
             container.scrollIntoView({ behavior: 'smooth', block: 'start' });
         }
 
-        function calculateProductsPerPage(layout, options) {
-            let base;
-            
-            if (layout === 'compact') {
-                base = options.includeImages ? 24 : 30;  // 6×4 or 6×5
-            } else if (layout === 'list') {
-                base = options.includeImages ? 7 : 10;   // Vertical list
-            } else { // grid - 4×3 = 12 items max to prevent any cutoff
-                base = options.includeImages ? 12 : 16;  // 4×3 or 4×4
-            }
-
-            if (options.groupByCategory) {
-                base = Math.floor(base * 0.85); // Account for category headers
-            }
-
-            return base;
-        }
+        // Remove the old calculateProductsPerPage function as we're using fixed values now
 
         function createHeaderPage() {
             const page = document.createElement('div');
