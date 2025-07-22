@@ -56,7 +56,7 @@
                 width: 210mm !important;
                 height: 297mm !important;
                 margin: 0 !important;
-                padding: 15mm 15mm 20mm 15mm !important;
+                padding: 20mm 15mm 25mm 15mm !important; /* Top, Right, Bottom, Left */
                 page-break-after: always !important;
                 page-break-inside: avoid !important;
                 position: relative !important;
@@ -71,7 +71,7 @@
             
             /* Page content area */
             .page-content {
-                height: calc(297mm - 40mm - 20mm) !important; /* Total height - padding - footer space */
+                height: calc(297mm - 45mm - 25mm) !important; /* Total height - padding top/bottom - footer space */
                 overflow: hidden !important;
                 display: flex !important;
                 flex-direction: column !important;
@@ -80,7 +80,7 @@
             /* Product grid adjustments */
             .product-grid-print {
                 display: grid !important;
-                gap: 0.5rem !important;
+                gap: 1rem !important; /* More spacing between items */
                 width: 100% !important;
                 margin-bottom: 1rem !important;
             }
@@ -100,12 +100,33 @@
             /* Product cards */
             .product-card-print {
                 border: 1px solid #e5e7eb !important;
-                padding: 0.5rem !important;
+                padding: 0.75rem !important; /* More padding for better appearance */
                 background: #ffffff !important;
-                border-radius: 0.25rem !important;
+                border-radius: 0.375rem !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
-                margin-bottom: 0.25rem !important;
+                display: flex !important;
+                flex-direction: column !important;
+            }
+            
+            /* Product images */
+            .product-image-container-print {
+                width: 100% !important;
+                aspect-ratio: 1 !important; /* Square aspect ratio */
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                overflow: hidden !important;
+                background: #f9fafb !important;
+                border-radius: 0.25rem !important;
+                margin-bottom: 0.5rem !important;
+            }
+            
+            .product-image {
+                max-width: 100% !important;
+                max-height: 100% !important;
+                object-fit: contain !important;
+                object-position: center !important;
             }
             
             /* Category headers */
@@ -124,17 +145,17 @@
             /* Page footer - positioned absolutely at bottom */
             .page-footer {
                 position: absolute !important;
-                bottom: 10mm !important;
+                bottom: 15mm !important;
                 left: 15mm !important;
                 right: 15mm !important;
-                height: 10mm !important;
+                height: 8mm !important;
                 border-top: 1px solid #e5e7eb !important;
-                padding-top: 3mm !important;
+                padding-top: 2mm !important;
                 background: white !important;
                 display: flex !important;
                 align-items: center !important;
                 justify-content: space-between !important;
-                font-size: 9pt !important;
+                font-size: 8pt !important;
                 color: #6b7280 !important;
             }
             
@@ -669,11 +690,11 @@
             let base;
             
             if (layout === 'compact') {
-                base = options.includeImages ? 24 : 36;
+                base = options.includeImages ? 24 : 30;  // 6×4 or 6×5
             } else if (layout === 'list') {
-                base = options.includeImages ? 8 : 12;
-            } else { // grid - reduced to prevent cutoff
-                base = options.includeImages ? 16 : 20;
+                base = options.includeImages ? 7 : 10;   // Vertical list
+            } else { // grid - 4×3 = 12 items max to prevent any cutoff
+                base = options.includeImages ? 12 : 16;  // 4×3 or 4×4
             }
 
             if (options.groupByCategory) {
@@ -885,7 +906,7 @@
                     </div>
                 `;
             } else {
-                const truncateLength = layout === 'compact' ? 45 : 70;
+                const truncateLength = layout === 'compact' ? 40 : 60;
                 const displayDescription = product.description.length > truncateLength ? 
                     product.description.substring(0, truncateLength) + '...' : 
                     product.description;
@@ -893,25 +914,27 @@
                 return `
                     <div class="product-card-print text-center avoid-break">
                         ${options.includeImages ? `
-                            <div class="${layout === 'compact' ? 'h-12' : 'h-16'} mb-1 flex items-center justify-center">
+                            <div class="product-image-container-print">
                                 ${imageUrl ? 
                                     `<img src="${imageUrl}" alt="${product.description}" class="product-image">` :
-                                    `<div class="w-full h-full image-placeholder rounded flex items-center justify-center">
-                                        <span class="${layout === 'compact' ? 'text-xs' : 'text-sm'} text-gray-500 font-mono">${product.sku}</span>
+                                    `<div class="w-full h-full flex items-center justify-center">
+                                        <span class="${layout === 'compact' ? 'text-xs' : 'text-sm'} text-gray-400 font-mono">${product.sku}</span>
                                     </div>`
                                 }
                             </div>
                         ` : ''}
-                        <div>
-                            <div class="product-sku">SKU: ${product.sku}</div>
-                            <div class="product-description ${layout === 'compact' ? 'min-h-[2rem]' : 'min-h-[2.5rem]'} px-1">
+                        <div class="flex-1 flex flex-col">
+                            <div class="product-sku mb-1">SKU: ${product.sku}</div>
+                            <div class="product-description flex-1 ${layout === 'compact' ? 'text-xs' : ''} px-1 mb-2">
                                 ${displayDescription}
                             </div>
                             ${options.includePrices ? `
-                                <div class="mt-1">
-                                    <div class="product-price">R${product.price.toFixed(2)}</div>
+                                <div class="mt-auto pt-2 border-t border-gray-100">
+                                    <div class="product-price mb-1">R${product.price.toFixed(2)}</div>
                                     <div class="text-xs text-gray-400 line-through">R${originalPrice}</div>
-                                    <div class="text-xs text-green-600 font-bold">SAVE ${savingsPercent}%</div>
+                                    <div class="text-xs text-green-600 font-bold bg-green-50 rounded px-1 py-0.5 inline-block">
+                                        SAVE ${savingsPercent}%
+                                    </div>
                                 </div>
                             ` : ''}
                         </div>
