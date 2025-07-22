@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📄 OZZ PDF Catalog Generator</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        @media print {
+            body { margin: 0; padding: 0; }
+            .no-print { display: none !important; }
+            .print-page { page-break-after: always; }
+            .print-page:last-child { page-break-after: avoid; }
+            .product-grid-print { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1rem; }
+            .product-card-print { border: 1px solid #ddd; padding: 0.5rem; margin-bottom: 1rem; }
+            .product-image-print { width: 100%; height: 150px; object-fit: contain; }
+        }
+        @page {
+            size: A4;
+            margin: 1cm;
+        }
+    </style>
+</head>
+<body class="bg-gray-100">
+    <div class="max-w-6xl mx-auto p-6">
+        <!-- Control Panel -->
+        <div class="bg-white rounded-xl shadow-lg p-8 mb-6 no-print">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">📄 PDF Catalog Generator</h1>
+                <p class="text-gray-600">Generate a printable PDF version of your promotional catalog</p>
+            </div>
+
+            <!-- Options -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">📄 Layout Options</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="radio" name="layout" value="grid" checked class="mr-3">
+                            <span>Grid Layout (4 per row)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="layout" value="list" class="mr-3">
+                            <span>List Layout (detailed)</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="radio" name="layout" value="compact" class="mr-3">
+                            <span>Compact (6 per row)</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="bg-gray-50 p-6 rounded-lg">
+                    <h3 class="text-lg font-semibold mb-4">🖼️ Image Options</h3>
+                    <div class="space-y-3">
+                        <label class="flex items-center">
+                            <input type="checkbox" id="includeImages" checked class="mr-3">
+                            <span>Include product images</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="includePrices" checked class="mr-3">
+                            <span>Include prices</span>
+                        </label>
+                        <label class="flex items-center">
+                            <input type="checkbox" id="includeCategories" checked class="mr-3">
+                            <span>Include categories</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Category Filter -->
+            <div class="bg-gray-50 p-6 rounded-lg mb-6">
+                <h3 class="text-lg font-semibold mb-4">🏷️ Category Filter</h3>
+                <div id="categoryFilters" class="grid grid-cols-2 md:grid-cols-4 gap-3">
+                    <!-- Category checkboxes will be populated here -->
+                </div>
+            </div>
+
+            <!-- Control Buttons -->
+            <div class="flex flex-col md:flex-row gap-4 justify-center">
+                <button onclick="loadCatalog()" id="loadBtn" 
+                        class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold">
+                    📊 Load Catalog Data
+                </button>
+                <button onclick="generatePDF()" id="generateBtn" disabled
+                        class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold disabled:opacity-50">
+                    📄 Generate PDF Preview
+                </button>
+                <button onclick="window.print()" id="printBtn" disabled
+                        class="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 transition-colors font-semibold disabled:opacity-50">
+                    🖨️ Print / Save as PDF
+                </button>
+            </div>
+
+            <!-- Status -->
+            <div class="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+                <div class="flex justify-between items-center">
+                    <span class="text-blue-900 font-semibold">Status:</span>
+                    <span id="status" class="text-blue-700">Ready to load catalog</span>
+                </div>
+                <div class="mt-2">
+                    <div class="text-sm text-blue-600" id="productCount">0 products loaded</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- PDF Content (Hidden until generated) -->
+        <div id="pdfContent" class="hidden">
+            <!-- PDF content will be generated here -->
+        </div>
+    </div>
+
+    <script>
+        // Same DriveImageManager as other tools
+        class DriveImageManager {
+            constructor() {
+                this.imageCache = new Map();
+                this.isInitialized = false;
+                this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
+                this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
+            }
+
+            async initializeGAPI() {
+                if (this.isInitialized) return true;
+                
+                try {
+                    await this.loadScript('https://apis.google.com/js/api.js');
+                    await new Promise(resolve => gapi.load('client', resolve));
+                    
+                    await gapi.client.init({
+                        apiKey: this.apiKey,
+                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+                    });
+                    
+                    this.isInitialized = true;
+                    return true;
+                } catch (error) {
+                    console.error('Failed to initialize Google Drive API:', error);
+                    return false;
+                }
+            }
+
+            loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    if (document.querySelector(`script[src="${src}"]`)) {
+                        resolve();
+                        return;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            }
+
+            async scanAllImages() {
+                try {
+                    const images = await this.fetchImagesFromFolder();
+                    this.buildImageMapping(images);
+                    return true;
+                } catch (error) {
+                    console.error('Error scanning images:', error);
+                    return false;
+                }
+            }
+
+            async fetchImagesFromFolder(pageToken = null) {
+                try {
+                    const response = await gapi.client.drive.files.list({
+                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
+                        fields: 'nextPageToken, files(id, name, mimeType)',
+                        pageSize: 100,
+                        pageToken: pageToken
+                    });
+
+                    let files = response.result.files || [];
+                    
+                    if (response.result.nextPageToken) {
+                        const nextPageFiles = await this.fetchImagesFromFolder(response.result.nextPageToken);
+                        files = files.concat(nextPageFiles);
+                    }
+                    
+                    return files;
+                } catch (error) {
+                    throw new Error('Failed to fetch images: ' + error.message);
+                }
+            }
+
+            buildImageMapping(images) {
+                this.imageCache.clear();
+                
+                images.forEach(image => {
+                    const codes = this.extractProductCodes(image.name);
+                    
+                    codes.forEach(code => {
+                        if (!this.imageCache.has(code)) {
+                            this.imageCache.set(code, {
+                                id: image.id,
+                                name: image.name,
+                                url: `https://lh3.googleusercontent.com/d/${image.id}=w400-h400-c`
+                            });
+                        }
+                    });
+                });
+            }
+
+            extractProductCodes(filename) {
+                const codes = [];
+                const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
+                
+                const numericCodes = nameWithoutExt.match(/\b\d{4,6}\b/g);
+                if (numericCodes) {
+                    codes.push(...numericCodes);
+                }
+                
+                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{4,8}\b/gi);
+                if (alphanumericCodes) {
+                    codes.push(...alphanumericCodes.map(code => code.toLowerCase()));
+                }
+                
+                const parts = nameWithoutExt.split(/[-_\s\.]+/);
+                parts.forEach(part => {
+                    const cleanPart = part.trim();
+                    if (/^\d{4,6}$/.test(cleanPart) || /^[A-Z0-9]{4,8}$/i.test(cleanPart)) {
+                        codes.push(cleanPart.toLowerCase());
+                    }
+                });
+                
+                return [...new Set(codes)];
+            }
+
+            getImageUrl(productCode) {
+                const normalizedCode = productCode.toString().toLowerCase().trim();
+                const imageData = this.imageCache.get(normalizedCode);
+                return imageData ? imageData.url : null;
+            }
+        }
+
+        // Global variables
+        let allProducts = [];
+        let driveImageManager = null;
+        let categories = [];
+
+        async function loadCatalog() {
+            const loadBtn = document.getElementById('loadBtn');
+            const status = document.getElementById('status');
+            
+            loadBtn.disabled = true;
+            loadBtn.textContent = '🔄 Loading...';
+            status.textContent = 'Loading catalog data...';
+
+            try {
+                // Load products
+                await loadProductsFromExcel();
+                status.textContent = 'Loading images...';
+                
+                // Load images
+                driveImageManager = new DriveImageManager();
+                const success = await driveImageManager.initializeGAPI();
+                if (success) {
+                    await driveImageManager.scanAllImages();
+                }
+
+                // Setup UI
+                setupCategoryFilters();
+                document.getElementById('generateBtn').disabled = false;
+                status.textContent = `Catalog loaded successfully! ${allProducts.length} products ready`;
+
+            } catch (error) {
+                status.textContent = 'Error loading catalog: ' + error.message;
+                alert('Error loading catalog: ' + error.message);
+            } finally {
+                loadBtn.disabled = false;
+                loadBtn.textContent = '📊 Load Catalog Data';
+            }
+        }
+
+        async function loadProductsFromExcel() {
+            const response = await fetch('./JULY PROMO.xlsx');
+            if (!response.ok) {
+                throw new Error('Could not load JULY PROMO.xlsx');
+            }
+            
+            const arrayBuffer = await response.arrayBuffer();
+            const workbook = XLSX.read(arrayBuffer);
+            const worksheet = workbook.Sheets['Sheet1'];
+            const rawData = XLSX.utils.sheet_to_json(worksheet);
+            
+            allProducts = rawData
+                .filter(item => item.SKU && item['PRODUCT '] && item.PRICE !== undefined && item.CATEGORY)
+                .map(item => ({
+                    sku: item.SKU.toString().trim(),
+                    description: item['PRODUCT '].toString().trim(),
+                    price: parseFloat(item.PRICE),
+                    category: item.CATEGORY.toString().trim().toUpperCase()
+                }))
+                .filter(product => product.price > 0);
+            
+            // Extract unique categories
+            categories = [...new Set(allProducts.map(p => p.category))].sort();
+            
+            document.getElementById('productCount').textContent = `${allProducts.length} products loaded`;
+        }
+
+        function setupCategoryFilters() {
+            const container = document.getElementById('categoryFilters');
+            container.innerHTML = categories.map(category => `
+                <label class="flex items-center p-2 bg-white rounded border hover:bg-gray-50">
+                    <input type="checkbox" value="${category}" checked class="mr-2 category-filter">
+                    <span class="text-sm">${category}</span>
+                </label>
+            `).join('');
+        }
+
+        function generatePDF() {
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.disabled = true;
+            generateBtn.textContent = '🔄 Generating...';
+
+            try {
+                // Get selected categories
+                const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked'))
+                    .map(cb => cb.value);
+                
+                // Filter products
+                const filteredProducts = allProducts.filter(product => 
+                    selectedCategories.includes(product.category)
+                );
+
+                // Get options
+                const layout = document.querySelector('input[name="layout"]:checked').value;
+                const includeImages = document.getElementById('includeImages').checked;
+                const includePrices = document.getElementById('includePrices').checked;
+                const includeCategories = document.getElementById('includeCategories').checked;
+
+                // Generate PDF content
+                generatePDFContent(filteredProducts, layout, {
+                    includeImages,
+                    includePrices,
+                    includeCategories
+                });
+
+                document.getElementById('printBtn').disabled = false;
+                document.getElementById('status').textContent = `PDF generated! ${filteredProducts.length} products ready to print`;
+
+            } catch (error) {
+                alert('Error generating PDF: ' + error.message);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = '📄 Generate PDF Preview';
+            }
+        }
+
+        function generatePDFContent(products, layout, options) {
+            const container = document.getElementById('pdfContent');
+            container.innerHTML = '';
+            container.classList.remove('hidden');
+
+            // Header page
+            const headerPage = createHeaderPage();
+            container.appendChild(headerPage);
+
+            // Product pages
+            const productsPerPage = layout === 'compact' ? 24 : (layout === 'list' ? 12 : 16);
+            const totalPages = Math.ceil(products.length / productsPerPage);
+
+            for (let page = 0; page < totalPages; page++) {
+                const startIndex = page * productsPerPage;
+                const endIndex = Math.min(startIndex + productsPerPage, products.length);
+                const pageProducts = products.slice(startIndex, endIndex);
+
+                const productPage = createProductPage(pageProducts, layout, options, page + 2, totalPages + 1);
+                container.appendChild(productPage);
+            }
+
+            // Scroll to PDF content
+            container.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function createHeaderPage() {
+            const page = document.createElement('div');
+            page.className = 'print-page bg-white p-8 shadow-lg rounded-lg mb-6';
+            page.innerHTML = `
+                <div class="text-center">
+                    <div class="mb-8">
+                        <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
+                             alt="OZZ Cash & Carry" class="h-24 mx-auto mb-4">
+                    </div>
+                    
+                    <div class="bg-red-600 text-white py-4 px-8 rounded-lg mb-8 inline-block">
+                        <h1 class="text-4xl font-bold mb-2">🎉 JULY 2025 PROMO 🎉</h1>
+                        <p class="text-xl">Exclusive Deals on Premium Home & Kitchen Products</p>
+                    </div>
+
+                    <div class="grid grid-cols-2 gap-8 text-left mb-8">
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">🏪 OZZ CASH & CARRY</h3>
+                            <p class="text-gray-700">
+                                40 Mazeppa & Gull Street<br>
+                                Durban, KwaZulu-Natal 4001<br>
+                                South Africa
+                            </p>
+                        </div>
+                        <div class="bg-gray-50 p-6 rounded-lg">
+                            <h3 class="text-xl font-bold text-gray-800 mb-4">🏠 IKHAYA HOMESTORE</h3>
+                            <p class="text-gray-700">
+                                Block D, Shop 88 China City<br>
+                                Springfield Park, Durban<br>
+                                KwaZulu-Natal, South Africa
+                            </p>
+                        </div>
+                    </div>
+
+                    <div class="bg-blue-50 p-6 rounded-lg mb-8">
+                        <h3 class="text-xl font-bold text-blue-800 mb-4">📞 Contact Information</h3>
+                        <p class="text-2xl font-bold text-blue-600 mb-2">+27 31 332 7192</p>
+                        <p class="text-blue-700">
+                            Monday - Friday: 8:00 AM - 5:00 PM<br>
+                            Saturday: 8:00 AM - 1:00 PM
+                        </p>
+                    </div>
+
+                    <div class="bg-yellow-50 border-l-4 border-yellow-400 p-6 text-left">
+                        <h4 class="text-lg font-bold text-yellow-800 mb-2">⏰ Limited Time Offer - July 2025</h4>
+                        <p class="text-yellow-700 mb-4">
+                            This promotional catalog features exclusive deals on premium home and kitchen products. 
+                            All prices are valid for July 2025 only and subject to stock availability.
+                        </p>
+                        <div class="grid grid-cols-3 gap-4 text-center">
+                            <div>
+                                <div class="text-2xl font-bold text-yellow-600">${allProducts.length}</div>
+                                <div class="text-sm text-yellow-700">Products</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-yellow-600">${categories.length}</div>
+                                <div class="text-sm text-yellow-700">Categories</div>
+                            </div>
+                            <div>
+                                <div class="text-2xl font-bold text-yellow-600">20%</div>
+                                <div class="text-sm text-yellow-700">Avg Savings</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+            return page;
+        }
+
+        function createProductPage(products, layout, options, pageNumber, totalPages) {
+            const page = document.createElement('div');
+            page.className = 'print-page bg-white p-6 shadow-lg rounded-lg mb-6';
+
+            // Page header
+            const header = `
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h2 class="text-xl font-bold text-gray-800">OZZ July 2025 Promotional Catalog</h2>
+                    <span class="text-gray-600">Page ${pageNumber} of ${totalPages}</span>
+                </div>
+            `;
+
+            // Products grid
+            const gridClass = layout === 'compact' ? 'grid-cols-6' : 
+                             layout === 'list' ? 'grid-cols-1' : 'grid-cols-4';
+            
+            const productsHTML = products.map(product => {
+                const imageUrl = driveImageManager ? driveImageManager.getImageUrl(product.sku) : null;
+                const originalPrice = (product.price * 1.2).toFixed(2);
+                const savings = (originalPrice - product.price).toFixed(2);
+
+                if (layout === 'list') {
+                    return `
+                        <div class="border border-gray-200 rounded p-4 mb-4 flex items-center">
+                            ${options.includeImages ? `
+                                <div class="w-24 h-24 mr-4 flex-shrink-0">
+                                    ${imageUrl ? 
+                                        `<img src="${imageUrl}" alt="${product.description}" class="w-full h-full object-contain border rounded">` :
+                                        `<div class="w-full h-full bg-gray-100 border rounded flex items-center justify-center text-xs text-gray-500">${product.sku}</div>`
+                                    }
+                                </div>
+                            ` : ''}
+                            <div class="flex-1">
+                                <div class="font-semibold text-sm mb-1">${product.sku}</div>
+                                <div class="text-gray-800 text-sm mb-2">${product.description}</div>
+                                ${options.includeCategories ? `<div class="text-xs text-blue-600 mb-2">${product.category}</div>` : ''}
+                                ${options.includePrices ? `
+                                    <div class="flex items-center gap-2">
+                                        <span class="text-lg font-bold text-red-600">R${product.price.toFixed(2)}</span>
+                                        <span class="text-sm text-gray-400 line-through">R${originalPrice}</span>
+                                        <span class="text-xs text-green-600 font-semibold">Save R${savings}</span>
+                                    </div>
+                                ` : ''}
+                            </div>
+                        </div>
+                    `;
+                } else {
+                    return `
+                        <div class="border border-gray-200 rounded p-3 text-center">
+                            ${options.includeImages ? `
+                                <div class="mb-3 ${layout === 'compact' ? 'h-16' : 'h-32'}">
+                                    ${imageUrl ? 
+                                        `<img src="${imageUrl}" alt="${product.description}" class="w-full h-full object-contain">` :
+                                        `<div class="w-full h-full bg-gray-100 border rounded flex items-center justify-center text-xs text-gray-500">${product.sku}</div>`
+                                    }
+                                </div>
+                            ` : ''}
+                            <div class="text-xs font-semibold text-gray-600 mb-1">${product.sku}</div>
+                            <div class="text-sm text-gray-800 mb-2 ${layout === 'compact' ? 'text-xs' : ''}" style="font-size: ${layout === 'compact' ? '10px' : '14px'}; line-height: 1.2;">
+                                ${layout === 'compact' && product.description.length > 40 ? 
+                                    product.description.substring(0, 40) + '...' : 
+                                    product.description}
+                            </div>
+                            ${options.includeCategories ? `<div class="text-xs text-blue-600 mb-2">${product.category}</div>` : ''}
+                            ${options.includePrices ? `
+                                <div class="text-center">
+                                    <div class="text-sm font-bold text-red-600">R${product.price.toFixed(2)}</div>
+                                    <div class="text-xs text-gray-400 line-through">R${originalPrice}</div>
+                                    <div class="text-xs text-green-600 font-semibold">Save R${savings}</div>
+                                </div>
+                            ` : ''}
+                        </div>
+                    `;
+                }
+            }).join('');
+
+            page.innerHTML = header + `<div class="grid ${gridClass} gap-3">${productsHTML}</div>`;
+            return page;
+        }
+    </script>
+</body>
+</html>
