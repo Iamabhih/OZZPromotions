@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>📸 OZZ Missing Images Report</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+</head>
+<body class="bg-gray-100 min-h-screen">
+    <div class="max-w-6xl mx-auto p-6">
+        <div class="bg-white rounded-xl shadow-lg p-8">
+            <div class="text-center mb-8">
+                <h1 class="text-3xl font-bold text-gray-900 mb-2">📸 Missing Images Report</h1>
+                <p class="text-gray-600">Generate a list of products that need images in Google Drive</p>
+            </div>
+
+            <!-- Status Panel -->
+            <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-6">
+                <h2 class="text-lg font-semibold text-blue-900 mb-4">📊 System Status</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-4 text-center">
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="text-2xl font-bold text-blue-600" id="totalProducts">-</div>
+                        <div class="text-sm text-gray-600">Total Products</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="text-2xl font-bold text-green-600" id="withImages">-</div>
+                        <div class="text-sm text-gray-600">With Images</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="text-2xl font-bold text-red-600" id="missingImages">-</div>
+                        <div class="text-sm text-gray-600">Missing Images</div>
+                    </div>
+                    <div class="bg-white rounded-lg p-4">
+                        <div class="text-2xl font-bold text-purple-600" id="coverage">-</div>
+                        <div class="text-sm text-gray-600">Coverage %</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Control Panel -->
+            <div class="mb-6">
+                <div class="flex flex-col md:flex-row gap-4 justify-center">
+                    <button onclick="generateReport()" id="generateBtn" 
+                            class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-colors font-semibold shadow-lg">
+                        🔍 Generate Missing Images Report
+                    </button>
+                    <button onclick="downloadReport()" id="downloadBtn" disabled
+                            class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                        📥 Download CSV Report
+                    </button>
+                    <button onclick="downloadImageList()" id="imageListBtn" disabled
+                            class="bg-purple-600 text-white px-8 py-3 rounded-lg hover:bg-purple-700 transition-colors font-semibold shadow-lg disabled:opacity-50 disabled:cursor-not-allowed">
+                        📋 Download Image To-Do List
+                    </button>
+                </div>
+            </div>
+
+            <!-- Progress Bar -->
+            <div id="progressSection" class="hidden mb-6">
+                <div class="bg-gray-200 rounded-full h-4 overflow-hidden">
+                    <div id="progressBar" class="bg-blue-600 h-4 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+                <p id="progressText" class="text-center text-gray-600 mt-2">Starting analysis...</p>
+            </div>
+
+            <!-- Results Section -->
+            <div id="resultsSection" class="hidden">
+                <!-- Summary -->
+                <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-yellow-800 mb-4">📋 Missing Images Summary</h3>
+                    <div id="summaryContent"></div>
+                </div>
+
+                <!-- Category Breakdown -->
+                <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+                    <h3 class="text-lg font-semibold text-gray-800 mb-4">📊 Missing Images by Category</h3>
+                    <div id="categoryBreakdown" class="grid grid-cols-1 md:grid-cols-3 gap-4"></div>
+                </div>
+
+                <!-- Missing Products Table -->
+                <div class="bg-white border border-gray-200 rounded-lg overflow-hidden">
+                    <div class="bg-gray-50 px-6 py-4 border-b border-gray-200">
+                        <h3 class="text-lg font-semibold text-gray-800">🔍 Products Missing Images</h3>
+                        <p class="text-sm text-gray-600 mt-1">Products that need images added to Google Drive</p>
+                    </div>
+                    <div class="overflow-x-auto">
+                        <table class="w-full">
+                            <thead class="bg-gray-50 border-b border-gray-200">
+                                <tr>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">SKU</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Product Description</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
+                                    <th class="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Suggested Filename</th>
+                                </tr>
+                            </thead>
+                            <tbody id="missingProductsTable" class="bg-white divide-y divide-gray-200">
+                                <!-- Missing products will be populated here -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Log Section -->
+            <div class="mt-6">
+                <h3 class="text-lg font-semibold text-gray-800 mb-3">📝 Process Log</h3>
+                <div id="log" class="bg-gray-900 text-green-400 p-4 rounded-lg h-32 overflow-y-auto font-mono text-sm">
+                    📸 Missing Images Report Tool Ready<br>
+                    🎯 Click "Generate Report" to analyze your catalog<br>
+                    📊 This will check all 238 products against your Google Drive images<br>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Same DriveImageManager class as main catalog
+        class DriveImageManager {
+            constructor() {
+                this.imageCache = new Map();
+                this.isInitialized = false;
+                this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
+                this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
+            }
+
+            async initializeGAPI() {
+                if (this.isInitialized) return true;
+                
+                try {
+                    await this.loadScript('https://apis.google.com/js/api.js');
+                    await new Promise(resolve => gapi.load('client', resolve));
+                    
+                    await gapi.client.init({
+                        apiKey: this.apiKey,
+                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+                    });
+                    
+                    this.isInitialized = true;
+                    log('✅ Google Drive API initialized');
+                    return true;
+                } catch (error) {
+                    log('❌ Failed to initialize Google Drive API: ' + error.message);
+                    return false;
+                }
+            }
+
+            loadScript(src) {
+                return new Promise((resolve, reject) => {
+                    if (document.querySelector(`script[src="${src}"]`)) {
+                        resolve();
+                        return;
+                    }
+                    
+                    const script = document.createElement('script');
+                    script.src = src;
+                    script.onload = resolve;
+                    script.onerror = reject;
+                    document.head.appendChild(script);
+                });
+            }
+
+            async scanAllImages() {
+                log('🔍 Scanning Google Drive for all images...');
+                updateProgress(20, 'Fetching images from Google Drive...');
+                
+                try {
+                    const images = await this.fetchImagesFromFolder();
+                    log(`📸 Found ${images.length} total images in Google Drive`);
+                    
+                    updateProgress(60, 'Building product code mapping...');
+                    this.buildImageMapping(images);
+                    
+                    log(`🎯 Mapped ${this.imageCache.size} product codes to images`);
+                    return true;
+                } catch (error) {
+                    log('❌ Error scanning images: ' + error.message);
+                    return false;
+                }
+            }
+
+            async fetchImagesFromFolder(pageToken = null) {
+                try {
+                    const response = await gapi.client.drive.files.list({
+                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
+                        fields: 'nextPageToken, files(id, name, mimeType)',
+                        pageSize: 100,
+                        pageToken: pageToken
+                    });
+
+                    let files = response.result.files || [];
+                    
+                    if (response.result.nextPageToken) {
+                        const nextPageFiles = await this.fetchImagesFromFolder(response.result.nextPageToken);
+                        files = files.concat(nextPageFiles);
+                    }
+                    
+                    return files;
+                } catch (error) {
+                    throw new Error('Failed to fetch images: ' + error.message);
+                }
+            }
+
+            buildImageMapping(images) {
+                this.imageCache.clear();
+                
+                images.forEach(image => {
+                    const codes = this.extractProductCodes(image.name);
+                    
+                    codes.forEach(code => {
+                        if (!this.imageCache.has(code)) {
+                            this.imageCache.set(code, {
+                                id: image.id,
+                                name: image.name,
+                                mimeType: image.mimeType
+                            });
+                        }
+                    });
+                });
+            }
+
+            extractProductCodes(filename) {
+                const codes = [];
+                const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
+                
+                // Find numeric codes
+                const numericCodes = nameWithoutExt.match(/\b\d{4,6}\b/g);
+                if (numericCodes) {
+                    codes.push(...numericCodes);
+                }
+                
+                // Find alphanumeric codes
+                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{4,8}\b/gi);
+                if (alphanumericCodes) {
+                    codes.push(...alphanumericCodes.map(code => code.toLowerCase()));
+                }
+                
+                // Split by delimiters
+                const parts = nameWithoutExt.split(/[-_\s\.]+/);
+                parts.forEach(part => {
+                    const cleanPart = part.trim();
+                    if (/^\d{4,6}$/.test(cleanPart) || /^[A-Z0-9]{4,8}$/i.test(cleanPart)) {
+                        codes.push(cleanPart.toLowerCase());
+                    }
+                });
+                
+                return [...new Set(codes)];
+            }
+
+            hasImage(productCode) {
+                const normalizedCode = productCode.toString().toLowerCase().trim();
+                return this.imageCache.has(normalizedCode);
+            }
+        }
+
+        // Global variables
+        let allProducts = [];
+        let missingProducts = [];
+        let driveImageManager = null;
+
+        function log(message) {
+            const logEl = document.getElementById('log');
+            logEl.innerHTML += message + '<br>';
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        function updateProgress(percent, text) {
+            document.getElementById('progressSection').classList.remove('hidden');
+            document.getElementById('progressBar').style.width = percent + '%';
+            document.getElementById('progressText').textContent = text;
+        }
+
+        async function generateReport() {
+            const generateBtn = document.getElementById('generateBtn');
+            generateBtn.disabled = true;
+            generateBtn.textContent = '🔄 Generating Report...';
+
+            try {
+                log('🚀 Starting missing images analysis...');
+                updateProgress(0, 'Initializing...');
+
+                // Step 1: Load products from Excel
+                updateProgress(10, 'Loading products from Excel...');
+                await loadProductsFromExcel();
+                
+                // Step 2: Initialize Google Drive
+                updateProgress(30, 'Connecting to Google Drive...');
+                driveImageManager = new DriveImageManager();
+                const success = await driveImageManager.initializeGAPI();
+                
+                if (!success) {
+                    throw new Error('Failed to initialize Google Drive API');
+                }
+
+                // Step 3: Scan all images
+                await driveImageManager.scanAllImages();
+
+                // Step 4: Analyze missing images
+                updateProgress(80, 'Analyzing missing images...');
+                analyzeMissingImages();
+
+                // Step 5: Display results
+                updateProgress(100, 'Report complete!');
+                displayResults();
+
+                // Enable download buttons
+                document.getElementById('downloadBtn').disabled = false;
+                document.getElementById('imageListBtn').disabled = false;
+
+                log('✅ Missing images report generated successfully!');
+
+            } catch (error) {
+                log('❌ Error generating report: ' + error.message);
+                alert('Error generating report: ' + error.message);
+            } finally {
+                generateBtn.disabled = false;
+                generateBtn.textContent = '🔍 Generate Missing Images Report';
+            }
+        }
+
+        async function loadProductsFromExcel() {
+            try {
+                const response = await fetch('./JULY PROMO.xlsx');
+                
+                if (!response.ok) {
+                    throw new Error('Could not load JULY PROMO.xlsx');
+                }
+                
+                const arrayBuffer = await response.arrayBuffer();
+                const workbook = XLSX.read(arrayBuffer);
+                const worksheet = workbook.Sheets['Sheet1'];
+                const rawData = XLSX.utils.sheet_to_json(worksheet);
+                
+                allProducts = rawData
+                    .filter(item => item.SKU && item['PRODUCT '] && item.PRICE !== undefined && item.CATEGORY)
+                    .map(item => ({
+                        sku: item.SKU.toString().trim(),
+                        description: item['PRODUCT '].toString().trim(),
+                        price: parseFloat(item.PRICE),
+                        category: item.CATEGORY.toString().trim().toUpperCase()
+                    }))
+                    .filter(product => product.price > 0);
+                
+                log(`📊 Loaded ${allProducts.length} products from Excel`);
+                
+                // Update total products
+                document.getElementById('totalProducts').textContent = allProducts.length;
+                
+            } catch (error) {
+                throw new Error('Failed to load Excel file: ' + error.message);
+            }
+        }
+
+        function analyzeMissingImages() {
+            missingProducts = allProducts.filter(product => {
+                return !driveImageManager.hasImage(product.sku);
+            });
+
+            const withImages = allProducts.length - missingProducts.length;
+            const coverage = Math.round((withImages / allProducts.length) * 100);
+
+            // Update status panel
+            document.getElementById('withImages').textContent = withImages;
+            document.getElementById('missingImages').textContent = missingProducts.length;
+            document.getElementById('coverage').textContent = coverage + '%';
+
+            log(`📈 Analysis complete:`);
+            log(`   • Total products: ${allProducts.length}`);
+            log(`   • Products with images: ${withImages}`);
+            log(`   • Products missing images: ${missingProducts.length}`);
+            log(`   • Image coverage: ${coverage}%`);
+        }
+
+        function displayResults() {
+            document.getElementById('resultsSection').classList.remove('hidden');
+
+            // Summary
+            const summaryContent = document.getElementById('summaryContent');
+            summaryContent.innerHTML = `
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-red-600">${missingProducts.length}</div>
+                        <div class="text-sm text-yellow-700">Products need images</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-green-600">${document.getElementById('withImages').textContent}</div>
+                        <div class="text-sm text-yellow-700">Products have images</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-3xl font-bold text-blue-600">${document.getElementById('coverage').textContent}</div>
+                        <div class="text-sm text-yellow-700">Coverage percentage</div>
+                    </div>
+                </div>
+                <div class="mt-4 p-4 bg-yellow-100 rounded-lg">
+                    <p class="text-yellow-800 text-sm">
+                        <strong>📝 Next Steps:</strong> Add images to Google Drive using the suggested filenames below. 
+                        Images should be named with the SKU (e.g., "455641.jpg" or "SKU-455641.png").
+                    </p>
+                </div>
+            `;
+
+            // Category breakdown
+            const categoryStats = {};
+            missingProducts.forEach(product => {
+                categoryStats[product.category] = (categoryStats[product.category] || 0) + 1;
+            });
+
+            const categoryBreakdown = document.getElementById('categoryBreakdown');
+            categoryBreakdown.innerHTML = Object.entries(categoryStats)
+                .sort(([,a], [,b]) => b - a)
+                .map(([category, count]) => `
+                    <div class="bg-white p-4 rounded-lg border border-gray-200 text-center">
+                        <div class="text-2xl font-bold text-red-600">${count}</div>
+                        <div class="text-sm text-gray-600">${category}</div>
+                    </div>
+                `).join('');
+
+            // Missing products table
+            const tableBody = document.getElementById('missingProductsTable');
+            tableBody.innerHTML = missingProducts
+                .sort((a, b) => a.category.localeCompare(b.category) || a.sku.localeCompare(b.sku))
+                .map(product => `
+                    <tr class="hover:bg-gray-50">
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">${product.sku}</td>
+                        <td class="px-6 py-4 text-sm text-gray-900">${product.description}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                            <span class="px-2 py-1 text-xs font-semibold rounded-full bg-blue-100 text-blue-800">${product.category}</span>
+                        </td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm text-gray-900">R${product.price.toFixed(2)}</td>
+                        <td class="px-6 py-4 whitespace-nowrap text-sm font-mono text-purple-600">${product.sku}.jpg</td>
+                    </tr>
+                `).join('');
+        }
+
+        function downloadReport() {
+            const csvContent = [
+                ['SKU', 'Product Description', 'Category', 'Price', 'Suggested Filename'],
+                ...missingProducts.map(product => [
+                    product.sku,
+                    product.description,
+                    product.category,
+                    'R' + product.price.toFixed(2),
+                    product.sku + '.jpg'
+                ])
+            ].map(row => row.map(cell => `"${cell}"`).join(',')).join('\n');
+
+            const blob = new Blob([csvContent], { type: 'text/csv' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `OZZ_Missing_Images_Report_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            log('📥 CSV report downloaded successfully');
+        }
+
+        function downloadImageList() {
+            const listContent = `OZZ CASH & CARRY - MISSING IMAGES TO-DO LIST
+Generated: ${new Date().toLocaleString()}
+Total Missing: ${missingProducts.length} products
+
+INSTRUCTIONS:
+1. Take photos of the products listed below
+2. Name each image file exactly as shown in the "Filename" column
+3. Upload all images to Google Drive folder: Ikhaya/OzzSA
+4. Ensure images are set to "Anyone with the link can view"
+
+MISSING IMAGES LIST:
+${missingProducts.map((product, index) => 
+`${index + 1}. SKU: ${product.sku}
+   Product: ${product.description}
+   Category: ${product.category}
+   Price: R${product.price.toFixed(2)}
+   Filename: ${product.sku}.jpg
+   ---`
+).join('\n')}
+
+SUMMARY BY CATEGORY:
+${Object.entries(missingProducts.reduce((acc, product) => {
+    acc[product.category] = (acc[product.category] || 0) + 1;
+    return acc;
+}, {})).map(([category, count]) => `${category}: ${count} products`).join('\n')}
+
+END OF REPORT
+Generated by OZZ Catalog Management System`;
+
+            const blob = new Blob([listContent], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `OZZ_Image_ToDo_List_${new Date().toISOString().split('T')[0]}.txt`;
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+
+            log('📋 To-Do list downloaded successfully');
+        }
+    </script>
+</body>
+</html>
