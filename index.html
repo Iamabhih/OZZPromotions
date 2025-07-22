@@ -431,7 +431,7 @@
                 </div>
                 <h1 class="text-4xl md:text-6xl font-bold mb-2">🎉 JULY 2025 PROMO 🎉</h1>
                 <p class="text-xl md:text-2xl mb-4">Exclusive Deals on Premium Home & Kitchen Products</p>
-                <p class="text-lg opacity-90" id="product-count">Loading promotional items...</p>
+                <p class="text-lg opacity-90" id="product-count">Loading promotional catalog...</p>
                 <div class="mt-6 inline-block bg-yellow-400 text-red-800 px-8 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
                     ⏰ LIMITED TIME OFFER!
                 </div>
@@ -927,6 +927,13 @@
                 
                 // PHASE 1: Load products and show catalog immediately
                 await loadProductsFromExcel();
+                
+                if (allProducts.length === 0) {
+                    console.error('❌ No products loaded! Check Excel file format.');
+                    showError('No products found in Excel file. Please check the file format and try again.');
+                    return;
+                }
+                
                 setupUI();
                 displayProducts(); // Show products with placeholders immediately
                 updateCounts();
@@ -1045,44 +1052,41 @@
                 const worksheet = workbook.Sheets['Sheet1'];
                 const rawData = XLSX.utils.sheet_to_json(worksheet);
                 
+                console.log('📊 Raw data loaded:', rawData.length, 'rows');
+                
+                // Process the new data format - FIXED for your Excel structure
                 allProducts = rawData
                     .filter(function(item) {
-                        return item.SKU && item['PAGE 1'] && item.PRICE !== undefined && !isNaN(parseFloat(item.PRICE));
+                        return item.SKU && item['PRODUCT '] && item.PRICE !== undefined && item.CATEGORY;
                     })
                     .map(function(item) {
                         return {
-                            sku: item.SKU.toString(),
-                            description: item['PAGE 1'],
+                            sku: item.SKU.toString().trim(),
+                            description: item['PRODUCT '].toString().trim(),
                             price: parseFloat(item.PRICE),
-                            category: categorizeProduct(item['PAGE 1'])
+                            category: item.CATEGORY.toString().trim().toUpperCase()
                         };
+                    })
+                    .filter(function(product) {
+                        return product.price > 0;
                     });
                 
-                console.log('✅ Loaded ' + allProducts.length + ' products from Excel');
+                console.log('✅ Processed products:', allProducts.length);
+                
+                if (allProducts.length > 0) {
+                    console.log('📊 Sample product:', allProducts[0]);
+                    
+                    const categoryStats = {};
+                    allProducts.forEach(product => {
+                        categoryStats[product.category] = (categoryStats[product.category] || 0) + 1;
+                    });
+                    console.log('📈 Categories found:', categoryStats);
+                }
                 
             } catch (error) {
-                console.error('Error loading products:', error);
+                console.error('❌ Error loading products:', error);
                 throw error;
             }
-        }
-
-        function categorizeProduct(description) {
-            const desc = description.toUpperCase();
-            
-            if (desc.indexOf('BOWL') !== -1) return 'BOWLS';
-            if (desc.indexOf('CUP') !== -1 || desc.indexOf('MUG') !== -1) return 'CUPS & MUGS';
-            if (desc.indexOf('PLATE') !== -1 || desc.indexOf('DINNER') !== -1) return 'PLATES';
-            if (desc.indexOf('GLASS') !== -1 || desc.indexOf('WATER') !== -1 || desc.indexOf('WINE') !== -1 || 
-                desc.indexOf('TUMBLER') !== -1 || desc.indexOf('CARAFFE') !== -1 || desc.indexOf('CARAFE') !== -1) return 'GLASSWARE';
-            if (desc.indexOf('ICE CREAM') !== -1 || desc.indexOf('GELATO') !== -1) return 'ICE CREAM SETS';
-            if (desc.indexOf('TRAY') !== -1 || desc.indexOf('PLATTER') !== -1) return 'TRAYS & PLATTERS';
-            if (desc.indexOf('STORAGE') !== -1 || desc.indexOf('CONTAINER') !== -1 || desc.indexOf('CONT') !== -1) return 'STORAGE';
-            if (desc.indexOf('KITCHEN') !== -1 || desc.indexOf('COOK') !== -1 || desc.indexOf('UTENSIL') !== -1) return 'KITCHEN TOOLS';
-            if (desc.indexOf('CUTLERY') !== -1 || desc.indexOf('KNIFE') !== -1 || desc.indexOf('FORK') !== -1 || desc.indexOf('SPOON') !== -1) return 'CUTLERY';
-            if (desc.indexOf('BOTTLE') !== -1 || desc.indexOf('JUG') !== -1 || desc.indexOf('PITCHER') !== -1) return 'BOTTLES & JUGS';
-            if (desc.indexOf('RAMEKIN') !== -1 || desc.indexOf('CASSEROLE') !== -1 || desc.indexOf('JAR') !== -1) return 'KITCHEN ACCESSORIES';
-            
-            return 'OTHER';
         }
 
         function getImageUrl(sku) {
@@ -1204,6 +1208,7 @@
             applyFilters();
         }
 
+        // Ensure filtering and searching work immediately
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             sortBy = document.getElementById('sortBy').value;
@@ -1245,7 +1250,7 @@
             });
             
             updatePagination();
-            displayProducts();
+            displayProducts(); // This will show content immediately, images will update as available
             updateCounts();
         }
 
@@ -1313,19 +1318,33 @@
             const grid = document.getElementById('productsGrid');
             const noResults = document.getElementById('noResults');
             
-            if (filteredProducts.length === 0) {
-                grid.innerHTML = '';
-                grid.className = ''; // Remove grid class when empty
-                noResults.classList.remove('hidden');
+            // Handle case where no products are loaded at all
+            if (!allProducts || allProducts.length === 0) {
+                grid.innerHTML = '<div class="text-center py-16">' +
+                    '<div class="text-4xl mb-4">⚠️</div>' +
+                    '<p class="text-xl text-gray-700 mb-2">No products found</p>' +
+                    '<p class="text-gray-500">Please check the Excel file format</p>' +
+                '</div>';
+                grid.className = '';
+                if (noResults) noResults.classList.add('hidden');
                 return;
             }
             
-            noResults.classList.add('hidden');
+            if (filteredProducts.length === 0) {
+                grid.innerHTML = '';
+                grid.className = ''; // Remove grid class when empty
+                if (noResults) noResults.classList.remove('hidden');
+                return;
+            }
+            
+            if (noResults) noResults.classList.add('hidden');
             grid.className = 'product-grid'; // Apply grid layout
             
             const startIndex = (currentPage - 1) * productsPerPage;
             const endIndex = Math.min(startIndex + productsPerPage, filteredProducts.length);
             const currentPageProducts = filteredProducts.slice(startIndex, endIndex);
+            
+            console.log('🎨 Displaying', currentPageProducts.length, 'products on page', currentPage);
             
             grid.innerHTML = currentPageProducts.map(function(product) {
                 const originalPrice = (product.price * 1.2).toFixed(2);
@@ -1388,20 +1407,22 @@
         }
 
         function updateCounts() {
-            const totalProducts = allProducts.length;
+            const totalProducts = allProducts ? allProducts.length : 0;
             
             // Customer-friendly count (no technical details)
             document.getElementById('product-count').textContent = `${totalProducts} promotional items available`;
-            document.getElementById('filteredCount').textContent = filteredProducts.length;
+            
+            const filteredCount = filteredProducts ? filteredProducts.length : 0;
+            document.getElementById('filteredCount').textContent = filteredCount;
             
             const startItem = (currentPage - 1) * productsPerPage + 1;
-            const endItem = Math.min(currentPage * productsPerPage, filteredProducts.length);
+            const endItem = Math.min(currentPage * productsPerPage, filteredCount);
             const pageInfoEl = document.getElementById('pageInfo');
             
-            if (filteredProducts.length === 0) {
-                pageInfoEl.textContent = 'No products to display';
+            if (filteredCount === 0) {
+                pageInfoEl.textContent = totalProducts === 0 ? 'Loading products...' : 'No products to display';
             } else {
-                pageInfoEl.textContent = `Page ${currentPage} of ${totalPages} • Showing ${startItem}-${endItem} of ${filteredProducts.length} products`;
+                pageInfoEl.textContent = `Page ${currentPage} of ${totalPages} • Showing ${startItem}-${endItem} of ${filteredCount} products`;
             }
         }
 
@@ -1556,52 +1577,6 @@
             }
         }
 
-        // Ensure filtering and searching work immediately
-        function applyFilters() {
-            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-            sortBy = document.getElementById('sortBy').value;
-            
-            filteredProducts = allProducts.filter(function(product) {
-                const matchesSearch = product.description.toLowerCase().indexOf(searchTerm) !== -1 || 
-                                    product.sku.toLowerCase().indexOf(searchTerm) !== -1;
-                const matchesCategory = currentCategory === 'ALL' || product.category === currentCategory;
-                return matchesSearch && matchesCategory;
-            });
-
-            filteredProducts.sort(function(a, b) {
-                let aVal, bVal;
-                
-                switch (sortBy) {
-                    case 'price':
-                        aVal = a.price;
-                        bVal = b.price;
-                        break;
-                    case 'category':
-                        aVal = a.category;
-                        bVal = b.category;
-                        break;
-                    default:
-                        aVal = a.description;
-                        bVal = b.description;
-                }
-
-                if (typeof aVal === 'string') {
-                    aVal = aVal.toLowerCase();
-                    bVal = bVal.toLowerCase();
-                }
-
-                if (sortOrder === 'asc') {
-                    return aVal < bVal ? -1 : aVal > bVal ? 1 : 0;
-                } else {
-                    return aVal > bVal ? -1 : aVal < bVal ? 1 : 0;
-                }
-            });
-            
-            updatePagination();
-            displayProducts(); // This will show content immediately, images will update as available
-            updateCounts();
-        }
-
         function showError(message) {
             // Hide any existing content and show customer-friendly error
             const body = document.body;
@@ -1623,20 +1598,6 @@
                 </div>
             `;
         }
-
-        // Event handlers
-        window.onclick = function(event) {
-            const modal = document.getElementById('productModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        };
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeModal();
-            }
-        });
 
         // Image handling functions
         function handleImageLoad(cardId) {
@@ -1798,9 +1759,23 @@
             document.body.style.overflow = 'hidden';
         }
 
+        // Event handlers
+        window.onclick = function(event) {
+            const modal = document.getElementById('productModal');
+            if (event.target === modal) {
+                closeModal();
+            }
+        };
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape') {
+                closeModal();
+            }
+        });
+
         console.log('🎉 OZZ Cash & Carry Enhanced Catalog Loaded');
-        console.log('📊 Debug: Check browser console for any errors');
-        console.log('🔧 If images appear blank, check Google Drive permissions and API key');
+        console.log('📊 Debug: Products should load automatically');
+        console.log('🔧 If no products show, check browser console for Excel parsing errors');
     </script>
 </body>
 </html>
