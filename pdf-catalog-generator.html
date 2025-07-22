@@ -71,15 +71,18 @@
             
             /* Page content area */
             .page-content {
-                height: calc(297mm - 35mm - 15mm) !important; /* Total height - padding - footer space */
+                height: calc(297mm - 40mm - 20mm) !important; /* Total height - padding - footer space */
                 overflow: hidden !important;
+                display: flex !important;
+                flex-direction: column !important;
             }
             
             /* Product grid adjustments */
             .product-grid-print {
                 display: grid !important;
-                gap: 0.75rem !important;
+                gap: 0.5rem !important;
                 width: 100% !important;
+                margin-bottom: 1rem !important;
             }
             
             .grid-cols-6-print {
@@ -102,6 +105,7 @@
                 border-radius: 0.25rem !important;
                 page-break-inside: avoid !important;
                 break-inside: avoid !important;
+                margin-bottom: 0.25rem !important;
             }
             
             /* Category headers */
@@ -665,15 +669,15 @@
             let base;
             
             if (layout === 'compact') {
-                base = options.includeImages ? 30 : 42;
+                base = options.includeImages ? 24 : 36;
             } else if (layout === 'list') {
-                base = options.includeImages ? 10 : 14;
-            } else { // grid
-                base = options.includeImages ? 20 : 28;
+                base = options.includeImages ? 8 : 12;
+            } else { // grid - reduced to prevent cutoff
+                base = options.includeImages ? 16 : 20;
             }
 
             if (options.groupByCategory) {
-                base = Math.floor(base * 0.9); // Account for category headers
+                base = Math.floor(base * 0.85); // Account for category headers
             }
 
             return base;
@@ -889,7 +893,7 @@
                 return `
                     <div class="product-card-print text-center avoid-break">
                         ${options.includeImages ? `
-                            <div class="${layout === 'compact' ? 'h-14' : 'h-20'} mb-2 flex items-center justify-center">
+                            <div class="${layout === 'compact' ? 'h-12' : 'h-16'} mb-1 flex items-center justify-center">
                                 ${imageUrl ? 
                                     `<img src="${imageUrl}" alt="${product.description}" class="product-image">` :
                                     `<div class="w-full h-full image-placeholder rounded flex items-center justify-center">
@@ -900,7 +904,7 @@
                         ` : ''}
                         <div>
                             <div class="product-sku">SKU: ${product.sku}</div>
-                            <div class="product-description ${layout === 'compact' ? 'min-h-[2.5rem]' : 'min-h-[3rem]'} px-1">
+                            <div class="product-description ${layout === 'compact' ? 'min-h-[2rem]' : 'min-h-[2.5rem]'} px-1">
                                 ${displayDescription}
                             </div>
                             ${options.includePrices ? `
