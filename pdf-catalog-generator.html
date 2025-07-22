@@ -796,18 +796,22 @@
             
             // Page header
             const pageHeader = `
-                <div class="flex justify-between items-center mb-4 pb-3 border-b border-gray-300">
-                    <div class="flex items-center">
-                        <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
-                             alt="OZZ" class="h-8 mr-3" onerror="this.style.display='none'">
-                        <h2 class="text-base font-bold text-gray-800">July 2025 Promotional Catalog</h2>
+                <div class="page-header-section">
+                    <div class="flex justify-between items-center pb-2 border-b border-gray-300">
+                        <div class="flex items-center">
+                            <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
+                                 alt="OZZ" class="h-6 mr-2" onerror="this.style.display='none'">
+                            <h2 class="text-sm font-bold text-gray-800">July 2025 Promotional Catalog</h2>
+                        </div>
+                        <span class="text-xs text-gray-600 font-semibold">Page ${pageNumber} of <span class="total-pages">-</span></span>
                     </div>
-                    <span class="text-sm text-gray-600 font-semibold">Page ${pageNumber} of <span class="total-pages">-</span></span>
                 </div>
             `;
             
             // Build content
             let content = '<div class="page-content">' + pageHeader;
+            content += '<div class="products-container">';
+            
             let currentCategory = null;
             let categoryProducts = [];
             
@@ -819,7 +823,7 @@
                         categoryProducts = [];
                     }
                     // Add category header
-                    content += `<div class="category-header avoid-break">${item.category}</div>`;
+                    content += `<div class="category-header">${item.category}</div>`;
                     currentCategory = item.category;
                 } else {
                     categoryProducts.push(item);
@@ -831,7 +835,7 @@
                 content += renderProductGrid(categoryProducts, layout, options);
             }
             
-            content += '</div>';
+            content += '</div></div>'; // Close products-container and page-content
             
             // Page footer
             const pageFooter = `
@@ -846,7 +850,7 @@
                     </div>
                     <div class="text-right">
                         <div class="font-semibold text-xs">Limited Time Offer - July 2025</div>
-                        <div class="text-xs">Designed by Black Orchid Consulting</div>
+                        <div class="text-xs">www.blackorchid.online</div>
                     </div>
                 </div>
             `;
