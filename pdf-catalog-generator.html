@@ -637,22 +637,17 @@
                 });
 
                 // Calculate products per page - STRICT LIMIT
-                const productsPerPage = layout === 'grid' ? 12 : 
-                                      layout === 'compact' ? 24 : 
-                                      7; // list layout
+                const productsPerPage = layout === 'grid' ? 8 :    // 2×4 grid = 8 items
+                                      layout === 'compact' ? 18 :   // 3×6 grid = 18 items
+                                      6; // list layout
 
                 // Process each category
                 Object.entries(categoryGroups).forEach(([category, categoryProducts], categoryIndex) => {
-                    // For problematic categories with long descriptions, reduce items per page
-                    const problematicCategories = ['GLASSWARE', 'STONEWARE', 'KITCHENWARE'];
-                    const adjustedProductsPerPage = problematicCategories.includes(category) && layout === 'grid' ? 
-                        9 : productsPerPage; // Only 9 items (3x3) for these categories
-                    
                     // Check if we should start a new page for each category
                     const startNewPage = options.newPagePerCategory && categoryIndex > 0;
                     
                     // Split category products into pages
-                    for (let i = 0; i < categoryProducts.length; i += adjustedProductsPerPage) {
+                    for (let i = 0; i < categoryProducts.length; i += productsPerPage) {
                         const pageItems = [];
                         
                         // Add category header only on first page of category
@@ -660,8 +655,8 @@
                             pageItems.push({ type: 'header', category });
                         }
                         
-                        // Add products for this page (max adjustedProductsPerPage)
-                        const pageProducts = categoryProducts.slice(i, i + adjustedProductsPerPage);
+                        // Add products for this page
+                        const pageProducts = categoryProducts.slice(i, i + productsPerPage);
                         pageProducts.forEach(product => {
                             pageItems.push({ type: 'product', ...product });
                         });
@@ -676,10 +671,10 @@
                 });
 
             } else {
-                // Regular layout without categories - strict 12 per page for grid
-                const productsPerPage = layout === 'grid' ? 12 : 
-                                      layout === 'compact' ? 24 : 
-                                      7; // list layout
+                // Regular layout without categories - strict 8 per page for grid
+                const productsPerPage = layout === 'grid' ? 8 :    // 2×4 grid
+                                      layout === 'compact' ? 18 :   // 3×6 grid
+                                      6; // list layout
                 
                 for (let i = 0; i < products.length; i += productsPerPage) {
                     const pageProducts = products.slice(i, i + productsPerPage);
