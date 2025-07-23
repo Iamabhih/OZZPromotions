@@ -866,7 +866,8 @@
                 renderProductCard(product, layout, options)
             ).join('');
             
-            return `<div class="${gridClass} mb-4">${productsHTML}</div>`;
+            // Wrap in products container for even distribution
+            return `<div class="${gridClass}">${productsHTML}</div>`;
         }
 
         function renderProductCard(product, layout, options) {
