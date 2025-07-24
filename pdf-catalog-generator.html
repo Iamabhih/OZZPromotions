@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OZZ Professional Catalog</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://apis.google.com/js/api.js"></script>
     
     <style>
         /* Reset and Base Styles */
@@ -126,6 +127,24 @@
             font-size: 12px;
             color: #666;
             margin-left: auto;
+        }
+
+        .image-status {
+            margin-top: 20px;
+            padding: 15px;
+            background: #e8f5e8;
+            border-left: 4px solid #28a745;
+            border-radius: 4px;
+        }
+
+        .image-status.loading {
+            background: #fff3cd;
+            border-color: #ffc107;
+        }
+
+        .image-status.error {
+            background: #f8d7da;
+            border-color: #dc3545;
         }
         
         /* Print Preview Container */
@@ -578,12 +597,15 @@
     <div class="control-panel">
         <div class="logo-header">
             <h1>OZZ Professional Catalog Generator</h1>
-            <p>Create beautiful retail-quality promotional catalogs</p>
+            <p>Create beautiful retail-quality promotional catalogs with images</p>
         </div>
         
         <div class="button-group">
             <button onclick="loadCatalog()" id="loadBtn">
                 📁 Load JULY PROMO.xlsx
+            </button>
+            <button onclick="initializeImages()" id="imageBtn" disabled>
+                📸 Initialize Images
             </button>
             <button onclick="generateCatalog()" id="generateBtn" disabled>
                 📄 Generate Catalog
@@ -595,6 +617,11 @@
         
         <div class="status-box" id="status">
             Ready to load catalog data...
+        </div>
+
+        <div class="image-status" id="imageStatus" style="display: none;">
+            <div id="imageStatusText">📸 Image system not initialized</div>
+            <div id="imageStats" style="margin-top: 10px; font-size: 14px; color: #666;"></div>
         </div>
         
         <div id="categorySection" class="category-section" style="display: none;">
@@ -608,17 +635,267 @@
     <script>
         let allProducts = [];
         let categories = [];
-        let imageManager = null;
+        let driveImageManager = null;
         
-        // Simple image manager
-        class ImageManager {
+        // Enhanced Google Drive Image Manager for PDF Generation
+        class DriveImageManager {
             constructor() {
-                this.images = new Map();
+                this.imageCache = new Map();
+                this.isInitialized = false;
+                this.cacheVersion = '1.0';
+                this.cacheExpiryHours = 24;
+                
+                // Your specific folder ID from Google Drive
+                this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
+                this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
             }
-            
-            getImageUrl(sku) {
-                // Placeholder - returns null for now
-                return null;
+
+            // Initialize Google Drive API
+            async initializeGAPI() {
+                if (this.isInitialized) return true;
+                
+                try {
+                    // Load Google APIs
+                    await new Promise(resolve => gapi.load('client', resolve));
+                    
+                    await gapi.client.init({
+                        apiKey: this.apiKey,
+                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
+                    });
+                    
+                    this.isInitialized = true;
+                    console.log('✅ Google Drive API initialized');
+                    return true;
+                } catch (error) {
+                    console.error('❌ Failed to initialize Google Drive API:', error);
+                    return false;
+                }
+            }
+
+            // Cache management
+            getCacheKey(type) {
+                return `ozz_pdf_${type}_v${this.cacheVersion}`;
+            }
+
+            loadCacheFromStorage() {
+                try {
+                    console.log('🔍 Checking for cached image data...');
+                    
+                    const cacheMetaKey = this.getCacheKey('meta');
+                    const cacheMetaStr = localStorage.getItem(cacheMetaKey);
+                    
+                    if (!cacheMetaStr) {
+                        console.log('📝 No cache found, will perform full scan');
+                        return false;
+                    }
+                    
+                    const cacheMeta = JSON.parse(cacheMetaStr);
+                    const cacheAge = Date.now() - cacheMeta.timestamp;
+                    const maxAge = this.cacheExpiryHours * 60 * 60 * 1000;
+                    
+                    if (cacheAge > maxAge) {
+                        console.log(`⏰ Cache expired (${Math.round(cacheAge / (60 * 60 * 1000))} hours old), will refresh`);
+                        this.clearCache();
+                        return false;
+                    }
+                    
+                    const imageCacheKey = this.getCacheKey('images');
+                    const imageCacheStr = localStorage.getItem(imageCacheKey);
+                    
+                    if (!imageCacheStr) {
+                        console.log('📝 Incomplete cache found, will perform full scan');
+                        return false;
+                    }
+                    
+                    const imageData = JSON.parse(imageCacheStr);
+                    this.imageCache = new Map(Object.entries(imageData));
+                    
+                    console.log(`✅ Cache loaded successfully! ${this.imageCache.size} images cached`);
+                    console.log(`📊 Cache age: ${Math.round(cacheAge / (60 * 1000))} minutes`);
+                    
+                    return true;
+                } catch (error) {
+                    console.error('❌ Error loading cache:', error);
+                    this.clearCache();
+                    return false;
+                }
+            }
+
+            saveCacheToStorage() {
+                try {
+                    console.log('💾 Saving image cache to storage...');
+                    
+                    const cacheMeta = {
+                        timestamp: Date.now(),
+                        version: this.cacheVersion,
+                        totalImages: this.imageCache.size
+                    };
+                    
+                    const cacheMetaKey = this.getCacheKey('meta');
+                    localStorage.setItem(cacheMetaKey, JSON.stringify(cacheMeta));
+                    
+                    const imageData = Object.fromEntries(this.imageCache);
+                    const imageCacheKey = this.getCacheKey('images');
+                    localStorage.setItem(imageCacheKey, JSON.stringify(imageData));
+                    
+                    console.log(`✅ Cache saved successfully! ${this.imageCache.size} images cached`);
+                } catch (error) {
+                    console.error('❌ Error saving cache:', error);
+                    this.clearCache();
+                }
+            }
+
+            clearCache() {
+                try {
+                    const keys = ['meta', 'images'];
+                    keys.forEach(key => {
+                        localStorage.removeItem(this.getCacheKey(key));
+                    });
+                    console.log('🗑️ Cache cleared');
+                } catch (error) {
+                    console.error('Error clearing cache:', error);
+                }
+            }
+
+            // Scan folder for images
+            async scanFolderForImages(forceRefresh = false) {
+                if (!forceRefresh && this.loadCacheFromStorage()) {
+                    console.log('🚀 Using cached image data, skipping scan');
+                    return;
+                }
+                
+                console.log('🔍 Scanning Google Drive folder for images...');
+                
+                try {
+                    const images = await this.fetchImagesFromFolder();
+                    this.buildImageMapping(images);
+                    this.saveCacheToStorage();
+                    console.log(`🎯 Total images cached: ${this.imageCache.size}`);
+                } catch (error) {
+                    console.error('❌ Error scanning folder:', error);
+                    throw error;
+                }
+            }
+
+            async fetchImagesFromFolder(pageToken = null) {
+                try {
+                    const response = await gapi.client.drive.files.list({
+                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
+                        fields: 'nextPageToken, files(id, name, mimeType, parents, webViewLink, thumbnailLink)',
+                        pageSize: 100,
+                        pageToken: pageToken
+                    });
+
+                    let files = response.result.files || [];
+                    
+                    if (response.result.nextPageToken) {
+                        const nextPageFiles = await this.fetchImagesFromFolder(response.result.nextPageToken);
+                        files = files.concat(nextPageFiles);
+                    }
+                    
+                    return files;
+                } catch (error) {
+                    console.error('Error fetching folder contents:', error);
+                    return [];
+                }
+            }
+
+            buildImageMapping(images) {
+                this.imageCache.clear();
+                
+                images.forEach(image => {
+                    const codes = this.extractProductCodes(image.name);
+                    
+                    codes.forEach(code => {
+                        if (!this.imageCache.has(code)) {
+                            this.imageCache.set(code, {
+                                id: image.id,
+                                name: image.name,
+                                thumbnailLink: image.thumbnailLink,
+                                webViewLink: image.webViewLink,
+                                directLink: this.getDirectImageUrl(image.id),
+                                mimeType: image.mimeType
+                            });
+                        }
+                    });
+                });
+            }
+
+            extractProductCodes(filename) {
+                const codes = [];
+                const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
+                
+                // Find numeric codes
+                const numericCodes = nameWithoutExt.match(/\b\d{4,6}\b/g);
+                if (numericCodes) {
+                    codes.push(...numericCodes);
+                }
+                
+                // Find alphanumeric codes
+                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{4,8}\b/gi);
+                if (alphanumericCodes) {
+                    codes.push(...alphanumericCodes.map(code => code.toLowerCase()));
+                }
+                
+                // Split by delimiters
+                const parts = nameWithoutExt.split(/[-_\s\.]+/);
+                parts.forEach(part => {
+                    const cleanPart = part.trim();
+                    if (/^\d{4,6}$/.test(cleanPart) || /^[A-Z0-9]{4,8}$/i.test(cleanPart)) {
+                        codes.push(cleanPart.toLowerCase());
+                    }
+                });
+                
+                return [...new Set(codes)];
+            }
+
+            getDirectImageUrl(fileId) {
+                return `https://lh3.googleusercontent.com/d/${fileId}=w800-h800-c`;
+            }
+
+            getProductImage(productCode) {
+                const normalizedCode = productCode.toString().toLowerCase().trim();
+                const imageData = this.imageCache.get(normalizedCode);
+                
+                if (imageData) {
+                    return {
+                        url: imageData.directLink,
+                        thumbnail: imageData.thumbnailLink,
+                        name: imageData.name,
+                        found: true
+                    };
+                }
+                
+                return {
+                    url: null,
+                    thumbnail: null,
+                    name: null,
+                    found: false
+                };
+            }
+
+            getStats() {
+                const cacheMetaKey = this.getCacheKey('meta');
+                const cacheMetaStr = localStorage.getItem(cacheMetaKey);
+                let cacheInfo = null;
+                
+                if (cacheMetaStr) {
+                    try {
+                        const cacheMeta = JSON.parse(cacheMetaStr);
+                        const cacheAge = Date.now() - cacheMeta.timestamp;
+                        cacheInfo = {
+                            age: Math.round(cacheAge / (60 * 1000)),
+                            timestamp: new Date(cacheMeta.timestamp).toLocaleString()
+                        };
+                    } catch (error) {
+                        console.warn('Could not parse cache metadata');
+                    }
+                }
+                
+                return {
+                    mappedProducts: this.imageCache.size,
+                    cacheInfo: cacheInfo
+                };
             }
         }
         
@@ -640,7 +917,7 @@
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
                 
-                // Process products
+                // Process products - Updated for correct column names
                 allProducts = jsonData
                     .filter(row => row.SKU && row['PRODUCT '] && row.PRICE && row.CATEGORY)
                     .map(row => ({
@@ -654,12 +931,10 @@
                 // Get categories
                 categories = [...new Set(allProducts.map(p => p.category))].sort();
                 
-                // Initialize image manager
-                imageManager = new ImageManager();
-                
                 // Show categories
                 showCategories();
                 
+                document.getElementById('imageBtn').disabled = false;
                 document.getElementById('generateBtn').disabled = false;
                 status.innerHTML = `✅ <strong>Loaded ${allProducts.length} products in ${categories.length} categories</strong>`;
                 
@@ -669,6 +944,88 @@
             } finally {
                 loadBtn.disabled = false;
             }
+        }
+
+        async function initializeImages() {
+            const imageBtn = document.getElementById('imageBtn');
+            const imageStatus = document.getElementById('imageStatus');
+            const imageStatusText = document.getElementById('imageStatusText');
+            const imageStats = document.getElementById('imageStats');
+            
+            imageBtn.disabled = true;
+            imageBtn.innerHTML = '⏳ Initializing...';
+            imageStatus.style.display = 'block';
+            imageStatus.className = 'image-status loading';
+            imageStatusText.innerHTML = '🔄 Initializing Google Drive API...';
+            
+            try {
+                // Initialize the image manager
+                driveImageManager = new DriveImageManager();
+                
+                // Initialize Google Drive API
+                const success = await driveImageManager.initializeGAPI();
+                if (!success) {
+                    throw new Error('Failed to initialize Google Drive API');
+                }
+                
+                imageStatusText.innerHTML = '📸 Scanning Google Drive for product images...';
+                
+                // Scan for images
+                await driveImageManager.scanFolderForImages();
+                
+                // Update UI with success
+                const stats = driveImageManager.getStats();
+                imageStatus.className = 'image-status';
+                imageStatusText.innerHTML = `✅ Image system ready! Found ${stats.mappedProducts} product images`;
+                
+                if (stats.cacheInfo) {
+                    imageStats.innerHTML = `Cache: ${stats.cacheInfo.age} minutes old • Last updated: ${stats.cacheInfo.timestamp}`;
+                } else {
+                    imageStats.innerHTML = 'Images freshly loaded from Google Drive';
+                }
+                
+                imageBtn.innerHTML = '✅ Images Ready';
+                
+                // Show image mapping preview
+                showImageMappingPreview();
+                
+            } catch (error) {
+                console.error('Image initialization failed:', error);
+                imageStatus.className = 'image-status error';
+                imageStatusText.innerHTML = `❌ Image system failed: ${error.message}`;
+                imageStats.innerHTML = 'Catalog will be generated without images';
+                imageBtn.innerHTML = '❌ Image Failed';
+            } finally {
+                imageBtn.disabled = false;
+            }
+        }
+
+        function showImageMappingPreview() {
+            if (!driveImageManager) return;
+            
+            let mappedCount = 0;
+            let unmappedProducts = [];
+            
+            allProducts.forEach(product => {
+                const imageData = driveImageManager.getProductImage(product.sku);
+                if (imageData.found) {
+                    mappedCount++;
+                } else {
+                    unmappedProducts.push(product.sku);
+                }
+            });
+            
+            const imageStats = document.getElementById('imageStats');
+            const mappingInfo = `
+                <div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;">
+                    <strong>Image Mapping Results:</strong><br>
+                    • ${mappedCount} products with images<br>
+                    • ${unmappedProducts.length} products without images<br>
+                    ${unmappedProducts.length > 0 ? `<details style="margin-top: 5px;"><summary style="cursor: pointer;">View unmapped SKUs</summary><div style="font-family: monospace; font-size: 12px; margin-top: 5px;">${unmappedProducts.slice(0, 10).join(', ')}${unmappedProducts.length > 10 ? ` and ${unmappedProducts.length - 10} more...` : ''}</div></details>` : ''}
+                </div>
+            `;
+            
+            imageStats.innerHTML += mappingInfo;
         }
         
         function showCategories() {
@@ -689,6 +1046,15 @@
                 `;
                 list.appendChild(item);
             });
+        }
+
+        function getImageUrl(sku) {
+            if (!driveImageManager) {
+                return null; // No image system initialized
+            }
+            
+            const imageData = driveImageManager.getProductImage(sku);
+            return imageData.found ? imageData.url : null;
         }
         
         function generateCatalog() {
@@ -742,8 +1108,21 @@
             });
             
             document.getElementById('printBtn').disabled = false;
+            
+            // Update status with image information
+            let imageInfo = '';
+            if (driveImageManager) {
+                const stats = driveImageManager.getStats();
+                let mappedCount = 0;
+                filteredProducts.forEach(product => {
+                    const imageData = driveImageManager.getProductImage(product.sku);
+                    if (imageData.found) mappedCount++;
+                });
+                imageInfo = ` (${mappedCount} with images)`;
+            }
+            
             document.getElementById('status').innerHTML = 
-                `✅ <strong>Generated ${totalPages} pages with ${filteredProducts.length} products</strong>`;
+                `✅ <strong>Generated ${totalPages} pages with ${filteredProducts.length} products${imageInfo}</strong>`;
             
             // Scroll to preview
             printContent.scrollIntoView({ behavior: 'smooth' });
@@ -873,7 +1252,7 @@
         }
         
         function createProductCard(product) {
-            const imageUrl = imageManager ? imageManager.getImageUrl(product.sku) : null;
+            const imageUrl = getImageUrl(product.sku);
             const originalPrice = (product.price * 1.2).toFixed(2);
             const savePercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
             
@@ -899,10 +1278,10 @@
                 <div class="product-card">
                     <div class="product-image">
                         ${imageUrl ? 
-                            `<img src="${imageUrl}" alt="${product.description}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'><div class=\\'no-image-icon\\'>🥃</div><div class=\\'no-image-text\\'>No Image</div></div>'">` :
+                            `<img src="${imageUrl}" alt="${product.description}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'><div class=\\'no-image-icon\\'>📦</div><div class=\\'no-image-text\\'>SKU: ${product.sku}</div></div>'">` :
                             `<div class="no-image">
-                                <div class="no-image-icon">🥃</div>
-                                <div class="no-image-text">No Image</div>
+                                <div class="no-image-icon">📦</div>
+                                <div class="no-image-text">SKU: ${product.sku}</div>
                             </div>`
                         }
                     </div>
@@ -945,6 +1324,63 @@
                 </div>
             `;
         }
+
+        // Add a refresh images function for the PDF generator
+        async function refreshImages() {
+            if (!driveImageManager) {
+                await initializeImages();
+                return;
+            }
+            
+            const imageBtn = document.getElementById('imageBtn');
+            const imageStatusText = document.getElementById('imageStatusText');
+            
+            imageBtn.disabled = true;
+            imageBtn.innerHTML = '🔄 Refreshing...';
+            imageStatusText.innerHTML = '🔄 Refreshing image cache...';
+            
+            try {
+                await driveImageManager.scanFolderForImages(true); // Force refresh
+                
+                const stats = driveImageManager.getStats();
+                imageStatusText.innerHTML = `✅ Images refreshed! Found ${stats.mappedProducts} product images`;
+                imageBtn.innerHTML = '✅ Images Ready';
+                
+                showImageMappingPreview();
+                
+            } catch (error) {
+                console.error('Image refresh failed:', error);
+                imageStatusText.innerHTML = `❌ Refresh failed: ${error.message}`;
+                imageBtn.innerHTML = '❌ Refresh Failed';
+            } finally {
+                imageBtn.disabled = false;
+            }
+        }
+
+        // Add refresh button to the UI
+        document.addEventListener('DOMContentLoaded', function() {
+            // Add refresh button after image button
+            const buttonGroup = document.querySelector('.button-group');
+            const refreshBtn = document.createElement('button');
+            refreshBtn.onclick = refreshImages;
+            refreshBtn.innerHTML = '🔄 Refresh Images';
+            refreshBtn.id = 'refreshImagesBtn';
+            refreshBtn.disabled = true;
+            
+            // Insert after image button
+            const imageBtn = document.getElementById('imageBtn');
+            buttonGroup.insertBefore(refreshBtn, imageBtn.nextSibling);
+            
+            // Enable refresh button when images are initialized
+            const originalInitialize = initializeImages;
+            initializeImages = async function() {
+                await originalInitialize();
+                refreshBtn.disabled = false;
+            };
+        });
+
+        console.log('🎉 OZZ Professional Catalog Generator with Images Loaded');
+        console.log('📸 Image integration ready - initialize images after loading products');
     </script>
 </body>
 </html>
