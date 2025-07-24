@@ -3,64 +3,135 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OZZ Catalog Generator</title>
+    <title>OZZ Professional Catalog</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
     <style>
-        /* Basic styles */
-        body {
-            font-family: Arial, sans-serif;
+        /* Reset and Base Styles */
+        * {
             margin: 0;
-            padding: 20px;
-            background: #f5f5f5;
+            padding: 0;
+            box-sizing: border-box;
         }
         
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: #f0f2f5;
+            color: #1a1a1a;
+            line-height: 1.4;
+        }
+        
+        /* Control Panel */
         .control-panel {
-            max-width: 800px;
-            margin: 0 auto 30px;
+            max-width: 900px;
+            margin: 20px auto;
             background: white;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 40px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.07);
         }
         
-        h1 {
-            color: #333;
+        .logo-header {
             text-align: center;
             margin-bottom: 30px;
         }
         
+        .logo-header h1 {
+            font-size: 32px;
+            color: #1a1a1a;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+        }
+        
+        .logo-header p {
+            color: #666;
+            margin-top: 5px;
+        }
+        
+        .button-group {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 30px 0;
+            flex-wrap: wrap;
+        }
+        
         button {
-            background: #007bff;
+            background: #1a1a1a;
             color: white;
             border: none;
-            padding: 10px 20px;
-            margin: 5px;
-            border-radius: 4px;
+            padding: 12px 24px;
+            border-radius: 6px;
+            font-size: 15px;
+            font-weight: 600;
             cursor: pointer;
-            font-size: 16px;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
         
         button:hover {
-            background: #0056b3;
+            background: #333;
+            transform: translateY(-1px);
         }
         
         button:disabled {
             background: #ccc;
             cursor: not-allowed;
+            transform: none;
         }
         
-        .status {
-            margin: 20px 0;
-            padding: 10px;
-            background: #e9ecef;
+        .status-box {
+            background: #f8f9fa;
+            border-left: 4px solid #0066cc;
+            padding: 15px 20px;
             border-radius: 4px;
+            margin: 20px 0;
         }
         
-        /* Print Preview */
+        .category-section {
+            margin-top: 30px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        
+        .category-section h3 {
+            margin-bottom: 15px;
+            color: #1a1a1a;
+        }
+        
+        .category-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+        }
+        
+        .category-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 8px;
+            background: white;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .category-item:hover {
+            background: #e9ecef;
+        }
+        
+        .category-count {
+            font-size: 12px;
+            color: #666;
+            margin-left: auto;
+        }
+        
+        /* Print Preview Container */
         .print-preview {
             max-width: 210mm;
-            margin: 0 auto;
+            margin: 20px auto;
         }
         
         /* Print Styles */
@@ -79,65 +150,120 @@
                 width: 210mm;
                 height: 297mm;
                 margin: 0;
-                padding: 15mm;
+                padding: 0;
                 page-break-after: always;
+                page-break-inside: avoid;
                 position: relative;
-                box-sizing: border-box;
+                background: white;
+                overflow: hidden;
             }
             
             .page:last-child {
                 page-break-after: avoid;
             }
             
+            /* Page Layout Structure */
+            .page-inner {
+                position: absolute;
+                top: 15mm;
+                left: 15mm;
+                right: 15mm;
+                bottom: 15mm;
+                display: flex;
+                flex-direction: column;
+            }
+            
+            /* Page Header */
             .page-header {
                 display: flex;
                 justify-content: space-between;
                 align-items: center;
-                padding-bottom: 5mm;
-                margin-bottom: 5mm;
-                border-bottom: 2px solid #333;
+                padding-bottom: 3mm;
+                margin-bottom: 3mm;
+                border-bottom: 2px solid #1a1a1a;
+                flex-shrink: 0;
             }
             
-            .page-header h2 {
-                margin: 0;
-                font-size: 16pt;
+            .header-left {
+                display: flex;
+                align-items: center;
+                gap: 3mm;
+            }
+            
+            .header-logo {
+                height: 8mm;
+                width: auto;
+            }
+            
+            .header-title {
+                font-size: 12pt;
+                font-weight: 700;
+                color: #1a1a1a;
             }
             
             .page-number {
                 font-size: 10pt;
                 color: #666;
+                font-weight: 500;
             }
             
+            /* Main Content Area */
+            .page-content {
+                flex: 1;
+                display: flex;
+                flex-direction: column;
+                min-height: 0;
+                margin-bottom: 5mm;
+            }
+            
+            /* Category Header */
             .category-header {
-                background: #333;
+                background: #1a1a1a;
                 color: white;
                 padding: 3mm 5mm;
-                margin: 5mm 0;
-                font-size: 14pt;
-                font-weight: bold;
+                margin: 0 -5mm 5mm -5mm;
+                font-size: 13pt;
+                font-weight: 700;
+                letter-spacing: 0.5px;
+                text-transform: uppercase;
+                flex-shrink: 0;
             }
             
+            /* Products Grid Container */
+            .products-container {
+                flex: 1;
+                min-height: 0;
+                display: flex;
+                align-items: flex-start;
+            }
+            
+            /* Products Grid */
             .products-grid {
                 display: grid;
                 grid-template-columns: repeat(2, 1fr);
-                gap: 5mm;
+                grid-template-rows: repeat(4, 1fr);
+                gap: 4mm;
+                width: 100%;
+                height: 100%;
             }
             
+            /* Product Card */
             .product-card {
-                border: 1px solid #ddd;
-                padding: 3mm;
-                height: 55mm;
+                border: 1px solid #e0e0e0;
+                background: white;
                 display: flex;
                 overflow: hidden;
+                height: 100%;
             }
             
             .product-image {
                 width: 35%;
-                background: #f8f8f8;
+                background: #fafafa;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                margin-right: 3mm;
+                padding: 2mm;
+                border-right: 1px solid #e0e0e0;
             }
             
             .product-image img {
@@ -148,74 +274,200 @@
             
             .no-image {
                 text-align: center;
-                color: #999;
-                font-size: 10pt;
+                color: #ccc;
             }
             
+            .no-image-icon {
+                font-size: 20pt;
+                margin-bottom: 2mm;
+            }
+            
+            .no-image-text {
+                font-size: 8pt;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+            }
+            
+            /* Product Details */
             .product-details {
                 flex: 1;
+                padding: 3mm;
                 display: flex;
                 flex-direction: column;
             }
             
             .product-title {
-                font-size: 11pt;
-                font-weight: bold;
+                font-size: 10pt;
+                font-weight: 700;
+                color: #1a1a1a;
                 margin-bottom: 2mm;
                 line-height: 1.2;
+                overflow: hidden;
+                display: -webkit-box;
+                -webkit-line-clamp: 2;
+                -webkit-box-orient: vertical;
             }
             
-            .product-sku {
-                font-size: 9pt;
+            .product-info {
+                flex: 1;
+                font-size: 8pt;
                 color: #666;
-                margin-bottom: 2mm;
             }
             
-            .product-category {
-                font-size: 9pt;
-                color: #666;
-                margin-bottom: auto;
+            .info-line {
+                margin-bottom: 1mm;
             }
             
-            .product-price {
+            .info-label {
+                color: #999;
+            }
+            
+            /* Price Section */
+            .price-section {
+                border-top: 1px solid #f0f0f0;
+                padding-top: 2mm;
+                margin-top: auto;
+            }
+            
+            .price-current {
                 font-size: 14pt;
-                font-weight: bold;
-                color: #d32f2f;
-                margin-top: 2mm;
+                font-weight: 700;
+                color: #cc0000;
+                margin-bottom: 1mm;
             }
             
-            .price-was {
-                font-size: 10pt;
+            .price-original {
+                font-size: 9pt;
                 color: #999;
                 text-decoration: line-through;
+                display: inline-block;
+                margin-right: 2mm;
             }
             
             .price-save {
                 font-size: 9pt;
-                color: #388e3c;
-                font-weight: bold;
+                color: #fff;
+                background: #4caf50;
+                padding: 0.5mm 2mm;
+                border-radius: 2mm;
+                font-weight: 600;
+                display: inline-block;
             }
             
+            /* Page Footer */
             .page-footer {
-                position: absolute;
-                bottom: 10mm;
-                left: 15mm;
-                right: 15mm;
-                font-size: 8pt;
-                color: #666;
-                border-top: 1px solid #ddd;
+                border-top: 1px solid #e0e0e0;
                 padding-top: 3mm;
+                font-size: 7pt;
+                color: #666;
+                line-height: 1.4;
+                flex-shrink: 0;
             }
             
-            .footer-text {
+            .disclaimer {
                 margin-bottom: 2mm;
-                line-height: 1.3;
+                text-align: justify;
             }
             
-            .footer-bottom {
+            .footer-info {
                 display: flex;
                 justify-content: space-between;
-                font-weight: bold;
+                align-items: center;
+                font-size: 8pt;
+            }
+            
+            .footer-left {
+                font-weight: 600;
+                color: #333;
+            }
+            
+            .footer-right {
+                text-align: right;
+            }
+            
+            /* First Page Special */
+            .hero-page .page-inner {
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .hero-content {
+                text-align: center;
+            }
+            
+            .hero-logo {
+                height: 30mm;
+                margin-bottom: 10mm;
+            }
+            
+            .hero-title {
+                font-size: 36pt;
+                font-weight: 800;
+                color: #cc0000;
+                margin-bottom: 5mm;
+                letter-spacing: -1px;
+            }
+            
+            .hero-subtitle {
+                font-size: 14pt;
+                color: #666;
+                margin-bottom: 15mm;
+            }
+            
+            .info-grid {
+                display: grid;
+                grid-template-columns: repeat(3, 1fr);
+                gap: 5mm;
+                margin: 10mm 0;
+            }
+            
+            .info-card {
+                background: #f8f9fa;
+                padding: 5mm;
+                border-radius: 3mm;
+                text-align: center;
+            }
+            
+            .info-label {
+                font-size: 8pt;
+                color: #666;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                margin-bottom: 2mm;
+            }
+            
+            .info-value {
+                font-size: 11pt;
+                font-weight: 700;
+                color: #1a1a1a;
+            }
+            
+            .address-section {
+                background: #f8f9fa;
+                padding: 8mm;
+                border-radius: 3mm;
+                margin: 10mm 0;
+                text-align: left;
+            }
+            
+            .address-title {
+                font-size: 14pt;
+                font-weight: 700;
+                margin-bottom: 3mm;
+            }
+            
+            .collection-notice {
+                background: #fff8dc;
+                border-left: 4mm solid #ffa500;
+                padding: 5mm;
+                margin: 10mm 0;
+                font-size: 10pt;
+            }
+            
+            .notice-title {
+                font-weight: 700;
+                margin-bottom: 2mm;
             }
         }
         
@@ -223,23 +475,51 @@
             size: A4;
             margin: 0;
         }
+        
+        /* Screen Preview Styles */
+        @media screen {
+            .page {
+                background: white;
+                box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+                margin-bottom: 20px;
+                position: relative;
+                width: 210mm;
+                min-height: 297mm;
+            }
+            
+            .page-inner {
+                padding: 15mm;
+            }
+        }
     </style>
 </head>
 <body>
     <div class="control-panel">
-        <h1>OZZ Catalog Generator</h1>
-        
-        <div style="text-align: center; margin: 30px 0;">
-            <button onclick="loadCatalog()" id="loadBtn">📁 Load JULY PROMO.xlsx</button>
-            <button onclick="generateCatalog()" id="generateBtn" disabled>📄 Generate Catalog</button>
-            <button onclick="window.print()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
+        <div class="logo-header">
+            <h1>OZZ Professional Catalog Generator</h1>
+            <p>Create beautiful retail-quality promotional catalogs</p>
         </div>
         
-        <div class="status" id="status">
+        <div class="button-group">
+            <button onclick="loadCatalog()" id="loadBtn">
+                📁 Load JULY PROMO.xlsx
+            </button>
+            <button onclick="generateCatalog()" id="generateBtn" disabled>
+                📄 Generate Catalog
+            </button>
+            <button onclick="window.print()" id="printBtn" disabled>
+                🖨️ Print / Save PDF
+            </button>
+        </div>
+        
+        <div class="status-box" id="status">
             Ready to load catalog data...
         </div>
         
-        <div id="categoryList" style="margin-top: 20px;"></div>
+        <div id="categorySection" class="category-section" style="display: none;">
+            <h3>Select Categories to Include:</h3>
+            <div id="categoryList" class="category-grid"></div>
+        </div>
     </div>
     
     <div id="printContent" class="print-preview"></div>
@@ -247,13 +527,26 @@
     <script>
         let allProducts = [];
         let categories = [];
+        let imageManager = null;
+        
+        // Simple image manager
+        class ImageManager {
+            constructor() {
+                this.images = new Map();
+            }
+            
+            getImageUrl(sku) {
+                // Placeholder - returns null for now
+                return null;
+            }
+        }
         
         async function loadCatalog() {
             const loadBtn = document.getElementById('loadBtn');
             const status = document.getElementById('status');
             
             loadBtn.disabled = true;
-            status.textContent = 'Loading Excel file...';
+            status.innerHTML = '⏳ Loading Excel file...';
             
             try {
                 const response = await fetch('./JULY PROMO.xlsx');
@@ -280,14 +573,17 @@
                 // Get categories
                 categories = [...new Set(allProducts.map(p => p.category))].sort();
                 
-                // Show category list
+                // Initialize image manager
+                imageManager = new ImageManager();
+                
+                // Show categories
                 showCategories();
                 
                 document.getElementById('generateBtn').disabled = false;
-                status.innerHTML = `<strong>✓ Loaded ${allProducts.length} products in ${categories.length} categories</strong>`;
+                status.innerHTML = `✅ <strong>Loaded ${allProducts.length} products in ${categories.length} categories</strong>`;
                 
             } catch (error) {
-                status.innerHTML = `<strong style="color: red;">Error: ${error.message}</strong>`;
+                status.innerHTML = `❌ <strong style="color: #dc3545;">Error: ${error.message}</strong>`;
                 console.error(error);
             } finally {
                 loadBtn.disabled = false;
@@ -295,19 +591,22 @@
         }
         
         function showCategories() {
-            const categoryList = document.getElementById('categoryList');
-            categoryList.innerHTML = '<h3>Categories:</h3>';
+            const section = document.getElementById('categorySection');
+            const list = document.getElementById('categoryList');
+            
+            section.style.display = 'block';
+            list.innerHTML = '';
             
             categories.forEach(cat => {
                 const count = allProducts.filter(p => p.category === cat).length;
-                const label = document.createElement('label');
-                label.style.display = 'block';
-                label.style.margin = '5px 0';
-                label.innerHTML = `
+                const item = document.createElement('label');
+                item.className = 'category-item';
+                item.innerHTML = `
                     <input type="checkbox" checked value="${cat}" class="category-cb">
-                    ${cat} (${count} products)
+                    <span>${cat}</span>
+                    <span class="category-count">${count} items</span>
                 `;
-                categoryList.appendChild(label);
+                list.appendChild(item);
             });
         }
         
@@ -347,6 +646,7 @@
             // Create product pages
             let pageNum = 2;
             Object.entries(grouped).forEach(([category, products]) => {
+                // Each category starts on a new page
                 for (let i = 0; i < products.length; i += 8) {
                     const pageProducts = products.slice(i, i + 8);
                     const showCategoryHeader = i === 0;
@@ -362,52 +662,75 @@
             
             document.getElementById('printBtn').disabled = false;
             document.getElementById('status').innerHTML = 
-                `<strong>✓ Generated ${totalPages} pages with ${filteredProducts.length} products</strong>`;
+                `✅ <strong>Generated ${totalPages} pages with ${filteredProducts.length} products</strong>`;
+            
+            // Scroll to preview
+            printContent.scrollIntoView({ behavior: 'smooth' });
         }
         
         function createHeaderPage() {
             const page = document.createElement('div');
-            page.className = 'page';
+            page.className = 'page hero-page';
+            
             page.innerHTML = `
-                <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center;">
-                    <h1 style="font-size: 48pt; color: #d32f2f; margin: 20mm 0 10mm;">JULY 2025 PROMO</h1>
-                    <p style="font-size: 16pt; color: #666; margin-bottom: 20mm;">Exclusive Deals on Premium Home & Kitchen Products</p>
-                    
-                    <div style="background: #f5f5f5; padding: 10mm; margin: 10mm 0; text-align: left;">
-                        <h2 style="font-size: 18pt; margin-bottom: 5mm;">OZZ CASH & CARRY</h2>
-                        <p style="font-size: 12pt; line-height: 1.5;">
-                            40 Mazeppa & Gull Street<br>
-                            Durban, KwaZulu-Natal 4001<br>
-                            South Africa
-                        </p>
-                        <p style="font-size: 12pt; margin-top: 5mm;">
-                            <strong>Phone:</strong> +27 31 332 7192<br>
-                            <strong>Email:</strong> info@ozzsa.com<br>
-                            <strong>Website:</strong> www.ozzsa.com
-                        </p>
+                <div class="page-inner">
+                    <div class="hero-content">
+                        <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
+                             alt="OZZ Cash & Carry" 
+                             class="hero-logo"
+                             onerror="this.style.display='none'">
+                        
+                        <h1 class="hero-title">JULY 2025 PROMO</h1>
+                        <p class="hero-subtitle">Exclusive Deals on Premium Home & Kitchen Products</p>
+                        
+                        <div class="info-grid">
+                            <div class="info-card">
+                                <div class="info-label">Phone</div>
+                                <div class="info-value">+27 31 332 7192</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Email</div>
+                                <div class="info-value">info@ozzsa.com</div>
+                            </div>
+                            <div class="info-card">
+                                <div class="info-label">Website</div>
+                                <div class="info-value">www.ozzsa.com</div>
+                            </div>
+                        </div>
+                        
+                        <div class="address-section">
+                            <div class="address-title">OZZ CASH & CARRY</div>
+                            <div>40 Mazeppa & Gull Street</div>
+                            <div>Durban, KwaZulu-Natal 4001</div>
+                            <div>South Africa</div>
+                            <div style="margin-top: 3mm;">
+                                <strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM
+                            </div>
+                        </div>
+                        
+                        <div class="collection-notice">
+                            <div class="notice-title">📍 COLLECTION & DELIVERY</div>
+                            <div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div>
+                            <div>Delivery is available at an additional charge.</div>
+                        </div>
                     </div>
                     
-                    <div style="background: #fff3cd; border-left: 4mm solid #ffc107; padding: 5mm; margin: 10mm 0;">
-                        <p style="font-size: 11pt; margin: 0;">
-                            <strong>📍 Collection & Delivery:</strong><br>
-                            Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.<br>
-                            Delivery is available at an additional charge.
-                        </p>
-                    </div>
-                </div>
-                
-                <div class="page-footer">
-                    <div class="footer-text">
-                        While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. 
-                        Ozz Cash and Carry reserves the right to limit quantities. Errors and omissions excepted. All items include VAT where applicable. 
-                        Images are for illustrative purposes only.
-                    </div>
-                    <div class="footer-bottom">
-                        <span>OZZ Cash & Carry • July 2025 Catalog</span>
-                        <span>Page 1 of <span class="total-pages">-</span> • Version 2.2</span>
+                    <div class="page-footer">
+                        <div class="disclaimer">
+                            While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. 
+                            Ozz Cash and Carry reserves the right to limit quantities. Errors and omissions excepted - Ozz Cash and Carry will always 
+                            take utmost care to ensure that advertising information is correct, however should a mistake or inaccuracy occur, Ozz Cash 
+                            and Carry shall display an in-store notice reflecting the correct details. All items include VAT where applicable. 
+                            Images are for illustrative purposes only.
+                        </div>
+                        <div class="footer-info">
+                            <span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span>
+                            <span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 3.0</span>
+                        </div>
                     </div>
                 </div>
             `;
+            
             return page;
         }
         
@@ -415,64 +738,95 @@
             const page = document.createElement('div');
             page.className = 'page';
             
-            let html = `
-                <div class="page-header">
-                    <h2>July 2025 Promotional Catalog</h2>
-                    <span class="page-number">Page ${pageNum} of <span class="total-pages">-</span></span>
-                </div>
+            let contentHTML = `
+                <div class="page-inner">
+                    <div class="page-header">
+                        <div class="header-left">
+                            <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
+                                 alt="OZZ" class="header-logo" onerror="this.style.display='none'">
+                            <span class="header-title">July 2025 Promotional Catalog</span>
+                        </div>
+                        <span class="page-number">Page ${pageNum} of <span class="total-pages">-</span></span>
+                    </div>
+                    
+                    <div class="page-content">
             `;
             
             if (showHeader) {
-                html += `<div class="category-header">${category}</div>`;
+                contentHTML += `<div class="category-header">${category}</div>`;
             }
             
-            html += '<div class="products-grid">';
+            contentHTML += '<div class="products-container"><div class="products-grid">';
             
-            // Always create 8 slots
+            // Always create exactly 8 slots
             for (let i = 0; i < 8; i++) {
                 if (i < products.length) {
-                    const p = products[i];
-                    const originalPrice = (p.price * 1.2).toFixed(2);
-                    const savePercent = Math.round(((originalPrice - p.price) / originalPrice) * 100);
-                    
-                    html += `
-                        <div class="product-card">
-                            <div class="product-image">
-                                <div class="no-image">📦<br>No Image</div>
-                            </div>
-                            <div class="product-details">
-                                <div class="product-title">${p.description}</div>
-                                <div class="product-sku">SKU: ${p.sku}</div>
-                                <div class="product-category">${p.category}</div>
-                                <div class="product-price">R${p.price.toFixed(2)}</div>
-                                <div class="price-was">Was R${originalPrice}</div>
-                                <div class="price-save">SAVE ${savePercent}%</div>
-                            </div>
-                        </div>
-                    `;
+                    contentHTML += createProductCard(products[i]);
                 } else {
-                    html += '<div></div>'; // Empty slot
+                    contentHTML += '<div class="product-card" style="visibility: hidden;"></div>';
                 }
             }
             
-            html += `
-                </div>
-                
-                <div class="page-footer">
-                    <div class="footer-text">
-                        While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. 
-                        Ozz Cash and Carry reserves the right to limit quantities. Errors and omissions excepted. All items include VAT where applicable. 
-                        Images are for illustrative purposes only.
+            contentHTML += `
+                        </div></div>
                     </div>
-                    <div class="footer-bottom">
-                        <span>OZZ Cash & Carry • +27 31 332 7192</span>
-                        <span>www.ozzsa.com • Version 2.2</span>
+                    
+                    <div class="page-footer">
+                        <div class="disclaimer">
+                            While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. 
+                            Ozz Cash and Carry reserves the right to limit quantities. Errors and omissions excepted - Ozz Cash and Carry will always 
+                            take utmost care to ensure that advertising information is correct, however should a mistake or inaccuracy occur, Ozz Cash 
+                            and Carry shall display an in-store notice reflecting the correct details. All items include VAT where applicable. 
+                            Images are for illustrative purposes only.
+                        </div>
+                        <div class="footer-info">
+                            <span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • info@ozzsa.com</span>
+                            <span class="footer-right">www.ozzsa.com • Version 3.0</span>
+                        </div>
                     </div>
                 </div>
             `;
             
-            page.innerHTML = html;
+            page.innerHTML = contentHTML;
             return page;
+        }
+        
+        function createProductCard(product) {
+            const imageUrl = imageManager ? imageManager.getImageUrl(product.sku) : null;
+            const originalPrice = (product.price * 1.2).toFixed(2);
+            const savePercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+            
+            return `
+                <div class="product-card">
+                    <div class="product-image">
+                        ${imageUrl ? 
+                            `<img src="${imageUrl}" alt="${product.description}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'><div class=\\'no-image-icon\\'>📦</div><div class=\\'no-image-text\\'>No Image</div></div>'">` :
+                            `<div class="no-image">
+                                <div class="no-image-icon">📦</div>
+                                <div class="no-image-text">No Image</div>
+                            </div>`
+                        }
+                    </div>
+                    <div class="product-details">
+                        <div class="product-title">${product.description}</div>
+                        <div class="product-info">
+                            <div class="info-line">
+                                <span class="info-label">SKU:</span> ${product.sku}
+                            </div>
+                            <div class="info-line">
+                                <span class="info-label">Category:</span> ${product.category}
+                            </div>
+                        </div>
+                        <div class="price-section">
+                            <div class="price-current">R${product.price.toFixed(2)}</div>
+                            <div>
+                                <span class="price-original">Was R${originalPrice}</span>
+                                <span class="price-save">SAVE ${savePercent}%</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
         }
     </script>
 </body>
