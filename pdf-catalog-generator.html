@@ -1063,7 +1063,7 @@
         let categories = [];
         let driveImageManager = null;
         
-        // CSP-Safe Image Manager - No eval() usage
+        // CSP-Safe Image Manager with Enhanced Progress Tracking
         class DriveImageManager {
             constructor() {
                 this.imageCache = new Map();
@@ -1074,26 +1074,49 @@
                 // Your specific folder ID from Google Drive
                 this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
                 this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
+                
+                // Progress tracking
+                this.progressCallback = null;
+                this.totalFiles = 0;
+                this.processedFiles = 0;
             }
 
-            // CSP-Safe initialization
+            // CSP-Safe initialization with timeout
             async initializeGAPI() {
                 if (this.isInitialized) return true;
                 
                 try {
-                    // Load Google APIs with CSP-safe method
-                    await this.loadGoogleAPISafe();
+                    this.updateProgress('Loading Google APIs...');
                     
-                    // Initialize client with promise-based approach
-                    await this.initializeClient();
+                    // Load Google APIs with timeout
+                    await Promise.race([
+                        this.loadGoogleAPISafe(),
+                        this.timeoutPromise(10000, 'Google API loading timeout')
+                    ]);
+                    
+                    this.updateProgress('Initializing Drive client...');
+                    
+                    // Initialize client with timeout
+                    await Promise.race([
+                        this.initializeClient(),
+                        this.timeoutPromise(10000, 'Drive client initialization timeout')
+                    ]);
                     
                     this.isInitialized = true;
                     console.log('✅ Google Drive API initialized (CSP-Safe)');
                     return true;
                 } catch (error) {
                     console.error('❌ Failed to initialize Google Drive API:', error);
+                    this.updateProgress(`❌ API Error: ${error.message}`);
                     return false;
                 }
+            }
+
+            // Timeout helper
+            timeoutPromise(ms, message) {
+                return new Promise((_, reject) => {
+                    setTimeout(() => reject(new Error(message)), ms);
+                });
             }
 
             // CSP-Safe Google API loading
@@ -1101,22 +1124,34 @@
                 if (window.gapi) return;
                 
                 return new Promise((resolve, reject) => {
+                    // Check if script already exists
+                    const existingScript = document.querySelector('script[src*="apis.google.com/js/api.js"]');
+                    if (existingScript) {
+                        if (window.gapi) {
+                            resolve();
+                            return;
+                        }
+                        // Wait for existing script to load
+                        existingScript.addEventListener('load', resolve);
+                        existingScript.addEventListener('error', reject);
+                        return;
+                    }
+                    
                     const script = document.createElement('script');
                     script.src = 'https://apis.google.com/js/api.js';
                     script.async = true;
                     script.defer = true;
                     
-                    // Use event listeners instead of function strings
                     const handleLoad = () => {
                         script.removeEventListener('load', handleLoad);
                         script.removeEventListener('error', handleError);
                         resolve();
                     };
                     
-                    const handleError = () => {
+                    const handleError = (err) => {
                         script.removeEventListener('load', handleLoad);
                         script.removeEventListener('error', handleError);
-                        reject(new Error('Failed to load Google APIs'));
+                        reject(new Error('Failed to load Google APIs: ' + (err.message || 'Network error')));
                     };
                     
                     script.addEventListener('load', handleLoad);
@@ -1129,15 +1164,51 @@
             // CSP-Safe client initialization
             async initializeClient() {
                 return new Promise((resolve, reject) => {
+                    const timeoutId = setTimeout(() => {
+                        reject(new Error('Client initialization timeout'));
+                    }, 8000);
+                    
                     const loadCallback = () => {
+                        clearTimeout(timeoutId);
+                        
                         gapi.client.init({
                             apiKey: this.apiKey,
                             discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-                        }).then(resolve).catch(reject);
+                        }).then(() => {
+                            console.log('✅ GAPI client initialized successfully');
+                            resolve();
+                        }).catch(err => {
+                            console.error('❌ GAPI client init error:', err);
+                            reject(err);
+                        });
                     };
                     
-                    gapi.load('client', loadCallback);
+                    try {
+                        gapi.load('client', {
+                            callback: loadCallback,
+                            onerror: () => {
+                                clearTimeout(timeoutId);
+                                reject(new Error('Failed to load GAPI client'));
+                            }
+                        });
+                    } catch (err) {
+                        clearTimeout(timeoutId);
+                        reject(err);
+                    }
                 });
+            }
+
+            // Progress update method
+            updateProgress(message) {
+                console.log(`📊 ${message}`);
+                if (this.progressCallback) {
+                    this.progressCallback(message);
+                }
+            }
+
+            // Set progress callback
+            setProgressCallback(callback) {
+                this.progressCallback = callback;
             }
 
             // Cache management
@@ -1245,33 +1316,120 @@
                 }
             }
 
-            async fetchImagesFromFolder(pageToken = null) {
+            // Enhanced folder scanning with progress tracking
+            async scanFolderForImages(forceRefresh = false) {
+                if (!forceRefresh && this.loadCacheFromStorage()) {
+                    console.log('🚀 Using cached image data, skipping scan');
+                    this.updateProgress('✅ Using cached images');
+                    return;
+                }
+                
+                this.updateProgress('🔍 Starting Google Drive scan...');
+                
                 try {
-                    const response = await gapi.client.drive.files.list({
-                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/jpg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp' or mimeType contains 'image/bmp' or mimeType contains 'image/tiff')`,
-                        fields: 'nextPageToken, files(id, name, mimeType, parents, webViewLink, thumbnailLink)',
-                        pageSize: 100,
-                        pageToken: pageToken
-                    });
-
-                    let files = response.result.files || [];
+                    // Test API connection first
+                    await this.testDriveConnection();
                     
-                    if (response.result.nextPageToken) {
-                        const nextPageFiles = await this.fetchImagesFromFolder(response.result.nextPageToken);
-                        files = files.concat(nextPageFiles);
+                    // Fetch images with progress tracking
+                    const images = await this.fetchImagesFromFolder();
+                    
+                    if (images.length === 0) {
+                        this.updateProgress('⚠️ No images found in Drive folder');
+                        console.warn('No images found. Check folder ID and permissions.');
+                        return;
                     }
                     
-                    return files;
+                    this.updateProgress(`📸 Processing ${images.length} images...`);
+                    this.buildImageMapping(images);
+                    this.saveCacheToStorage();
+                    
+                    this.updateProgress(`✅ Mapped ${this.imageCache.size} product images`);
+                    console.log(`🎯 Total images cached: ${this.imageCache.size}`);
+                } catch (error) {
+                    console.error('❌ Error scanning folder:', error);
+                    this.updateProgress(`❌ Scan failed: ${error.message}`);
+                    throw error;
+                }
+            }
+
+            // Test Drive API connection
+            async testDriveConnection() {
+                this.updateProgress('🔗 Testing Drive connection...');
+                
+                try {
+                    const response = await Promise.race([
+                        gapi.client.drive.files.list({
+                            q: `'${this.folderId}' in parents`,
+                            fields: 'files(id, name)',
+                            pageSize: 1
+                        }),
+                        this.timeoutPromise(15000, 'Drive connection timeout')
+                    ]);
+                    
+                    console.log('✅ Drive connection successful');
+                    this.updateProgress('✅ Connected to Google Drive');
+                    return response;
+                } catch (error) {
+                    if (error.message.includes('timeout')) {
+                        throw new Error('Drive connection timeout - check network');
+                    }
+                    if (error.status === 403) {
+                        throw new Error('Access denied - check API key and folder permissions');
+                    }
+                    if (error.status === 404) {
+                        throw new Error('Folder not found - check folder ID');
+                    }
+                    throw new Error(`Drive API error: ${error.message}`);
+                }
+            }
+
+            async fetchImagesFromFolder(pageToken = null, allFiles = []) {
+                try {
+                    this.updateProgress(`📂 Scanning folder... (${allFiles.length} files found)`);
+                    
+                    const response = await Promise.race([
+                        gapi.client.drive.files.list({
+                            q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/jpg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp' or mimeType contains 'image/bmp' or mimeType contains 'image/tiff')`,
+                            fields: 'nextPageToken, files(id, name, mimeType, parents, webViewLink, thumbnailLink, size)',
+                            pageSize: 100,
+                            pageToken: pageToken
+                        }),
+                        this.timeoutPromise(30000, 'File listing timeout')
+                    ]);
+
+                    const files = response.result.files || [];
+                    allFiles.push(...files);
+                    
+                    console.log(`📊 Found ${files.length} images in this batch`);
+                    
+                    if (response.result.nextPageToken) {
+                        this.updateProgress(`📂 Continuing scan... (${allFiles.length} files so far)`);
+                        return await this.fetchImagesFromFolder(response.result.nextPageToken, allFiles);
+                    }
+                    
+                    console.log(`✅ Scan complete: ${allFiles.length} total image files`);
+                    return allFiles;
+                    
                 } catch (error) {
                     console.error('Error fetching folder contents:', error);
-                    return [];
+                    if (error.message.includes('timeout')) {
+                        throw new Error(`Folder scan timeout after finding ${allFiles.length} files`);
+                    }
+                    throw error;
                 }
             }
 
             buildImageMapping(images) {
                 this.imageCache.clear();
+                this.updateProgress('🔗 Building SKU mappings...');
                 
-                images.forEach(image => {
+                let mappedCount = 0;
+                
+                images.forEach((image, index) => {
+                    if (index % 10 === 0) {
+                        this.updateProgress(`🔗 Mapping ${index}/${images.length} images...`);
+                    }
+                    
                     const codes = this.extractProductCodes(image.name);
                     
                     codes.forEach(code => {
@@ -1282,11 +1440,15 @@
                                 thumbnailLink: image.thumbnailLink,
                                 webViewLink: image.webViewLink,
                                 directLink: this.getDirectImageUrl(image.id),
-                                mimeType: image.mimeType
+                                mimeType: image.mimeType,
+                                size: image.size
                             });
+                            mappedCount++;
                         }
                     });
                 });
+                
+                console.log(`🎯 Successfully mapped ${mappedCount} product codes from ${images.length} images`);
             }
 
             extractProductCodes(filename) {
@@ -1445,22 +1607,40 @@
             imageBtn.innerHTML = '⏳ Initializing...';
             imageStatus.style.display = 'block';
             imageStatus.className = 'image-status loading';
-            imageStatusText.innerHTML = '🔄 Initializing Google Drive API...';
+            imageStatusText.innerHTML = '🔄 Starting image system...';
             
             try {
-                // Initialize the image manager
+                // Initialize the image manager with progress tracking
                 driveImageManager = new DriveImageManager();
                 
-                // Initialize Google Drive API
-                const success = await driveImageManager.initializeGAPI();
-                if (!success) {
+                // Set up progress tracking
+                driveImageManager.setProgressCallback((message) => {
+                    imageStatusText.innerHTML = message;
+                });
+                
+                imageStatusText.innerHTML = '🔑 Initializing Google Drive API...';
+                
+                // Initialize Google Drive API with timeout
+                const initSuccess = await Promise.race([
+                    driveImageManager.initializeGAPI(),
+                    new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('API initialization timeout')), 20000)
+                    )
+                ]);
+                
+                if (!initSuccess) {
                     throw new Error('Failed to initialize Google Drive API');
                 }
                 
-                imageStatusText.innerHTML = '📸 Scanning Google Drive for product images...';
+                imageStatusText.innerHTML = '📸 Scanning for product images (this may take 30-60 seconds)...';
                 
-                // Scan for images
-                await driveImageManager.scanFolderForImages();
+                // Scan for images with timeout
+                await Promise.race([
+                    driveImageManager.scanFolderForImages(),
+                    new Promise((_, reject) => 
+                        setTimeout(() => reject(new Error('Folder scan timeout - please try again')), 60000)
+                    )
+                ]);
                 
                 // Update UI with success
                 const stats = driveImageManager.getStats();
@@ -1478,15 +1658,76 @@
                 // Show image mapping preview
                 showImageMappingPreview();
                 
+                // Show success notification
+                showNotification(`Found ${stats.mappedProducts} product images!`, 'success');
+                
             } catch (error) {
                 console.error('Image initialization failed:', error);
                 imageStatus.className = 'image-status error';
-                imageStatusText.innerHTML = `❌ Image system failed: ${error.message}`;
-                imageStats.innerHTML = 'Catalog will be generated without images';
-                imageBtn.innerHTML = '❌ Image Failed';
+                
+                let errorMessage = '❌ Image system failed: ';
+                if (error.message.includes('timeout')) {
+                    errorMessage += 'Connection timeout - please check your internet and try again';
+                } else if (error.message.includes('Access denied')) {
+                    errorMessage += 'Access denied - check folder permissions';
+                } else if (error.message.includes('Folder not found')) {
+                    errorMessage += 'Folder not found - check folder ID';
+                } else {
+                    errorMessage += error.message;
+                }
+                
+                imageStatusText.innerHTML = errorMessage;
+                imageStats.innerHTML = 'Catalog will be generated without images. Check console for details.';
+                imageBtn.innerHTML = '❌ Try Again';
+                
+                // Show detailed troubleshooting
+                showTroubleshootingInfo(error);
+                
             } finally {
                 imageBtn.disabled = false;
             }
+        }
+
+        function showTroubleshootingInfo(error) {
+            const troubleshootingDiv = document.createElement('div');
+            troubleshootingDiv.style.cssText = `
+                margin-top: 15px;
+                padding: 15px;
+                background: #fff3cd;
+                border: 1px solid #ffeaa7;
+                border-radius: 8px;
+                font-size: 14px;
+            `;
+            
+            let troubleshooting = '<strong>🛠️ Troubleshooting Steps:</strong><br>';
+            
+            if (error.message.includes('timeout')) {
+                troubleshooting += `
+                    1. Check your internet connection<br>
+                    2. Try refreshing the page and retry<br>
+                    3. The folder may contain many images - this is normal<br>
+                    4. Wait up to 2 minutes for large folders
+                `;
+            } else if (error.message.includes('Access denied') || error.message.includes('403')) {
+                troubleshooting += `
+                    1. Open your Google Drive folder<br>
+                    2. Right-click → Share → "Anyone with the link can view"<br>
+                    3. Apply to all images in the folder<br>
+                    4. Check the folder ID: <code>${driveImageManager?.folderId}</code>
+                `;
+            } else {
+                troubleshooting += `
+                    1. Check Google Drive folder permissions<br>
+                    2. Verify folder ID: <code>${driveImageManager?.folderId}</code><br>
+                    3. Ensure images are named with SKU numbers<br>
+                    4. Try refreshing the page
+                `;
+            }
+            
+            troubleshootingDiv.innerHTML = troubleshooting;
+            
+            const imageStats = document.getElementById('imageStats');
+            imageStats.appendChild(troubleshootingDiv);
         }
 
         function showImageMappingPreview() {
