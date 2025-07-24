@@ -640,47 +640,16 @@
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
                 
-                // Check what columns are available
-                if (jsonData.length > 0) {
-                    console.log('Available columns:', Object.keys(jsonData[0]));
-                    console.log('First row sample:', jsonData[0]);
-                }
-                
-                // Try multiple possible column names for flexibility
+                // Process products
                 allProducts = jsonData
-                    .filter(row => {
-                        // Check for SKU variations
-                        const sku = row.SKU || row['Item Code'] || row['Product Code'] || row['Code'];
-                        // Check for description variations
-                        const desc = row['PRODUCT '] || row.PRODUCT || row.Description || row['Product Description'] || row.Name;
-                        // Check for price variations
-                        const price = row.PRICE || row.Price || row['Selling Price'] || row['Unit Price'];
-                        // Check for category variations
-                        const cat = row.CATEGORY || row.Category || row['Product Category'] || row.Type;
-                        
-                        return sku && desc && price !== undefined && cat;
-                    })
-                    .map(row => {
-                        // Map with same flexibility
-                        const sku = row.SKU || row['Item Code'] || row['Product Code'] || row['Code'];
-                        const desc = row['PRODUCT '] || row.PRODUCT || row.Description || row['Product Description'] || row.Name;
-                        const price = row.PRICE || row.Price || row['Selling Price'] || row['Unit Price'];
-                        const cat = row.CATEGORY || row.Category || row['Product Category'] || row.Type;
-                        
-                        return {
-                            sku: String(sku).trim(),
-                            description: String(desc).trim(),
-                            price: parseFloat(price) || 0,
-                            category: String(cat).trim().toUpperCase()
-                        };
-                    })
+                    .filter(row => row.SKU && row['PRODUCT '] && row.PRICE && row.CATEGORY)
+                    .map(row => ({
+                        sku: String(row.SKU).trim(),
+                        description: String(row['PRODUCT '] || row.PRODUCT || '').trim(),
+                        price: parseFloat(row.PRICE) || 0,
+                        category: String(row.CATEGORY).trim().toUpperCase()
+                    }))
                     .filter(p => p.price > 0);
-                
-                // If no products found, show what columns were detected
-                if (allProducts.length === 0 && jsonData.length > 0) {
-                    const cols = Object.keys(jsonData[0]).join(', ');
-                    throw new Error(`No valid products found. Detected columns: ${cols}. Please ensure your Excel has columns for SKU, Product description, Price, and Category.`);
-                }
                 
                 // Get categories
                 categories = [...new Set(allProducts.map(p => p.category))].sort();
@@ -696,7 +665,7 @@
                 
             } catch (error) {
                 status.innerHTML = `❌ <strong style="color: #dc3545;">Error: ${error.message}</strong>`;
-                console.error('Error details:', error);
+                console.error(error);
             } finally {
                 loadBtn.disabled = false;
             }
