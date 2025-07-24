@@ -3,385 +3,219 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>OZZ Professional Catalog Generator</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>OZZ Catalog Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
-    <!-- Professional Fonts -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet">
-    
     <style>
-        /* Global Font Settings */
-        * {
-            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+        /* Basic styles */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
         }
         
-        /* Screen styles */
-        @media screen {
-            body {
-                background-color: #f0f2f5;
-            }
-            .print-preview-container {
-                max-width: 210mm;
-                margin: 0 auto;
-                background: white;
-                box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            }
+        .control-panel {
+            max-width: 800px;
+            margin: 0 auto 30px;
+            background: white;
+            padding: 30px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
         }
-
-        /* Print-specific styles */
+        
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        
+        button {
+            background: #007bff;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            margin: 5px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        button:hover {
+            background: #0056b3;
+        }
+        
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+        }
+        
+        .status {
+            margin: 20px 0;
+            padding: 10px;
+            background: #e9ecef;
+            border-radius: 4px;
+        }
+        
+        /* Print Preview */
+        .print-preview {
+            max-width: 210mm;
+            margin: 0 auto;
+        }
+        
+        /* Print Styles */
         @media print {
-            * {
-                -webkit-print-color-adjust: exact !important;
-                print-color-adjust: exact !important;
-                color-adjust: exact !important;
-            }
-            
-            html, body {
-                margin: 0 !important;
-                padding: 0 !important;
-                width: 100% !important;
-                height: 100% !important;
-                font-size: 10pt !important;
-            }
-            
             body {
-                background: white !important;
-                font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif !important;
+                margin: 0;
+                padding: 0;
+                background: white;
             }
             
-            .no-print {
-                display: none !important;
+            .control-panel {
+                display: none;
             }
             
-            #pdfContent {
-                margin: 0 !important;
-                padding: 0 !important;
+            .page {
+                width: 210mm;
+                height: 297mm;
+                margin: 0;
+                padding: 15mm;
+                page-break-after: always;
+                position: relative;
+                box-sizing: border-box;
             }
             
-            /* A4 Page Setup */
-            .print-page {
-                width: 210mm !important;
-                height: 297mm !important;
-                margin: 0 !important;
-                padding: 15mm 15mm 25mm 15mm !important;
-                page-break-after: always !important;
-                page-break-inside: avoid !important;
-                position: relative !important;
-                background: white !important;
-                box-sizing: border-box !important;
-                display: flex !important;
-                flex-direction: column !important;
+            .page:last-child {
+                page-break-after: avoid;
             }
             
-            .print-page:last-child {
-                page-break-after: auto !important;
-            }
-            
-            /* Page Header */
             .page-header {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                padding-bottom: 3mm !important;
-                margin-bottom: 5mm !important;
-                border-bottom: 2px solid #1a1a1a !important;
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-bottom: 5mm;
+                margin-bottom: 5mm;
+                border-bottom: 2px solid #333;
             }
             
-            .header-logo {
-                height: 8mm !important;
-            }
-            
-            .header-title {
-                font-size: 11pt !important;
-                font-weight: 700 !important;
-                color: #1a1a1a !important;
-                letter-spacing: -0.02em !important;
+            .page-header h2 {
+                margin: 0;
+                font-size: 16pt;
             }
             
             .page-number {
-                font-size: 9pt !important;
-                color: #666 !important;
-                font-weight: 500 !important;
+                font-size: 10pt;
+                color: #666;
             }
             
-            /* Content Area */
-            .page-content {
-                flex: 1 !important;
-                display: flex !important;
-                flex-direction: column !important;
-            }
-            
-            /* Category Headers */
             .category-header {
-                background: #1a1a1a !important;
-                color: white !important;
-                padding: 3mm 5mm !important;
-                margin: 0 -15mm 5mm -15mm !important;
-                font-size: 14pt !important;
-                font-weight: 800 !important;
-                letter-spacing: 0.05em !important;
-                text-transform: uppercase !important;
-                display: flex !important;
-                align-items: center !important;
-                gap: 3mm !important;
+                background: #333;
+                color: white;
+                padding: 3mm 5mm;
+                margin: 5mm 0;
+                font-size: 14pt;
+                font-weight: bold;
             }
             
-            .category-header::before {
-                content: '' !important;
-                width: 5mm !important;
-                height: 5mm !important;
-                background: #dc2626 !important;
-                display: block !important;
+            .products-grid {
+                display: grid;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 5mm;
             }
             
-            /* Product Grid */
-            .product-grid {
-                display: grid !important;
-                grid-template-columns: repeat(2, 1fr) !important;
-                grid-template-rows: repeat(4, 1fr) !important;
-                gap: 5mm !important;
-                height: 100% !important;
-                align-content: start !important;
-            }
-            
-            /* Product Card - Professional Magazine Style */
             .product-card {
-                background: white !important;
-                border: 1px solid #e0e0e0 !important;
-                height: 55mm !important;
-                display: flex !important;
-                overflow: hidden !important;
-                position: relative !important;
-            }
-            
-            /* Product Image Container */
-            .product-image-container {
-                width: 40% !important;
-                background: #fafafa !important;
-                display: flex !important;
-                align-items: center !important;
-                justify-content: center !important;
-                padding: 3mm !important;
-                position: relative !important;
+                border: 1px solid #ddd;
+                padding: 3mm;
+                height: 55mm;
+                display: flex;
+                overflow: hidden;
             }
             
             .product-image {
-                max-width: 100% !important;
-                max-height: 100% !important;
-                object-fit: contain !important;
-                filter: drop-shadow(0 2px 4px rgba(0,0,0,0.1)) !important;
+                width: 35%;
+                background: #f8f8f8;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                margin-right: 3mm;
             }
             
-            .no-image-placeholder {
-                text-align: center !important;
-                color: #ccc !important;
+            .product-image img {
+                max-width: 100%;
+                max-height: 100%;
+                object-fit: contain;
             }
             
-            .no-image-icon {
-                font-size: 24pt !important;
-                margin-bottom: 2mm !important;
-                opacity: 0.3 !important;
+            .no-image {
+                text-align: center;
+                color: #999;
+                font-size: 10pt;
             }
             
-            .no-image-text {
-                font-size: 8pt !important;
-                text-transform: uppercase !important;
-                letter-spacing: 0.05em !important;
-            }
-            
-            /* Product Details */
             .product-details {
-                width: 60% !important;
-                display: flex !important;
-                flex-direction: column !important;
-                padding: 3mm !important;
+                flex: 1;
+                display: flex;
+                flex-direction: column;
             }
             
-            /* Product Title */
             .product-title {
-                font-size: 10pt !important;
-                font-weight: 700 !important;
-                color: #1a1a1a !important;
-                line-height: 1.2 !important;
-                margin-bottom: 2mm !important;
-                letter-spacing: -0.01em !important;
-                display: -webkit-box !important;
-                -webkit-line-clamp: 2 !important;
-                -webkit-box-orient: vertical !important;
-                overflow: hidden !important;
+                font-size: 11pt;
+                font-weight: bold;
+                margin-bottom: 2mm;
+                line-height: 1.2;
             }
             
-            /* Product Info */
-            .product-info {
-                flex: 1 !important;
-                font-size: 8pt !important;
-                color: #666 !important;
-                line-height: 1.4 !important;
+            .product-sku {
+                font-size: 9pt;
+                color: #666;
+                margin-bottom: 2mm;
             }
             
-            .info-row {
-                display: flex !important;
-                margin-bottom: 1mm !important;
+            .product-category {
+                font-size: 9pt;
+                color: #666;
+                margin-bottom: auto;
             }
             
-            .info-label {
-                font-weight: 500 !important;
-                color: #999 !important;
-                width: 20mm !important;
-            }
-            
-            .info-value {
-                color: #333 !important;
-            }
-            
-            /* Price Section */
-            .price-section {
-                border-top: 1px solid #f0f0f0 !important;
-                padding-top: 2mm !important;
-                margin-top: auto !important;
-            }
-            
-            .price-row {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: flex-end !important;
-            }
-            
-            .price-main {
-                font-size: 16pt !important;
-                font-weight: 800 !important;
-                color: #dc2626 !important;
-                letter-spacing: -0.02em !important;
-                line-height: 1 !important;
-            }
-            
-            .price-currency {
-                font-size: 11pt !important;
-                font-weight: 600 !important;
-            }
-            
-            .price-cents {
-                font-size: 10pt !important;
-                font-weight: 600 !important;
-                vertical-align: super !important;
+            .product-price {
+                font-size: 14pt;
+                font-weight: bold;
+                color: #d32f2f;
+                margin-top: 2mm;
             }
             
             .price-was {
-                font-size: 9pt !important;
-                color: #999 !important;
-                text-decoration: line-through !important;
+                font-size: 10pt;
+                color: #999;
+                text-decoration: line-through;
             }
             
-            .save-badge {
-                background: #16a34a !important;
-                color: white !important;
-                padding: 1mm 3mm !important;
-                font-size: 8pt !important;
-                font-weight: 700 !important;
-                letter-spacing: 0.02em !important;
+            .price-save {
+                font-size: 9pt;
+                color: #388e3c;
+                font-weight: bold;
             }
             
-            /* Page Footer */
             .page-footer {
-                position: absolute !important;
-                bottom: 10mm !important;
-                left: 15mm !important;
-                right: 15mm !important;
-                font-size: 7pt !important;
-                color: #666 !important;
-                line-height: 1.3 !important;
+                position: absolute;
+                bottom: 10mm;
+                left: 15mm;
+                right: 15mm;
+                font-size: 8pt;
+                color: #666;
+                border-top: 1px solid #ddd;
+                padding-top: 3mm;
             }
             
-            .footer-disclaimer {
-                padding-bottom: 2mm !important;
-                margin-bottom: 2mm !important;
-                border-bottom: 1px solid #e0e0e0 !important;
-                text-align: justify !important;
+            .footer-text {
+                margin-bottom: 2mm;
+                line-height: 1.3;
             }
             
-            .footer-info {
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                font-size: 8pt !important;
-            }
-            
-            .footer-logo {
-                height: 5mm !important;
-            }
-            
-            /* First Page Special Styling */
-            .hero-page {
-                display: flex !important;
-                flex-direction: column !important;
-                justify-content: center !important;
-                text-align: center !important;
-            }
-            
-            .hero-logo {
-                height: 40mm !important;
-                margin: 0 auto 10mm auto !important;
-            }
-            
-            .hero-title {
-                font-family: 'Bebas Neue', sans-serif !important;
-                font-size: 48pt !important;
-                color: #dc2626 !important;
-                letter-spacing: 0.02em !important;
-                margin-bottom: 5mm !important;
-                line-height: 0.9 !important;
-            }
-            
-            .hero-subtitle {
-                font-size: 14pt !important;
-                color: #666 !important;
-                font-weight: 300 !important;
-                margin-bottom: 15mm !important;
-            }
-            
-            .contact-grid {
-                display: grid !important;
-                grid-template-columns: repeat(3, 1fr) !important;
-                gap: 5mm !important;
-                margin-bottom: 10mm !important;
-            }
-            
-            .contact-card {
-                background: #f8f9fa !important;
-                padding: 5mm !important;
-                border-radius: 2mm !important;
-            }
-            
-            .contact-label {
-                font-size: 8pt !important;
-                color: #666 !important;
-                text-transform: uppercase !important;
-                letter-spacing: 0.05em !important;
-                margin-bottom: 1mm !important;
-            }
-            
-            .contact-value {
-                font-size: 11pt !important;
-                font-weight: 700 !important;
-                color: #1a1a1a !important;
-            }
-            
-            .collection-notice {
-                background: #fef3c7 !important;
-                border-left: 4mm solid #f59e0b !important;
-                padding: 5mm !important;
-                margin: 10mm 0 !important;
-                font-size: 9pt !important;
-                line-height: 1.5 !important;
-            }
-            
-            .notice-title {
-                font-weight: 700 !important;
-                color: #92400e !important;
-                margin-bottom: 2mm !important;
+            .footer-bottom {
+                display: flex;
+                justify-content: space-between;
+                font-weight: bold;
             }
         }
         
@@ -392,417 +226,254 @@
     </style>
 </head>
 <body>
-    <!-- Control Panel -->
-    <div class="max-w-6xl mx-auto p-6 no-print">
-        <div class="bg-white rounded-xl shadow-lg p-8 mb-6">
-            <div class="text-center mb-8">
-                <h1 class="text-3xl font-bold text-gray-900 mb-2">OZZ Professional Catalog Generator</h1>
-                <p class="text-gray-600">Create beautiful retail-quality promotional catalogs</p>
-                <div class="text-sm text-gray-500 mt-2">
-                    <span class="px-2 py-1 bg-gray-100 rounded">Version 2.1</span>
-                </div>
-            </div>
-
-            <!-- Layout Options -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-8">
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <h3 class="text-lg font-semibold mb-4">📄 Layout Settings</h3>
-                    <div class="space-y-3">
-                        <p class="text-sm text-gray-600 mb-3">Fixed layout: 2×4 grid (8 products per page)</p>
-                        <label class="flex items-center">
-                            <input type="checkbox" id="includeImages" checked class="mr-3 h-4 w-4">
-                            <span>Include product images</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" id="includePrices" checked class="mr-3 h-4 w-4">
-                            <span>Include pricing information</span>
-                        </label>
-                        <label class="flex items-center">
-                            <input type="checkbox" id="groupByCategory" checked class="mr-3 h-4 w-4">
-                            <span>Group products by category</span>
-                        </label>
-                    </div>
-                </div>
-
-                <div class="bg-gray-50 p-6 rounded-lg">
-                    <h3 class="text-lg font-semibold mb-4">🏷️ Category Filter</h3>
-                    <div class="mb-3">
-                        <button onclick="selectAllCategories()" class="text-sm text-blue-600 hover:underline mr-4">Select All</button>
-                        <button onclick="deselectAllCategories()" class="text-sm text-blue-600 hover:underline">Clear All</button>
-                    </div>
-                    <div id="categoryFilters" class="max-h-40 overflow-y-auto">
-                        <!-- Categories will be populated here -->
-                    </div>
-                </div>
-            </div>
-
-            <!-- Action Buttons -->
-            <div class="flex flex-col sm:flex-row gap-4 justify-center">
-                <button onclick="loadCatalog()" id="loadBtn" 
-                        class="bg-blue-600 text-white px-8 py-3 rounded-lg hover:bg-blue-700 transition-all font-semibold shadow-md">
-                    📊 Load Catalog Data
-                </button>
-                <button onclick="generatePDF()" id="generateBtn" disabled
-                        class="bg-green-600 text-white px-8 py-3 rounded-lg hover:bg-green-700 transition-all font-semibold shadow-md disabled:opacity-50">
-                    📄 Generate PDF Preview
-                </button>
-                <button onclick="window.print()" id="printBtn" disabled
-                        class="bg-red-600 text-white px-8 py-3 rounded-lg hover:bg-red-700 transition-all font-semibold shadow-md disabled:opacity-50">
-                    🖨️ Print / Save as PDF
-                </button>
-            </div>
-
-            <!-- Status -->
-            <div class="mt-6 bg-blue-50 border-l-4 border-blue-500 p-4">
-                <p id="status" class="text-blue-900 font-medium">Ready to load catalog</p>
-                <p id="productCount" class="text-sm text-blue-700 mt-1"></p>
-            </div>
+    <div class="control-panel">
+        <h1>OZZ Catalog Generator</h1>
+        
+        <div style="text-align: center; margin: 30px 0;">
+            <button onclick="loadCatalog()" id="loadBtn">📁 Load JULY PROMO.xlsx</button>
+            <button onclick="generateCatalog()" id="generateBtn" disabled>📄 Generate Catalog</button>
+            <button onclick="window.print()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
         </div>
+        
+        <div class="status" id="status">
+            Ready to load catalog data...
+        </div>
+        
+        <div id="categoryList" style="margin-top: 20px;"></div>
     </div>
-
-    <!-- PDF Content -->
-    <div id="pdfContent" class="hidden print-preview-container">
-        <!-- PDF pages will be generated here -->
-    </div>
+    
+    <div id="printContent" class="print-preview"></div>
 
     <script>
-        // Drive Image Manager
-        class DriveImageManager {
-            constructor() {
-                this.imageCache = new Map();
-                this.isInitialized = false;
-                this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
-                this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
-            }
-
-            async initializeGAPI() {
-                if (this.isInitialized) return true;
-                
-                try {
-                    await this.loadScript('https://apis.google.com/js/api.js');
-                    await new Promise(resolve => gapi.load('client', resolve));
-                    
-                    await gapi.client.init({
-                        apiKey: this.apiKey,
-                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-                    });
-                    
-                    this.isInitialized = true;
-                    return true;
-                } catch (error) {
-                    console.error('Failed to initialize Google Drive API:', error);
-                    return false;
-                }
-            }
-
-            loadScript(src) {
-                return new Promise((resolve, reject) => {
-                    if (document.querySelector(`script[src="${src}"]`)) {
-                        resolve();
-                        return;
-                    }
-                    
-                    const script = document.createElement('script');
-                    script.src = src;
-                    script.onload = resolve;
-                    script.onerror = reject;
-                    document.head.appendChild(script);
-                });
-            }
-
-            async scanAllImages() {
-                try {
-                    const images = await this.fetchImagesFromFolder();
-                    this.buildImageMapping(images);
-                    return true;
-                } catch (error) {
-                    console.error('Error scanning images:', error);
-                    return false;
-                }
-            }
-
-            async fetchImagesFromFolder(pageToken = null) {
-                try {
-                    const response = await gapi.client.drive.files.list({
-                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
-                        fields: 'nextPageToken, files(id, name, mimeType)',
-                        pageSize: 100,
-                        pageToken: pageToken
-                    });
-
-                    let files = response.result.files || [];
-                    
-                    if (response.result.nextPageToken) {
-                        const nextPageFiles = await this.fetchImagesFromFolder(response.result.nextPageToken);
-                        files = files.concat(nextPageFiles);
-                    }
-                    
-                    return files;
-                } catch (error) {
-                    throw new Error('Failed to fetch images: ' + error.message);
-                }
-            }
-
-            buildImageMapping(images) {
-                this.imageCache.clear();
-                
-                images.forEach(image => {
-                    const codes = this.extractProductCodes(image.name);
-                    codes.forEach(code => {
-                        if (!this.imageCache.has(code)) {
-                            this.imageCache.set(code, {
-                                id: image.id,
-                                name: image.name,
-                                url: `https://lh3.googleusercontent.com/d/${image.id}=w800-h800-c`
-                            });
-                        }
-                    });
-                });
-            }
-
-            extractProductCodes(filename) {
-                const codes = [];
-                const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
-                
-                const numericCodes = nameWithoutExt.match(/\b\d{4,6}\b/g);
-                if (numericCodes) codes.push(...numericCodes);
-                
-                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{4,8}\b/gi);
-                if (alphanumericCodes) {
-                    codes.push(...alphanumericCodes.map(code => code.toLowerCase()));
-                }
-                
-                const parts = nameWithoutExt.split(/[-_\s\.]+/);
-                parts.forEach(part => {
-                    const cleanPart = part.trim();
-                    if (/^\d{4,6}$/.test(cleanPart) || /^[A-Z0-9]{4,8}$/i.test(cleanPart)) {
-                        codes.push(cleanPart.toLowerCase());
-                    }
-                });
-                
-                return [...new Set(codes)];
-            }
-
-            getImageUrl(productCode) {
-                const normalizedCode = productCode.toString().toLowerCase().trim();
-                const imageData = this.imageCache.get(normalizedCode);
-                return imageData ? imageData.url : null;
-            }
-        }
-
-        // Global variables
         let allProducts = [];
-        let driveImageManager = null;
         let categories = [];
-
-        // Load catalog
+        
         async function loadCatalog() {
             const loadBtn = document.getElementById('loadBtn');
             const status = document.getElementById('status');
             
             loadBtn.disabled = true;
-            loadBtn.textContent = '🔄 Loading...';
-            status.textContent = 'Loading catalog data...';
-
+            status.textContent = 'Loading Excel file...';
+            
             try {
-                await loadProductsFromExcel();
-                status.textContent = 'Loading product images...';
-                
-                driveImageManager = new DriveImageManager();
-                const success = await driveImageManager.initializeGAPI();
-                if (success) {
-                    await driveImageManager.scanAllImages();
+                const response = await fetch('./JULY PROMO.xlsx');
+                if (!response.ok) {
+                    throw new Error('Could not find JULY PROMO.xlsx in the same folder');
                 }
-
-                setupCategoryFilters();
+                
+                const data = await response.arrayBuffer();
+                const workbook = XLSX.read(data);
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const jsonData = XLSX.utils.sheet_to_json(worksheet);
+                
+                // Process products
+                allProducts = jsonData
+                    .filter(row => row.SKU && row['PRODUCT '] && row.PRICE && row.CATEGORY)
+                    .map(row => ({
+                        sku: String(row.SKU).trim(),
+                        description: String(row['PRODUCT '] || row.PRODUCT || '').trim(),
+                        price: parseFloat(row.PRICE) || 0,
+                        category: String(row.CATEGORY).trim().toUpperCase()
+                    }))
+                    .filter(p => p.price > 0);
+                
+                // Get categories
+                categories = [...new Set(allProducts.map(p => p.category))].sort();
+                
+                // Show category list
+                showCategories();
+                
                 document.getElementById('generateBtn').disabled = false;
-                status.textContent = `✅ Catalog loaded successfully!`;
-                document.getElementById('productCount').textContent = `${allProducts.length} products from ${categories.length} categories`;
-
+                status.innerHTML = `<strong>✓ Loaded ${allProducts.length} products in ${categories.length} categories</strong>`;
+                
             } catch (error) {
-                status.textContent = '❌ Error: ' + error.message;
-                console.error('Load error:', error);
+                status.innerHTML = `<strong style="color: red;">Error: ${error.message}</strong>`;
+                console.error(error);
             } finally {
                 loadBtn.disabled = false;
-                loadBtn.textContent = '📊 Load Catalog Data';
             }
         }
-
-        async function loadProductsFromExcel() {
-            const response = await fetch('./JULY PROMO.xlsx');
-            if (!response.ok) {
-                throw new Error('Could not load JULY PROMO.xlsx file');
-            }
+        
+        function showCategories() {
+            const categoryList = document.getElementById('categoryList');
+            categoryList.innerHTML = '<h3>Categories:</h3>';
             
-            const arrayBuffer = await response.arrayBuffer();
-            const workbook = XLSX.read(arrayBuffer);
-            const worksheet = workbook.Sheets['Sheet1'];
-            const rawData = XLSX.utils.sheet_to_json(worksheet);
-            
-            allProducts = rawData
-                .filter(item => item.SKU && item['PRODUCT '] && item.PRICE !== undefined && item.CATEGORY)
-                .map(item => ({
-                    sku: item.SKU.toString().trim(),
-                    description: item['PRODUCT '].toString().trim(),
-                    price: parseFloat(item.PRICE),
-                    category: item.CATEGORY.toString().trim().toUpperCase()
-                }))
-                .filter(product => product.price > 0);
-            
-            categories = [...new Set(allProducts.map(p => p.category))].sort();
-        }
-
-        function setupCategoryFilters() {
-            const container = document.getElementById('categoryFilters');
-            container.innerHTML = categories.map(category => {
-                const count = allProducts.filter(p => p.category === category).length;
-                return `
-                    <label class="flex items-center p-2 hover:bg-gray-100 rounded cursor-pointer">
-                        <input type="checkbox" value="${category}" checked class="mr-2 category-filter">
-                        <span class="text-sm">${category} (${count})</span>
-                    </label>
+            categories.forEach(cat => {
+                const count = allProducts.filter(p => p.category === cat).length;
+                const label = document.createElement('label');
+                label.style.display = 'block';
+                label.style.margin = '5px 0';
+                label.innerHTML = `
+                    <input type="checkbox" checked value="${cat}" class="category-cb">
+                    ${cat} (${count} products)
                 `;
-            }).join('');
-        }
-
-        function selectAllCategories() {
-            document.querySelectorAll('.category-filter').forEach(cb => cb.checked = true);
-        }
-
-        function deselectAllCategories() {
-            document.querySelectorAll('.category-filter').forEach(cb => cb.checked = false);
-        }
-
-        function generatePDF() {
-            const generateBtn = document.getElementById('generateBtn');
-            generateBtn.disabled = true;
-            generateBtn.textContent = '🔄 Generating...';
-
-            try {
-                const selectedCategories = Array.from(document.querySelectorAll('.category-filter:checked'))
-                    .map(cb => cb.value);
-                
-                if (selectedCategories.length === 0) {
-                    alert('Please select at least one category');
-                    return;
-                }
-                
-                const filteredProducts = allProducts.filter(product => 
-                    selectedCategories.includes(product.category)
-                );
-
-                const options = {
-                    includeImages: document.getElementById('includeImages').checked,
-                    includePrices: document.getElementById('includePrices').checked,
-                    groupByCategory: document.getElementById('groupByCategory').checked
-                };
-
-                generatePDFContent(filteredProducts, options);
-
-                document.getElementById('printBtn').disabled = false;
-                document.getElementById('status').textContent = 
-                    `✅ PDF generated! ${filteredProducts.length} products on ${document.querySelectorAll('.print-page').length} pages`;
-
-            } catch (error) {
-                alert('Error generating PDF: ' + error.message);
-            } finally {
-                generateBtn.disabled = false;
-                generateBtn.textContent = '📄 Generate PDF Preview';
-            }
-        }
-
-        function generatePDFContent(products, options) {
-            const container = document.getElementById('pdfContent');
-            container.innerHTML = '';
-            container.classList.remove('hidden');
-
-            // Create header page
-            container.appendChild(createHeaderPage());
-
-            // Sort and group products
-            const sortedProducts = [...products].sort((a, b) => {
-                if (a.category === b.category) {
-                    return a.description.localeCompare(b.description);
-                }
-                return a.category.localeCompare(b.category);
+                categoryList.appendChild(label);
             });
-
-            if (options.groupByCategory) {
-                const categoryGroups = {};
-                sortedProducts.forEach(product => {
-                    if (!categoryGroups[product.category]) {
-                        categoryGroups[product.category] = [];
-                    }
-                    categoryGroups[product.category].push(product);
-                });
-
-                let pageNumber = 2;
-                Object.entries(categoryGroups).forEach(([category, categoryProducts]) => {
-                    for (let i = 0; i < categoryProducts.length; i += 8) {
-                        const pageProducts = categoryProducts.slice(i, i + 8);
-                        const showHeader = i === 0;
-                        container.appendChild(createProductPage(pageProducts, category, showHeader, pageNumber++, options));
-                    }
-                });
-            } else {
-                let pageNumber = 2;
-                for (let i = 0; i < sortedProducts.length; i += 8) {
-                    const pageProducts = sortedProducts.slice(i, i + 8);
-                    container.appendChild(createProductPage(pageProducts, null, false, pageNumber++, options));
-                }
+        }
+        
+        function generateCatalog() {
+            const selectedCats = Array.from(document.querySelectorAll('.category-cb:checked'))
+                .map(cb => cb.value);
+            
+            if (selectedCats.length === 0) {
+                alert('Please select at least one category');
+                return;
             }
-
+            
+            const filteredProducts = allProducts.filter(p => selectedCats.includes(p.category));
+            
+            // Sort by category then description
+            filteredProducts.sort((a, b) => {
+                if (a.category !== b.category) {
+                    return a.category.localeCompare(b.category);
+                }
+                return a.description.localeCompare(b.description);
+            });
+            
+            // Generate pages
+            const printContent = document.getElementById('printContent');
+            printContent.innerHTML = '';
+            
+            // Add header page
+            printContent.appendChild(createHeaderPage());
+            
+            // Group by category
+            const grouped = {};
+            filteredProducts.forEach(p => {
+                if (!grouped[p.category]) grouped[p.category] = [];
+                grouped[p.category].push(p);
+            });
+            
+            // Create product pages
+            let pageNum = 2;
+            Object.entries(grouped).forEach(([category, products]) => {
+                for (let i = 0; i < products.length; i += 8) {
+                    const pageProducts = products.slice(i, i + 8);
+                    const showCategoryHeader = i === 0;
+                    printContent.appendChild(createProductPage(pageProducts, category, showCategoryHeader, pageNum++));
+                }
+            });
+            
             // Update page numbers
-            const totalPages = container.querySelectorAll('.print-page').length;
-            container.querySelectorAll('.total-pages').forEach(el => {
+            const totalPages = printContent.querySelectorAll('.page').length;
+            printContent.querySelectorAll('.total-pages').forEach(el => {
                 el.textContent = totalPages;
             });
-
-            container.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            
+            document.getElementById('printBtn').disabled = false;
+            document.getElementById('status').innerHTML = 
+                `<strong>✓ Generated ${totalPages} pages with ${filteredProducts.length} products</strong>`;
         }
-
+        
         function createHeaderPage() {
             const page = document.createElement('div');
-            page.className = 'print-page';
-            
+            page.className = 'page';
             page.innerHTML = `
-                <div class="hero-page">
-                    <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
-                         alt="OZZ Cash & Carry" 
-                         class="hero-logo"
-                         onerror="this.style.display='none'">
+                <div style="display: flex; flex-direction: column; justify-content: center; height: 100%; text-align: center;">
+                    <h1 style="font-size: 48pt; color: #d32f2f; margin: 20mm 0 10mm;">JULY 2025 PROMO</h1>
+                    <p style="font-size: 16pt; color: #666; margin-bottom: 20mm;">Exclusive Deals on Premium Home & Kitchen Products</p>
                     
-                    <h1 class="hero-title">JULY 2025 PROMO</h1>
-                    <p class="hero-subtitle">Exclusive Deals on Premium Home & Kitchen Products</p>
-                    
-                    <div class="contact-grid">
-                        <div class="contact-card">
-                            <div class="contact-label">Phone</div>
-                            <div class="contact-value">+27 31 332 7192</div>
-                        </div>
-                        <div class="contact-card">
-                            <div class="contact-label">Email</div>
-                            <div class="contact-value">info@ozzsa.com</div>
-                        </div>
-                        <div class="contact-card">
-                            <div class="contact-label">Website</div>
-                            <div class="contact-value">www.ozzsa.com</div>
-                        </div>
+                    <div style="background: #f5f5f5; padding: 10mm; margin: 10mm 0; text-align: left;">
+                        <h2 style="font-size: 18pt; margin-bottom: 5mm;">OZZ CASH & CARRY</h2>
+                        <p style="font-size: 12pt; line-height: 1.5;">
+                            40 Mazeppa & Gull Street<br>
+                            Durban, KwaZulu-Natal 4001<br>
+                            South Africa
+                        </p>
+                        <p style="font-size: 12pt; margin-top: 5mm;">
+                            <strong>Phone:</strong> +27 31 332 7192<br>
+                            <strong>Email:</strong> info@ozzsa.com<br>
+                            <strong>Website:</strong> www.ozzsa.com
+                        </p>
                     </div>
                     
-                    <div style="text-align: left;">
-                        <div class="contact-card" style="margin-bottom: 5mm;">
-                            <div class="contact-label">Visit Our Store</div>
-                            <div class="contact-value">OZZ CASH & CARRY</div>
-                            <div style="font-size: 9pt; color: #666; margin-top: 2mm;">
-                                40 Mazeppa & Gull Street<br>
-                                Durban, KwaZulu-Natal 4001<br>
-                                South Africa
+                    <div style="background: #fff3cd; border-left: 4mm solid #ffc107; padding: 5mm; margin: 10mm 0;">
+                        <p style="font-size: 11pt; margin: 0;">
+                            <strong>📍 Collection & Delivery:</strong><br>
+                            Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.<br>
+                            Delivery is available at an additional charge.
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="page-footer">
+                    <div class="footer-text">
+                        While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. 
+                        Ozz Cash and Carry reserves the right to limit quantities. Errors and omissions excepted. All items include VAT where applicable. 
+                        Images are for illustrative purposes only.
+                    </div>
+                    <div class="footer-bottom">
+                        <span>OZZ Cash & Carry • July 2025 Catalog</span>
+                        <span>Page 1 of <span class="total-pages">-</span> • Version 2.2</span>
+                    </div>
+                </div>
+            `;
+            return page;
+        }
+        
+        function createProductPage(products, category, showHeader, pageNum) {
+            const page = document.createElement('div');
+            page.className = 'page';
+            
+            let html = `
+                <div class="page-header">
+                    <h2>July 2025 Promotional Catalog</h2>
+                    <span class="page-number">Page ${pageNum} of <span class="total-pages">-</span></span>
+                </div>
+            `;
+            
+            if (showHeader) {
+                html += `<div class="category-header">${category}</div>`;
+            }
+            
+            html += '<div class="products-grid">';
+            
+            // Always create 8 slots
+            for (let i = 0; i < 8; i++) {
+                if (i < products.length) {
+                    const p = products[i];
+                    const originalPrice = (p.price * 1.2).toFixed(2);
+                    const savePercent = Math.round(((originalPrice - p.price) / originalPrice) * 100);
+                    
+                    html += `
+                        <div class="product-card">
+                            <div class="product-image">
+                                <div class="no-image">📦<br>No Image</div>
+                            </div>
+                            <div class="product-details">
+                                <div class="product-title">${p.description}</div>
+                                <div class="product-sku">SKU: ${p.sku}</div>
+                                <div class="product-category">${p.category}</div>
+                                <div class="product-price">R${p.price.toFixed(2)}</div>
+                                <div class="price-was">Was R${originalPrice}</div>
+                                <div class="price-save">SAVE ${savePercent}%</div>
                             </div>
                         </div>
-                        
-                        <div class="collection-notice">
-                            <div class="notice-title">📍 COLLECTION & DELIVERY</div>
-                            <div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div>
-                            <div>Delivery is available at an additional charge.</div>
-                        </div>
+                    `;
+                } else {
+                    html += '<div></div>'; // Empty slot
+                }
+            }
+            
+            html += `
+                </div>
+                
+                <div class="page-footer">
+                    <div class="footer-text">
+                        While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. 
+                        Ozz Cash and Carry reserves the right to limit quantities. Errors and omissions excepted. All items include VAT where applicable. 
+                        Images are for illustrative purposes only.
+                    </div>
+                    <div class="footer-bottom">
+                        <span>OZZ Cash & Carry • +27 31 332 7192</span>
+                        <span>www.ozzsa.com • Version 2.2</span>
+                    </div>
+                </div>
+            `;
+            
+            page.innerHTML = html;
+            return page;
+        }
+    </script>
+</body>
+</html>
