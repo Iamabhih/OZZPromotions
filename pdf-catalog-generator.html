@@ -19,12 +19,15 @@
                 script.src = 'https://apis.google.com/js/api.js';
                 script.async = true;
                 script.defer = true;
-                script.onload = () => {
+                
+                // Use proper event handlers instead of string evaluation
+                script.addEventListener('load', () => {
                     resolve();
-                };
-                script.onerror = () => {
+                });
+                script.addEventListener('error', () => {
                     reject(new Error('Failed to load Google APIs'));
-                };
+                });
+                
                 document.head.appendChild(script);
             });
         }
@@ -315,24 +318,174 @@
                 --grid-gap: 3mm;
             }
             
-            /* Ultra-compact layout option */
+            /* Ultra-compact layout option - Enhanced Typography */
             .products-grid.ultra-compact {
                 --grid-columns: 3;
                 --grid-rows: 5;
                 --grid-gap: 2.5mm;
             }
             
-            /* Product Card - High-End Retail Style */
+            /* Ultra-compact specific adjustments */
+            .products-grid.ultra-compact .product-name {
+                font-size: 5.5pt;
+                font-weight: 900;
+                line-height: 1.0;
+                margin-bottom: 0.3mm;
+                -webkit-line-clamp: 2;
+                max-height: 2.4em;
+                overflow: hidden;
+            }
+            
+            .products-grid.ultra-compact .product-variant {
+                font-size: 4.5pt;
+                font-weight: 600;
+                line-height: 1.0;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            
+            .products-grid.ultra-compact .product-header {
+                padding: 1mm 1.5mm;
+                min-height: 8mm;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+            }
+            
+            .products-grid.ultra-compact .product-specs {
+                padding: 1mm;
+                gap: 0.2mm;
+                justify-content: space-evenly;
+            }
+            
+            .products-grid.ultra-compact .spec-item {
+                font-size: 4.5pt;
+                margin-bottom: 0.2mm;
+                line-height: 0.9;
+            }
+            
+            .products-grid.ultra-compact .spec-label {
+                font-size: 4pt;
+                min-width: 6mm;
+                font-weight: 800;
+            }
+            
+            .products-grid.ultra-compact .spec-value {
+                font-size: 4.5pt;
+                font-weight: 600;
+            }
+            
+            .products-grid.ultra-compact .spec-bullet {
+                font-size: 5pt;
+                margin-right: 0.8mm;
+            }
+            
+            .products-grid.ultra-compact .price-badge {
+                padding: 1.5mm 1mm;
+                min-height: 12mm;
+            }
+            
+            .products-grid.ultra-compact .price-amount {
+                font-size: 10pt;
+                font-weight: 900;
+                margin-bottom: 0.3mm;
+                text-shadow: 0 0.5px 1px rgba(0,0,0,0.4);
+            }
+            
+            .products-grid.ultra-compact .price-currency {
+                font-size: 7pt;
+                font-weight: 800;
+            }
+            
+            .products-grid.ultra-compact .price-cents {
+                font-size: 6pt;
+                font-weight: 800;
+            }
+            
+            .products-grid.ultra-compact .price-unit {
+                font-size: 4.5pt;
+                font-weight: 700;
+                letter-spacing: 1px;
+            }
+            
+            /* Compact layout adjustments */
+            .products-grid.compact .product-name {
+                font-size: 6pt;
+                line-height: 1.05;
+                -webkit-line-clamp: 2;
+                max-height: 2.8em;
+            }
+            
+            .products-grid.compact .product-variant {
+                font-size: 4.8pt;
+                line-height: 1.0;
+            }
+            
+            .products-grid.compact .product-header {
+                padding: 1.2mm 1.8mm;
+                min-height: 9mm;
+            }
+            
+            .products-grid.compact .product-specs {
+                padding: 1.2mm;
+            }
+            
+            .products-grid.compact .spec-item {
+                font-size: 5pt;
+                margin-bottom: 0.25mm;
+            }
+            
+            .products-grid.compact .spec-label {
+                font-size: 4.5pt;
+                min-width: 7mm;
+            }
+            
+            .products-grid.compact .price-amount {
+                font-size: 11pt;
+                margin-bottom: 0.4mm;
+            }
+            
+            .products-grid.compact .price-currency {
+                font-size: 7.5pt;
+            }
+            
+            .products-grid.compact .price-cents {
+                font-size: 6.5pt;
+            }
+            
+            .products-grid.compact .price-unit {
+                font-size: 5pt;
+            }
+            
+            /* Product Card - Enhanced Premium Styling */
             .product-card {
-                background: white;
+                background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
                 display: flex;
                 overflow: hidden;
                 height: 100%;
-                border-radius: 2mm;
-                box-shadow: 0 0.5mm 2mm rgba(0,0,0,0.08);
+                border-radius: 3mm;
+                box-shadow: 
+                    0 1mm 3mm rgba(0,0,0,0.12),
+                    0 0.5mm 2mm rgba(0,0,0,0.08),
+                    inset 0 1px 0 rgba(255,255,255,0.3);
+                border: 0.5px solid rgba(0,0,0,0.08);
+                position: relative;
             }
             
-            /* Product Image - Enhanced Size (65% width) */
+            /* Subtle premium border effect */
+            .product-card::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                height: 0.5mm;
+                background: linear-gradient(90deg, #006b6b 0%, #cc0000 50%, #006b6b 100%);
+                opacity: 0.6;
+            }
+            
+            /* Product Image - Enhanced Premium Styling */
             .product-image {
                 width: 65%;
                 background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
@@ -341,35 +494,68 @@
                 justify-content: center;
                 padding: 2mm;
                 position: relative;
-                border-right: 1px solid #e0e0e0;
+                border-right: 1px solid rgba(0,0,0,0.06);
+                overflow: hidden;
+            }
+            
+            /* Subtle texture overlay for premium feel */
+            .product-image::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 0;
+                right: 0;
+                bottom: 0;
+                background: 
+                    radial-gradient(circle at 20% 20%, rgba(255,255,255,0.3) 1px, transparent 1px),
+                    radial-gradient(circle at 80% 80%, rgba(0,0,0,0.02) 1px, transparent 1px);
+                background-size: 8px 8px, 12px 12px;
+                pointer-events: none;
+                z-index: 1;
             }
             
             .product-image img {
                 max-width: 100%;
                 max-height: 100%;
                 object-fit: contain;
-                filter: drop-shadow(0 1mm 3mm rgba(0,0,0,0.15));
+                filter: 
+                    drop-shadow(0 2mm 4mm rgba(0,0,0,0.15))
+                    drop-shadow(0 1mm 2mm rgba(0,0,0,0.1));
                 border-radius: 1mm;
+                position: relative;
+                z-index: 2;
+                transition: transform 0.3s ease;
+            }
+            
+            /* Subtle hover effect for screen preview */
+            @media screen {
+                .product-image img:hover {
+                    transform: scale(1.02);
+                }
             }
             
             .no-image {
                 text-align: center;
-                color: #ccc;
+                color: #bbb;
                 padding: 2mm;
+                position: relative;
+                z-index: 2;
             }
             
             .no-image-icon {
                 font-size: 28pt;
                 margin-bottom: 2mm;
-                opacity: 0.6;
+                opacity: 0.4;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.1);
             }
             
             .no-image-text {
                 font-size: 6pt;
                 text-transform: uppercase;
                 letter-spacing: 0.8px;
-                color: #aaa;
-                font-weight: 600;
+                color: #999;
+                font-weight: 700;
+                text-shadow: 0 0.5px 1px rgba(255,255,255,0.8);
             }
             
             /* Product Details - Compact Right Side (35% width) */
@@ -380,17 +566,30 @@
                 overflow: hidden;
             }
             
-            /* Product Header - Compact Dark Teal */
+            /* Product Header - Enhanced Premium Styling */
             .product-header {
                 background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%);
                 color: white;
                 padding: 1.5mm 2mm;
                 flex-shrink: 0;
+                position: relative;
+                box-shadow: inset 0 -1px 0 rgba(255,255,255,0.1);
+            }
+            
+            /* Premium metallic accent */
+            .product-header::after {
+                content: '';
+                position: absolute;
+                bottom: 0;
+                left: 0;
+                right: 0;
+                height: 0.5px;
+                background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.3) 50%, transparent 100%);
             }
             
             .product-name {
                 font-size: 6.5pt;
-                font-weight: 800;
+                font-weight: 900;
                 text-transform: uppercase;
                 letter-spacing: 0.2px;
                 line-height: 1.1;
@@ -400,17 +599,21 @@
                 display: -webkit-box;
                 -webkit-line-clamp: 2;
                 -webkit-box-orient: vertical;
+                text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                color: #ffffff;
             }
             
             .product-variant {
                 font-size: 5pt;
-                font-weight: 500;
-                opacity: 0.9;
+                font-weight: 600;
+                opacity: 0.95;
                 text-transform: uppercase;
                 letter-spacing: 0.3px;
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
+                color: rgba(255,255,255,0.9);
+                text-shadow: 0 0.5px 1px rgba(0,0,0,0.2);
             }
             
             /* Product Specs - Compact Middle Section */
@@ -463,7 +666,7 @@
                 flex: 1;
             }
             
-            /* Price Badge - Compact Red Background */
+            /* Price Badge - Enhanced Premium Styling */
             .price-badge {
                 background: linear-gradient(135deg, #cc0000 0%, #990000 100%);
                 color: white;
@@ -474,7 +677,22 @@
                 justify-content: center;
                 align-items: center;
                 flex-shrink: 0;
-                box-shadow: inset 0 1px 0 rgba(255,255,255,0.2);
+                box-shadow: 
+                    inset 0 1px 0 rgba(255,255,255,0.2),
+                    inset 0 -1px 0 rgba(0,0,0,0.2);
+                position: relative;
+            }
+            
+            /* Premium accent stripe */
+            .price-badge::before {
+                content: '';
+                position: absolute;
+                top: 0;
+                left: 50%;
+                transform: translateX(-50%);
+                width: 80%;
+                height: 1px;
+                background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.4) 50%, transparent 100%);
             }
             
             .price-amount {
@@ -483,19 +701,24 @@
                 line-height: 1;
                 letter-spacing: -0.3px;
                 margin-bottom: 0.5mm;
-                text-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                text-shadow: 
+                    0 1px 2px rgba(0,0,0,0.4),
+                    0 0 4px rgba(255,255,255,0.1);
+                color: #ffffff;
             }
             
             .price-currency {
                 font-size: 8pt;
-                font-weight: 700;
+                font-weight: 800;
+                color: #ffffff;
             }
             
             .price-cents {
                 font-size: 7pt;
                 vertical-align: super;
-                font-weight: 700;
+                font-weight: 800;
                 margin-left: 0.3mm;
+                color: #ffffff;
             }
             
             .price-unit {
@@ -503,7 +726,9 @@
                 text-transform: uppercase;
                 letter-spacing: 0.8px;
                 opacity: 0.95;
-                font-weight: 600;
+                font-weight: 700;
+                color: rgba(255,255,255,0.95);
+                text-shadow: 0 0.5px 1px rgba(0,0,0,0.2);
             }
             
             /* Page Footer */
@@ -1419,7 +1644,7 @@
                 <div class="product-card">
                     <div class="product-image">
                         ${imageUrl ? 
-                            `<img src="${imageUrl}" alt="${product.description}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'><div class=\\'no-image-icon\\'>📦</div><div class=\\'no-image-text\\'>SKU: ${product.sku}</div></div>'">` :
+                            `<img src="${imageUrl}" alt="${product.description}">` :
                             `<div class="no-image">
                                 <div class="no-image-icon">📦</div>
                                 <div class="no-image-text">SKU: ${product.sku}</div>
