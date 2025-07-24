@@ -216,17 +216,29 @@
                 margin-bottom: 5mm;
             }
             
-            /* Category Header */
+            /* Category Header - Premium Style */
             .category-header {
-                background: #1a1a1a;
+                background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%);
                 color: white;
-                padding: 3mm 5mm;
+                padding: 4mm 6mm;
                 margin: 0 -5mm 5mm -5mm;
-                font-size: 13pt;
-                font-weight: 700;
-                letter-spacing: 0.5px;
+                font-size: 14pt;
+                font-weight: 800;
+                letter-spacing: 1px;
                 text-transform: uppercase;
                 flex-shrink: 0;
+                display: flex;
+                align-items: center;
+                box-shadow: 0 1mm 3mm rgba(0,0,0,0.15);
+            }
+            
+            .category-header::before {
+                content: '';
+                width: 4mm;
+                height: 4mm;
+                background: #cc0000;
+                margin-right: 4mm;
+                display: block;
             }
             
             /* Products Grid Container */
@@ -247,111 +259,162 @@
                 height: 100%;
             }
             
-            /* Product Card */
+            /* Product Card - High-End Retail Style */
             .product-card {
-                border: 1px solid #e0e0e0;
                 background: white;
                 display: flex;
                 overflow: hidden;
                 height: 100%;
+                border-radius: 2mm;
+                box-shadow: 0 0.5mm 2mm rgba(0,0,0,0.08);
             }
             
+            /* Product Image - Left Side */
             .product-image {
-                width: 35%;
+                width: 40%;
                 background: #fafafa;
                 display: flex;
                 align-items: center;
                 justify-content: center;
-                padding: 2mm;
-                border-right: 1px solid #e0e0e0;
+                padding: 3mm;
+                position: relative;
             }
             
             .product-image img {
                 max-width: 100%;
                 max-height: 100%;
                 object-fit: contain;
+                filter: drop-shadow(0 1mm 2mm rgba(0,0,0,0.1));
             }
             
             .no-image {
                 text-align: center;
-                color: #ccc;
+                color: #ddd;
             }
             
             .no-image-icon {
-                font-size: 20pt;
+                font-size: 24pt;
                 margin-bottom: 2mm;
             }
             
             .no-image-text {
-                font-size: 8pt;
+                font-size: 7pt;
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
+                color: #bbb;
             }
             
-            /* Product Details */
+            /* Product Details - Right Side */
             .product-details {
                 flex: 1;
-                padding: 3mm;
                 display: flex;
                 flex-direction: column;
-            }
-            
-            .product-title {
-                font-size: 10pt;
-                font-weight: 700;
-                color: #1a1a1a;
-                margin-bottom: 2mm;
-                line-height: 1.2;
                 overflow: hidden;
-                display: -webkit-box;
-                -webkit-line-clamp: 2;
-                -webkit-box-orient: vertical;
             }
             
-            .product-info {
+            /* Product Header - Dark Teal */
+            .product-header {
+                background: #006b6b;
+                color: white;
+                padding: 2.5mm 3mm;
+            }
+            
+            .product-name {
+                font-size: 9pt;
+                font-weight: 800;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                line-height: 1.1;
+                margin-bottom: 1mm;
+            }
+            
+            .product-variant {
+                font-size: 7pt;
+                font-weight: 400;
+                opacity: 0.85;
+                text-transform: uppercase;
+                letter-spacing: 0.2px;
+            }
+            
+            /* Product Specs - Middle Section */
+            .product-specs {
+                background: white;
+                padding: 3mm;
                 flex: 1;
-                font-size: 8pt;
-                color: #666;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
             }
             
-            .info-line {
-                margin-bottom: 1mm;
+            .spec-item {
+                font-size: 7.5pt;
+                color: #333;
+                margin-bottom: 1.5mm;
+                display: flex;
+                align-items: baseline;
+                line-height: 1.2;
             }
             
-            .info-label {
-                color: #999;
+            .spec-item:last-child {
+                margin-bottom: 0;
             }
             
-            /* Price Section */
-            .price-section {
-                border-top: 1px solid #f0f0f0;
-                padding-top: 2mm;
-                margin-top: auto;
-            }
-            
-            .price-current {
-                font-size: 14pt;
-                font-weight: 700;
-                color: #cc0000;
-                margin-bottom: 1mm;
-            }
-            
-            .price-original {
+            .spec-bullet {
+                color: #006b6b;
                 font-size: 9pt;
-                color: #999;
-                text-decoration: line-through;
-                display: inline-block;
                 margin-right: 2mm;
+                line-height: 1;
             }
             
-            .price-save {
-                font-size: 9pt;
-                color: #fff;
-                background: #4caf50;
-                padding: 0.5mm 2mm;
-                border-radius: 2mm;
+            .spec-label {
                 font-weight: 600;
-                display: inline-block;
+                color: #666;
+                margin-right: 1mm;
+                min-width: 12mm;
+            }
+            
+            .spec-value {
+                color: #1a1a1a;
+            }
+            
+            /* Price Badge - Red Background */
+            .price-badge {
+                background: #cc0000;
+                color: white;
+                padding: 3mm;
+                text-align: center;
+                display: flex;
+                flex-direction: column;
+                justify-content: center;
+                align-items: center;
+            }
+            
+            .price-amount {
+                font-size: 16pt;
+                font-weight: 800;
+                line-height: 1;
+                letter-spacing: -0.5px;
+                margin-bottom: 1mm;
+            }
+            
+            .price-currency {
+                font-size: 11pt;
+                font-weight: 700;
+            }
+            
+            .price-cents {
+                font-size: 9pt;
+                vertical-align: super;
+                font-weight: 700;
+                margin-left: 0.5mm;
+            }
+            
+            .price-unit {
+                font-size: 7pt;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                opacity: 0.9;
+                font-weight: 500;
             }
             
             /* Page Footer */
@@ -401,18 +464,22 @@
                 margin-bottom: 10mm;
             }
             
+            /* Hero Page Premium Styling */
             .hero-title {
-                font-size: 36pt;
-                font-weight: 800;
+                font-size: 42pt;
+                font-weight: 900;
                 color: #cc0000;
                 margin-bottom: 5mm;
-                letter-spacing: -1px;
+                letter-spacing: -1.5px;
+                text-shadow: 0 2px 4px rgba(0,0,0,0.1);
             }
             
             .hero-subtitle {
-                font-size: 14pt;
-                color: #666;
+                font-size: 16pt;
+                color: #444;
                 margin-bottom: 15mm;
+                font-weight: 300;
+                letter-spacing: 0.5px;
             }
             
             .info-grid {
@@ -423,51 +490,65 @@
             }
             
             .info-card {
-                background: #f8f9fa;
-                padding: 5mm;
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                padding: 6mm;
                 border-radius: 3mm;
                 text-align: center;
+                box-shadow: 0 1mm 3mm rgba(0,0,0,0.05);
             }
             
             .info-label {
                 font-size: 8pt;
                 color: #666;
                 text-transform: uppercase;
-                letter-spacing: 0.5px;
+                letter-spacing: 0.8px;
                 margin-bottom: 2mm;
+                font-weight: 600;
             }
             
             .info-value {
-                font-size: 11pt;
-                font-weight: 700;
+                font-size: 12pt;
+                font-weight: 800;
                 color: #1a1a1a;
             }
             
             .address-section {
-                background: #f8f9fa;
-                padding: 8mm;
-                border-radius: 3mm;
+                background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%);
+                color: white;
+                padding: 10mm;
+                border-radius: 4mm;
                 margin: 10mm 0;
                 text-align: left;
+                box-shadow: 0 2mm 5mm rgba(0,0,0,0.1);
             }
             
             .address-title {
-                font-size: 14pt;
-                font-weight: 700;
-                margin-bottom: 3mm;
+                font-size: 16pt;
+                font-weight: 800;
+                margin-bottom: 4mm;
+                letter-spacing: 0.5px;
+            }
+            
+            .address-section div {
+                line-height: 1.6;
+                font-size: 11pt;
             }
             
             .collection-notice {
-                background: #fff8dc;
-                border-left: 4mm solid #ffa500;
-                padding: 5mm;
+                background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%);
+                border-left: 5mm solid #ff6b35;
+                padding: 6mm 8mm;
                 margin: 10mm 0;
                 font-size: 10pt;
+                border-radius: 0 3mm 3mm 0;
+                box-shadow: 0 1mm 3mm rgba(0,0,0,0.08);
             }
             
             .notice-title {
-                font-weight: 700;
+                font-weight: 800;
                 margin-bottom: 2mm;
+                color: #d84315;
+                font-size: 11pt;
             }
         }
         
@@ -559,16 +640,47 @@
                 const worksheet = workbook.Sheets[workbook.SheetNames[0]];
                 const jsonData = XLSX.utils.sheet_to_json(worksheet);
                 
-                // Process products
+                // Check what columns are available
+                if (jsonData.length > 0) {
+                    console.log('Available columns:', Object.keys(jsonData[0]));
+                    console.log('First row sample:', jsonData[0]);
+                }
+                
+                // Try multiple possible column names for flexibility
                 allProducts = jsonData
-                    .filter(row => row.SKU && row['PRODUCT '] && row.PRICE && row.CATEGORY)
-                    .map(row => ({
-                        sku: String(row.SKU).trim(),
-                        description: String(row['PRODUCT '] || row.PRODUCT || '').trim(),
-                        price: parseFloat(row.PRICE) || 0,
-                        category: String(row.CATEGORY).trim().toUpperCase()
-                    }))
+                    .filter(row => {
+                        // Check for SKU variations
+                        const sku = row.SKU || row['Item Code'] || row['Product Code'] || row['Code'];
+                        // Check for description variations
+                        const desc = row['PRODUCT '] || row.PRODUCT || row.Description || row['Product Description'] || row.Name;
+                        // Check for price variations
+                        const price = row.PRICE || row.Price || row['Selling Price'] || row['Unit Price'];
+                        // Check for category variations
+                        const cat = row.CATEGORY || row.Category || row['Product Category'] || row.Type;
+                        
+                        return sku && desc && price !== undefined && cat;
+                    })
+                    .map(row => {
+                        // Map with same flexibility
+                        const sku = row.SKU || row['Item Code'] || row['Product Code'] || row['Code'];
+                        const desc = row['PRODUCT '] || row.PRODUCT || row.Description || row['Product Description'] || row.Name;
+                        const price = row.PRICE || row.Price || row['Selling Price'] || row['Unit Price'];
+                        const cat = row.CATEGORY || row.Category || row['Product Category'] || row.Type;
+                        
+                        return {
+                            sku: String(sku).trim(),
+                            description: String(desc).trim(),
+                            price: parseFloat(price) || 0,
+                            category: String(cat).trim().toUpperCase()
+                        };
+                    })
                     .filter(p => p.price > 0);
+                
+                // If no products found, show what columns were detected
+                if (allProducts.length === 0 && jsonData.length > 0) {
+                    const cols = Object.keys(jsonData[0]).join(', ');
+                    throw new Error(`No valid products found. Detected columns: ${cols}. Please ensure your Excel has columns for SKU, Product description, Price, and Category.`);
+                }
                 
                 // Get categories
                 categories = [...new Set(allProducts.map(p => p.category))].sort();
@@ -584,7 +696,7 @@
                 
             } catch (error) {
                 status.innerHTML = `❌ <strong style="color: #dc3545;">Error: ${error.message}</strong>`;
-                console.error(error);
+                console.error('Error details:', error);
             } finally {
                 loadBtn.disabled = false;
             }
@@ -796,33 +908,69 @@
             const originalPrice = (product.price * 1.2).toFixed(2);
             const savePercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
             
+            // Split price into rands and cents
+            const priceStr = product.price.toFixed(2);
+            const [rands, cents] = priceStr.split('.');
+            
+            // Extract product name and variant from description
+            const descWords = product.description.split(' ');
+            let productName = '';
+            let productVariant = '';
+            
+            // Simple logic to split name and variant
+            if (descWords.length > 2) {
+                productName = descWords.slice(0, 2).join(' ');
+                productVariant = descWords.slice(2).join(' ');
+            } else {
+                productName = product.description;
+                productVariant = product.category;
+            }
+            
             return `
                 <div class="product-card">
                     <div class="product-image">
                         ${imageUrl ? 
-                            `<img src="${imageUrl}" alt="${product.description}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'><div class=\\'no-image-icon\\'>📦</div><div class=\\'no-image-text\\'>No Image</div></div>'">` :
+                            `<img src="${imageUrl}" alt="${product.description}" onerror="this.parentElement.innerHTML='<div class=\\'no-image\\'><div class=\\'no-image-icon\\'>🥃</div><div class=\\'no-image-text\\'>No Image</div></div>'">` :
                             `<div class="no-image">
-                                <div class="no-image-icon">📦</div>
+                                <div class="no-image-icon">🥃</div>
                                 <div class="no-image-text">No Image</div>
                             </div>`
                         }
                     </div>
                     <div class="product-details">
-                        <div class="product-title">${product.description}</div>
-                        <div class="product-info">
-                            <div class="info-line">
-                                <span class="info-label">SKU:</span> ${product.sku}
-                            </div>
-                            <div class="info-line">
-                                <span class="info-label">Category:</span> ${product.category}
-                            </div>
+                        <div class="product-header">
+                            <div class="product-name">${productName}</div>
+                            <div class="product-variant">${productVariant}</div>
                         </div>
-                        <div class="price-section">
-                            <div class="price-current">R${product.price.toFixed(2)}</div>
-                            <div>
-                                <span class="price-original">Was R${originalPrice}</span>
-                                <span class="price-save">SAVE ${savePercent}%</span>
+                        <div class="product-specs">
+                            <div class="spec-item">
+                                <span class="spec-bullet">•</span>
+                                <span class="spec-label">SKU:</span>
+                                <span class="spec-value">${product.sku}</span>
                             </div>
+                            <div class="spec-item">
+                                <span class="spec-bullet">•</span>
+                                <span class="spec-label">Category:</span>
+                                <span class="spec-value">${product.category}</span>
+                            </div>
+                            <div class="spec-item">
+                                <span class="spec-bullet">•</span>
+                                <span class="spec-label">Price:</span>
+                                <span class="spec-value">R${originalPrice} RRP</span>
+                            </div>
+                            ${savePercent > 0 ? `
+                                <div class="spec-item">
+                                    <span class="spec-bullet">•</span>
+                                    <span class="spec-label">Savings:</span>
+                                    <span class="spec-value">${savePercent}% OFF</span>
+                                </div>
+                            ` : ''}
+                        </div>
+                        <div class="price-badge">
+                            <div class="price-amount">
+                                <span class="price-currency">R</span>${rands}<span class="price-cents">${cents}</span>
+                            </div>
+                            <div class="price-unit">Each</div>
                         </div>
                     </div>
                 </div>
