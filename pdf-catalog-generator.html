@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OZZ Professional Catalog</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://apis.google.com/js/api.js"></script>
+    <!-- Remove Google APIs script that causes CSP issues -->
     
     <style>
         /* Reset and Base Styles */
@@ -637,7 +637,7 @@
         let categories = [];
         let driveImageManager = null;
         
-        // Enhanced Google Drive Image Manager for PDF Generation
+        // Direct Google Drive API implementation without CSP issues
         class DriveImageManager {
             constructor() {
                 this.imageCache = new Map();
@@ -648,23 +648,24 @@
                 // Your specific folder ID from Google Drive
                 this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
                 this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
+                this.baseUrl = 'https://www.googleapis.com/drive/v3';
             }
 
-            // Initialize Google Drive API
+            // Direct API calls without gapi library to avoid CSP issues
             async initializeGAPI() {
                 if (this.isInitialized) return true;
                 
                 try {
-                    // Load Google APIs
-                    await new Promise(resolve => gapi.load('client', resolve));
+                    // Test API connection with a simple request
+                    const testUrl = `${this.baseUrl}/files?key=${this.apiKey}&pageSize=1`;
+                    const response = await fetch(testUrl);
                     
-                    await gapi.client.init({
-                        apiKey: this.apiKey,
-                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-                    });
+                    if (!response.ok) {
+                        throw new Error(`API test failed: ${response.status} ${response.statusText}`);
+                    }
                     
                     this.isInitialized = true;
-                    console.log('✅ Google Drive API initialized');
+                    console.log('✅ Google Drive API initialized (direct fetch)');
                     return true;
                 } catch (error) {
                     console.error('❌ Failed to initialize Google Drive API:', error);
@@ -757,7 +758,7 @@
                 }
             }
 
-            // Scan folder for images
+            // Direct fetch implementation for scanning folder
             async scanFolderForImages(forceRefresh = false) {
                 if (!forceRefresh && this.loadCacheFromStorage()) {
                     console.log('🚀 Using cached image data, skipping scan');
@@ -777,19 +778,29 @@
                 }
             }
 
+            // Direct fetch without gapi library
             async fetchImagesFromFolder(pageToken = null) {
                 try {
-                    const response = await gapi.client.drive.files.list({
-                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
-                        fields: 'nextPageToken, files(id, name, mimeType, parents, webViewLink, thumbnailLink)',
-                        pageSize: 100,
-                        pageToken: pageToken
-                    });
-
-                    let files = response.result.files || [];
+                    const query = `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`;
+                    const fields = 'nextPageToken,files(id,name,mimeType,parents,webViewLink,thumbnailLink)';
                     
-                    if (response.result.nextPageToken) {
-                        const nextPageFiles = await this.fetchImagesFromFolder(response.result.nextPageToken);
+                    let url = `${this.baseUrl}/files?key=${this.apiKey}&q=${encodeURIComponent(query)}&fields=${encodeURIComponent(fields)}&pageSize=100`;
+                    
+                    if (pageToken) {
+                        url += `&pageToken=${pageToken}`;
+                    }
+
+                    const response = await fetch(url);
+                    
+                    if (!response.ok) {
+                        throw new Error(`Failed to fetch files: ${response.status} ${response.statusText}`);
+                    }
+                    
+                    const data = await response.json();
+                    let files = data.files || [];
+                    
+                    if (data.nextPageToken) {
+                        const nextPageFiles = await this.fetchImagesFromFolder(data.nextPageToken);
                         files = files.concat(nextPageFiles);
                     }
                     
