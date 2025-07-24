@@ -291,14 +291,35 @@
                 align-items: flex-start;
             }
             
-            /* Products Grid */
+            /* Products Grid - Flexible Layout Options */
             .products-grid {
                 display: grid;
-                grid-template-columns: repeat(2, 1fr);
-                grid-template-rows: repeat(4, 1fr);
-                gap: 4mm;
+                grid-template-columns: repeat(var(--grid-columns, 2), 1fr);
+                grid-template-rows: repeat(var(--grid-rows, 4), 1fr);
+                gap: var(--grid-gap, 4mm);
                 width: 100%;
                 height: 100%;
+            }
+            
+            /* Compact layout option */
+            .products-grid.compact {
+                --grid-columns: 3;
+                --grid-rows: 4;
+                --grid-gap: 3mm;
+            }
+            
+            /* Dense layout option */
+            .products-grid.dense {
+                --grid-columns: 2;
+                --grid-rows: 5;
+                --grid-gap: 3mm;
+            }
+            
+            /* Ultra-compact layout option */
+            .products-grid.ultra-compact {
+                --grid-columns: 3;
+                --grid-rows: 5;
+                --grid-gap: 2.5mm;
             }
             
             /* Product Card - High-End Retail Style */
@@ -406,10 +427,10 @@
             .spec-item {
                 font-size: 5.5pt;
                 color: #333;
-                margin-bottom: 0.8mm;
+                margin-bottom: 0.3mm;
                 display: flex;
                 align-items: baseline;
-                line-height: 1.1;
+                line-height: 1.0;
             }
             
             .spec-item:last-child {
@@ -664,6 +685,40 @@
             </button>
         </div>
         
+        <div id="layoutOptions" class="category-section" style="display: none;">
+            <h3>Page Layout Options:</h3>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
+                <label class="category-item" style="border: 2px solid #ddd; border-radius: 8px; padding: 12px;">
+                    <input type="radio" name="layout" value="standard" checked>
+                    <div>
+                        <strong>Standard</strong><br>
+                        <small>2×4 = 8 products/page</small>
+                    </div>
+                </label>
+                <label class="category-item" style="border: 2px solid #ddd; border-radius: 8px; padding: 12px;">
+                    <input type="radio" name="layout" value="compact">
+                    <div>
+                        <strong>Compact</strong><br>
+                        <small>3×4 = 12 products/page</small>
+                    </div>
+                </label>
+                <label class="category-item" style="border: 2px solid #ddd; border-radius: 8px; padding: 12px;">
+                    <input type="radio" name="layout" value="dense">
+                    <div>
+                        <strong>Dense</strong><br>
+                        <small>2×5 = 10 products/page</small>
+                    </div>
+                </label>
+                <label class="category-item" style="border: 2px solid #ddd; border-radius: 8px; padding: 12px;">
+                    <input type="radio" name="layout" value="ultra-compact">
+                    <div>
+                        <strong>Ultra Compact</strong><br>
+                        <small>3×5 = 15 products/page</small>
+                    </div>
+                </label>
+            </div>
+        </div>
+        
         <div class="status-box" id="status">
             Ready to load catalog data...
         </div>
@@ -832,7 +887,7 @@
             async fetchImagesFromFolder(pageToken = null) {
                 try {
                     const response = await gapi.client.drive.files.list({
-                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
+                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/jpg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp' or mimeType contains 'image/bmp' or mimeType contains 'image/tiff')`,
                         fields: 'nextPageToken, files(id, name, mimeType, parents, webViewLink, thumbnailLink)',
                         pageSize: 100,
                         pageToken: pageToken
@@ -875,21 +930,25 @@
 
             extractProductCodes(filename) {
                 const codes = [];
-                const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
+                const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp|bmp|tiff)$/i, '');
                 
-                // Find numeric codes
+                console.log(`🔍 Extracting codes from: ${filename}`);
+                
+                // Find numeric codes (4-6 digits)
                 const numericCodes = nameWithoutExt.match(/\b\d{4,6}\b/g);
                 if (numericCodes) {
                     codes.push(...numericCodes);
+                    console.log(`📊 Found numeric codes: ${numericCodes.join(', ')}`);
                 }
                 
                 // Find alphanumeric codes
                 const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{4,8}\b/gi);
                 if (alphanumericCodes) {
                     codes.push(...alphanumericCodes.map(code => code.toLowerCase()));
+                    console.log(`🔤 Found alphanumeric codes: ${alphanumericCodes.join(', ')}`);
                 }
                 
-                // Split by delimiters
+                // Split by delimiters and check each part
                 const parts = nameWithoutExt.split(/[-_\s\.]+/);
                 parts.forEach(part => {
                     const cleanPart = part.trim();
@@ -898,7 +957,22 @@
                     }
                 });
                 
-                return [...new Set(codes)];
+                // Try to extract SKU patterns like "SKU123456" or "PRODUCT123"
+                const skuPatterns = nameWithoutExt.match(/(?:sku|product|item|code)[-_\s]*(\d{4,6})/gi);
+                if (skuPatterns) {
+                    skuPatterns.forEach(pattern => {
+                        const match = pattern.match(/(\d{4,6})/);
+                        if (match) {
+                            codes.push(match[1]);
+                            console.log(`🏷️ Found SKU pattern: ${match[1]} from ${pattern}`);
+                        }
+                    });
+                }
+                
+                const uniqueCodes = [...new Set(codes)];
+                console.log(`✅ Final codes for ${filename}: ${uniqueCodes.join(', ')}`);
+                
+                return uniqueCodes;
             }
 
             getDirectImageUrl(fileId) {
@@ -983,8 +1057,9 @@
                 // Get categories
                 categories = [...new Set(allProducts.map(p => p.category))].sort();
                 
-                // Show categories
+                // Show categories and layout options
                 showCategories();
+                document.getElementById('layoutOptions').style.display = 'block';
                 
                 document.getElementById('imageBtn').disabled = false;
                 document.getElementById('generateBtn').disabled = false;
@@ -1118,6 +1193,10 @@
                 return;
             }
             
+            // Get selected layout
+            const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
+            const layoutConfig = getLayoutConfig(selectedLayout);
+            
             const filteredProducts = allProducts.filter(p => selectedCats.includes(p.category));
             
             // Sort by category then description
@@ -1142,14 +1221,14 @@
                 grouped[p.category].push(p);
             });
             
-            // Create product pages
+            // Create product pages with selected layout
             let pageNum = 2;
             Object.entries(grouped).forEach(([category, products]) => {
                 // Each category starts on a new page
-                for (let i = 0; i < products.length; i += 8) {
-                    const pageProducts = products.slice(i, i + 8);
+                for (let i = 0; i < products.length; i += layoutConfig.productsPerPage) {
+                    const pageProducts = products.slice(i, i + layoutConfig.productsPerPage);
                     const showCategoryHeader = i === 0;
-                    printContent.appendChild(createProductPage(pageProducts, category, showCategoryHeader, pageNum++));
+                    printContent.appendChild(createProductPage(pageProducts, category, showCategoryHeader, pageNum++, layoutConfig));
                 }
             });
             
@@ -1161,7 +1240,7 @@
             
             document.getElementById('printBtn').disabled = false;
             
-            // Update status with image information
+            // Update status with image and layout information
             let imageInfo = '';
             if (driveImageManager) {
                 const stats = driveImageManager.getStats();
@@ -1174,10 +1253,20 @@
             }
             
             document.getElementById('status').innerHTML = 
-                `✅ <strong>Generated ${totalPages} pages with ${filteredProducts.length} products${imageInfo}</strong>`;
+                `✅ <strong>Generated ${totalPages} pages with ${filteredProducts.length} products${imageInfo} using ${selectedLayout} layout</strong>`;
             
             // Scroll to preview
             printContent.scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function getLayoutConfig(layout) {
+            const configs = {
+                'standard': { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 },
+                'compact': { productsPerPage: 12, gridClass: 'compact', columns: 3, rows: 4 },
+                'dense': { productsPerPage: 10, gridClass: 'dense', columns: 2, rows: 5 },
+                'ultra-compact': { productsPerPage: 15, gridClass: 'ultra-compact', columns: 3, rows: 5 }
+            };
+            return configs[layout] || configs['standard'];
         }
         
         function createHeaderPage() {
@@ -1246,7 +1335,7 @@
             return page;
         }
         
-        function createProductPage(products, category, showHeader, pageNum) {
+        function createProductPage(products, category, showHeader, pageNum, layoutConfig = { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 }) {
             const page = document.createElement('div');
             page.className = 'page';
             
@@ -1268,10 +1357,10 @@
                 contentHTML += `<div class="category-header">${category}</div>`;
             }
             
-            contentHTML += '<div class="products-container"><div class="products-grid">';
+            contentHTML += `<div class="products-container"><div class="products-grid ${layoutConfig.gridClass}">`;
             
-            // Always create exactly 8 slots
-            for (let i = 0; i < 8; i++) {
+            // Create slots for the selected layout
+            for (let i = 0; i < layoutConfig.productsPerPage; i++) {
                 if (i < products.length) {
                     contentHTML += createProductCard(products[i]);
                 } else {
