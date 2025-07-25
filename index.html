@@ -65,7 +65,7 @@
         }
 
         .search-section {
-            max-width: 900px;
+            max-width: 1200px;
             margin: 40px auto;
             background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
             padding: 40px;
@@ -121,6 +121,7 @@
             font-weight: 600;
             cursor: pointer;
             transition: all 0.3s ease;
+            font-size: 14px;
         }
 
         .btn:hover {
@@ -128,6 +129,97 @@
             color: white;
             transform: translateY(-2px);
             box-shadow: 0 6px 20px rgba(0, 107, 107, 0.2);
+        }
+
+        .page-navigation {
+            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+            border: 2px solid #cbd5e1;
+            border-radius: 16px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .page-nav-title {
+            font-size: 24px;
+            font-weight: 800;
+            color: #1e293b;
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .page-nav-subtitle {
+            font-size: 16px;
+            color: #64748b;
+            margin-bottom: 25px;
+            line-height: 1.5;
+        }
+
+        .page-buttons {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        .page-btn {
+            background: linear-gradient(135deg, #ffffff 0%, #f8fafc 100%);
+            border: 2px solid #e2e8f0;
+            padding: 20px 15px;
+            border-radius: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-size: 14px;
+            letter-spacing: 0.5px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-btn::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(0, 107, 107, 0.1), transparent);
+            transition: left 0.5s;
+        }
+
+        .page-btn:hover::before {
+            left: 100%;
+        }
+
+        .page-btn.active {
+            background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%);
+            color: white;
+            border-color: #2196f3;
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(33, 150, 243, 0.3);
+        }
+
+        .page-btn:hover:not(.active) {
+            background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%);
+            color: white;
+            border-color: #006b6b;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 107, 107, 0.2);
+        }
+
+        .page-btn .page-number {
+            display: block;
+            font-size: 18px;
+            margin-bottom: 5px;
+        }
+
+        .page-btn .product-count {
+            display: block;
+            font-size: 12px;
+            opacity: 0.8;
         }
 
         .category-btn {
@@ -152,6 +244,71 @@
             box-shadow: 0 6px 20px rgba(204, 0, 0, 0.3);
         }
 
+        .mode-toggle {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #e5e7eb;
+            border-radius: 16px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: center;
+        }
+
+        .mode-toggle h3 {
+            font-size: 20px;
+            color: #1e293b;
+            margin-bottom: 15px;
+            font-weight: 800;
+        }
+
+        .toggle-container {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .toggle-switch {
+            position: relative;
+            width: 60px;
+            height: 30px;
+            background: #e5e7eb;
+            border-radius: 15px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-switch.active {
+            background: #2196f3;
+        }
+
+        .toggle-switch::before {
+            content: '';
+            position: absolute;
+            top: 3px;
+            left: 3px;
+            width: 24px;
+            height: 24px;
+            background: white;
+            border-radius: 12px;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .toggle-switch.active::before {
+            transform: translateX(30px);
+        }
+
+        .toggle-label {
+            font-weight: 600;
+            color: #64748b;
+            transition: all 0.3s ease;
+        }
+
+        .toggle-label.active {
+            color: #2196f3;
+            font-weight: 800;
+        }
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
@@ -265,6 +422,21 @@
             z-index: 10;
         }
 
+        .excel-page-badge {
+            position: absolute;
+            top: 12px;
+            right: 12px;
+            background: linear-gradient(45deg, #2196f3, #1976d2);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            box-shadow: 0 4px 12px rgba(33, 150, 243, 0.3);
+            z-index: 10;
+        }
+
         .product-content {
             padding: 24px;
             position: relative;
@@ -312,25 +484,6 @@
             color: #cc0000;
             margin-bottom: 4px;
             letter-spacing: -0.5px;
-        }
-
-        .price-original {
-            font-size: 14px;
-            color: #999;
-            text-decoration: line-through;
-            margin-bottom: 8px;
-        }
-
-        .savings {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white;
-            padding: 6px 12px;
-            border-radius: 20px;
-            font-size: 12px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.3px;
-            display: inline-block;
         }
 
         .view-btn {
@@ -386,47 +539,6 @@
             60% { transform: translateY(-15px); }
         }
 
-        .footer {
-            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
-            color: white;
-            padding: 60px 20px;
-            text-align: center;
-            margin-top: 60px;
-            position: relative;
-        }
-
-        .footer::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            height: 4px;
-            background: linear-gradient(90deg, #006b6b 0%, #cc0000 50%, #006b6b 100%);
-        }
-
-        .footer h3 {
-            font-size: 2rem;
-            margin-bottom: 20px;
-        }
-
-        .contact-info {
-            background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%);
-            padding: 30px;
-            border-radius: 16px;
-            margin: 20px auto;
-            max-width: 400px;
-            box-shadow: 0 20px 40px rgba(0, 107, 107, 0.3);
-        }
-
-        .phone {
-            font-size: 2rem;
-            font-weight: 900;
-            color: #fbbf24;
-            margin: 10px 0;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
         .status-indicator {
             position: fixed;
             top: 20px;
@@ -449,21 +561,18 @@
             background: rgba(239, 68, 68, 0.9);
         }
 
+        @keyframes loadingBar {
+            0% { width: 0%; }
+            50% { width: 70%; }
+            100% { width: 100%; }
+        }
+
         @media (max-width: 768px) {
-            .header-title {
-                font-size: 2rem;
-            }
-            
-            .products-grid {
-                grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-                gap: 20px;
-                padding: 10px;
-            }
-            
-            .search-section {
-                margin: 20px;
-                padding: 20px;
-            }
+            .header-title { font-size: 2rem; }
+            .products-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 20px; padding: 10px; }
+            .search-section { margin: 20px; padding: 20px; }
+            .page-buttons { grid-template-columns: repeat(auto-fit, minmax(120px, 1fr)); gap: 10px; }
+            .page-btn { padding: 15px 10px; font-size: 12px; }
         }
     </style>
 </head>
@@ -506,13 +615,43 @@
                 <option value="name">📝 Sort by Name</option>
                 <option value="price">💰 Sort by Price</option>
                 <option value="category">🏷️ Sort by Category</option>
+                <option value="excel-page">📄 Sort by Page</option>
             </select>
             <button id="sortOrderBtn" class="btn">↑ A-Z</button>
             <button id="refreshBtn" class="btn">🔄 Refresh Images</button>
             <button id="imageStatusBtn" class="btn">📸 Image Status</button>
         </div>
+
+        <!-- Mode Toggle -->
+        <div class="mode-toggle">
+            <h3>📋 Browse Mode</h3>
+            <p style="color: #64748b; margin-bottom: 15px; font-size: 14px;">
+                Choose how you want to explore our July 2025 promotional catalog
+            </p>
+            <div class="toggle-container">
+                <span class="toggle-label active" id="categoryModeLabel">Category View</span>
+                <div class="toggle-switch" id="modeToggle" onclick="toggleBrowseMode()"></div>
+                <span class="toggle-label" id="pageModeLabel">Excel Page View</span>
+            </div>
+            <p style="color: #64748b; font-size: 12px; margin-top: 10px;" id="modeDescription">
+                Browse products organized by categories
+            </p>
+        </div>
         
-        <div style="text-align: center; margin: 30px 0;">
+        <!-- Excel Page Navigation -->
+        <div id="pageNavigation" class="page-navigation" style="display: none;">
+            <div class="page-nav-title">📄 Excel Page Navigation</div>
+            <div class="page-nav-subtitle">
+                Products are organized exactly as they appear in our Excel catalog.<br>
+                Each page contains approximately 24 promotional items.
+            </div>
+            <div class="page-buttons" id="pageButtons">
+                <!-- Page buttons will be populated here -->
+            </div>
+        </div>
+        
+        <!-- Category Buttons -->
+        <div style="text-align: center; margin: 30px 0;" id="categorySection">
             <div id="categoryButtons">
                 <!-- Categories will be populated here -->
             </div>
@@ -523,6 +662,7 @@
                 🔥 <span id="filteredCount">0</span> promotional deals found!
             </p>
             <p style="font-size: 14px; color: #666;" id="imageLoadingStatus">📸 Loading product images...</p>
+            <p style="font-size: 14px; color: #2196f3; margin-top: 5px;" id="currentViewMode">Category browsing mode</p>
         </div>
     </div>
 
@@ -547,14 +687,6 @@
             Show All Products
         </button>
     </div>
-
-    <style>
-        @keyframes loadingBar {
-            0% { width: 0%; }
-            50% { width: 70%; }
-            100% { width: 100%; }
-        }
-    </style>
     <!-- Footer -->
     <footer class="footer">
         <h3>🎉 Don't Miss Out on These July 2025 Deals! 🎉</h3>
@@ -600,10 +732,10 @@
                     </div>
                 </div>
                 
-                <div class="contact-info">
+                <div style="background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%); color: white; padding: 30px; border-radius: 16px; text-align: center; box-shadow: 0 20px 40px rgba(0, 107, 107, 0.3);">
                     <div style="font-size: 3rem; margin-bottom: 15px;">📞</div>
                     <h4 style="font-weight: 700; margin-bottom: 10px;">Call Us Today!</h4>
-                    <div class="phone">+27 31 332 7192</div>
+                    <div style="font-size: 2rem; font-weight: 900; color: #fbbf24; margin: 10px 0; text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);">+27 31 332 7192</div>
                     <p style="font-size: 14px; margin-top: 15px; opacity: 0.9;">
                         Monday - Friday: 8:00 AM - 5:00 PM<br>
                         Saturday: 8:00 AM - 1:00 PM
@@ -620,8 +752,9 @@
             </div>
         </div>
     </footer>
+
     <script>
-        // Enhanced Fast Google Drive Image Manager with Better SKU Matching
+        // Enhanced Fast Google Drive Image Manager with Excel Page Support
         class FastGoogleDriveImageManager {
             constructor() {
                 this.imageCache = new Map();
@@ -629,7 +762,6 @@
                 this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
                 this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
                 this.loadingPromise = null;
-                this.imageLoadingQueue = [];
             }
 
             async initialize() {
@@ -644,7 +776,6 @@
                 try {
                     showStatus('🔄 Connecting to Google Drive...', 'loading');
                     
-                    // Initialize Google API
                     await new Promise((resolve, reject) => {
                         if (typeof gapi === 'undefined') {
                             reject(new Error('Google API not loaded'));
@@ -665,9 +796,7 @@
                     this.isInitialized = true;
                     showStatus('✅ Connected to Google Drive', 'success');
                     
-                    // Start loading images immediately
                     this.loadImages();
-                    
                     return true;
                 } catch (error) {
                     console.error('Failed to initialize Google Drive API:', error);
@@ -682,16 +811,10 @@
                     
                     const images = await this.fetchAllImages();
                     this.buildImageMapping(images);
-                    
-                    // Update all existing product images
                     this.updateAllProductImages();
                     
-                    showStatus(`✅ Loaded ${this.imageCache.size} product images`, 'success');
-                    
-                    // Hide status after 3 seconds
-                    setTimeout(() => {
-                        hideStatus();
-                    }, 3000);
+                    showStatus('✅ Loaded ' + this.imageCache.size + ' product images', 'success');
+                    setTimeout(() => hideStatus(), 3000);
                     
                 } catch (error) {
                     console.error('Error loading images:', error);
@@ -706,14 +829,14 @@
                 do {
                     try {
                         const response = await gapi.client.drive.files.list({
-                            q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
+                            q: "'" + this.folderId + "' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')",
                             fields: 'nextPageToken, files(id, name)',
                             pageSize: 1000,
                             pageToken: pageToken
                         });
 
                         const files = response.result.files || [];
-                        allFiles.push(...files);
+                        allFiles.push.apply(allFiles, files);
                         pageToken = response.result.nextPageToken;
                         
                     } catch (error) {
@@ -727,45 +850,43 @@
 
             buildImageMapping(images) {
                 this.imageCache.clear();
+                var self = this;
                 
-                images.forEach(image => {
-                    const codes = this.extractProductCodes(image.name);
-                    codes.forEach(code => {
-                        if (!this.imageCache.has(code)) {
-                            this.imageCache.set(code, {
+                images.forEach(function(image) {
+                    const codes = self.extractProductCodes(image.name);
+                    codes.forEach(function(code) {
+                        if (!self.imageCache.has(code)) {
+                            self.imageCache.set(code, {
                                 id: image.id,
                                 name: image.name,
-                                url: `https://lh3.googleusercontent.com/d/${image.id}=w800-h800-c`
+                                url: 'https://lh3.googleusercontent.com/d/' + image.id + '=w800-h800-c'
                             });
                         }
                     });
                 });
                 
-                console.log(`📸 Mapped ${this.imageCache.size} product images`);
-                console.log('Available SKUs:', Array.from(this.imageCache.keys()).slice(0, 20));
+                console.log('📸 Mapped ' + this.imageCache.size + ' product images');
             }
 
             extractProductCodes(filename) {
                 const codes = [];
                 const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp|bmp)$/i, '');
                 
-                // Enhanced pattern matching
                 const patterns = [
-                    /\b\d{4,8}\b/g,                    // 4-8 digit codes (455288, 448217, etc.)
-                    /\b[A-Z0-9]{4,10}\b/gi,           // Alphanumeric codes
-                    /[A-Z]+\d+/gi,                    // Letter+number combinations
-                    /\d+[A-Z]+/gi,                    // Number+letter combinations
-                    /\b\d{2,3}-\d{2,5}\b/g,          // Dash separated numbers (71-827)
-                    /\b[A-Z]{2,4}\d{2,6}\b/gi,       // Letter prefix with numbers
-                    /\b\d{2,6}[A-Z]{2,4}\b/gi        // Number prefix with letters
+                    /\b\d{4,8}\b/g,
+                    /\b[A-Z0-9]{4,10}\b/gi,
+                    /[A-Z]+\d+/gi,
+                    /\d+[A-Z]+/gi,
+                    /\b\d{2,3}-\d{2,5}\b/g,
+                    /\b[A-Z]{2,4}\d{2,6}\b/gi,
+                    /\b\d{2,6}[A-Z]{2,4}\b/gi
                 ];
                 
-                patterns.forEach(pattern => {
+                patterns.forEach(function(pattern) {
                     const matches = nameWithoutExt.match(pattern);
                     if (matches) {
-                        matches.forEach(match => {
+                        matches.forEach(function(match) {
                             codes.push(match.toLowerCase());
-                            // Also add without leading zeros
                             const withoutZeros = match.replace(/^0+/, '');
                             if (withoutZeros !== match) {
                                 codes.push(withoutZeros.toLowerCase());
@@ -774,18 +895,16 @@
                     }
                 });
                 
-                // Split by common delimiters and clean
                 const delimiters = /[-_\s\.(),\[\]{}]+/;
                 const parts = nameWithoutExt.split(delimiters);
-                parts.forEach(part => {
+                parts.forEach(function(part) {
                     const cleanPart = part.trim();
                     if (cleanPart.length >= 3) {
                         codes.push(cleanPart.toLowerCase());
                         
-                        // Extract numbers from mixed strings
                         const numbers = cleanPart.match(/\d+/g);
                         if (numbers) {
-                            numbers.forEach(num => {
+                            numbers.forEach(function(num) {
                                 if (num.length >= 4) {
                                     codes.push(num);
                                 }
@@ -794,103 +913,52 @@
                     }
                 });
                 
-                // Add filename without extension as potential match
                 codes.push(nameWithoutExt.toLowerCase());
                 
-                return [...new Set(codes)];
+                return codes.filter(function(value, index, self) {
+                    return self.indexOf(value) === index;
+                });
             }
 
             getImageUrl(sku) {
                 const normalizedSku = sku.toString().toLowerCase().trim();
                 
-                // Try exact match first
                 let imageData = this.imageCache.get(normalizedSku);
                 
                 if (!imageData) {
-                    // Try without leading zeros
                     const skuWithoutZeros = normalizedSku.replace(/^0+/, '');
                     imageData = this.imageCache.get(skuWithoutZeros);
                 }
                 
                 if (!imageData) {
-                    // Try partial matches - look for SKU within image codes
-                    for (const [code, data] of this.imageCache.entries()) {
+                    const cacheKeys = Array.from(this.imageCache.keys());
+                    for (let i = 0; i < cacheKeys.length; i++) {
+                        const code = cacheKeys[i];
                         if (code.includes(normalizedSku) || normalizedSku.includes(code)) {
-                            imageData = data;
-                            console.log(`📸 Found partial match: ${normalizedSku} → ${code}`);
+                            imageData = this.imageCache.get(code);
+                            console.log('📸 Found partial match: ' + normalizedSku + ' → ' + code);
                             break;
                         }
-                    }
-                }
-                
-                if (!imageData) {
-                    // Try fuzzy matching for similar codes
-                    const similarCodes = Array.from(this.imageCache.keys()).filter(code => {
-                        const similarity = this.calculateSimilarity(normalizedSku, code);
-                        return similarity > 0.7; // 70% similarity threshold
-                    });
-                    
-                    if (similarCodes.length > 0) {
-                        imageData = this.imageCache.get(similarCodes[0]);
-                        console.log(`📸 Found fuzzy match: ${normalizedSku} → ${similarCodes[0]}`);
                     }
                 }
                 
                 return imageData ? imageData.url : null;
             }
 
-            calculateSimilarity(str1, str2) {
-                const longer = str1.length > str2.length ? str1 : str2;
-                const shorter = str1.length > str2.length ? str2 : str1;
-                
-                if (longer.length === 0) return 1.0;
-                
-                const editDistance = this.levenshteinDistance(longer, shorter);
-                return (longer.length - editDistance) / longer.length;
-            }
-
-            levenshteinDistance(str1, str2) {
-                const matrix = [];
-                
-                for (let i = 0; i <= str2.length; i++) {
-                    matrix[i] = [i];
-                }
-                
-                for (let j = 0; j <= str1.length; j++) {
-                    matrix[0][j] = j;
-                }
-                
-                for (let i = 1; i <= str2.length; i++) {
-                    for (let j = 1; j <= str1.length; j++) {
-                        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
-                            matrix[i][j] = matrix[i - 1][j - 1];
-                        } else {
-                            matrix[i][j] = Math.min(
-                                matrix[i - 1][j - 1] + 1,
-                                matrix[i][j - 1] + 1,
-                                matrix[i - 1][j] + 1
-                            );
-                        }
-                    }
-                }
-                
-                return matrix[str2.length][str1.length];
-            }
-
             updateAllProductImages() {
                 const images = document.querySelectorAll('.product-image[data-sku]');
                 let updatedCount = 0;
                 let notFoundCount = 0;
+                var self = this;
                 
-                images.forEach(img => {
+                images.forEach(function(img) {
                     const sku = img.getAttribute('data-sku');
-                    const imageUrl = this.getImageUrl(sku);
+                    const imageUrl = self.getImageUrl(sku);
                     
                     if (imageUrl && img.src !== imageUrl) {
                         img.src = imageUrl;
                         img.style.display = 'block';
                         
-                        // Hide loading indicator and placeholder
                         const container = img.parentElement;
                         const loadingEl = container.querySelector('.image-loading');
                         const placeholder = container.querySelector('.image-placeholder');
@@ -901,22 +969,19 @@
                         updatedCount++;
                     } else if (!imageUrl) {
                         notFoundCount++;
-                        console.log(`📸 No image found for SKU: ${sku}`);
                         
-                        // Hide loading indicator but keep placeholder
                         const container = img.parentElement;
                         const loadingEl = container.querySelector('.image-loading');
                         if (loadingEl) loadingEl.style.display = 'none';
                     }
                 });
                 
-                console.log(`🎨 Updated ${updatedCount} product images`);
-                console.log(`⚠️ ${notFoundCount} images not found`);
+                console.log('🎨 Updated ' + updatedCount + ' product images');
+                console.log('⚠️ ' + notFoundCount + ' images not found');
                 
-                // Update status
                 const statusEl = document.getElementById('imageLoadingStatus');
                 if (statusEl) {
-                    statusEl.textContent = `📸 ${updatedCount} images loaded, ${notFoundCount} using placeholders`;
+                    statusEl.textContent = '📸 ' + updatedCount + ' images loaded, ' + notFoundCount + ' using placeholders';
                 }
             }
 
@@ -925,14 +990,16 @@
                 await this.loadImages();
             }
         }
-
         // Global variables
         let allProducts = [];
         let filteredProducts = [];
         let currentCategory = 'ALL';
+        let currentExcelPage = 'ALL';
         let sortBy = 'name';
         let sortOrder = 'asc';
         let imageManager = null;
+        let browseMode = 'category'; // 'category' or 'excel-page'
+        let excelPageData = {};
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -941,15 +1008,10 @@
 
         async function initializeApp() {
             try {
-                // Load products first (fast)
                 await loadProducts();
-                
-                // Initialize Google Drive images (background)
                 imageManager = new FastGoogleDriveImageManager();
-                imageManager.initialize(); // Don't await - let it load in background
-                
+                imageManager.initialize();
                 setupEventListeners();
-                
             } catch (error) {
                 console.error('Failed to initialize app:', error);
                 showError('Unable to load catalog. Please refresh the page.');
@@ -966,10 +1028,11 @@
 
         function debounce(func, wait) {
             let timeout;
-            return function executedFunction(...args) {
-                const later = () => {
+            return function executedFunction() {
+                const args = arguments;
+                const later = function() {
                     clearTimeout(timeout);
-                    func(...args);
+                    func.apply(this, args);
                 };
                 clearTimeout(timeout);
                 timeout = setTimeout(later, wait);
@@ -987,25 +1050,67 @@
                 
                 const arrayBuffer = await response.arrayBuffer();
                 const workbook = XLSX.read(arrayBuffer);
-                const worksheet = workbook.Sheets['Sheet1'];
-                const rawData = XLSX.utils.sheet_to_json(worksheet);
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
                 
                 console.log('📊 Raw data loaded:', rawData.length, 'rows');
                 
-                allProducts = rawData
-                    .filter(item => item.SKU && item['PRODUCT '] && item.PRICE !== undefined && item.CATEGORY)
-                    .map(item => ({
-                        sku: item.SKU.toString().trim(),
-                        description: item['PRODUCT '].toString().trim(),
-                        price: parseFloat(item.PRICE),
-                        category: item.CATEGORY.toString().trim().toUpperCase()
-                    }))
-                    .filter(product => product.price > 0);
+                // Parse Excel page organization
+                const pageData = {};
+                let currentPage = null;
+                let pageProducts = [];
+                
+                rawData.forEach(function(row, index) {
+                    if (!row || row.length === 0) return;
+                    
+                    const pageMatch = row.find(function(cell) {
+                        return cell && String(cell).toUpperCase().includes('PAGE');
+                    });
+                    
+                    if (pageMatch) {
+                        if (currentPage && pageProducts.length > 0) {
+                            pageData[currentPage] = pageProducts.slice();
+                        }
+                        
+                        currentPage = String(pageMatch).toUpperCase();
+                        pageProducts = [];
+                    }
+                    else if (row[1] && typeof row[1] === 'number' && row[2] && row[3]) {
+                        const product = {
+                            sku: String(row[1]).trim(),
+                            description: String(row[2]).trim(),
+                            price: parseFloat(row[3]) || 0,
+                            category: String(row[4] || 'UNCATEGORIZED').trim().toUpperCase(),
+                            excelPage: currentPage ? currentPage : 'PAGE 1'
+                        };
+                        
+                        if (product.price > 0 && product.description) {
+                            pageProducts.push(product);
+                        }
+                    }
+                });
+                
+                if (currentPage && pageProducts.length > 0) {
+                    pageData[currentPage] = pageProducts.slice();
+                }
+                
+                // Flatten all products
+                allProducts = [];
+                Object.keys(pageData).sort(function(a, b) {
+                    const numA = parseInt(a.replace('PAGE ', ''));
+                    const numB = parseInt(b.replace('PAGE ', ''));
+                    return numA - numB;
+                }).forEach(function(page) {
+                    allProducts.push.apply(allProducts, pageData[page]);
+                });
+                
+                excelPageData = pageData;
                 
                 console.log('✅ Processed products:', allProducts.length);
-                console.log('📦 Sample SKUs:', allProducts.slice(0, 5).map(p => p.sku));
+                console.log('📄 Excel pages found:', Object.keys(pageData).length);
                 
                 setupCategories();
+                setupExcelPages();
                 applyFilters();
                 updateCounts();
                 
@@ -1019,7 +1124,7 @@
             const categories = ['ALL'];
             const categorySet = new Set();
             
-            allProducts.forEach(product => {
+            allProducts.forEach(function(product) {
                 if (!categorySet.has(product.category)) {
                     categorySet.add(product.category);
                     categories.push(product.category);
@@ -1031,24 +1136,113 @@
             const categoryButtons = document.getElementById('categoryButtons');
             categoryButtons.innerHTML = '';
             
-            categories.forEach(category => {
+            categories.forEach(function(category) {
                 const button = document.createElement('button');
                 button.className = 'category-btn' + (category === 'ALL' ? ' active' : '');
                 button.textContent = category;
-                button.addEventListener('click', () => filterByCategory(category));
+                button.addEventListener('click', function() { filterByCategory(category); });
                 categoryButtons.appendChild(button);
             });
         }
 
-        function filterByCategory(category) {
-            currentCategory = category;
+        function setupExcelPages() {
+            const pageButtons = document.getElementById('pageButtons');
+            pageButtons.innerHTML = '';
             
-            // Update button states
-            document.querySelectorAll('.category-btn').forEach(btn => {
-                btn.className = 'category-btn' + (btn.textContent === category ? ' active' : '');
+            // Add "ALL PAGES" button
+            const allButton = document.createElement('button');
+            allButton.className = 'page-btn active';
+            allButton.innerHTML = '<span class="page-number">ALL PAGES</span><span class="product-count">' + allProducts.length + ' items</span>';
+            allButton.addEventListener('click', function() { filterByExcelPage('ALL'); });
+            pageButtons.appendChild(allButton);
+            
+            // Add individual page buttons
+            Object.keys(excelPageData).sort(function(a, b) {
+                const numA = parseInt(a.replace('PAGE ', ''));
+                const numB = parseInt(b.replace('PAGE ', ''));
+                return numA - numB;
+            }).forEach(function(page) {
+                const products = excelPageData[page];
+                const button = document.createElement('button');
+                button.className = 'page-btn';
+                button.innerHTML = '<span class="page-number">' + page + '</span><span class="product-count">' + products.length + ' items</span>';
+                button.addEventListener('click', function() { filterByExcelPage(page); });
+                pageButtons.appendChild(button);
             });
+        }
+
+        function toggleBrowseMode() {
+            const toggle = document.getElementById('modeToggle');
+            const categoryModeLabel = document.getElementById('categoryModeLabel');
+            const pageModeLabel = document.getElementById('pageModeLabel');
+            const modeDescription = document.getElementById('modeDescription');
+            const categorySection = document.getElementById('categorySection');
+            const pageNavigation = document.getElementById('pageNavigation');
+            const currentViewMode = document.getElementById('currentViewMode');
+            
+            if (browseMode === 'category') {
+                // Switch to Excel page mode
+                browseMode = 'excel-page';
+                toggle.classList.add('active');
+                categoryModeLabel.classList.remove('active');
+                pageModeLabel.classList.add('active');
+                modeDescription.textContent = 'Browse products organized by Excel pages (24 items per page)';
+                categorySection.style.display = 'none';
+                pageNavigation.style.display = 'block';
+                currentViewMode.textContent = 'Excel page browsing mode';
+                
+                // Reset to show all pages
+                currentExcelPage = 'ALL';
+                updatePageButtons();
+                
+            } else {
+                // Switch to category mode
+                browseMode = 'category';
+                toggle.classList.remove('active');
+                categoryModeLabel.classList.add('active');
+                pageModeLabel.classList.remove('active');
+                modeDescription.textContent = 'Browse products organized by categories';
+                categorySection.style.display = 'block';
+                pageNavigation.style.display = 'none';
+                currentViewMode.textContent = 'Category browsing mode';
+                
+                // Reset to show all categories
+                currentCategory = 'ALL';
+                updateCategoryButtons();
+            }
             
             applyFilters();
+        }
+
+        function filterByCategory(category) {
+            if (browseMode !== 'category') return;
+            
+            currentCategory = category;
+            updateCategoryButtons();
+            applyFilters();
+        }
+
+        function filterByExcelPage(page) {
+            if (browseMode !== 'excel-page') return;
+            
+            currentExcelPage = page;
+            updatePageButtons();
+            applyFilters();
+        }
+
+        function updateCategoryButtons() {
+            document.querySelectorAll('.category-btn').forEach(function(btn) {
+                btn.className = 'category-btn' + (btn.textContent === currentCategory ? ' active' : '');
+            });
+        }
+
+        function updatePageButtons() {
+            document.querySelectorAll('.page-btn').forEach(function(btn) {
+                const pageText = btn.querySelector('.page-number').textContent;
+                const isActive = (currentExcelPage === 'ALL' && pageText === 'ALL PAGES') || 
+                                (currentExcelPage !== 'ALL' && pageText === currentExcelPage);
+                btn.className = 'page-btn' + (isActive ? ' active' : '');
+            });
         }
 
         function filterProducts() {
@@ -1063,8 +1257,13 @@
 
         function clearFilters() {
             document.getElementById('searchInput').value = '';
-            currentCategory = 'ALL';
-            setupCategories();
+            if (browseMode === 'category') {
+                currentCategory = 'ALL';
+                updateCategoryButtons();
+            } else {
+                currentExcelPage = 'ALL';
+                updatePageButtons();
+            }
             applyFilters();
         }
 
@@ -1080,41 +1279,42 @@
         function showImageStatus() {
             if (imageManager && imageManager.imageCache.size > 0) {
                 const availableSkus = Array.from(imageManager.imageCache.keys()).slice(0, 10).join(', ');
-                alert(`📸 Image System Status:
-
-✅ Connected to Google Drive
-📦 ${imageManager.imageCache.size} product images available
-🔄 Images load automatically as you browse
-
-Sample available SKUs: ${availableSkus}...
-
-Google Drive Folder ID: ${imageManager.folderId}
-
-Images are cached for faster loading!`);
+                alert('📸 Image System Status:\n\n✅ Connected to Google Drive\n📦 ' + imageManager.imageCache.size + ' product images available\n🔄 Images load automatically as you browse\n\nSample available SKUs: ' + availableSkus + '...\n\nGoogle Drive Folder ID: ' + imageManager.folderId + '\n\nImages are cached for faster loading!');
             } else {
-                alert(`📸 Image System Status:
-
-⚠️ Not connected to Google Drive
-🔄 Attempting to connect...
-📦 Using placeholder images
-
-Please wait a moment for images to load, or click "Refresh Images" to try again.`);
+                alert('📸 Image System Status:\n\n⚠️ Not connected to Google Drive\n🔄 Attempting to connect...\n📦 Using placeholder images\n\nPlease wait a moment for images to load, or click "Refresh Images" to try again.');
             }
         }
-
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             sortBy = document.getElementById('sortBy').value;
             
-            filteredProducts = allProducts.filter(product => {
+            // Start with all products
+            filteredProducts = allProducts.slice();
+            
+            // Apply mode-specific filtering
+            if (browseMode === 'category') {
+                // Category mode filtering
+                filteredProducts = filteredProducts.filter(function(product) {
+                    const matchesCategory = currentCategory === 'ALL' || product.category === currentCategory;
+                    return matchesCategory;
+                });
+            } else {
+                // Excel page mode filtering
+                filteredProducts = filteredProducts.filter(function(product) {
+                    const matchesPage = currentExcelPage === 'ALL' || product.excelPage === currentExcelPage;
+                    return matchesPage;
+                });
+            }
+            
+            // Apply search filtering
+            filteredProducts = filteredProducts.filter(function(product) {
                 const matchesSearch = product.description.toLowerCase().includes(searchTerm) || 
                                     product.sku.toLowerCase().includes(searchTerm);
-                const matchesCategory = currentCategory === 'ALL' || product.category === currentCategory;
-                return matchesSearch && matchesCategory;
+                return matchesSearch;
             });
 
             // Sort products
-            filteredProducts.sort((a, b) => {
+            filteredProducts.sort(function(a, b) {
                 let aVal, bVal;
                 
                 switch (sortBy) {
@@ -1125,6 +1325,10 @@ Please wait a moment for images to load, or click "Refresh Images" to try again.
                     case 'category':
                         aVal = a.category;
                         bVal = b.category;
+                        break;
+                    case 'excel-page':
+                        aVal = parseInt(a.excelPage.replace('PAGE ', ''));
+                        bVal = parseInt(b.excelPage.replace('PAGE ', ''));
                         break;
                     default:
                         aVal = a.description;
@@ -1161,45 +1365,35 @@ Please wait a moment for images to load, or click "Refresh Images" to try again.
             const grid = document.createElement('div');
             grid.className = 'products-grid';
             
-            grid.innerHTML = filteredProducts.map(product => {
-                const originalPrice = (product.price * 1.2).toFixed(2);
-                const savings = (originalPrice - product.price).toFixed(2);
-                const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
-                
-                // Get image URL if available
+            grid.innerHTML = filteredProducts.map(function(product) {
                 const imageUrl = imageManager ? imageManager.getImageUrl(product.sku) : null;
                 
-                return `
-                    <div class="product-card">
-                        <div class="product-image-container">
-                            ${imageUrl ? 
-                                `<img src="${imageUrl}" alt="${product.description}" class="product-image" data-sku="${product.sku}" style="display: block;">` :
-                                `<div class="image-placeholder" style="display: block;">
-                                    <div style="font-weight: 600; font-size: 14px;">SKU: ${product.sku}</div>
-                                    <div style="font-size: 12px; margin-top: 5px;">Product Image</div>
-                                </div>
-                                <img src="" alt="${product.description}" class="product-image" data-sku="${product.sku}" style="display: none;">`
-                            }
-                            ${!imageUrl ? '<div class="image-loading">Loading image...</div>' : ''}
-                            <div class="promo-badge">PROMO</div>
-                        </div>
-                        <div class="product-content">
-                            <div class="category-badge">${product.category}</div>
-                            <div class="product-sku">SKU: ${product.sku}</div>
-                            <h3 class="product-title" onclick="showProductDetails('${product.sku}')">${product.description}</h3>
-                            
-                            <div class="price-section">
-                                <div class="price-main">R${product.price.toFixed(2)}</div>
-                                <div class="price-original">Was R${originalPrice}</div>
-                                <div class="savings">SAVE R${savings} (${savingsPercent}% OFF!)</div>
-                            </div>
-                            
-                            <button class="view-btn" onclick="showProductDetails('${product.sku}')">
-                                VIEW DETAILS
-                            </button>
-                        </div>
-                    </div>
-                `;
+                return '<div class="product-card">' +
+                    '<div class="product-image-container">' +
+                        (imageUrl ? 
+                            '<img src="' + imageUrl + '" alt="' + product.description + '" class="product-image" data-sku="' + product.sku + '" style="display: block;">' :
+                            '<div class="image-placeholder" style="display: block;">' +
+                                '<div style="font-weight: 600; font-size: 14px;">SKU: ' + product.sku + '</div>' +
+                                '<div style="font-size: 12px; margin-top: 5px;">Product Image</div>' +
+                            '</div>' +
+                            '<img src="" alt="' + product.description + '" class="product-image" data-sku="' + product.sku + '" style="display: none;">'
+                        ) +
+                        (!imageUrl ? '<div class="image-loading">Loading image...</div>' : '') +
+                        '<div class="promo-badge">PROMO</div>' +
+                        (browseMode === 'excel-page' ? '<div class="excel-page-badge">' + product.excelPage + '</div>' : '') +
+                    '</div>' +
+                    '<div class="product-content">' +
+                        '<div class="category-badge">' + product.category + '</div>' +
+                        '<div class="product-sku">SKU: ' + product.sku + '</div>' +
+                        '<h3 class="product-title" onclick="showProductDetails(\'' + product.sku + '\')">' + product.description + '</h3>' +
+                        '<div class="price-section">' +
+                            '<div class="price-main">R' + product.price.toFixed(2) + '</div>' +
+                        '</div>' +
+                        '<button class="view-btn" onclick="showProductDetails(\'' + product.sku + '\')">' +
+                            'VIEW DETAILS' +
+                        '</button>' +
+                    '</div>' +
+                '</div>';
             }).join('');
             
             container.innerHTML = '';
@@ -1207,7 +1401,7 @@ Please wait a moment for images to load, or click "Refresh Images" to try again.
             
             // Update images for newly created products
             if (imageManager && imageManager.imageCache.size > 0) {
-                setTimeout(() => imageManager.updateAllProductImages(), 200);
+                setTimeout(function() { imageManager.updateAllProductImages(); }, 200);
             }
         }
 
@@ -1215,39 +1409,31 @@ Please wait a moment for images to load, or click "Refresh Images" to try again.
             const totalProducts = allProducts.length;
             const filteredCount = filteredProducts.length;
             
-            document.getElementById('product-count').textContent = `${totalProducts} promotional items available`;
+            document.getElementById('product-count').textContent = totalProducts + ' promotional items available';
             document.getElementById('filteredCount').textContent = filteredCount;
         }
 
         function showProductDetails(sku) {
-            const product = allProducts.find(p => p.sku === sku);
+            const product = allProducts.find(function(p) { return p.sku === sku; });
             if (!product) return;
             
-            const originalPrice = (product.price * 1.2).toFixed(2);
-            const savings = (originalPrice - product.price).toFixed(2);
-            const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
+            const modeInfo = browseMode === 'excel-page' ? '\n📄 Excel Page: ' + product.excelPage : '';
             
-            alert(`🎉 JULY 2025 PROMOTIONAL DEAL 🎉
-
-📦 Product: ${product.description}
-🏷️ SKU: ${product.sku}
-📂 Category: ${product.category}
-
-💰 PROMOTIONAL PRICE: R${product.price.toFixed(2)}
-💸 Regular Price: R${originalPrice}
-🎯 YOU SAVE: R${savings} (${savingsPercent}% OFF!)
-
-⏰ Limited time July 2025 offer!
-📞 Call +27 31 332 7192 to order now!
-
-🏪 OZZ Cash & Carry
-📍 40 Mazeppa & Gull Street, Durban`);
+            alert('🎉 JULY 2025 PROMOTIONAL DEAL 🎉\n\n' +
+                '📦 Product: ' + product.description + '\n' +
+                '🏷️ SKU: ' + product.sku + '\n' +
+                '📂 Category: ' + product.category + modeInfo + '\n\n' +
+                '💰 PROMOTIONAL PRICE: R' + product.price.toFixed(2) + '\n\n' +
+                '⏰ Limited time July 2025 offer!\n' +
+                '📞 Call +27 31 332 7192 to order now!\n\n' +
+                '🏪 OZZ Cash & Carry\n' +
+                '📍 40 Mazeppa & Gull Street, Durban');
         }
 
         function showStatus(message, type) {
             const indicator = document.getElementById('statusIndicator');
             indicator.textContent = message;
-            indicator.className = `status-indicator ${type}`;
+            indicator.className = 'status-indicator ' + type;
             indicator.style.display = 'block';
         }
 
@@ -1258,25 +1444,25 @@ Please wait a moment for images to load, or click "Refresh Images" to try again.
 
         function showError(message) {
             const container = document.getElementById('productsContainer');
-            container.innerHTML = `
-                <div style="text-align: center; padding: 60px 20px; background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%); margin: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
-                    <div style="font-size: 4rem; margin-bottom: 20px;">⚠️</div>
-                    <h3 style="font-size: 2rem; margin-bottom: 15px;">Error Loading Catalog</h3>
-                    <p style="color: #666; margin: 20px 0; font-size: 18px;">${message}</p>
-                    <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 25px; margin: 25px auto; max-width: 400px;">
-                        <h4 style="color: #1e40af; margin-bottom: 15px; font-size: 18px;">📞 Contact Us</h4>
-                        <p style="color: #1d4ed8; font-size: 16px; font-weight: 600;">Call: +27 31 332 7192</p>
-                        <p style="font-size: 14px; color: #3b82f6; margin-top: 8px;">Monday-Friday: 8:00 AM - 5:00 PM</p>
-                    </div>
-                    <button onclick="location.reload()" style="background: linear-gradient(135deg, #cc0000 0%, #990000 100%); color: white; border: none; padding: 16px 32px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 20px rgba(204, 0, 0, 0.3);">
-                        🔄 Try Again
-                    </button>
-                </div>
-            `;
+            container.innerHTML = '<div style="text-align: center; padding: 60px 20px; background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%); margin: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">' +
+                '<div style="font-size: 4rem; margin-bottom: 20px;">⚠️</div>' +
+                '<h3 style="font-size: 2rem; margin-bottom: 15px;">Error Loading Catalog</h3>' +
+                '<p style="color: #666; margin: 20px 0; font-size: 18px;">' + message + '</p>' +
+                '<div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 2px solid #93c5fd; border-radius: 16px; padding: 25px; margin: 25px auto; max-width: 400px;">' +
+                    '<h4 style="color: #1e40af; margin-bottom: 15px; font-size: 18px;">📞 Contact Us</h4>' +
+                    '<p style="color: #1d4ed8; font-size: 16px; font-weight: 600;">Call: +27 31 332 7192</p>' +
+                    '<p style="font-size: 14px; color: #3b82f6; margin-top: 8px;">Monday-Friday: 8:00 AM - 5:00 PM</p>' +
+                '</div>' +
+                '<button onclick="location.reload()" style="background: linear-gradient(135deg, #cc0000 0%, #990000 100%); color: white; border: none; padding: 16px 32px; border-radius: 12px; font-weight: 700; cursor: pointer; margin-top: 20px; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 20px rgba(204, 0, 0, 0.3);">' +
+                    '🔄 Try Again' +
+                '</button>' +
+            '</div>';
         }
 
-        console.log('🎉 OZZ Cash & Carry Enhanced Fast Catalog Loaded');
+        console.log('🎉 OZZ Cash & Carry Enhanced Online Catalog with Excel Page Support Loaded');
         console.log('📸 Google Drive images will load automatically in background');
+        console.log('📄 Excel page organization available');
+        console.log('🔄 Dual browse modes: Category and Excel Page');
     </script>
 </body>
 </html>
