@@ -620,16 +620,8 @@
             </div>
         </div>
     </footer>
-    <p style="margin-top: 10px; font-size: 12px;">South Africa's premier home & kitchen products retailer</p>
-                <p style="margin-top: 15px; font-size: 11px; opacity: 0.6; border-top: 1px solid #333; padding-top: 15px;">
-                    Designed and managed by <a href="https://www.blackorchid.online" target="_blank" style="color: #fbbf24; text-decoration: none;">Black Orchid Consulting www.blackorchid.online</a>
-                </p>
-            </div>
-        </div>
-    </footer>
-
     <script>
-        // Enhanced Fast Google Drive Image Manager
+        // Enhanced Fast Google Drive Image Manager with Better SKU Matching
         class FastGoogleDriveImageManager {
             constructor() {
                 this.imageCache = new Map();
@@ -637,6 +629,7 @@
                 this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
                 this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
                 this.loadingPromise = null;
+                this.imageLoadingQueue = [];
             }
 
             async initialize() {
@@ -749,35 +742,60 @@
                 });
                 
                 console.log(`📸 Mapped ${this.imageCache.size} product images`);
+                console.log('Available SKUs:', Array.from(this.imageCache.keys()).slice(0, 20));
             }
 
             extractProductCodes(filename) {
                 const codes = [];
                 const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp|bmp)$/i, '');
                 
-                // Extract various code patterns
+                // Enhanced pattern matching
                 const patterns = [
-                    /\b\d{4,8}\b/g,           // 4-8 digit codes
-                    /\b[A-Z0-9]{4,10}\b/gi,   // Alphanumeric codes
-                    /[A-Z]+\d+/gi,            // Letter+number combinations
-                    /\d+[A-Z]+/gi             // Number+letter combinations
+                    /\b\d{4,8}\b/g,                    // 4-8 digit codes (455288, 448217, etc.)
+                    /\b[A-Z0-9]{4,10}\b/gi,           // Alphanumeric codes
+                    /[A-Z]+\d+/gi,                    // Letter+number combinations
+                    /\d+[A-Z]+/gi,                    // Number+letter combinations
+                    /\b\d{2,3}-\d{2,5}\b/g,          // Dash separated numbers (71-827)
+                    /\b[A-Z]{2,4}\d{2,6}\b/gi,       // Letter prefix with numbers
+                    /\b\d{2,6}[A-Z]{2,4}\b/gi        // Number prefix with letters
                 ];
                 
                 patterns.forEach(pattern => {
                     const matches = nameWithoutExt.match(pattern);
                     if (matches) {
-                        codes.push(...matches.map(code => code.toLowerCase()));
+                        matches.forEach(match => {
+                            codes.push(match.toLowerCase());
+                            // Also add without leading zeros
+                            const withoutZeros = match.replace(/^0+/, '');
+                            if (withoutZeros !== match) {
+                                codes.push(withoutZeros.toLowerCase());
+                            }
+                        });
                     }
                 });
                 
-                // Split by common delimiters
-                const parts = nameWithoutExt.split(/[-_\s\.(),]+/);
+                // Split by common delimiters and clean
+                const delimiters = /[-_\s\.(),\[\]{}]+/;
+                const parts = nameWithoutExt.split(delimiters);
                 parts.forEach(part => {
                     const cleanPart = part.trim();
                     if (cleanPart.length >= 3) {
                         codes.push(cleanPart.toLowerCase());
+                        
+                        // Extract numbers from mixed strings
+                        const numbers = cleanPart.match(/\d+/g);
+                        if (numbers) {
+                            numbers.forEach(num => {
+                                if (num.length >= 4) {
+                                    codes.push(num);
+                                }
+                            });
+                        }
                     }
                 });
+                
+                // Add filename without extension as potential match
+                codes.push(nameWithoutExt.toLowerCase());
                 
                 return [...new Set(codes)];
             }
@@ -788,22 +806,81 @@
                 // Try exact match first
                 let imageData = this.imageCache.get(normalizedSku);
                 
-                // Try partial matches if exact match fails
                 if (!imageData) {
+                    // Try without leading zeros
+                    const skuWithoutZeros = normalizedSku.replace(/^0+/, '');
+                    imageData = this.imageCache.get(skuWithoutZeros);
+                }
+                
+                if (!imageData) {
+                    // Try partial matches - look for SKU within image codes
                     for (const [code, data] of this.imageCache.entries()) {
                         if (code.includes(normalizedSku) || normalizedSku.includes(code)) {
                             imageData = data;
+                            console.log(`📸 Found partial match: ${normalizedSku} → ${code}`);
                             break;
                         }
+                    }
+                }
+                
+                if (!imageData) {
+                    // Try fuzzy matching for similar codes
+                    const similarCodes = Array.from(this.imageCache.keys()).filter(code => {
+                        const similarity = this.calculateSimilarity(normalizedSku, code);
+                        return similarity > 0.7; // 70% similarity threshold
+                    });
+                    
+                    if (similarCodes.length > 0) {
+                        imageData = this.imageCache.get(similarCodes[0]);
+                        console.log(`📸 Found fuzzy match: ${normalizedSku} → ${similarCodes[0]}`);
                     }
                 }
                 
                 return imageData ? imageData.url : null;
             }
 
+            calculateSimilarity(str1, str2) {
+                const longer = str1.length > str2.length ? str1 : str2;
+                const shorter = str1.length > str2.length ? str2 : str1;
+                
+                if (longer.length === 0) return 1.0;
+                
+                const editDistance = this.levenshteinDistance(longer, shorter);
+                return (longer.length - editDistance) / longer.length;
+            }
+
+            levenshteinDistance(str1, str2) {
+                const matrix = [];
+                
+                for (let i = 0; i <= str2.length; i++) {
+                    matrix[i] = [i];
+                }
+                
+                for (let j = 0; j <= str1.length; j++) {
+                    matrix[0][j] = j;
+                }
+                
+                for (let i = 1; i <= str2.length; i++) {
+                    for (let j = 1; j <= str1.length; j++) {
+                        if (str2.charAt(i - 1) === str1.charAt(j - 1)) {
+                            matrix[i][j] = matrix[i - 1][j - 1];
+                        } else {
+                            matrix[i][j] = Math.min(
+                                matrix[i - 1][j - 1] + 1,
+                                matrix[i][j - 1] + 1,
+                                matrix[i - 1][j] + 1
+                            );
+                        }
+                    }
+                }
+                
+                return matrix[str2.length][str1.length];
+            }
+
             updateAllProductImages() {
                 const images = document.querySelectorAll('.product-image[data-sku]');
                 let updatedCount = 0;
+                let notFoundCount = 0;
                 
                 images.forEach(img => {
                     const sku = img.getAttribute('data-sku');
@@ -813,22 +890,33 @@
                         img.src = imageUrl;
                         img.style.display = 'block';
                         
-                        // Hide loading indicator
-                        const loadingEl = img.parentElement.querySelector('.image-loading');
-                        if (loadingEl) {
-                            loadingEl.style.display = 'none';
-                        }
+                        // Hide loading indicator and placeholder
+                        const container = img.parentElement;
+                        const loadingEl = container.querySelector('.image-loading');
+                        const placeholder = container.querySelector('.image-placeholder');
+                        
+                        if (loadingEl) loadingEl.style.display = 'none';
+                        if (placeholder) placeholder.style.display = 'none';
                         
                         updatedCount++;
+                    } else if (!imageUrl) {
+                        notFoundCount++;
+                        console.log(`📸 No image found for SKU: ${sku}`);
+                        
+                        // Hide loading indicator but keep placeholder
+                        const container = img.parentElement;
+                        const loadingEl = container.querySelector('.image-loading');
+                        if (loadingEl) loadingEl.style.display = 'none';
                     }
                 });
                 
                 console.log(`🎨 Updated ${updatedCount} product images`);
+                console.log(`⚠️ ${notFoundCount} images not found`);
                 
                 // Update status
                 const statusEl = document.getElementById('imageLoadingStatus');
                 if (statusEl) {
-                    statusEl.textContent = `📸 ${updatedCount} images loaded, ${this.imageCache.size} total available`;
+                    statusEl.textContent = `📸 ${updatedCount} images loaded, ${notFoundCount} using placeholders`;
                 }
             }
 
@@ -915,6 +1003,7 @@
                     .filter(product => product.price > 0);
                 
                 console.log('✅ Processed products:', allProducts.length);
+                console.log('📦 Sample SKUs:', allProducts.slice(0, 5).map(p => p.sku));
                 
                 setupCategories();
                 applyFilters();
@@ -990,11 +1079,14 @@
 
         function showImageStatus() {
             if (imageManager && imageManager.imageCache.size > 0) {
+                const availableSkus = Array.from(imageManager.imageCache.keys()).slice(0, 10).join(', ');
                 alert(`📸 Image System Status:
 
 ✅ Connected to Google Drive
 📦 ${imageManager.imageCache.size} product images available
 🔄 Images load automatically as you browse
+
+Sample available SKUs: ${availableSkus}...
 
 Google Drive Folder ID: ${imageManager.folderId}
 
@@ -1082,7 +1174,7 @@ Please wait a moment for images to load, or click "Refresh Images" to try again.
                         <div class="product-image-container">
                             ${imageUrl ? 
                                 `<img src="${imageUrl}" alt="${product.description}" class="product-image" data-sku="${product.sku}" style="display: block;">` :
-                                `<div class="image-placeholder">
+                                `<div class="image-placeholder" style="display: block;">
                                     <div style="font-weight: 600; font-size: 14px;">SKU: ${product.sku}</div>
                                     <div style="font-size: 12px; margin-top: 5px;">Product Image</div>
                                 </div>
@@ -1103,7 +1195,7 @@ Please wait a moment for images to load, or click "Refresh Images" to try again.
                             </div>
                             
                             <button class="view-btn" onclick="showProductDetails('${product.sku}')">
-                                View Details
+                                VIEW DETAILS
                             </button>
                         </div>
                     </div>
@@ -1115,7 +1207,7 @@ Please wait a moment for images to load, or click "Refresh Images" to try again.
             
             // Update images for newly created products
             if (imageManager && imageManager.imageCache.size > 0) {
-                setTimeout(() => imageManager.updateAllProductImages(), 100);
+                setTimeout(() => imageManager.updateAllProductImages(), 200);
             }
         }
 
