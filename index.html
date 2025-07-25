@@ -17,379 +17,402 @@
     <meta property="og:type" content="website">
     
     <style>
-        body { visibility: hidden; } /* Prevent flash of unstyled content */
+        :root {
+            --primary-teal: #006b6b;
+            --primary-red: #cc0000;
+            --accent-dark: #1a1a1a;
+            --accent-light: #f8f9fa;
+            --border-light: #e5e7eb;
+            --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.1);
+            --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.08);
+            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        * { box-sizing: border-box; }
+
+        body { 
+            visibility: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+            background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #ffffff 50%, #f1f5f9 75%, #e2e8f0 100%);
+            min-height: 100vh; color: #1a1a1a; line-height: 1.6;
+        }
         
-        .animate-pulse {
-            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
-        }
-        @keyframes pulse {
-            0%, 100% { opacity: 1; }
-            50% { opacity: .5; }
-        }
-        .animate-spin {
-            animation: spin 1s linear infinite;
-        }
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
+        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
+        
+        .animate-spin { animation: spin 1s linear infinite; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        .animate-float { animation: float 6s ease-in-out infinite; }
+        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
+
         .product-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
-            gap: 1.5rem;
+            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+            gap: 2rem; padding: 2rem 0;
         }
+        
+        @media (max-width: 768px) {
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; padding: 1rem 0; }
+        }
+        
         @media (max-width: 640px) {
-            .product-grid {
-                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
-                gap: 1rem;
-            }
-            .product-image-container {
-                height: 180px;
-            }
-            .modal-image-container {
-                height: 300px;
-            }
+            .product-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
         }
-        @media (max-width: 480px) {
-            .product-grid {
-                grid-template-columns: 1fr 1fr;
-                gap: 0.75rem;
-            }
-            .product-image-container {
-                height: 160px;
-            }
-            .modal-image-container {
-                height: 250px;
-            }
-            .image-controls {
-                opacity: 1; /* Always show on mobile */
-            }
-            .image-control-btn {
-                width: 28px;
-                height: 28px;
-                font-size: 12px;
-            }
-        }
+
         .product-card {
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-            overflow: hidden;
-            transition: all 0.3s ease;
+            background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+            border-radius: 16px; box-shadow: var(--shadow-card); overflow: hidden;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            border: 1px solid rgba(0, 0, 0, 0.04); position: relative;
         }
-        .product-card:hover {
-            transform: translateY(-4px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-            border: 2px solid #fecaca;
+
+        .product-card::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
+            background: linear-gradient(90deg, var(--primary-teal) 0%, var(--primary-red) 50%, var(--primary-teal) 100%);
+            opacity: 0; transition: opacity 0.3s ease;
         }
+
+        .product-card:hover::before { opacity: 1; }
+        .product-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow-hover); }
+
         .product-image-container {
-            position: relative;
-            width: 100%;
-            height: 200px;
-            background: #f8fafc;
-            border: 2px solid #e5e7eb;
-            overflow: hidden;
-            border-radius: 8px 8px 0 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            min-height: 200px; /* Ensure minimum height */
+            position: relative; width: 100%; height: 240px;
+            background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+            border-bottom: 1px solid var(--border-light); overflow: hidden;
+            display: flex; align-items: center; justify-content: center;
         }
-        .product-image-container::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            z-index: 0;
-        }
+
         .product-image {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            object-position: center;
-            transition: all 0.3s ease;
-            background: white;
-            position: relative;
-            z-index: 1;
+            width: 100%; height: 100%; object-fit: cover; object-position: center;
+            transition: all 0.4s ease; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
         }
-        .product-image.contain-mode {
-            object-fit: contain;
-            padding: 8px;
-            background: #fafafa;
-        }
-        .product-image:hover {
-            transform: scale(1.05);
-        }
-        .fallback-placeholder {
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border: 2px dashed #cbd5e1;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            z-index: 2;
-        }
+
+        .product-image.contain-mode { object-fit: contain; padding: 16px; background: white; }
+        .product-image:hover { transform: scale(1.05); }
+
         .image-controls {
-            position: absolute;
-            top: 8px;
-            right: 8px;
-            display: flex;
-            gap: 4px;
-            opacity: 0;
-            transition: opacity 0.3s ease;
+            position: absolute; top: 12px; right: 12px; display: flex; gap: 8px;
+            opacity: 0; transition: opacity 0.3s ease;
         }
-        .product-card:hover .image-controls {
-            opacity: 1;
-        }
+
+        .product-card:hover .image-controls { opacity: 1; }
+
         .image-control-btn {
-            background: rgba(0, 0, 0, 0.7);
-            color: white;
-            border: none;
-            width: 32px;
-            height: 32px;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            cursor: pointer;
-            transition: all 0.2s ease;
-            font-size: 14px;
-        }
-        .image-control-btn:hover {
-            background: rgba(0, 0, 0, 0.9);
-            transform: scale(1.1);
-        }
-        .modal-image-container {
-            position: relative;
-            width: 100%;
-            height: 400px;
-            background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%);
-            border-radius: 12px;
-            overflow: hidden;
-            border: 2px solid #e5e7eb;
-        }
-        .modal-image {
-            width: 100%;
-            height: 100%;
-            object-fit: contain;
-            object-position: center;
-            background: white;
-            transition: all 0.3s ease;
-        }
-        .modal-image-controls {
-            position: absolute;
-            bottom: 12px;
-            right: 12px;
-            display: flex;
-            gap: 8px;
-        }
-        .modal-control-btn {
-            background: rgba(0, 0, 0, 0.8);
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            font-size: 12px;
-            cursor: pointer;
-            transition: all 0.2s ease;
-        }
-        .modal-control-btn:hover {
-            background: rgba(0, 0, 0, 0.95);
-        }
-        .image-loading {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #6b7280;
-            font-size: 12px;
-            text-align: center;
-        }
-        .image-error {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: #9ca3af;
-            font-size: 12px;
-            text-align: center;
-            background: rgba(255, 255, 255, 0.9);
-            padding: 8px;
-            border-radius: 4px;
-        }
-        .promo-badge {
-            position: absolute;
-            top: 8px;
-            left: 8px;
-            background: linear-gradient(45deg, #ef4444, #dc2626);
-            color: white;
-            padding: 4px 12px;
-            border-radius: 9999px;
-            font-size: 12px;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
-        }
-        .search-input {
-            width: 100%;
-            padding: 12px 16px 12px 40px;
-            border: 2px solid #fecaca;
-            border-radius: 8px;
-            font-size: 16px;
-            transition: all 0.3s ease;
-        }
-        .search-input:focus {
-            outline: none;
-            border-color: #ef4444;
-            box-shadow: 0 0 0 3px rgba(239, 68, 68, 0.1);
-        }
-        .modal {
-            display: none;
-            position: fixed;
-            z-index: 1000;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background: rgba(0, 0, 0, 0.8); color: white; border: none;
+            width: 36px; height: 36px; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center;
+            cursor: pointer; transition: all 0.3s ease; font-size: 14px;
             backdrop-filter: blur(4px);
         }
-        .modal-content {
-            background-color: white;
-            margin: 2% auto;
-            padding: 0;
-            border-radius: 12px;
-            width: 95%;
-            max-width: 700px;
-            max-height: 90vh;
-            overflow-y: auto;
-            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+
+        .image-control-btn:hover { background: rgba(0, 0, 0, 0.95); transform: scale(1.1); }
+
+        .promo-badge {
+            position: absolute; top: 12px; left: 12px;
+            background: linear-gradient(45deg, var(--primary-red), #990000);
+            color: white; padding: 6px 14px; border-radius: 20px;
+            font-size: 11px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(204, 0, 0, 0.3); z-index: 10;
         }
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-            cursor: pointer;
-            padding: 10px;
-            transition: color 0.3s ease;
+
+        .product-content { padding: 24px; position: relative; }
+
+        .product-sku {
+            font-size: 12px; color: #666; font-weight: 600;
+            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
         }
-        .close:hover {
-            color: #ef4444;
+
+        .product-title {
+            font-size: 18px; font-weight: 700; color: var(--accent-dark);
+            margin-bottom: 16px; line-height: 1.4; min-height: 50px;
+            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+            overflow: hidden; cursor: pointer; transition: color 0.3s ease;
         }
-        .loading-overlay {
-            position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 9999;
-            color: white;
+
+        .product-title:hover { color: var(--primary-teal); }
+
+        .product-price-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px; border-radius: 12px; margin-bottom: 16px;
+            border: 1px solid var(--border-light);
         }
-        .loading-step {
-            opacity: 0.5;
-            transition: opacity 0.3s ease;
+
+        .price-main {
+            font-size: 28px; font-weight: 900; color: var(--primary-red);
+            margin-bottom: 4px; letter-spacing: -0.5px;
         }
-        .loading-step.active {
-            opacity: 1;
+
+        .price-original { font-size: 14px; color: #999; text-decoration: line-through; margin-bottom: 8px; }
+
+        .savings-badge {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white; padding: 6px 12px; border-radius: 20px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.3px; display: inline-block;
         }
-        .progress-bar {
-            width: 300px;
-            height: 8px;
-            background: rgba(255,255,255,0.2);
-            border-radius: 4px;
-            overflow: hidden;
-            margin: 20px 0;
+
+        .category-badge {
+            background: linear-gradient(90deg, var(--primary-teal) 0%, #004d4d 100%);
+            color: white; padding: 8px 16px; border-radius: 20px;
+            font-size: 12px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; position: absolute; top: -12px; right: 20px;
+            box-shadow: 0 4px 12px rgba(0, 107, 107, 0.3);
         }
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(90deg, #00d4aa, #00b894);
-            width: 0%;
-            transition: width 0.5s ease;
-            border-radius: 4px;
+
+        .view-details-btn {
+            width: 100%; background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
+            color: white; border: none; padding: 14px 24px; border-radius: 12px;
+            font-size: 14px; font-weight: 700; text-transform: uppercase;
+            letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease;
+            box-shadow: 0 4px 12px rgba(0, 107, 107, 0.2);
         }
-        .image-placeholder {
-            background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 50%, #cbd5e1 100%);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            color: #64748b;
-            font-weight: bold;
-            font-size: 14px;
-            position: relative;
+
+        .view-details-btn:hover {
+            transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 107, 107, 0.3);
+            background: linear-gradient(135deg, #004d4d 0%, var(--primary-teal) 100%);
         }
-        .image-placeholder::before {
-            content: '📦';
-            position: absolute;
-            top: 20px;
-            font-size: 24px;
+
+        .search-section {
+            background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+            border-radius: 20px; box-shadow: var(--shadow-premium);
+            padding: 40px; margin-bottom: 40px;
+            border: 1px solid rgba(0, 0, 0, 0.04); position: relative; overflow: hidden;
+        }
+
+        .search-section::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--primary-teal) 0%, var(--primary-red) 50%, var(--primary-teal) 100%);
+        }
+
+        .search-input {
+            width: 100%; padding: 16px 20px 16px 50px;
+            border: 2px solid var(--border-light); border-radius: 12px; font-size: 16px;
+            transition: all 0.3s ease; background: white;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+        }
+
+        .search-input:focus {
+            outline: none; border-color: var(--primary-teal);
+            box-shadow: 0 0 0 4px rgba(0, 107, 107, 0.1); transform: translateY(-1px);
+        }
+
+        .control-btn {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid var(--border-light); color: var(--accent-dark);
+            padding: 12px 20px; border-radius: 12px; font-weight: 600;
+            transition: all 0.3s ease; cursor: pointer;
+        }
+
+        .control-btn:hover {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
+            color: white; transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 107, 107, 0.2);
+        }
+
+        .category-btn {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid var(--border-light); color: var(--accent-dark);
+            padding: 12px 24px; border-radius: 25px; font-weight: 700;
+            text-transform: uppercase; letter-spacing: 0.5px;
+            transition: all 0.3s ease; cursor: pointer; font-size: 13px;
+        }
+
+        .category-btn.active, .category-btn:hover {
+            background: linear-gradient(135deg, var(--primary-red) 0%, #990000 100%);
+            color: white; transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(204, 0, 0, 0.3);
+        }
+
+        .header-section {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 25%, var(--primary-red) 75%, #990000 100%);
+            color: white; position: relative; overflow: hidden;
+        }
+
+        .header-section::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
+            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.06)"/><circle cx="70" cy="80" r="2.5" fill="rgba(255,255,255,0.05)"/></svg>') repeat;
             opacity: 0.3;
         }
-        .logo-glow {
-            filter: drop-shadow(0 0 10px rgba(255,255,255,0.3));
+
+        .header-content { position: relative; z-index: 2; padding: 60px 0; text-align: center; }
+        .logo-glow { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4)); animation: float 6s ease-in-out infinite; }
+
+        .header-title {
+            font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; margin-bottom: 16px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); letter-spacing: -1px;
         }
+
+        .header-subtitle {
+            font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin-bottom: 24px;
+            opacity: 0.95; font-weight: 300;
+        }
+
+        .limited-offer-badge {
+            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
+            color: #92400e; padding: 16px 32px; border-radius: 50px;
+            font-size: 16px; font-weight: 800; text-transform: uppercase;
+            letter-spacing: 1px; box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4);
+            animation: pulse 2s infinite;
+        }
+
+        .modal {
+            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
+            width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(8px);
+        }
+
+        .modal-content {
+            background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+            margin: 2% auto; padding: 0; border-radius: 20px;
+            width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .modal-header {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
+            color: white; padding: 24px; border-radius: 20px 20px 0 0; position: relative;
+        }
+
+        .close {
+            color: rgba(255, 255, 255, 0.8); float: right; font-size: 32px; font-weight: bold;
+            cursor: pointer; transition: all 0.3s ease; width: 40px; height: 40px;
+            display: flex; align-items: center; justify-content: center;
+            border-radius: 50%; background: rgba(255, 255, 255, 0.1);
+        }
+
+        .close:hover { color: white; background: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
+
         .pagination {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            gap: 0.5rem;
-            margin: 2rem 0;
+            display: flex; justify-content: center; align-items: center;
+            gap: 8px; margin: 3rem 0; flex-wrap: wrap;
         }
+
         .pagination button {
-            padding: 0.5rem 1rem;
-            border: 1px solid #d1d5db;
-            background: white;
-            color: #374151;
-            border-radius: 0.5rem;
-            transition: all 0.2s;
-            font-weight: 500;
+            padding: 12px 16px; border: 2px solid var(--border-light);
+            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
+            color: var(--accent-dark); border-radius: 12px; transition: all 0.3s ease;
+            font-weight: 600; min-width: 44px;
         }
+
         .pagination button:hover:not(:disabled) {
-            background: #f3f4f6;
-            border-color: #9ca3af;
+            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
+            color: white; transform: translateY(-2px);
+            box-shadow: 0 6px 20px rgba(0, 107, 107, 0.2);
         }
+
         .pagination button.active {
-            background: #ef4444;
-            color: white;
-            border-color: #ef4444;
+            background: linear-gradient(135deg, var(--primary-red) 0%, #990000 100%);
+            color: white; border-color: var(--primary-red);
+            box-shadow: 0 4px 15px rgba(204, 0, 0, 0.3);
         }
-        .pagination button:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-        }
+
+        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
+
         .page-info {
-            background: #f3f4f6;
-            padding: 0.75rem 1.5rem;
-            border-radius: 2rem;
-            font-weight: 600;
-            color: #374151;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 12px 24px; border-radius: 25px; font-weight: 700;
+            color: var(--accent-dark); border: 2px solid var(--border-light);
+            text-transform: uppercase; letter-spacing: 0.5px; font-size: 13px;
         }
-        @media print {
-            .no-print { display: none !important; }
-            .bg-gradient-to-br { background: white !important; }
-            .shadow-lg, .shadow-md, .shadow-sm { box-shadow: none !important; }
-            .rounded-lg, .rounded-xl { border-radius: 0 !important; }
-            .product-card { border: 1px solid #ddd !important; }
+
+        .results-section {
+            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
+            border-radius: 16px; padding: 24px; margin-bottom: 32px;
+            box-shadow: var(--shadow-card); border: 1px solid rgba(0, 0, 0, 0.04);
         }
+
+        .footer-section {
+            background: linear-gradient(135deg, var(--accent-dark) 0%, #2d2d2d 100%);
+            color: white; position: relative; overflow: hidden;
+        }
+
+        .footer-section::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
+            background: linear-gradient(90deg, var(--primary-teal) 0%, var(--primary-red) 50%, var(--primary-teal) 100%);
+        }
+
+        .footer-content { position: relative; z-index: 2; padding: 80px 0; }
+
+        .feature-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 16px; padding: 32px; text-align: center; transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
+        }
+
+        .feature-card:hover {
+            transform: translateY(-8px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+        }
+
+        .location-card {
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
+            border-radius: 16px; padding: 24px; border: 1px solid rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px); transition: all 0.3s ease;
+        }
+
+        .location-card:hover {
+            transform: translateY(-4px);
+            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+        }
+
+        .contact-highlight {
+            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
+            border-radius: 16px; padding: 32px; text-align: center;
+            box-shadow: 0 20px 40px rgba(0, 107, 107, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .phone-number {
+            font-size: 2rem; font-weight: 900; color: #fbbf24;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); letter-spacing: 1px;
+        }
+
+        @media (max-width: 768px) {
+            .header-content { padding: 40px 0; }
+            .search-section { padding: 24px; margin-bottom: 24px; }
+            .product-content { padding: 16px; }
+            .footer-content { padding: 40px 0; }
+            .image-controls { opacity: 1; }
+            .image-control-btn { width: 32px; height: 32px; font-size: 12px; }
+        }
+
+        .no-results {
+            background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
+            border-radius: 20px; padding: 60px 40px; text-align: center;
+            box-shadow: var(--shadow-premium); border: 1px solid rgba(0, 0, 0, 0.04);
+        }
+
+        .loading-overlay {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-red) 100%);
+            display: flex; flex-direction: column; justify-content: center; align-items: center;
+            z-index: 9999; color: white;
+        }
+
+        .progress-bar {
+            width: 300px; height: 8px; background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px; overflow: hidden; margin: 20px 0;
+        }
+
+        .progress-fill {
+            height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b);
+            width: 0%; transition: width 0.5s ease; border-radius: 4px;
+        }
+
+        .loading-step { opacity: 0.5; transition: opacity 0.3s ease; padding: 4px 0; }
+        .loading-step.active { opacity: 1; font-weight: 600; }
+
+        @media print { .no-print { display: none !important; } }
     </style>
 </head>
-<body class="bg-gradient-to-br from-red-50 via-white to-blue-50">
+<body>
     
-    <!-- Hidden Loading Overlay (for seamless customer experience) -->
+    <!-- Hidden Loading Overlay -->
     <div id="loadingOverlay" class="loading-overlay" style="display: none;">
         <div class="text-center">
-            <div class="text-6xl mb-6">🎉</div>
+            <div class="text-6xl mb-6 animate-float">🎉</div>
             <h1 class="text-4xl font-bold mb-4">OZZ Cash & Carry</h1>
             <p class="text-xl mb-8">Loading your July 2025 promotional catalog...</p>
             
@@ -405,7 +428,6 @@
                 <div id="step5" class="loading-step">✨ Almost ready!</div>
             </div>
             
-            <!-- Loading Notice -->
             <div class="mt-8 bg-green-900 bg-opacity-30 p-4 rounded-lg text-sm max-w-md mx-auto">
                 <p>🎉 <strong>July 2025 Special Offers Loading!</strong></p>
                 <p>Premium home & kitchen products • Exclusive deals • Limited time offers</p>
@@ -415,24 +437,24 @@
     </div>
 
     <!-- Header -->
-    <header class="bg-gradient-to-r from-red-600 via-red-500 to-blue-600 text-white shadow-xl">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-            <div class="text-center">
+    <header class="header-section">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="header-content">
                 <!-- OZZ Logo -->
-                <div class="mb-6">
+                <div class="mb-8">
                     <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
                          alt="OZZ Cash & Carry" 
-                         class="h-20 md:h-24 mx-auto mb-2 logo-glow"
+                         class="h-20 md:h-28 mx-auto mb-4 logo-glow"
                          onerror="this.style.display='none';">
                 </div>
                 
-                <div class="inline-block bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-6 py-2 mb-4">
+                <div class="inline-block bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-8 py-3 mb-6">
                     <span class="text-sm font-semibold uppercase tracking-wide">OZZ Cash & Carry Promotions and Special Offers</span>
                 </div>
-                <h1 class="text-4xl md:text-6xl font-bold mb-2">🎉 JULY 2025 PROMO 🎉</h1>
-                <p class="text-xl md:text-2xl mb-4">Exclusive Deals on Premium Home & Kitchen Products</p>
-                <p class="text-lg opacity-90" id="product-count">Loading promotional catalog...</p>
-                <div class="mt-6 inline-block bg-yellow-400 text-red-800 px-8 py-3 rounded-full font-bold text-lg shadow-lg animate-pulse">
+                <h1 class="header-title">🎉 JULY 2025 PROMO 🎉</h1>
+                <p class="header-subtitle">Exclusive Deals on Premium Home & Kitchen Products</p>
+                <p class="text-lg opacity-90 mb-8" id="product-count">Loading promotional catalog...</p>
+                <div class="limited-offer-badge animate-pulse">
                     ⏰ LIMITED TIME OFFER!
                 </div>
             </div>
@@ -440,14 +462,14 @@
     </header>
 
     <!-- Search Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        <div class="bg-white rounded-xl shadow-lg p-6 mb-6 border-2 border-red-100">
-            <div class="mb-4 text-center">
-                <h2 class="text-2xl font-bold text-gray-800 mb-2">🔍 Find Your Perfect Deal!</h2>
-                <p class="text-gray-600">Search through our exclusive July promotional items</p>
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+        <div class="search-section">
+            <div class="mb-6 text-center">
+                <h2 class="text-3xl font-bold text-gray-800 mb-3">🔍 Find Your Perfect Deal!</h2>
+                <p class="text-gray-600 text-lg">Search through our exclusive July promotional items</p>
             </div>
-            <div class="max-w-md mx-auto relative mb-4">
-                <svg class="absolute left-3 top-1/2 transform -translate-y-1/2 text-red-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <div class="max-w-md mx-auto relative mb-6">
+                <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
                 </svg>
                 <input 
@@ -459,35 +481,37 @@
                 >
             </div>
             
-            <!-- Sort Controls -->
-            <div class="flex justify-center gap-4">
-                <select id="sortBy" onchange="applyFilters()" class="px-4 py-2 border-2 border-red-200 rounded-lg focus:ring-2 focus:ring-red-500 focus:border-red-500">
+            <!-- Enhanced Control Panel -->
+            <div class="flex flex-wrap justify-center gap-4">
+                <select id="sortBy" onchange="applyFilters()" class="control-btn">
                     <option value="name">Sort by Name</option>
                     <option value="price">Sort by Price</option>
                     <option value="category">Sort by Category</option>
                 </select>
-                <button onclick="toggleSortOrder()" id="sortOrderBtn" class="px-4 py-2 bg-red-100 text-red-700 rounded-lg hover:bg-red-200 transition-colors">
+                <button onclick="toggleSortOrder()" id="sortOrderBtn" class="control-btn">
                     ↑ A-Z
                 </button>
-                <button onclick="refreshImageCache()" id="refreshBtn" class="px-4 py-2 bg-blue-100 text-blue-700 rounded-lg hover:bg-blue-200 transition-colors">
+                <button onclick="refreshImageCache()" id="refreshBtn" class="control-btn">
                     🔄 Refresh Images
                 </button>
-            </div>
+                </div>
         </div>
 
         <!-- Category Filter -->
-        <div class="text-center mb-6">
-            <div class="inline-flex flex-wrap gap-2 justify-center" id="categoryButtons">
+        <div class="text-center mb-8">
+            <div class="inline-flex flex-wrap gap-3 justify-center" id="categoryButtons">
                 <!-- Categories will be populated here -->
             </div>
         </div>
 
         <!-- Results Counter and Pagination Info -->
-        <div class="mb-6 text-center">
+        <div class="results-section">
             <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <p class="text-xl text-gray-700" id="resultsCount">
-                    🔥 <span class="font-bold text-red-600" id="filteredCount">0</span> promotional deals found!
-                </p>
+                <div class="text-center md:text-left">
+                    <p class="text-2xl font-bold text-gray-700" id="resultsCount">
+                        🔥 <span class="text-red-600" id="filteredCount">0</span> promotional deals found!
+                    </p>
+                </div>
                 <div class="page-info" id="pageInfo">
                     Page 1 of 1 • Showing 1-20 of 0 products
                 </div>
@@ -497,12 +521,12 @@
         <!-- Products Grid -->
         <div id="productsGrid">
             <!-- Initial loading message -->
-            <div class="text-center py-16">
-                <div class="text-4xl mb-4">🎉</div>
-                <p class="text-xl text-gray-700 mb-2">Loading promotional deals...</p>
-                <p class="text-gray-500">July 2025 special offers coming right up!</p>
-                <div class="animate-pulse mt-4">
-                    <div class="w-16 h-2 bg-red-200 rounded mx-auto"></div>
+            <div class="text-center py-20">
+                <div class="text-6xl mb-6 animate-float">🎉</div>
+                <p class="text-2xl text-gray-700 mb-4 font-semibold">Loading promotional deals...</p>
+                <p class="text-gray-500 text-lg">July 2025 special offers coming right up!</p>
+                <div class="animate-pulse mt-6">
+                    <div class="w-20 h-3 bg-gradient-to-r from-teal-200 to-red-200 rounded mx-auto"></div>
                 </div>
             </div>
         </div>
@@ -513,66 +537,71 @@
         </div>
 
         <!-- No Results Message -->
-        <div id="noResults" class="text-center py-16 bg-white rounded-xl shadow-lg hidden">
-            <div class="text-6xl mb-4">🔍</div>
-            <p class="text-gray-500 text-xl mb-2">No promotional deals found matching your search.</p>
-            <p class="text-gray-400">Try adjusting your search terms or browse all categories!</p>
-            <button onclick="clearFilters()" class="mt-4 bg-red-600 text-white px-6 py-3 rounded-lg hover:bg-red-700 transition-colors">
+        <div id="noResults" class="no-results hidden">
+            <div class="text-8xl mb-6">🔍</div>
+            <p class="text-gray-500 text-2xl mb-4 font-semibold">No promotional deals found matching your search.</p>
+            <p class="text-gray-400 text-lg mb-8">Try adjusting your search terms or browse all categories!</p>
+            <button onclick="clearFilters()" class="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-full font-bold text-lg hover:from-red-700 hover:to-red-800 transition-all transform hover:scale-105 shadow-lg">
                 Show All Products
             </button>
         </div>
     </div>
 
-    <!-- Product Modal -->
+    <!-- Enhanced Product Modal -->
     <div id="productModal" class="modal">
         <div class="modal-content">
-            <div class="p-6">
+            <div class="modal-header">
                 <span class="close" onclick="closeModal()">&times;</span>
-                <div id="modalContent">
-                    <!-- Product details will be loaded here -->
-                </div>
+                <h2 class="text-2xl font-bold">Product Details</h2>
+            </div>
+            <div class="p-8" id="modalContent">
+                <!-- Product details will be loaded here -->
             </div>
         </div>
     </div>
 
-    <!-- Footer -->
-    <footer class="bg-gradient-to-r from-gray-800 to-gray-900 text-white py-12 mt-16">
+    <!-- Enhanced Footer -->
+    <footer class="footer-section">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center">
-                <h3 class="text-2xl font-bold mb-4">🎉 Don't Miss Out on These July 2025 Deals! 🎉</h3>
-                <p class="text-lg mb-6">Limited time promotional pricing on premium home & kitchen products</p>
-                <div class="grid md:grid-cols-3 gap-6 text-sm mb-8">
-                    <div class="bg-white bg-opacity-10 rounded-lg p-6 hover:bg-opacity-20 transition-all">
-                        <div class="text-3xl mb-3">🚚</div>
-                        <h4 class="font-semibold mb-2 text-lg">Fast Delivery</h4>
-                        <p>Quick shipping on all promotional items across South Africa</p>
+            <div class="footer-content">
+                <div class="text-center mb-12">
+                    <h3 class="text-4xl font-bold mb-6">🎉 Don't Miss Out on These July 2025 Deals! 🎉</h3>
+                    <p class="text-xl mb-8 opacity-90">Limited time promotional pricing on premium home & kitchen products</p>
+                </div>
+                
+                <div class="grid md:grid-cols-3 gap-8 mb-12">
+                    <div class="feature-card">
+                        <div class="text-5xl mb-4">🚚</div>
+                        <h4 class="font-bold text-xl mb-3">Fast Delivery</h4>
+                        <p class="opacity-90">Quick shipping on all promotional items across South Africa</p>
                     </div>
-                    <div class="bg-white bg-opacity-10 rounded-lg p-6 hover:bg-opacity-20 transition-all">
-                        <div class="text-3xl mb-3">💯</div>
-                        <h4 class="font-semibold mb-2 text-lg">Quality Guaranteed</h4>
-                        <p>Premium products at unbeatable promotional prices</p>
+                    <div class="feature-card">
+                        <div class="text-5xl mb-4">💯</div>
+                        <h4 class="font-bold text-xl mb-3">Quality Guaranteed</h4>
+                        <p class="opacity-90">Premium products at unbeatable promotional prices</p>
                     </div>
-                    <div class="bg-white bg-opacity-10 rounded-lg p-6 hover:bg-opacity-20 transition-all">
-                        <div class="text-3xl mb-3">⏰</div>
-                        <h4 class="font-semibold mb-2 text-lg">Limited Time</h4>
-                        <p>July 2025 exclusive promotional offers - don't miss out!</p>
+                    <div class="feature-card">
+                        <div class="text-5xl mb-4">⏰</div>
+                        <h4 class="font-bold text-xl mb-3">Limited Time</h4>
+                        <p class="opacity-90">July 2025 exclusive promotional offers - don't miss out!</p>
                     </div>
                 </div>
-                <div class="border-t border-gray-700 pt-8 mt-8">
-                    <div class="grid md:grid-cols-2 gap-8 mb-6">
-                        <div class="text-center md:text-left">
-                            <h4 class="text-xl font-bold text-white mb-4">Our Locations</h4>
-                            <div class="space-y-4">
-                                <div class="bg-white bg-opacity-10 rounded-lg p-4">
-                                    <h5 class="font-semibold text-lg text-yellow-300 mb-2">🏪 OZZ CASH & CARRY</h5>
+                
+                <div class="border-t border-gray-700 pt-12 mt-12">
+                    <div class="grid lg:grid-cols-3 gap-8 mb-8">
+                        <div class="lg:col-span-2">
+                            <h4 class="text-2xl font-bold text-white mb-6">Our Locations</h4>
+                            <div class="grid md:grid-cols-2 gap-6">
+                                <div class="location-card">
+                                    <h5 class="font-bold text-lg text-yellow-300 mb-3">🏪 OZZ CASH & CARRY</h5>
                                     <p class="text-sm text-gray-300 leading-relaxed">
                                         40 Mazeppa & Gull Street<br>
                                         Durban, KwaZulu-Natal 4001<br>
                                         South Africa
                                     </p>
                                 </div>
-                                <div class="bg-white bg-opacity-10 rounded-lg p-4">
-                                    <h5 class="font-semibold text-lg text-yellow-300 mb-2">🏠 IKHAYA HOMESTORE</h5>
+                                <div class="location-card">
+                                    <h5 class="font-bold text-lg text-yellow-300 mb-3">🏠 IKHAYA HOMESTORE</h5>
                                     <p class="text-sm text-gray-300 leading-relaxed">
                                         Block D, Shop 88 China City<br>
                                         Springfield Park, Durban<br>
@@ -581,33 +610,32 @@
                                 </div>
                             </div>
                         </div>
-                        <div class="text-center md:text-right">
-                            <h4 class="text-xl font-bold text-white mb-4">Contact Us</h4>
-                            <div class="bg-white bg-opacity-10 rounded-lg p-6">
-                                <div class="text-3xl mb-3">📞</div>
-                                <p class="text-lg font-semibold text-white mb-2">Call Us Today!</p>
-                                <a href="tel:+27313327192" class="text-2xl font-bold text-yellow-300 hover:text-yellow-200 transition-colors">
+                        <div>
+                            <div class="contact-highlight">
+                                <div class="text-4xl mb-4">📞</div>
+                                <p class="text-lg font-semibold mb-3">Call Us Today!</p>
+                                <a href="tel:+27313327192" class="phone-number hover:text-yellow-200 transition-colors">
                                     +27 31 332 7192
                                 </a>
-                                <p class="text-sm text-gray-300 mt-3">
+                                <p class="text-sm text-gray-300 mt-4 opacity-90">
                                     Monday - Friday: 8:00 AM - 5:00 PM<br>
                                     Saturday: 8:00 AM - 1:00 PM
                                 </p>
                             </div>
                         </div>
                     </div>
-                    <div class="text-center pt-6 border-t border-gray-700">
-                        <p class="text-sm opacity-75">© 2025 OZZ Cash & Carry. All promotional prices valid for July 2025 only.</p>
-                        <p class="text-xs opacity-50 mt-2">South Africa's premier home & kitchen products retailer</p>
-                        <p class="text-xs opacity-40 mt-3 border-t border-gray-800 pt-3">
-                            Designed and managed by <a href="https://www.blackorchid.online" target="_blank" class="hover:opacity-60 transition-opacity">Black Orchid Consulting www.blackorchid.online</a>
+                    
+                    <div class="text-center pt-8 border-t border-gray-700">
+                        <p class="text-sm opacity-75 mb-2">© 2025 OZZ Cash & Carry. All promotional prices valid for July 2025 only.</p>
+                        <p class="text-xs opacity-50 mb-4">South Africa's premier home & kitchen products retailer</p>
+                        <p class="text-xs opacity-40 border-t border-gray-800 pt-4">
+                            Designed and managed by <a href="https://www.blackorchid.online" target="_blank" class="hover:opacity-60 transition-opacity underline">Black Orchid Consulting www.blackorchid.online</a>
                         </p>
                     </div>
                 </div>
             </div>
         </div>
     </footer>
-
     <script>
         // Enhanced Google Drive Image Manager with Caching
         class DriveImageManager {
@@ -989,17 +1017,18 @@
                 position: fixed;
                 top: 20px;
                 right: 20px;
-                background: #10b981;
+                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
                 color: white;
-                padding: 12px 20px;
-                border-radius: 8px;
-                box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+                padding: 16px 24px;
+                border-radius: 12px;
+                box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
                 z-index: 1000;
                 font-size: 14px;
-                font-weight: 500;
+                font-weight: 600;
                 opacity: 0;
                 transform: translateX(100%);
-                transition: all 0.3s ease;
+                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+                border: 1px solid rgba(255, 255, 255, 0.2);
             `;
             
             notification.innerHTML = '📸 Product images loaded!';
@@ -1019,24 +1048,8 @@
                     if (notification.parentNode) {
                         notification.parentNode.removeChild(notification);
                     }
-                }, 300);
+                }, 400);
             }, 3000);
-        }
-
-        // Simple loading state (hidden from customer view)
-        function showSimpleLoading() {
-            // Add a subtle loading indicator to header if needed
-            const headerEl = document.querySelector('header h1');
-            if (headerEl) {
-                headerEl.innerHTML = '🎉 JULY 2025 PROMO 🎉 <span class="animate-pulse">📦</span>';
-            }
-        }
-
-        function hideSimpleLoading() {
-            const headerEl = document.querySelector('header h1');
-            if (headerEl) {
-                headerEl.innerHTML = '🎉 JULY 2025 PROMO 🎉';
-            }
         }
 
         async function loadProductsFromExcel() {
@@ -1111,24 +1124,37 @@
         }
 
         function generatePlaceholderSVG(sku, message = 'Loading...') {
-            // Create a simple, reliable SVG placeholder
-            const simpleSvg = `<svg width="300" height="200" xmlns="http://www.w3.org/2000/svg">
-                <rect width="300" height="200" fill="#f8fafc" stroke="#cbd5e1" stroke-width="2" rx="8"/>
-                <circle cx="150" cy="80" r="25" fill="#e5e7eb"/>
-                <text x="150" y="87" text-anchor="middle" font-family="Arial, sans-serif" font-size="18" fill="#6b7280">📦</text>
-                <text x="150" y="115" text-anchor="middle" font-family="Arial, sans-serif" font-size="14" font-weight="bold" fill="#374151">SKU: ${sku}</text>
-                <text x="150" y="135" text-anchor="middle" font-family="Arial, sans-serif" font-size="12" fill="#6b7280">${message}</text>
-                <text x="150" y="175" text-anchor="middle" font-family="Arial, sans-serif" font-size="10" fill="#9ca3af">OZZ Cash &amp; Carry</text>
+            // Create a professional, high-end placeholder
+            const placeholderSvg = `<svg width="320" height="240" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#f1f5f9;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
+                    </linearGradient>
+                    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
+                        <stop offset="0%" style="stop-color:#006b6b;stop-opacity:1" />
+                        <stop offset="50%" style="stop-color:#cc0000;stop-opacity:1" />
+                        <stop offset="100%" style="stop-color:#006b6b;stop-opacity:1" />
+                    </linearGradient>
+                </defs>
+                <rect width="320" height="240" fill="url(#bg)" rx="12"/>
+                <rect width="320" height="3" fill="url(#accent)" opacity="0.6"/>
+                <circle cx="160" cy="100" r="30" fill="#e5e7eb" opacity="0.6"/>
+                <text x="160" y="110" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#6b7280">📦</text>
+                <rect x="40" y="140" width="240" height="20" rx="10" fill="#e5e7eb" opacity="0.4"/>
+                <text x="160" y="155" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#374151">SKU: ${sku}</text>
+                <text x="160" y="180" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#6b7280">${message}</text>
+                <text x="160" y="220" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600" fill="#9ca3af" opacity="0.8">OZZ Cash &amp; Carry</text>
             </svg>`;
             
             try {
-                return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(simpleSvg)}`;
+                return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(placeholderSvg)}`;
             } catch (error) {
                 // Ultimate fallback - base64 encoded simple SVG
                 try {
-                    return `data:image/svg+xml;base64,${btoa(simpleSvg)}`;
+                    return `data:image/svg+xml;base64,${btoa(placeholderSvg)}`;
                 } catch (e) {
-                    // If all else fails, return a 1x1 transparent pixel
                     console.warn('All placeholder generation methods failed');
                     return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
                 }
@@ -1142,7 +1168,7 @@
         }
 
         function setupCategories() {
-            // Get unique categories from the actual data (no longer need to categorize manually)
+            // Get unique categories from the actual data
             const categories = ['ALL'];
             const categorySet = {};
             
@@ -1162,12 +1188,10 @@
             const categoryButtons = document.getElementById('categoryButtons');
             categoryButtons.innerHTML = categories.map(function(category) {
                 const isActive = category === 'ALL';
-                const className = 'category-btn ' + (isActive ? 
-                    'bg-red-600 text-white' : 
-                    'bg-gray-200 text-gray-700 hover:bg-red-100') + 
-                    ' px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer';
+                const className = 'category-btn ' + (isActive ? 'active' : '');
                 
-                return '<button onclick="filterByCategory(\'' + category + '\')" class="' + className + '">' + 
+                return '<button onclick
+                    return '<button onclick="filterByCategory(\'' + category + '\')" class="' + className + '">' + 
                        category + '</button>';
             }).join('');
         }
@@ -1180,9 +1204,9 @@
             for (let i = 0; i < buttons.length; i++) {
                 const btn = buttons[i];
                 if (btn.textContent.trim() === category) {
-                    btn.className = 'category-btn bg-red-600 text-white px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer';
+                    btn.className = 'category-btn active';
                 } else {
-                    btn.className = 'category-btn bg-gray-200 text-gray-700 hover:bg-red-100 px-4 py-2 rounded-full text-sm font-semibold transition-all cursor-pointer';
+                    btn.className = 'category-btn';
                 }
             }
             
@@ -1208,7 +1232,6 @@
             applyFilters();
         }
 
-        // Ensure filtering and searching work immediately
         function applyFilters() {
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             sortBy = document.getElementById('sortBy').value;
@@ -1250,7 +1273,7 @@
             });
             
             updatePagination();
-            displayProducts(); // This will show content immediately, images will update as available
+            displayProducts();
             updateCounts();
         }
 
@@ -1320,10 +1343,10 @@
             
             // Handle case where no products are loaded at all
             if (!allProducts || allProducts.length === 0) {
-                grid.innerHTML = '<div class="text-center py-16">' +
-                    '<div class="text-4xl mb-4">⚠️</div>' +
-                    '<p class="text-xl text-gray-700 mb-2">No products found</p>' +
-                    '<p class="text-gray-500">Please check the Excel file format</p>' +
+                grid.innerHTML = '<div class="text-center py-20">' +
+                    '<div class="text-6xl mb-6">⚠️</div>' +
+                    '<p class="text-2xl text-gray-700 mb-4 font-semibold">No products found</p>' +
+                    '<p class="text-gray-500 text-lg">Please check the Excel file format</p>' +
                 '</div>';
                 grid.className = '';
                 if (noResults) noResults.classList.add('hidden');
@@ -1332,13 +1355,13 @@
             
             if (filteredProducts.length === 0) {
                 grid.innerHTML = '';
-                grid.className = ''; // Remove grid class when empty
+                grid.className = '';
                 if (noResults) noResults.classList.remove('hidden');
                 return;
             }
             
             if (noResults) noResults.classList.add('hidden');
-            grid.className = 'product-grid'; // Apply grid layout
+            grid.className = 'product-grid';
             
             const startIndex = (currentPage - 1) * productsPerPage;
             const endIndex = Math.min(startIndex + productsPerPage, filteredProducts.length);
@@ -1362,54 +1385,44 @@
                     imageUrl = generatePlaceholderSVG(product.sku, 'Product Image');
                 }
                 
-                return '<div class="product-card" id="' + cardId + '">' +
-                    '<div class="product-image-container">' +
-                        '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
-                             'class="product-image" id="img-' + cardId + '" ' +
-                             'style="display: block; opacity: 1;" ' +
-                             'onload="handleImageLoad(\'' + cardId + '\')" ' +
-                             'onerror="handleImageError(\'' + cardId + '\', \'' + product.sku + '\')">' +
-                        '<div class="image-controls">' +
-                            '<button class="image-control-btn" onclick="toggleImageFit(\'' + cardId + '\')" title="Toggle image fit">' +
-                                '🔍' +
-                            '</button>' +
-                            '<button class="image-control-btn" onclick="showProductDetails(\'' + product.sku + '\')" title="View details">' +
-                                '👁️' +
-                            '</button>' +
-                        '</div>' +
-                        '<div class="promo-badge">PROMO</div>' +
-                    '</div>' +
-                    '<div class="p-4">' +
-                        '<div class="text-sm text-gray-500 mb-1">SKU: ' + product.sku + '</div>' +
-                        '<h3 class="font-semibold text-gray-900 mb-3 min-h-[3rem] leading-tight cursor-pointer hover:text-red-600 transition-colors" onclick="showProductDetails(\'' + product.sku + '\')">' + 
-                            product.description + 
-                        '</h3>' +
-                        '<div class="flex justify-between items-center mb-3">' +
-                            '<div class="flex flex-col">' +
-                                '<span class="text-2xl font-bold text-red-600">R' + product.price.toFixed(2) + '</span>' +
-                                '<span class="text-xs text-gray-400 line-through">R' + originalPrice + '</span>' +
-                            '</div>' +
-                            '<span class="text-xs bg-gradient-to-r from-blue-500 to-red-500 text-white px-3 py-1 rounded-full font-semibold">' +
-                                product.category +
-                            '</span>' +
-                        '</div>' +
-                        '<div class="text-center mb-3">' +
-                            '<span class="text-sm font-semibold text-green-600 bg-green-100 px-2 py-1 rounded-full">' +
-                                'SAVE R' + savings + ' (' + savingsPercent + '% OFF!)' +
-                            '</span>' +
-                        '</div>' +
-                        '<button onclick="showProductDetails(\'' + product.sku + '\')" class="w-full bg-gradient-to-r from-red-500 to-red-600 text-white py-2 px-4 rounded-lg hover:from-red-600 hover:to-red-700 transition-all duration-200 font-semibold text-sm shadow-lg hover:shadow-xl">' +
-                            'View Details' +
-                        '</button>' +
-                    '</div>' +
-                '</div>';
+                return `<div class="product-card" id="${cardId}">
+                    <div class="product-image-container">
+                        <img src="${imageUrl}" alt="${product.description}" 
+                             class="product-image" id="img-${cardId}" 
+                             onload="handleImageLoad('${cardId}')" 
+                             onerror="handleImageError('${cardId}', '${product.sku}')">
+                        <div class="image-controls">
+                            <button class="image-control-btn" onclick="toggleImageFit('${cardId}')" title="Toggle image fit">
+                                🔍
+                            </button>
+                            <button class="image-control-btn" onclick="showProductDetails('${product.sku}')" title="View details">
+                                👁️
+                            </button>
+                        </div>
+                        <div class="promo-badge">PROMO</div>
+                    </div>
+                    <div class="product-content">
+                        <div class="category-badge">${product.category}</div>
+                        <div class="product-sku">SKU: ${product.sku}</div>
+                        <h3 class="product-title" onclick="showProductDetails('${product.sku}')">${product.description}</h3>
+                        
+                        <div class="product-price-section">
+                            <div class="price-main">R${product.price.toFixed(2)}</div>
+                            <div class="price-original">Was R${originalPrice}</div>
+                            <div class="savings-badge">SAVE R${savings} (${savingsPercent}% OFF!)</div>
+                        </div>
+                        
+                        <button onclick="showProductDetails('${product.sku}')" class="view-details-btn">
+                            View Details
+                        </button>
+                    </div>
+                </div>`;
             }).join('');
         }
 
         function updateCounts() {
             const totalProducts = allProducts ? allProducts.length : 0;
             
-            // Customer-friendly count (no technical details)
             document.getElementById('product-count').textContent = `${totalProducts} promotional items available`;
             
             const filteredCount = filteredProducts ? filteredProducts.length : 0;
@@ -1426,7 +1439,6 @@
             }
         }
 
-        // Update individual product images as they become available
         function updateProductImages() {
             if (!imageSystemReady || !driveImageManager) {
                 console.log('🔄 Image system not ready yet, skipping update');
@@ -1435,7 +1447,6 @@
             
             console.log('🎨 Updating product images with real photos...');
             
-            // Update all visible product images
             const productImages = document.querySelectorAll('.product-image');
             let updatedCount = 0;
             
@@ -1444,7 +1455,6 @@
                     const cardId = img.id.replace('img-', '');
                     const skuFromId = cardId.replace('card-', '');
                     
-                    // Find the actual SKU from the product data
                     const product = allProducts.find(p => {
                         const normalizedSku = p.sku.replace(/[^a-zA-Z0-9]/g, '');
                         return normalizedSku === skuFromId;
@@ -1475,68 +1485,67 @@
             const imageUrl = getImageUrl(product.sku);
             
             const modalContent = document.getElementById('modalContent');
-            modalContent.innerHTML = '<div class="mb-6">' +
-                '<div class="inline-block bg-red-500 text-white px-4 py-2 rounded-full text-sm font-bold mb-3">' +
-                    '🎉 JULY 2025 PROMO' +
-                '</div>' +
-                '<h2 class="text-3xl font-bold text-gray-900">Promotional Deal</h2>' +
-            '</div>' +
-            '<div class="grid md:grid-cols-2 gap-8">' +
-                '<div class="relative">' +
-                    '<div class="modal-image-container">' +
-                        '<img src="' + imageUrl + '" alt="' + product.description + '" ' +
-                             'class="modal-image" id="modal-img-' + product.sku + '" ' +
-                             'onload="handleModalImageLoad(\'' + product.sku + '\')" ' +
-                             'onerror="handleModalImageError(\'' + product.sku + '\')">' +
-                        '<div class="image-loading" id="modal-loading-' + product.sku + '">' +
-                            '<div class="animate-spin rounded-full h-8 w-8 border-b-2 border-gray-400 mx-auto mb-2"></div>' +
-                            'Loading image...' +
-                        '</div>' +
-                        '<div class="modal-image-controls">' +
-                            '<button class="modal-control-btn" onclick="toggleModalImageFit(\'' + product.sku + '\')">' +
-                                '🔍 Toggle Fit' +
-                            '</button>' +
-                            '<button class="modal-control-btn" onclick="openImageFullscreen(\'' + imageUrl + '\')">' +
-                                '⛶ Fullscreen' +
-                            '</button>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="absolute top-3 left-3 bg-red-500 text-white px-3 py-1 rounded-full text-sm font-bold shadow-lg">' +
-                        'LIMITED TIME' +
-                    '</div>' +
-                '</div>' +
-                '<div>' +
-                    '<div class="text-sm text-gray-500 mb-2">SKU: ' + product.sku + '</div>' +
-                    '<h3 class="text-2xl font-semibold text-gray-900 mb-4 leading-tight">' + product.description + '</h3>' +
-                    '<div class="mb-6">' +
-                        '<span class="text-sm bg-gradient-to-r from-blue-500 to-red-500 text-white px-4 py-2 rounded-full font-semibold">' +
-                            product.category +
-                        '</span>' +
-                    '</div>' +
-                    '<div class="bg-gradient-to-r from-red-50 to-pink-50 p-6 rounded-xl mb-6 border-l-4 border-red-500 shadow-inner">' +
-                        '<div class="flex items-center justify-between mb-3">' +
-                            '<span class="text-sm text-gray-600 font-medium">Regular Price:</span>' +
-                            '<span class="text-xl text-gray-500 line-through">R' + originalPrice + '</span>' +
-                        '</div>' +
-                        '<div class="flex items-center justify-between mb-3">' +
-                            '<span class="text-xl font-semibold text-red-700">July Promo Price:</span>' +
-                            '<span class="text-4xl font-bold text-red-600">R' + product.price.toFixed(2) + '</span>' +
-                        '</div>' +
-                        '<div class="text-center bg-green-100 rounded-lg py-2">' +
-                            '<span class="text-lg font-bold text-green-700">' +
-                                'YOU SAVE: R' + savings + ' (' + savingsPercent + '% OFF!)' +
-                            '</span>' +
-                        '</div>' +
-                    '</div>' +
-                    '<button class="w-full bg-gradient-to-r from-red-600 to-red-700 text-white py-4 px-8 rounded-lg hover:from-red-700 hover:to-red-800 transition-all font-bold text-xl shadow-lg hover:shadow-xl transform hover:scale-105">' +
-                        '🛒 Get This Deal Now!' +
-                    '</button>' +
-                    '<div class="mt-6 text-center p-4 bg-yellow-50 rounded-lg border border-yellow-200">' +
-                        '<p class="text-sm text-yellow-800 font-medium">⏰ Limited time offer - July 2025 only!</p>' +
-                        '<p class="text-xs text-yellow-700 mt-1">Don\'t miss out on this exclusive promotional price</p>' +
-                    '</div>' +
-                '</div>' +
-            '</div>';
+            modalContent.innerHTML = `
+                <div class="grid md:grid-cols-2 gap-8">
+                    <div class="relative">
+                        <div class="modal-image-container" style="position: relative; width: 100%; height: 400px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; overflow: hidden; border: 2px solid #e5e7eb;">
+                            <img src="${imageUrl}" alt="${product.description}" 
+                                 style="width: 100%; height: 100%; object-fit: contain; object-position: center; background: white; transition: all 0.3s ease;"
+                                 id="modal-img-${product.sku}" 
+                                 onload="handleModalImageLoad('${product.sku}')" 
+                                 onerror="handleModalImageError('${product.sku}')">
+                            <div style="position: absolute; bottom: 12px; right: 12px; display: flex; gap: 8px;">
+                                <button onclick="toggleModalImageFit('${product.sku}')" style="background: rgba(0, 0, 0, 0.8); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+                                    🔍 Toggle Fit
+                                </button>
+                                <button onclick="openImageFullscreen('${imageUrl}')" style="background: rgba(0, 0, 0, 0.8); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">
+                                    ⛶ Fullscreen
+                                </button>
+                            </div>
+                        </div>
+                        <div style="position: absolute; top: 12px; left: 12px; background: linear-gradient(45deg, #cc0000, #990000); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase;">
+                            LIMITED TIME
+                        </div>
+                    </div>
+                    <div style="display: flex; flex-direction: column; justify-content: space-between;">
+                        <div>
+                            <div style="margin-bottom: 8px;">
+                                <span style="background: linear-gradient(90deg, #006b6b 0%, #004d4d 100%); color: white; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 700; text-transform: uppercase;">
+                                    ${product.category}
+                                </span>
+                            </div>
+                            <div style="font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 600;">SKU: ${product.sku}</div>
+                            <h3 style="font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 24px; line-height: 1.3;">${product.description}</h3>
+                            
+                            <div style="background: linear-gradient(135deg, #fef7f0 0%, #fed7aa 100%); padding: 24px; border-radius: 16px; margin-bottom: 24px; border-left: 4px solid #cc0000;">
+                                <div style="display: flex; items-center; justify-content: space-between; margin-bottom: 12px;">
+                                    <span style="font-size: 14px; color: #666; font-weight: 600;">Regular Price:</span>
+                                    <span style="font-size: 18px; color: #999; text-decoration: line-through;">R${originalPrice}</span>
+                                </div>
+                                <div style="display: flex; items-center; justify-content: space-between; margin-bottom: 16px;">
+                                    <span style="font-size: 20px; font-weight: 700; color: #cc0000;">July Promo Price:</span>
+                                    <span style="font-size: 32px; font-weight: 900; color: #cc0000;">R${product.price.toFixed(2)}</span>
+                                </div>
+                                <div style="text-align: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; border-radius: 12px;">
+                                    <span style="font-size: 16px; font-weight: 800;">
+                                        YOU SAVE: R${savings} (${savingsPercent}% OFF!)
+                                    </span>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div>
+                            <button style="width: 100%; background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%); color: white; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(0, 107, 107, 0.3); margin-bottom: 16px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 30px rgba(0, 107, 107, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(0, 107, 107, 0.3)'">
+                                🛒 Get This Deal Now!
+                            </button>
+                            <div style="text-align: center; padding: 16px; background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); border-radius: 12px; border: 1px solid #fbbf24;">
+                                <p style="font-size: 14px; color: #92400e; font-weight: 600; margin-bottom: 4px;">⏰ Limited time offer - July 2025 only!</p>
+                                <p style="font-size: 12px; color: #a16207;">Don't miss out on this exclusive promotional price</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
             
             document.getElementById('productModal').style.display = 'block';
             document.body.style.overflow = 'hidden';
@@ -1549,7 +1558,6 @@
 
         async function refreshImageCache() {
             if (!driveImageManager) {
-                // If image system hasn't loaded yet, just restart the background loading
                 loadImagesInBackground();
                 return;
             }
@@ -1560,7 +1568,7 @@
             
             try {
                 await driveImageManager.forceRefresh();
-                updateProductImages(); // Update existing images smoothly
+                updateProductImages();
                 updateCounts();
                 
                 refreshBtn.innerHTML = '✅ Updated!';
@@ -1578,20 +1586,19 @@
         }
 
         function showError(message) {
-            // Hide any existing content and show customer-friendly error
             const body = document.body;
             body.innerHTML = `
-                <div class="min-h-screen bg-gradient-to-br from-red-50 via-white to-blue-50 flex items-center justify-center p-4">
-                    <div class="text-center max-w-md mx-auto">
-                        <div class="text-6xl mb-6">🏪</div>
-                        <h1 class="text-2xl font-bold text-gray-900 mb-4">OZZ Cash & Carry</h1>
-                        <p class="text-lg text-gray-600 mb-6">${message}</p>
-                        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-                            <h3 class="font-semibold text-blue-900 mb-2">📞 Contact Us</h3>
-                            <p class="text-blue-700">Call: <a href="tel:+27313327192" class="font-bold hover:underline">+27 31 332 7192</a></p>
-                            <p class="text-sm text-blue-600 mt-1">Monday-Friday: 8:00 AM - 5:00 PM</p>
+                <div style="min-height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; padding: 2rem;">
+                    <div style="text-align: center; max-width: 28rem; margin: 0 auto;">
+                        <div style="font-size: 4rem; margin-bottom: 1.5rem;">🏪</div>
+                        <h1 style="font-size: 2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1rem;">OZZ Cash & Carry</h1>
+                        <p style="font-size: 1.125rem; color: #4b5563; margin-bottom: 1.5rem;">${message}</p>
+                        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 1px solid #93c5fd; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
+                            <h3 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">📞 Contact Us</h3>
+                            <p style="color: #1d4ed8;">Call: <a href="tel:+27313327192" style="font-weight: 700; text-decoration: underline; color: inherit;">+27 31 332 7192</a></p>
+                            <p style="font-size: 0.875rem; color: #3b82f6; margin-top: 0.25rem;">Monday-Friday: 8:00 AM - 5:00 PM</p>
                         </div>
-                        <button onclick="location.reload()" class="bg-red-600 text-white px-6 py-3 rounded-lg font-semibold hover:bg-red-700 transition-colors">
+                        <button onclick="location.reload()" style="background: linear-gradient(135deg, #cc0000 0%, #990000 100%); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
                             🔄 Try Again
                         </button>
                     </div>
@@ -1601,14 +1608,7 @@
 
         // Image handling functions
         function handleImageLoad(cardId) {
-            const loadingEl = document.getElementById('loading-' + cardId);
             const imgEl = document.getElementById('img-' + cardId);
-            
-            if (loadingEl) {
-                loadingEl.style.display = 'none';
-            }
-            
-            // Ensure image is visible
             if (imgEl) {
                 imgEl.style.display = 'block';
                 imgEl.style.opacity = '1';
@@ -1625,21 +1625,30 @@
                 imgEl.style.display = 'none';
             }
             
-            // Create a visible placeholder div as fallback
             if (container && !container.querySelector('.fallback-placeholder')) {
                 const placeholder = document.createElement('div');
-                placeholder.className = 'fallback-placeholder';
+                placeholder.className = 'image-placeholder';
+                placeholder.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    flex-direction: column;
+                    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+                    border-radius: 12px;
+                `;
                 placeholder.innerHTML = `
-                    <div class="text-center text-gray-500">
-                        <div class="text-3xl mb-2">📦</div>
-                        <div class="font-semibold text-sm">SKU: ${sku}</div>
-                        <div class="text-xs mt-1">Product Image</div>
-                    </div>
+                    <div style="font-size: 3rem; margin-bottom: 0.5rem; opacity: 0.4;">📦</div>
+                    <div style="font-weight: 600; font-size: 0.875rem; color: #374151;">SKU: ${sku}</div>
+                    <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Product Image</div>
                 `;
                 container.appendChild(placeholder);
             }
             
-            // Try to set a fallback image
             if (imgEl) {
                 setTimeout(() => {
                     imgEl.src = generatePlaceholderSVG(sku, 'No Image Available');
@@ -1660,26 +1669,35 @@
         }
 
         function handleModalImageLoad(sku) {
-            const loadingEl = document.getElementById('modal-loading-' + sku);
-            if (loadingEl) {
-                loadingEl.style.display = 'none';
-            }
+            // Modal image loaded successfully
         }
 
         function handleModalImageError(sku) {
             const imgEl = document.getElementById('modal-img-' + sku);
-            const loadingEl = document.getElementById('modal-loading-' + sku);
-            
-            if (loadingEl) {
-                loadingEl.innerHTML = '<div class="text-center">' +
-                    '<div class="text-4xl mb-2">📦</div>' +
-                    '<div class="font-semibold text-lg">' + sku + '</div>' +
-                    '<div class="text-sm text-gray-500">Image not available</div>' +
-                '</div>';
-            }
-            
             if (imgEl) {
                 imgEl.style.display = 'none';
+                const container = imgEl.parentElement;
+                if (container) {
+                    const placeholder = document.createElement('div');
+                    placeholder.style.cssText = `
+                        position: absolute;
+                        top: 0;
+                        left: 0;
+                        width: 100%;
+                        height: 100%;
+                        display: flex;
+                        align-items: center;
+                        justify-content: center;
+                        flex-direction: column;
+                        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
+                    `;
+                    placeholder.innerHTML = `
+                        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.4;">📦</div>
+                        <div style="font-weight: 700; font-size: 1.125rem; color: #374151;">${sku}</div>
+                        <div style="font-size: 0.875rem; color: #6b7280;">Image not available</div>
+                    `;
+                    container.appendChild(placeholder);
+                }
             }
         }
 
@@ -1697,7 +1715,6 @@
         }
 
         function openImageFullscreen(imageUrl) {
-            // Create fullscreen overlay
             const overlay = document.createElement('div');
             overlay.style.cssText = `
                 position: fixed;
@@ -1711,6 +1728,7 @@
                 align-items: center;
                 justify-content: center;
                 cursor: zoom-out;
+                backdrop-filter: blur(8px);
             `;
             
             const img = document.createElement('img');
@@ -1719,8 +1737,8 @@
                 max-width: 95%;
                 max-height: 95%;
                 object-fit: contain;
-                border-radius: 8px;
-                box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+                border-radius: 12px;
+                box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
             `;
             
             const closeBtn = document.createElement('button');
@@ -1732,19 +1750,20 @@
                 background: rgba(255, 255, 255, 0.2);
                 border: none;
                 color: white;
-                font-size: 24px;
-                width: 40px;
-                height: 40px;
+                font-size: 28px;
+                font-weight: bold;
+                width: 50px;
+                height: 50px;
                 border-radius: 50%;
                 cursor: pointer;
                 backdrop-filter: blur(4px);
+                transition: all 0.3s ease;
             `;
             
             overlay.appendChild(img);
             overlay.appendChild(closeBtn);
             document.body.appendChild(overlay);
             
-            // Close handlers
             const closeFullscreen = () => {
                 document.body.removeChild(overlay);
                 document.body.style.overflow = 'auto';
@@ -1773,7 +1792,7 @@
             }
         });
 
-        console.log('🎉 OZZ Cash & Carry Enhanced Catalog Loaded');
+        console.log('🎉 OZZ Cash & Carry Enhanced Premium Catalog Loaded');
         console.log('📊 Debug: Products should load automatically');
         console.log('🔧 If no products show, check browser console for Excel parsing errors');
     </script>
