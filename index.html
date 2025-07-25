@@ -3,1061 +3,469 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🎉 July 2025 Promotional Catalog - OZZ Cash & Carry | Premium Home & Kitchen Products</title>
-    <link rel="icon" href="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" type="image/png">
-    <link rel="shortcut icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎉</text></svg>" type="image/svg+xml">
-    
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>🎉 July 2025 Promotional Catalog - OZZ Cash & Carry</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     
-    <meta name="description" content="July 2025 Promotional Catalog - Exclusive deals on premium home & kitchen products from OZZ Cash & Carry">
-    <meta name="keywords" content="OZZ Cash & Carry, July 2025, promo, deals, kitchen, home, South Africa">
-    <meta property="og:title" content="July 2025 Promotional Catalog - OZZ Cash & Carry">
-    <meta property="og:description" content="Exclusive promotional deals on premium home & kitchen products">
-    <meta property="og:type" content="website">
-    
     <style>
-        :root {
-            --primary-teal: #006b6b;
-            --primary-red: #cc0000;
-            --accent-dark: #1a1a1a;
-            --accent-light: #f8f9fa;
-            --border-light: #e5e7eb;
-            --shadow-premium: 0 10px 30px rgba(0, 0, 0, 0.1);
-            --shadow-card: 0 4px 15px rgba(0, 0, 0, 0.08);
-            --shadow-hover: 0 20px 40px rgba(0, 0, 0, 0.15);
-        }
-
-        * { box-sizing: border-box; }
-
-        body { 
-            visibility: hidden;
-            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Helvetica Neue', Arial, sans-serif;
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif;
             background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 25%, #ffffff 50%, #f1f5f9 75%, #e2e8f0 100%);
-            min-height: 100vh; color: #1a1a1a; line-height: 1.6;
-        }
-        
-        .animate-pulse { animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite; }
-        @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: .5; } }
-        
-        .animate-spin { animation: spin 1s linear infinite; }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
-
-        .animate-float { animation: float 6s ease-in-out infinite; }
-        @keyframes float { 0%, 100% { transform: translateY(0px); } 50% { transform: translateY(-10px); } }
-
-        .product-grid {
-            display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
-            gap: 2rem; padding: 2rem 0;
-        }
-        
-        @media (max-width: 768px) {
-            .product-grid { grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1.5rem; padding: 1rem 0; }
-        }
-        
-        @media (max-width: 640px) {
-            .product-grid { grid-template-columns: repeat(auto-fill, minmax(250px, 1fr)); gap: 1rem; }
+            min-height: 100vh;
+            color: #1a1a1a;
+            line-height: 1.6;
         }
 
-        .product-card {
-            background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
-            border-radius: 16px; box-shadow: var(--shadow-card); overflow: hidden;
-            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-            border: 1px solid rgba(0, 0, 0, 0.04); position: relative;
+        .header-section {
+            background: linear-gradient(135deg, #006b6b 0%, #004d4d 25%, #cc0000 75%, #990000 100%);
+            color: white;
+            text-align: center;
+            padding: 60px 20px;
         }
 
-        .product-card::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 3px;
-            background: linear-gradient(90deg, var(--primary-teal) 0%, var(--primary-red) 50%, var(--primary-teal) 100%);
-            opacity: 0; transition: opacity 0.3s ease;
+        .logo {
+            height: 80px;
+            margin-bottom: 20px;
+            filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4));
         }
 
-        .product-card:hover::before { opacity: 1; }
-        .product-card:hover { transform: translateY(-8px) scale(1.02); box-shadow: var(--shadow-hover); }
-
-        .product-image-container {
-            position: relative; width: 100%; height: 240px;
-            background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
-            border-bottom: 1px solid var(--border-light); overflow: hidden;
-            display: flex; align-items: center; justify-content: center;
+        .header-title {
+            font-size: 3rem;
+            font-weight: 900;
+            margin-bottom: 16px;
+            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
         }
 
-        .product-image {
-            width: 100%; height: 100%; object-fit: cover; object-position: center;
-            transition: all 0.4s ease; filter: drop-shadow(0 4px 8px rgba(0, 0, 0, 0.1));
-        }
-
-        .product-image.contain-mode { object-fit: contain; padding: 16px; background: white; }
-        .product-image:hover { transform: scale(1.05); }
-
-        .image-controls {
-            position: absolute; top: 12px; right: 12px; display: flex; gap: 8px;
-            opacity: 0; transition: opacity 0.3s ease;
-        }
-
-        .product-card:hover .image-controls { opacity: 1; }
-
-        .image-control-btn {
-            background: rgba(0, 0, 0, 0.8); color: white; border: none;
-            width: 36px; height: 36px; border-radius: 50%;
-            display: flex; align-items: center; justify-content: center;
-            cursor: pointer; transition: all 0.3s ease; font-size: 14px;
-            backdrop-filter: blur(4px);
-        }
-
-        .image-control-btn:hover { background: rgba(0, 0, 0, 0.95); transform: scale(1.1); }
-
-        .promo-badge {
-            position: absolute; top: 12px; left: 12px;
-            background: linear-gradient(45deg, var(--primary-red), #990000);
-            color: white; padding: 6px 14px; border-radius: 20px;
-            font-size: 11px; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 0.5px; box-shadow: 0 4px 12px rgba(204, 0, 0, 0.3); z-index: 10;
-        }
-
-        .product-content { padding: 24px; position: relative; }
-
-        .product-sku {
-            font-size: 12px; color: #666; font-weight: 600;
-            text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 8px;
-        }
-
-        .product-title {
-            font-size: 18px; font-weight: 700; color: var(--accent-dark);
-            margin-bottom: 16px; line-height: 1.4; min-height: 50px;
-            display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
-            overflow: hidden; cursor: pointer; transition: color 0.3s ease;
-        }
-
-        .product-title:hover { color: var(--primary-teal); }
-
-        .product-price-section {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 16px; border-radius: 12px; margin-bottom: 16px;
-            border: 1px solid var(--border-light);
-        }
-
-        .price-main {
-            font-size: 28px; font-weight: 900; color: var(--primary-red);
-            margin-bottom: 4px; letter-spacing: -0.5px;
-        }
-
-        .price-original { font-size: 14px; color: #999; text-decoration: line-through; margin-bottom: 8px; }
-
-        .savings-badge {
-            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-            color: white; padding: 6px 12px; border-radius: 20px;
-            font-size: 12px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.3px; display: inline-block;
-        }
-
-        .category-badge {
-            background: linear-gradient(90deg, var(--primary-teal) 0%, #004d4d 100%);
-            color: white; padding: 8px 16px; border-radius: 20px;
-            font-size: 12px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.5px; position: absolute; top: -12px; right: 20px;
-            box-shadow: 0 4px 12px rgba(0, 107, 107, 0.3);
-        }
-
-        .view-details-btn {
-            width: 100%; background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
-            color: white; border: none; padding: 14px 24px; border-radius: 12px;
-            font-size: 14px; font-weight: 700; text-transform: uppercase;
-            letter-spacing: 0.5px; cursor: pointer; transition: all 0.3s ease;
-            box-shadow: 0 4px 12px rgba(0, 107, 107, 0.2);
-        }
-
-        .view-details-btn:hover {
-            transform: translateY(-2px); box-shadow: 0 8px 25px rgba(0, 107, 107, 0.3);
-            background: linear-gradient(135deg, #004d4d 0%, var(--primary-teal) 100%);
+        .header-subtitle {
+            font-size: 1.5rem;
+            margin-bottom: 24px;
+            opacity: 0.95;
         }
 
         .search-section {
-            background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
-            border-radius: 20px; box-shadow: var(--shadow-premium);
-            padding: 40px; margin-bottom: 40px;
-            border: 1px solid rgba(0, 0, 0, 0.04); position: relative; overflow: hidden;
-        }
-
-        .search-section::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--primary-teal) 0%, var(--primary-red) 50%, var(--primary-teal) 100%);
+            max-width: 800px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 16px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
         }
 
         .search-input {
-            width: 100%; padding: 16px 20px 16px 50px;
-            border: 2px solid var(--border-light); border-radius: 12px; font-size: 16px;
-            transition: all 0.3s ease; background: white;
-            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.06);
+            width: 100%;
+            padding: 16px;
+            border: 2px solid #e5e7eb;
+            border-radius: 12px;
+            font-size: 16px;
+            margin-bottom: 20px;
         }
 
         .search-input:focus {
-            outline: none; border-color: var(--primary-teal);
-            box-shadow: 0 0 0 4px rgba(0, 107, 107, 0.1); transform: translateY(-1px);
+            outline: none;
+            border-color: #006b6b;
+            box-shadow: 0 0 0 4px rgba(0, 107, 107, 0.1);
         }
 
-        .control-btn {
+        .controls {
+            display: flex;
+            gap: 15px;
+            flex-wrap: wrap;
+            justify-content: center;
+            margin-bottom: 20px;
+        }
+
+        .btn {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 2px solid var(--border-light); color: var(--accent-dark);
-            padding: 12px 20px; border-radius: 12px; font-weight: 600;
-            transition: all 0.3s ease; cursor: pointer;
+            border: 2px solid #e5e7eb;
+            padding: 12px 20px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
         }
 
-        .control-btn:hover {
-            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
-            color: white; transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 107, 107, 0.2);
+        .btn:hover {
+            background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%);
+            color: white;
+            transform: translateY(-2px);
         }
 
         .category-btn {
             background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 2px solid var(--border-light); color: var(--accent-dark);
-            padding: 12px 24px; border-radius: 25px; font-weight: 700;
-            text-transform: uppercase; letter-spacing: 0.5px;
-            transition: all 0.3s ease; cursor: pointer; font-size: 13px;
+            border: 2px solid #e5e7eb;
+            padding: 12px 24px;
+            border-radius: 25px;
+            font-weight: 700;
+            text-transform: uppercase;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin: 5px;
         }
 
-        .category-btn.active, .category-btn:hover {
-            background: linear-gradient(135deg, var(--primary-red) 0%, #990000 100%);
-            color: white; transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(204, 0, 0, 0.3);
+        .category-btn.active {
+            background: linear-gradient(135deg, #cc0000 0%, #990000 100%);
+            color: white;
+            border-color: #cc0000;
         }
 
-        .header-section {
-            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 25%, var(--primary-red) 75%, #990000 100%);
-            color: white; position: relative; overflow: hidden;
+        .products-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 30px;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
         }
 
-        .header-section::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; bottom: 0;
-            background: url('data:image/svg+xml,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 100 100"><circle cx="20" cy="20" r="2" fill="rgba(255,255,255,0.1)"/><circle cx="80" cy="40" r="1.5" fill="rgba(255,255,255,0.08)"/><circle cx="40" cy="70" r="1" fill="rgba(255,255,255,0.06)"/><circle cx="70" cy="80" r="2.5" fill="rgba(255,255,255,0.05)"/></svg>') repeat;
-            opacity: 0.3;
-        }
-
-        .header-content { position: relative; z-index: 2; padding: 60px 0; text-align: center; }
-        .logo-glow { filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.4)); animation: float 6s ease-in-out infinite; }
-
-        .header-title {
-            font-size: clamp(2.5rem, 5vw, 4rem); font-weight: 900; margin-bottom: 16px;
-            text-shadow: 0 4px 8px rgba(0, 0, 0, 0.3); letter-spacing: -1px;
-        }
-
-        .header-subtitle {
-            font-size: clamp(1.2rem, 2.5vw, 1.5rem); margin-bottom: 24px;
-            opacity: 0.95; font-weight: 300;
-        }
-
-        .limited-offer-badge {
-            background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%);
-            color: #92400e; padding: 16px 32px; border-radius: 50px;
-            font-size: 16px; font-weight: 800; text-transform: uppercase;
-            letter-spacing: 1px; box-shadow: 0 8px 25px rgba(251, 191, 36, 0.4);
-            animation: pulse 2s infinite;
-        }
-
-        .modal {
-            display: none; position: fixed; z-index: 1000; left: 0; top: 0;
-            width: 100%; height: 100%; background-color: rgba(0, 0, 0, 0.7);
-            backdrop-filter: blur(8px);
-        }
-
-        .modal-content {
+        .product-card {
             background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
-            margin: 2% auto; padding: 0; border-radius: 20px;
-            width: 95%; max-width: 800px; max-height: 90vh; overflow-y: auto;
-            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 16px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+            overflow: hidden;
+            transition: all 0.4s ease;
+            border: 1px solid rgba(0, 0, 0, 0.04);
+            position: relative;
         }
 
-        .modal-header {
-            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
-            color: white; padding: 24px; border-radius: 20px 20px 0 0; position: relative;
-        }
-
-        .close {
-            color: rgba(255, 255, 255, 0.8); float: right; font-size: 32px; font-weight: bold;
-            cursor: pointer; transition: all 0.3s ease; width: 40px; height: 40px;
-            display: flex; align-items: center; justify-content: center;
-            border-radius: 50%; background: rgba(255, 255, 255, 0.1);
-        }
-
-        .close:hover { color: white; background: rgba(255, 255, 255, 0.2); transform: scale(1.1); }
-
-        .pagination {
-            display: flex; justify-content: center; align-items: center;
-            gap: 8px; margin: 3rem 0; flex-wrap: wrap;
-        }
-
-        .pagination button {
-            padding: 12px 16px; border: 2px solid var(--border-light);
-            background: linear-gradient(135deg, #ffffff 0%, #f8f9fa 100%);
-            color: var(--accent-dark); border-radius: 12px; transition: all 0.3s ease;
-            font-weight: 600; min-width: 44px;
-        }
-
-        .pagination button:hover:not(:disabled) {
-            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
-            color: white; transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(0, 107, 107, 0.2);
-        }
-
-        .pagination button.active {
-            background: linear-gradient(135deg, var(--primary-red) 0%, #990000 100%);
-            color: white; border-color: var(--primary-red);
-            box-shadow: 0 4px 15px rgba(204, 0, 0, 0.3);
-        }
-
-        .pagination button:disabled { opacity: 0.5; cursor: not-allowed; }
-
-        .page-info {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            padding: 12px 24px; border-radius: 25px; font-weight: 700;
-            color: var(--accent-dark); border: 2px solid var(--border-light);
-            text-transform: uppercase; letter-spacing: 0.5px; font-size: 13px;
-        }
-
-        .results-section {
-            background: linear-gradient(135deg, #ffffff 0%, #fafafa 100%);
-            border-radius: 16px; padding: 24px; margin-bottom: 32px;
-            box-shadow: var(--shadow-card); border: 1px solid rgba(0, 0, 0, 0.04);
-        }
-
-        .footer-section {
-            background: linear-gradient(135deg, var(--accent-dark) 0%, #2d2d2d 100%);
-            color: white; position: relative; overflow: hidden;
-        }
-
-        .footer-section::before {
-            content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px;
-            background: linear-gradient(90deg, var(--primary-teal) 0%, var(--primary-red) 50%, var(--primary-teal) 100%);
-        }
-
-        .footer-content { position: relative; z-index: 2; padding: 80px 0; }
-
-        .feature-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-            border-radius: 16px; padding: 32px; text-align: center; transition: all 0.3s ease;
-            border: 1px solid rgba(255, 255, 255, 0.1); backdrop-filter: blur(10px);
-        }
-
-        .feature-card:hover {
+        .product-card:hover {
             transform: translateY(-8px);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
-            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.2);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.15);
         }
 
-        .location-card {
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.1) 0%, rgba(255, 255, 255, 0.05) 100%);
-            border-radius: 16px; padding: 24px; border: 1px solid rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(10px); transition: all 0.3s ease;
+        .product-image-container {
+            position: relative;
+            width: 100%;
+            height: 240px;
+            background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
         }
 
-        .location-card:hover {
-            transform: translateY(-4px);
-            background: linear-gradient(135deg, rgba(255, 255, 255, 0.15) 0%, rgba(255, 255, 255, 0.08) 100%);
+        .product-image {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            transition: transform 0.3s ease;
         }
 
-        .contact-highlight {
-            background: linear-gradient(135deg, var(--primary-teal) 0%, #004d4d 100%);
-            border-radius: 16px; padding: 32px; text-align: center;
-            box-shadow: 0 20px 40px rgba(0, 107, 107, 0.3);
-            border: 1px solid rgba(255, 255, 255, 0.1);
+        .product-image:hover {
+            transform: scale(1.05);
         }
 
-        .phone-number {
-            font-size: 2rem; font-weight: 900; color: #fbbf24;
-            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.3); letter-spacing: 1px;
+        .promo-badge {
+            position: absolute;
+            top: 12px;
+            left: 12px;
+            background: linear-gradient(45deg, #cc0000, #990000);
+            color: white;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+        }
+
+        .product-content {
+            padding: 24px;
+        }
+
+        .product-sku {
+            font-size: 12px;
+            color: #666;
+            font-weight: 600;
+            margin-bottom: 8px;
+        }
+
+        .product-title {
+            font-size: 18px;
+            font-weight: 700;
+            margin-bottom: 16px;
+            line-height: 1.4;
+            cursor: pointer;
+        }
+
+        .product-title:hover {
+            color: #006b6b;
+        }
+
+        .price-section {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            padding: 16px;
+            border-radius: 12px;
+            margin-bottom: 16px;
+            text-align: center;
+        }
+
+        .price-main {
+            font-size: 28px;
+            font-weight: 900;
+            color: #cc0000;
+            margin-bottom: 4px;
+        }
+
+        .price-original {
+            font-size: 14px;
+            color: #999;
+            text-decoration: line-through;
+            margin-bottom: 8px;
+        }
+
+        .savings {
+            background: linear-gradient(135deg, #10b981 0%, #059669 100%);
+            color: white;
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            display: inline-block;
+        }
+
+        .view-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .view-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 8px 25px rgba(0, 107, 107, 0.3);
+        }
+
+        .category-badge {
+            position: absolute;
+            top: -12px;
+            right: 20px;
+            background: linear-gradient(90deg, #006b6b 0%, #004d4d 100%);
+            color: white;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .loading {
+            text-align: center;
+            padding: 60px 20px;
+        }
+
+        .loading-icon {
+            font-size: 4rem;
+            margin-bottom: 20px;
+        }
+
+        .footer {
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            color: white;
+            padding: 60px 20px;
+            text-align: center;
+            margin-top: 60px;
+        }
+
+        .footer h3 {
+            font-size: 2rem;
+            margin-bottom: 20px;
+        }
+
+        .contact-info {
+            background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%);
+            padding: 30px;
+            border-radius: 16px;
+            margin: 20px auto;
+            max-width: 400px;
+        }
+
+        .phone {
+            font-size: 2rem;
+            font-weight: 900;
+            color: #fbbf24;
+            margin: 10px 0;
         }
 
         @media (max-width: 768px) {
-            .header-content { padding: 40px 0; }
-            .search-section { padding: 24px; margin-bottom: 24px; }
-            .product-content { padding: 16px; }
-            .footer-content { padding: 40px 0; }
-            .image-controls { opacity: 1; }
-            .image-control-btn { width: 32px; height: 32px; font-size: 12px; }
+            .header-title {
+                font-size: 2rem;
+            }
+            
+            .products-grid {
+                grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+                gap: 20px;
+                padding: 10px;
+            }
+            
+            .search-section {
+                margin: 20px;
+                padding: 20px;
+            }
         }
-
-        .no-results {
-            background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
-            border-radius: 20px; padding: 60px 40px; text-align: center;
-            box-shadow: var(--shadow-premium); border: 1px solid rgba(0, 0, 0, 0.04);
-        }
-
-        .loading-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: linear-gradient(135deg, var(--primary-teal) 0%, var(--primary-red) 100%);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; color: white;
-        }
-
-        .progress-bar {
-            width: 300px; height: 8px; background: rgba(255, 255, 255, 0.2);
-            border-radius: 4px; overflow: hidden; margin: 20px 0;
-        }
-
-        .progress-fill {
-            height: 100%; background: linear-gradient(90deg, #fbbf24, #f59e0b);
-            width: 0%; transition: width 0.5s ease; border-radius: 4px;
-        }
-
-        .loading-step { opacity: 0.5; transition: opacity 0.3s ease; padding: 4px 0; }
-        .loading-step.active { opacity: 1; font-weight: 600; }
-
-        @media print { .no-print { display: none !important; } }
     </style>
 </head>
 <body>
-    
-    <!-- Hidden Loading Overlay -->
-    <div id="loadingOverlay" class="loading-overlay" style="display: none;">
-        <div class="text-center">
-            <div class="text-6xl mb-6 animate-float">🎉</div>
-            <h1 class="text-4xl font-bold mb-4">OZZ Cash & Carry</h1>
-            <p class="text-xl mb-8">Loading your July 2025 promotional catalog...</p>
-            
-            <div class="progress-bar">
-                <div id="progressFill" class="progress-fill"></div>
-            </div>
-            
-            <div class="space-y-2 text-left">
-                <div id="step1" class="loading-step">📊 Loading promotional products...</div>
-                <div id="step2" class="loading-step">📸 Preparing product images...</div>
-                <div id="step3" class="loading-step">🗂️ Organizing catalog...</div>
-                <div id="step4" class="loading-step">🔧 Setting up interface...</div>
-                <div id="step5" class="loading-step">✨ Almost ready!</div>
-            </div>
-            
-            <div class="mt-8 bg-green-900 bg-opacity-30 p-4 rounded-lg text-sm max-w-md mx-auto">
-                <p>🎉 <strong>July 2025 Special Offers Loading!</strong></p>
-                <p>Premium home & kitchen products • Exclusive deals • Limited time offers</p>
-                <p class="text-xs mt-2 opacity-75">Loading the best promotional prices for you</p>
-            </div>
-        </div>
-    </div>
-
     <!-- Header -->
     <header class="header-section">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="header-content">
-                <!-- OZZ Logo -->
-                <div class="mb-8">
-                    <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
-                         alt="OZZ Cash & Carry" 
-                         class="h-20 md:h-28 mx-auto mb-4 logo-glow"
-                         onerror="this.style.display='none';">
-                </div>
-                
-                <div class="inline-block bg-white bg-opacity-20 backdrop-blur-sm rounded-full px-8 py-3 mb-6">
-                    <span class="text-sm font-semibold uppercase tracking-wide">OZZ Cash & Carry Promotions and Special Offers</span>
-                </div>
-                <h1 class="header-title">🎉 JULY 2025 PROMO 🎉</h1>
-                <p class="header-subtitle">Exclusive Deals on Premium Home & Kitchen Products</p>
-                <p class="text-lg opacity-90 mb-8" id="product-count">Loading promotional catalog...</p>
-                <div class="limited-offer-badge animate-pulse">
-                    ⏰ LIMITED TIME OFFER!
-                </div>
-            </div>
+        <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
+             alt="OZZ Cash & Carry" class="logo">
+        
+        <div style="background: rgba(255,255,255,0.2); padding: 8px 20px; border-radius: 25px; display: inline-block; margin-bottom: 20px;">
+            <span style="font-size: 14px; font-weight: 600;">OZZ Cash & Carry Promotions</span>
+        </div>
+        
+        <h1 class="header-title">🎉 JULY 2025 PROMO 🎉</h1>
+        <p class="header-subtitle">Exclusive Deals on Premium Home & Kitchen Products</p>
+        <p style="font-size: 18px; margin-bottom: 20px;" id="product-count">Loading promotional catalog...</p>
+        
+        <div style="background: linear-gradient(135deg, #fbbf24 0%, #f59e0b 100%); color: #92400e; padding: 16px 32px; border-radius: 50px; font-weight: 800; display: inline-block;">
+            ⏰ LIMITED TIME OFFER!
         </div>
     </header>
 
     <!-- Search Section -->
-    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-        <div class="search-section">
-            <div class="mb-6 text-center">
-                <h2 class="text-3xl font-bold text-gray-800 mb-3">🔍 Find Your Perfect Deal!</h2>
-                <p class="text-gray-600 text-lg">Search through our exclusive July promotional items</p>
-            </div>
-            <div class="max-w-md mx-auto relative mb-6">
-                <svg class="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
-                </svg>
-                <input 
-                    type="text" 
-                    id="searchInput"
-                    placeholder="Search promo items or SKU..." 
-                    class="search-input"
-                    onkeyup="filterProducts()"
-                >
-            </div>
-            
-            <!-- Enhanced Control Panel -->
-            <div class="flex flex-wrap justify-center gap-4">
-                <select id="sortBy" onchange="applyFilters()" class="control-btn">
-                    <option value="name">Sort by Name</option>
-                    <option value="price">Sort by Price</option>
-                    <option value="category">Sort by Category</option>
-                </select>
-                <button onclick="toggleSortOrder()" id="sortOrderBtn" class="control-btn">
-                    ↑ A-Z
-                </button>
-                <button onclick="refreshImageCache()" id="refreshBtn" class="control-btn">
-                    🔄 Refresh Images
-                </button>
-                </div>
+    <div class="search-section">
+        <h2 style="text-align: center; font-size: 2rem; margin-bottom: 20px; color: #1a1a1a;">🔍 Find Your Perfect Deal!</h2>
+        <p style="text-align: center; color: #666; margin-bottom: 30px;">Search through our exclusive July promotional items</p>
+        
+        <input type="text" id="searchInput" placeholder="Search promo items or SKU..." class="search-input">
+        
+        <div class="controls">
+            <select id="sortBy" class="btn">
+                <option value="name">Sort by Name</option>
+                <option value="price">Sort by Price</option>
+                <option value="category">Sort by Category</option>
+            </select>
+            <button id="sortOrderBtn" class="btn">↑ A-Z</button>
+            <button id="refreshBtn" class="btn">🔄 Refresh</button>
         </div>
-
-        <!-- Category Filter -->
-        <div class="text-center mb-8">
-            <div class="inline-flex flex-wrap gap-3 justify-center" id="categoryButtons">
+        
+        <div style="text-align: center; margin: 20px 0;">
+            <div id="categoryButtons">
                 <!-- Categories will be populated here -->
             </div>
         </div>
-
-        <!-- Results Counter and Pagination Info -->
-        <div class="results-section">
-            <div class="flex flex-col md:flex-row items-center justify-between gap-4">
-                <div class="text-center md:text-left">
-                    <p class="text-2xl font-bold text-gray-700" id="resultsCount">
-                        🔥 <span class="text-red-600" id="filteredCount">0</span> promotional deals found!
-                    </p>
-                </div>
-                <div class="page-info" id="pageInfo">
-                    Page 1 of 1 • Showing 1-20 of 0 products
-                </div>
-            </div>
-        </div>
-
-        <!-- Products Grid -->
-        <div id="productsGrid">
-            <!-- Initial loading message -->
-            <div class="text-center py-20">
-                <div class="text-6xl mb-6 animate-float">🎉</div>
-                <p class="text-2xl text-gray-700 mb-4 font-semibold">Loading promotional deals...</p>
-                <p class="text-gray-500 text-lg">July 2025 special offers coming right up!</p>
-                <div class="animate-pulse mt-6">
-                    <div class="w-20 h-3 bg-gradient-to-r from-teal-200 to-red-200 rounded mx-auto"></div>
-                </div>
-            </div>
-        </div>
-
-        <!-- Pagination Controls -->
-        <div class="pagination no-print" id="paginationControls">
-            <!-- Pagination will be populated here -->
-        </div>
-
-        <!-- No Results Message -->
-        <div id="noResults" class="no-results hidden">
-            <div class="text-8xl mb-6">🔍</div>
-            <p class="text-gray-500 text-2xl mb-4 font-semibold">No promotional deals found matching your search.</p>
-            <p class="text-gray-400 text-lg mb-8">Try adjusting your search terms or browse all categories!</p>
-            <button onclick="clearFilters()" class="bg-gradient-to-r from-red-600 to-red-700 text-white px-8 py-4 rounded-full font-bold text-lg hover:from-red-700 hover:to-red-800 transition-all transform hover:scale-105 shadow-lg">
-                Show All Products
-            </button>
+        
+        <div style="text-align: center; background: #f8f9fa; padding: 16px; border-radius: 12px;">
+            <p style="font-size: 20px; font-weight: 700; color: #cc0000;">
+                🔥 <span id="filteredCount">0</span> promotional deals found!
+            </p>
         </div>
     </div>
 
-    <!-- Enhanced Product Modal -->
-    <div id="productModal" class="modal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <span class="close" onclick="closeModal()">&times;</span>
-                <h2 class="text-2xl font-bold">Product Details</h2>
-            </div>
-            <div class="p-8" id="modalContent">
-                <!-- Product details will be loaded here -->
-            </div>
+    <!-- Products Grid -->
+    <div id="productsContainer">
+        <div class="loading">
+            <div class="loading-icon">🎉</div>
+            <h3>Loading promotional deals...</h3>
+            <p>July 2025 special offers coming right up!</p>
         </div>
     </div>
 
-    <!-- Enhanced Footer -->
-    <footer class="footer-section">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="footer-content">
-                <div class="text-center mb-12">
-                    <h3 class="text-4xl font-bold mb-6">🎉 Don't Miss Out on These July 2025 Deals! 🎉</h3>
-                    <p class="text-xl mb-8 opacity-90">Limited time promotional pricing on premium home & kitchen products</p>
-                </div>
-                
-                <div class="grid md:grid-cols-3 gap-8 mb-12">
-                    <div class="feature-card">
-                        <div class="text-5xl mb-4">🚚</div>
-                        <h4 class="font-bold text-xl mb-3">Fast Delivery</h4>
-                        <p class="opacity-90">Quick shipping on all promotional items across South Africa</p>
+    <!-- No Results -->
+    <div id="noResults" style="display: none; text-align: center; padding: 60px 20px;">
+        <div style="font-size: 4rem; margin-bottom: 20px;">🔍</div>
+        <h3>No promotional deals found</h3>
+        <p>Try adjusting your search terms or browse all categories!</p>
+        <button onclick="clearFilters()" style="margin-top: 20px; background: #cc0000; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer;">
+            Show All Products
+        </button>
+    </div>
+    <!-- Footer -->
+    <footer class="footer">
+        <h3>🎉 Don't Miss Out on These July 2025 Deals! 🎉</h3>
+        <p style="font-size: 18px; margin-bottom: 40px;">Limited time promotional pricing on premium home & kitchen products</p>
+        
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 1000px; margin: 0 auto 40px auto;">
+            <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 16px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">🚚</div>
+                <h4 style="font-size: 1.2rem; margin-bottom: 10px;">Fast Delivery</h4>
+                <p>Quick shipping on all promotional items across South Africa</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 16px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">💯</div>
+                <h4 style="font-size: 1.2rem; margin-bottom: 10px;">Quality Guaranteed</h4>
+                <p>Premium products at unbeatable promotional prices</p>
+            </div>
+            <div style="background: rgba(255,255,255,0.1); padding: 30px; border-radius: 16px;">
+                <div style="font-size: 3rem; margin-bottom: 15px;">⏰</div>
+                <h4 style="font-size: 1.2rem; margin-bottom: 10px;">Limited Time</h4>
+                <p>July 2025 exclusive promotional offers</p>
+            </div>
+        </div>
+        
+        <div style="border-top: 1px solid #444; padding-top: 40px;">
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 30px; max-width: 800px; margin: 0 auto;">
+                <div>
+                    <h4 style="font-size: 1.5rem; margin-bottom: 20px;">Our Locations</h4>
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px; margin-bottom: 15px;">
+                        <h5 style="color: #fbbf24; margin-bottom: 10px;">🏪 OZZ CASH & CARRY</h5>
+                        <p style="font-size: 14px; line-height: 1.6;">
+                            40 Mazeppa & Gull Street<br>
+                            Durban, KwaZulu-Natal 4001<br>
+                            South Africa
+                        </p>
                     </div>
-                    <div class="feature-card">
-                        <div class="text-5xl mb-4">💯</div>
-                        <h4 class="font-bold text-xl mb-3">Quality Guaranteed</h4>
-                        <p class="opacity-90">Premium products at unbeatable promotional prices</p>
-                    </div>
-                    <div class="feature-card">
-                        <div class="text-5xl mb-4">⏰</div>
-                        <h4 class="font-bold text-xl mb-3">Limited Time</h4>
-                        <p class="opacity-90">July 2025 exclusive promotional offers - don't miss out!</p>
-                    </div>
-                </div>
-                
-                <div class="border-t border-gray-700 pt-12 mt-12">
-                    <div class="grid lg:grid-cols-3 gap-8 mb-8">
-                        <div class="lg:col-span-2">
-                            <h4 class="text-2xl font-bold text-white mb-6">Our Locations</h4>
-                            <div class="grid md:grid-cols-2 gap-6">
-                                <div class="location-card">
-                                    <h5 class="font-bold text-lg text-yellow-300 mb-3">🏪 OZZ CASH & CARRY</h5>
-                                    <p class="text-sm text-gray-300 leading-relaxed">
-                                        40 Mazeppa & Gull Street<br>
-                                        Durban, KwaZulu-Natal 4001<br>
-                                        South Africa
-                                    </p>
-                                </div>
-                                <div class="location-card">
-                                    <h5 class="font-bold text-lg text-yellow-300 mb-3">🏠 IKHAYA HOMESTORE</h5>
-                                    <p class="text-sm text-gray-300 leading-relaxed">
-                                        Block D, Shop 88 China City<br>
-                                        Springfield Park, Durban<br>
-                                        KwaZulu-Natal, South Africa
-                                    </p>
-                                </div>
-                            </div>
-                        </div>
-                        <div>
-                            <div class="contact-highlight">
-                                <div class="text-4xl mb-4">📞</div>
-                                <p class="text-lg font-semibold mb-3">Call Us Today!</p>
-                                <a href="tel:+27313327192" class="phone-number hover:text-yellow-200 transition-colors">
-                                    +27 31 332 7192
-                                </a>
-                                <p class="text-sm text-gray-300 mt-4 opacity-90">
-                                    Monday - Friday: 8:00 AM - 5:00 PM<br>
-                                    Saturday: 8:00 AM - 1:00 PM
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    
-                    <div class="text-center pt-8 border-t border-gray-700">
-                        <p class="text-sm opacity-75 mb-2">© 2025 OZZ Cash & Carry. All promotional prices valid for July 2025 only.</p>
-                        <p class="text-xs opacity-50 mb-4">South Africa's premier home & kitchen products retailer</p>
-                        <p class="text-xs opacity-40 border-t border-gray-800 pt-4">
-                            Designed and managed by <a href="https://www.blackorchid.online" target="_blank" class="hover:opacity-60 transition-opacity underline">Black Orchid Consulting www.blackorchid.online</a>
+                    <div style="background: rgba(255,255,255,0.1); padding: 20px; border-radius: 12px;">
+                        <h5 style="color: #fbbf24; margin-bottom: 10px;">🏠 IKHAYA HOMESTORE</h5>
+                        <p style="font-size: 14px; line-height: 1.6;">
+                            Block D, Shop 88 China City<br>
+                            Springfield Park, Durban<br>
+                            KwaZulu-Natal, South Africa
                         </p>
                     </div>
                 </div>
+                
+                <div class="contact-info">
+                    <div style="font-size: 3rem; margin-bottom: 15px;">📞</div>
+                    <h4>Call Us Today!</h4>
+                    <div class="phone">+27 31 332 7192</div>
+                    <p style="font-size: 14px; margin-top: 15px;">
+                        Monday - Friday: 8:00 AM - 5:00 PM<br>
+                        Saturday: 8:00 AM - 1:00 PM
+                    </p>
+                </div>
+            </div>
+            
+            <div style="margin-top: 40px; padding-top: 20px; border-top: 1px solid #444; font-size: 14px; opacity: 0.8;">
+                <p>© 2025 OZZ Cash & Carry. All promotional prices valid for July 2025 only.</p>
+                <p style="margin-top: 10px; font-size: 12px;">South Africa's premier home & kitchen products retailer</p>
             </div>
         </div>
     </footer>
     <script>
-        // Enhanced Google Drive Image Manager with Caching
-        class DriveImageManager {
-            constructor() {
-                this.imageCache = new Map();
-                this.folderCache = new Map();
-                this.isInitialized = false;
-                this.cacheVersion = '1.0';
-                this.cacheExpiryHours = 24;
-                
-                // Your specific folder ID from Google Drive
-                this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
-                this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
-            }
-
-            // Initialize Google Drive API
-            async initializeGAPI() {
-                if (this.isInitialized) return true;
-                
-                try {
-                    // Load Google APIs
-                    await this.loadScript('https://apis.google.com/js/api.js');
-                    await new Promise(resolve => gapi.load('client', resolve));
-                    
-                    await gapi.client.init({
-                        apiKey: this.apiKey,
-                        discoveryDocs: ['https://www.googleapis.com/discovery/v1/apis/drive/v3/rest']
-                    });
-                    
-                    this.isInitialized = true;
-                    console.log('✅ Google Drive API initialized');
-                    return true;
-                } catch (error) {
-                    console.error('❌ Failed to initialize Google Drive API:', error);
-                    return false;
-                }
-            }
-
-            // Load script helper
-            loadScript(src) {
-                return new Promise((resolve, reject) => {
-                    if (document.querySelector(`script[src="${src}"]`)) {
-                        resolve();
-                        return;
-                    }
-                    
-                    const script = document.createElement('script');
-                    script.src = src;
-                    script.onload = resolve;
-                    script.onerror = reject;
-                    document.head.appendChild(script);
-                });
-            }
-
-            // Cache management
-            getCacheKey(type) {
-                return `ozz_promo_${type}_v${this.cacheVersion}`;
-            }
-
-            loadCacheFromStorage() {
-                try {
-                    console.log('🔍 Checking for cached image data...');
-                    
-                    const cacheMetaKey = this.getCacheKey('meta');
-                    const cacheMetaStr = localStorage.getItem(cacheMetaKey);
-                    
-                    if (!cacheMetaStr) {
-                        console.log('📝 No cache found, will perform full scan');
-                        return false;
-                    }
-                    
-                    const cacheMeta = JSON.parse(cacheMetaStr);
-                    const cacheAge = Date.now() - cacheMeta.timestamp;
-                    const maxAge = this.cacheExpiryHours * 60 * 60 * 1000;
-                    
-                    if (cacheAge > maxAge) {
-                        console.log(`⏰ Cache expired (${Math.round(cacheAge / (60 * 60 * 1000))} hours old), will refresh`);
-                        this.clearCache();
-                        return false;
-                    }
-                    
-                    const imageCacheKey = this.getCacheKey('images');
-                    const imageCacheStr = localStorage.getItem(imageCacheKey);
-                    
-                    if (!imageCacheStr) {
-                        console.log('📝 Incomplete cache found, will perform full scan');
-                        return false;
-                    }
-                    
-                    const imageData = JSON.parse(imageCacheStr);
-                    this.imageCache = new Map(Object.entries(imageData));
-                    
-                    console.log(`✅ Cache loaded successfully! ${this.imageCache.size} images cached`);
-                    console.log(`📊 Cache age: ${Math.round(cacheAge / (60 * 1000))} minutes`);
-                    
-                    return true;
-                } catch (error) {
-                    console.error('❌ Error loading cache:', error);
-                    this.clearCache();
-                    return false;
-                }
-            }
-
-            saveCacheToStorage() {
-                try {
-                    console.log('💾 Saving image cache to storage...');
-                    
-                    const cacheMeta = {
-                        timestamp: Date.now(),
-                        version: this.cacheVersion,
-                        totalImages: this.imageCache.size
-                    };
-                    
-                    const cacheMetaKey = this.getCacheKey('meta');
-                    localStorage.setItem(cacheMetaKey, JSON.stringify(cacheMeta));
-                    
-                    const imageData = Object.fromEntries(this.imageCache);
-                    const imageCacheKey = this.getCacheKey('images');
-                    localStorage.setItem(imageCacheKey, JSON.stringify(imageData));
-                    
-                    console.log(`✅ Cache saved successfully! ${this.imageCache.size} images cached`);
-                } catch (error) {
-                    console.error('❌ Error saving cache:', error);
-                    this.clearCache();
-                }
-            }
-
-            clearCache() {
-                try {
-                    const keys = ['meta', 'images'];
-                    keys.forEach(key => {
-                        localStorage.removeItem(this.getCacheKey(key));
-                    });
-                    console.log('🗑️ Cache cleared');
-                } catch (error) {
-                    console.error('Error clearing cache:', error);
-                }
-            }
-
-            // Scan folder for images
-            async scanFolderForImages(forceRefresh = false) {
-                if (!forceRefresh && this.loadCacheFromStorage()) {
-                    console.log('🚀 Using cached image data, skipping scan');
-                    return;
-                }
-                
-                console.log('🔍 Scanning Google Drive folder for images...');
-                
-                try {
-                    const images = await this.fetchImagesFromFolder();
-                    this.buildImageMapping(images);
-                    this.saveCacheToStorage();
-                    console.log(`🎯 Total images cached: ${this.imageCache.size}`);
-                } catch (error) {
-                    console.error('❌ Error scanning folder:', error);
-                }
-            }
-
-            async fetchImagesFromFolder(pageToken = null) {
-                try {
-                    const response = await gapi.client.drive.files.list({
-                        q: `'${this.folderId}' in parents and (mimeType contains 'image/jpeg' or mimeType contains 'image/png' or mimeType contains 'image/gif' or mimeType contains 'image/webp')`,
-                        fields: 'nextPageToken, files(id, name, mimeType, parents, webViewLink, thumbnailLink)',
-                        pageSize: 100,
-                        pageToken: pageToken
-                    });
-
-                    let files = response.result.files || [];
-                    
-                    if (response.result.nextPageToken) {
-                        const nextPageFiles = await this.fetchImagesFromFolder(response.result.nextPageToken);
-                        files = files.concat(nextPageFiles);
-                    }
-                    
-                    return files;
-                } catch (error) {
-                    console.error('Error fetching folder contents:', error);
-                    return [];
-                }
-            }
-
-            buildImageMapping(images) {
-                this.imageCache.clear();
-                
-                images.forEach(image => {
-                    const codes = this.extractProductCodes(image.name);
-                    
-                    codes.forEach(code => {
-                        if (!this.imageCache.has(code)) {
-                            this.imageCache.set(code, {
-                                id: image.id,
-                                name: image.name,
-                                thumbnailLink: image.thumbnailLink,
-                                webViewLink: image.webViewLink,
-                                directLink: this.getDirectImageUrl(image.id),
-                                mimeType: image.mimeType
-                            });
-                        }
-                    });
-                });
-            }
-
-            extractProductCodes(filename) {
-                const codes = [];
-                const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp)$/i, '');
-                
-                // Find numeric codes
-                const numericCodes = nameWithoutExt.match(/\b\d{4,6}\b/g);
-                if (numericCodes) {
-                    codes.push(...numericCodes);
-                }
-                
-                // Find alphanumeric codes
-                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{4,8}\b/gi);
-                if (alphanumericCodes) {
-                    codes.push(...alphanumericCodes.map(code => code.toLowerCase()));
-                }
-                
-                // Split by delimiters
-                const parts = nameWithoutExt.split(/[-_\s\.]+/);
-                parts.forEach(part => {
-                    const cleanPart = part.trim();
-                    if (/^\d{4,6}$/.test(cleanPart) || /^[A-Z0-9]{4,8}$/i.test(cleanPart)) {
-                        codes.push(cleanPart.toLowerCase());
-                    }
-                });
-                
-                return [...new Set(codes)];
-            }
-
-            getDirectImageUrl(fileId) {
-                return `https://lh3.googleusercontent.com/d/${fileId}=w800-h800-c`;
-            }
-
-            getProductImage(productCode) {
-                const normalizedCode = productCode.toString().toLowerCase().trim();
-                const imageData = this.imageCache.get(normalizedCode);
-                
-                if (imageData) {
-                    return {
-                        url: imageData.directLink,
-                        thumbnail: imageData.thumbnailLink,
-                        name: imageData.name,
-                        found: true
-                    };
-                }
-                
-                return {
-                    url: null,
-                    thumbnail: null,
-                    name: null,
-                    found: false
-                };
-            }
-
-            getStats() {
-                const cacheMetaKey = this.getCacheKey('meta');
-                const cacheMetaStr = localStorage.getItem(cacheMetaKey);
-                let cacheInfo = null;
-                
-                if (cacheMetaStr) {
-                    try {
-                        const cacheMeta = JSON.parse(cacheMetaStr);
-                        const cacheAge = Date.now() - cacheMeta.timestamp;
-                        cacheInfo = {
-                            age: Math.round(cacheAge / (60 * 1000)),
-                            timestamp: new Date(cacheMeta.timestamp).toLocaleString()
-                        };
-                    } catch (error) {
-                        console.warn('Could not parse cache metadata');
-                    }
-                }
-                
-                return {
-                    mappedProducts: this.imageCache.size,
-                    cacheInfo: cacheInfo
-                };
-            }
-
-            async forceRefresh() {
-                console.log('🔄 Forcing cache refresh...');
-                this.clearCache();
-                await this.scanFolderForImages(true);
-            }
-        }
-
         // Global variables
         let allProducts = [];
         let filteredProducts = [];
         let currentCategory = 'ALL';
         let sortBy = 'name';
         let sortOrder = 'asc';
-        let currentPage = 1;
-        let totalPages = 1;
-        let productsPerPage = 20;
-        let driveImageManager = null;
-        let imageSystemReady = false;
 
-        // GitHub Pages compatible configuration
-        const CONFIG = {
-            GITHUB_REPO: './JULY PROMO.xlsx',
-            PRODUCTS_PER_PAGE: 20
-        };
-
-        // Initialize the application with immediate content display
+        // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
-            // Show layout immediately
-            document.body.style.visibility = 'visible';
-            
-            // Start loading content immediately
-            initializeCatalog();
+            loadProducts();
+            setupEventListeners();
         });
 
-        async function initializeCatalog() {
-            try {
-                console.log('🚀 Loading catalog content immediately...');
-                
-                // PHASE 1: Load products and show catalog immediately
-                await loadProductsFromExcel();
-                
-                if (allProducts.length === 0) {
-                    console.error('❌ No products loaded! Check Excel file format.');
-                    showError('No products found in Excel file. Please check the file format and try again.');
-                    return;
-                }
-                
-                setupUI();
-                displayProducts(); // Show products with placeholders immediately
-                updateCounts();
-                
-                console.log('✅ Catalog content loaded - customers can browse immediately');
-                console.log('📊 Products loaded:', allProducts.length);
-                
-                // PHASE 2: Load images in background (non-blocking)
-                loadImagesInBackground();
-                
-            } catch (error) {
-                console.error('Failed to initialize catalog:', error);
-                showError('Unable to load promotional catalog. Please refresh the page or contact us at +27 31 332 7192');
-            }
+        function setupEventListeners() {
+            document.getElementById('searchInput').addEventListener('input', filterProducts);
+            document.getElementById('sortBy').addEventListener('change', applyFilters);
+            document.getElementById('sortOrderBtn').addEventListener('click', toggleSortOrder);
+            document.getElementById('refreshBtn').addEventListener('click', refreshProducts);
         }
 
-        async function loadImagesInBackground() {
+        async function loadProducts() {
             try {
-                console.log('📸 Loading images in background...');
+                console.log('Loading products...');
                 
-                // Initialize Google Drive API in background
-                driveImageManager = new DriveImageManager();
-                const success = await driveImageManager.initializeGAPI();
-                
-                if (success) {
-                    console.log('🗂️ Scanning for product images...');
-                    await driveImageManager.scanFolderForImages();
-                    imageSystemReady = true;
-                    
-                    // Update images smoothly without disrupting user experience
-                    console.log('🎨 Updating products with real images...');
-                    updateProductImages(); // Update existing images
-                    updateCounts(); // Update counts with image info
-                    
-                    // Add subtle notification that images have loaded
-                    showImageLoadedNotification();
-                    
-                    console.log('✅ All images loaded and ready');
-                } else {
-                    console.warn('⚠️ Image system failed, using placeholders');
-                    imageSystemReady = false;
-                }
-            } catch (error) {
-                console.warn('📸 Image loading failed, using placeholders:', error);
-                imageSystemReady = false;
-            }
-        }
-
-        function showImageLoadedNotification() {
-            // Create a subtle notification that images have loaded
-            const notification = document.createElement('div');
-            notification.style.cssText = `
-                position: fixed;
-                top: 20px;
-                right: 20px;
-                background: linear-gradient(135deg, #10b981 0%, #059669 100%);
-                color: white;
-                padding: 16px 24px;
-                border-radius: 12px;
-                box-shadow: 0 8px 25px rgba(16, 185, 129, 0.4);
-                z-index: 1000;
-                font-size: 14px;
-                font-weight: 600;
-                opacity: 0;
-                transform: translateX(100%);
-                transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
-                border: 1px solid rgba(255, 255, 255, 0.2);
-            `;
-            
-            notification.innerHTML = '📸 Product images loaded!';
-            document.body.appendChild(notification);
-            
-            // Animate in
-            setTimeout(() => {
-                notification.style.opacity = '1';
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            // Animate out and remove
-            setTimeout(() => {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(() => {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 400);
-            }, 3000);
-        }
-
-        async function loadProductsFromExcel() {
-            try {
-                const response = await fetch(CONFIG.GITHUB_REPO);
-                
+                const response = await fetch('./JULY PROMO.xlsx');
                 if (!response.ok) {
-                    throw new Error('Could not load JULY PROMO.xlsx. Make sure the file is in your repository root.');
+                    throw new Error('Could not load JULY PROMO.xlsx');
                 }
                 
                 const arrayBuffer = await response.arrayBuffer();
@@ -1065,9 +473,8 @@
                 const worksheet = workbook.Sheets['Sheet1'];
                 const rawData = XLSX.utils.sheet_to_json(worksheet);
                 
-                console.log('📊 Raw data loaded:', rawData.length, 'rows');
+                console.log('Raw data loaded:', rawData.length, 'rows');
                 
-                // Process the new data format - FIXED for your Excel structure
                 allProducts = rawData
                     .filter(function(item) {
                         return item.SKU && item['PRODUCT '] && item.PRICE !== undefined && item.CATEGORY;
@@ -1084,137 +491,62 @@
                         return product.price > 0;
                     });
                 
-                console.log('✅ Processed products:', allProducts.length);
+                console.log('Processed products:', allProducts.length);
                 
-                if (allProducts.length > 0) {
-                    console.log('📊 Sample product:', allProducts[0]);
-                    
-                    const categoryStats = {};
-                    allProducts.forEach(product => {
-                        categoryStats[product.category] = (categoryStats[product.category] || 0) + 1;
-                    });
-                    console.log('📈 Categories found:', categoryStats);
-                }
+                setupCategories();
+                applyFilters();
+                updateCounts();
                 
             } catch (error) {
-                console.error('❌ Error loading products:', error);
-                throw error;
+                console.error('Error loading products:', error);
+                showError('Unable to load products. Please check if JULY PROMO.xlsx exists.');
             }
-        }
-
-        function getImageUrl(sku) {
-            // Always return a valid image source
-            if (!imageSystemReady || !driveImageManager) {
-                // Show professional placeholder while images load
-                return generatePlaceholderSVG(sku, 'Product Image');
-            }
-            
-            try {
-                const imageData = driveImageManager.getProductImage(sku);
-                
-                if (imageData && imageData.found && imageData.url) {
-                    return imageData.url;
-                }
-            } catch (error) {
-                console.warn('Error getting image for SKU', sku, error);
-            }
-            
-            // Show "no image" placeholder for products without images
-            return generatePlaceholderSVG(sku, 'Product Image');
-        }
-
-        function generatePlaceholderSVG(sku, message = 'Loading...') {
-            // Create a professional, high-end placeholder
-            const placeholderSvg = `<svg width="320" height="240" xmlns="http://www.w3.org/2000/svg">
-                <defs>
-                    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
-                        <stop offset="0%" style="stop-color:#f8fafc;stop-opacity:1" />
-                        <stop offset="50%" style="stop-color:#f1f5f9;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#e2e8f0;stop-opacity:1" />
-                    </linearGradient>
-                    <linearGradient id="accent" x1="0%" y1="0%" x2="100%" y2="0%">
-                        <stop offset="0%" style="stop-color:#006b6b;stop-opacity:1" />
-                        <stop offset="50%" style="stop-color:#cc0000;stop-opacity:1" />
-                        <stop offset="100%" style="stop-color:#006b6b;stop-opacity:1" />
-                    </linearGradient>
-                </defs>
-                <rect width="320" height="240" fill="url(#bg)" rx="12"/>
-                <rect width="320" height="3" fill="url(#accent)" opacity="0.6"/>
-                <circle cx="160" cy="100" r="30" fill="#e5e7eb" opacity="0.6"/>
-                <text x="160" y="110" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="24" font-weight="600" fill="#6b7280">📦</text>
-                <rect x="40" y="140" width="240" height="20" rx="10" fill="#e5e7eb" opacity="0.4"/>
-                <text x="160" y="155" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="14" font-weight="700" fill="#374151">SKU: ${sku}</text>
-                <text x="160" y="180" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="12" font-weight="500" fill="#6b7280">${message}</text>
-                <text x="160" y="220" text-anchor="middle" font-family="system-ui, -apple-system, sans-serif" font-size="10" font-weight="600" fill="#9ca3af" opacity="0.8">OZZ Cash &amp; Carry</text>
-            </svg>`;
-            
-            try {
-                return `data:image/svg+xml;charset=utf-8,${encodeURIComponent(placeholderSvg)}`;
-            } catch (error) {
-                // Ultimate fallback - base64 encoded simple SVG
-                try {
-                    return `data:image/svg+xml;base64,${btoa(placeholderSvg)}`;
-                } catch (e) {
-                    console.warn('All placeholder generation methods failed');
-                    return 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-                }
-            }
-        }
-
-        function setupUI() {
-            filteredProducts = allProducts.slice();
-            setupCategories();
-            applyFilters();
         }
 
         function setupCategories() {
-            // Get unique categories from the actual data
             const categories = ['ALL'];
             const categorySet = {};
             
-            // Get unique categories from the loaded data
-            for (let i = 0; i < allProducts.length; i++) {
-                const cat = allProducts[i].category;
-                if (cat && !categorySet[cat]) {
-                    categorySet[cat] = true;
-                    categories.push(cat);
+            allProducts.forEach(function(product) {
+                if (!categorySet[product.category]) {
+                    categorySet[product.category] = true;
+                    categories.push(product.category);
                 }
-            }
+            });
             
             categories.sort();
             
-            console.log('🏷️ Available categories:', categories);
-            
             const categoryButtons = document.getElementById('categoryButtons');
-            categoryButtons.innerHTML = categories.map(function(category) {
-                const isActive = category === 'ALL';
-                const className = 'category-btn ' + (isActive ? 'active' : '');
-                
-                return '<button onclick
-                    return '<button onclick="filterByCategory(\'' + category + '\')" class="' + className + '">' + 
-                       category + '</button>';
-            }).join('');
+            categoryButtons.innerHTML = '';
+            
+            categories.forEach(function(category) {
+                const button = document.createElement('button');
+                button.className = 'category-btn' + (category === 'ALL' ? ' active' : '');
+                button.textContent = category;
+                button.addEventListener('click', function() {
+                    filterByCategory(category);
+                });
+                categoryButtons.appendChild(button);
+            });
         }
 
         function filterByCategory(category) {
             currentCategory = category;
-            currentPage = 1;
             
+            // Update button states
             const buttons = document.querySelectorAll('.category-btn');
-            for (let i = 0; i < buttons.length; i++) {
-                const btn = buttons[i];
-                if (btn.textContent.trim() === category) {
+            buttons.forEach(function(btn) {
+                if (btn.textContent === category) {
                     btn.className = 'category-btn active';
                 } else {
                     btn.className = 'category-btn';
                 }
-            }
+            });
             
             applyFilters();
         }
 
         function filterProducts() {
-            currentPage = 1;
             applyFilters();
         }
 
@@ -1227,9 +559,12 @@
         function clearFilters() {
             document.getElementById('searchInput').value = '';
             currentCategory = 'ALL';
-            currentPage = 1;
             setupCategories();
             applyFilters();
+        }
+
+        function refreshProducts() {
+            loadProducts();
         }
 
         function applyFilters() {
@@ -1237,12 +572,13 @@
             sortBy = document.getElementById('sortBy').value;
             
             filteredProducts = allProducts.filter(function(product) {
-                const matchesSearch = product.description.toLowerCase().indexOf(searchTerm) !== -1 || 
-                                    product.sku.toLowerCase().indexOf(searchTerm) !== -1;
+                const matchesSearch = product.description.toLowerCase().includes(searchTerm) || 
+                                    product.sku.toLowerCase().includes(searchTerm);
                 const matchesCategory = currentCategory === 'ALL' || product.category === currentCategory;
                 return matchesSearch && matchesCategory;
             });
 
+            // Sort products
             filteredProducts.sort(function(a, b) {
                 let aVal, bVal;
                 
@@ -1272,207 +608,70 @@
                 }
             });
             
-            updatePagination();
             displayProducts();
             updateCounts();
         }
 
-        function updatePagination() {
-            totalPages = Math.ceil(filteredProducts.length / productsPerPage);
-            if (currentPage > totalPages) {
-                currentPage = Math.max(1, totalPages);
-            }
-            renderPaginationControls();
-        }
-
-        function renderPaginationControls() {
-            const paginationEl = document.getElementById('paginationControls');
-            
-            if (totalPages <= 1) {
-                paginationEl.innerHTML = '';
-                return;
-            }
-
-            let paginationHTML = '';
-            
-            paginationHTML += `<button onclick="goToPage(${currentPage - 1})" ${currentPage === 1 ? 'disabled' : ''}>
-                ← Previous
-            </button>`;
-            
-            const startPage = Math.max(1, currentPage - 2);
-            const endPage = Math.min(totalPages, currentPage + 2);
-            
-            if (startPage > 1) {
-                paginationHTML += `<button onclick="goToPage(1)">1</button>`;
-                if (startPage > 2) {
-                    paginationHTML += `<span class="px-2">...</span>`;
-                }
-            }
-            
-            for (let i = startPage; i <= endPage; i++) {
-                paginationHTML += `<button onclick="goToPage(${i})" ${i === currentPage ? 'class="active"' : ''}>${i}</button>`;
-            }
-            
-            if (endPage < totalPages) {
-                if (endPage < totalPages - 1) {
-                    paginationHTML += `<span class="px-2">...</span>`;
-                }
-                paginationHTML += `<button onclick="goToPage(${totalPages})">${totalPages}</button>`;
-            }
-            
-            paginationHTML += `<button onclick="goToPage(${currentPage + 1})" ${currentPage === totalPages ? 'disabled' : ''}>
-                Next →
-            </button>`;
-            
-            paginationEl.innerHTML = paginationHTML;
-        }
-
-        function goToPage(page) {
-            if (page >= 1 && page <= totalPages && page !== currentPage) {
-                currentPage = page;
-                displayProducts();
-                updateCounts();
-                renderPaginationControls();
-                document.getElementById('productsGrid').scrollIntoView({ behavior: 'smooth' });
-            }
-        }
-
         function displayProducts() {
-            const grid = document.getElementById('productsGrid');
+            const container = document.getElementById('productsContainer');
             const noResults = document.getElementById('noResults');
             
-            // Handle case where no products are loaded at all
-            if (!allProducts || allProducts.length === 0) {
-                grid.innerHTML = '<div class="text-center py-20">' +
-                    '<div class="text-6xl mb-6">⚠️</div>' +
-                    '<p class="text-2xl text-gray-700 mb-4 font-semibold">No products found</p>' +
-                    '<p class="text-gray-500 text-lg">Please check the Excel file format</p>' +
-                '</div>';
-                grid.className = '';
-                if (noResults) noResults.classList.add('hidden');
-                return;
-            }
-            
             if (filteredProducts.length === 0) {
-                grid.innerHTML = '';
-                grid.className = '';
-                if (noResults) noResults.classList.remove('hidden');
+                container.style.display = 'none';
+                noResults.style.display = 'block';
                 return;
             }
             
-            if (noResults) noResults.classList.add('hidden');
-            grid.className = 'product-grid';
+            container.style.display = 'block';
+            noResults.style.display = 'none';
             
-            const startIndex = (currentPage - 1) * productsPerPage;
-            const endIndex = Math.min(startIndex + productsPerPage, filteredProducts.length);
-            const currentPageProducts = filteredProducts.slice(startIndex, endIndex);
+            const grid = document.createElement('div');
+            grid.className = 'products-grid';
             
-            console.log('🎨 Displaying', currentPageProducts.length, 'products on page', currentPage);
-            
-            grid.innerHTML = currentPageProducts.map(function(product) {
+            grid.innerHTML = filteredProducts.map(function(product) {
                 const originalPrice = (product.price * 1.2).toFixed(2);
                 const savings = (originalPrice - product.price).toFixed(2);
                 const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
                 
-                const cardId = 'card-' + product.sku.replace(/[^a-zA-Z0-9]/g, '');
-                
-                // Get image URL with proper fallback
-                let imageUrl;
-                try {
-                    imageUrl = getImageUrl(product.sku);
-                } catch (error) {
-                    console.warn('Error getting image URL for', product.sku, error);
-                    imageUrl = generatePlaceholderSVG(product.sku, 'Product Image');
-                }
-                
-                return `<div class="product-card" id="${cardId}">
-                    <div class="product-image-container">
-                        <img src="${imageUrl}" alt="${product.description}" 
-                             class="product-image" id="img-${cardId}" 
-                             onload="handleImageLoad('${cardId}')" 
-                             onerror="handleImageError('${cardId}', '${product.sku}')">
-                        <div class="image-controls">
-                            <button class="image-control-btn" onclick="toggleImageFit('${cardId}')" title="Toggle image fit">
-                                🔍
-                            </button>
-                            <button class="image-control-btn" onclick="showProductDetails('${product.sku}')" title="View details">
-                                👁️
+                return `
+                    <div class="product-card">
+                        <div class="product-image-container">
+                            <div style="width: 100%; height: 100%; background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; flex-direction: column; color: #64748b;">
+                                <div style="font-size: 3rem; margin-bottom: 10px; opacity: 0.4;">📦</div>
+                                <div style="font-weight: 600; font-size: 14px;">SKU: ${product.sku}</div>
+                                <div style="font-size: 12px; margin-top: 5px;">Product Image</div>
+                            </div>
+                            <div class="promo-badge">PROMO</div>
+                        </div>
+                        <div class="product-content">
+                            <div class="category-badge">${product.category}</div>
+                            <div class="product-sku">SKU: ${product.sku}</div>
+                            <h3 class="product-title">${product.description}</h3>
+                            
+                            <div class="price-section">
+                                <div class="price-main">R${product.price.toFixed(2)}</div>
+                                <div class="price-original">Was R${originalPrice}</div>
+                                <div class="savings">SAVE R${savings} (${savingsPercent}% OFF!)</div>
+                            </div>
+                            
+                            <button class="view-btn" onclick="showProductDetails('${product.sku}')">
+                                View Details
                             </button>
                         </div>
-                        <div class="promo-badge">PROMO</div>
                     </div>
-                    <div class="product-content">
-                        <div class="category-badge">${product.category}</div>
-                        <div class="product-sku">SKU: ${product.sku}</div>
-                        <h3 class="product-title" onclick="showProductDetails('${product.sku}')">${product.description}</h3>
-                        
-                        <div class="product-price-section">
-                            <div class="price-main">R${product.price.toFixed(2)}</div>
-                            <div class="price-original">Was R${originalPrice}</div>
-                            <div class="savings-badge">SAVE R${savings} (${savingsPercent}% OFF!)</div>
-                        </div>
-                        
-                        <button onclick="showProductDetails('${product.sku}')" class="view-details-btn">
-                            View Details
-                        </button>
-                    </div>
-                </div>`;
+                `;
             }).join('');
+            
+            container.innerHTML = '';
+            container.appendChild(grid);
         }
 
         function updateCounts() {
-            const totalProducts = allProducts ? allProducts.length : 0;
+            const totalProducts = allProducts.length;
+            const filteredCount = filteredProducts.length;
             
             document.getElementById('product-count').textContent = `${totalProducts} promotional items available`;
-            
-            const filteredCount = filteredProducts ? filteredProducts.length : 0;
             document.getElementById('filteredCount').textContent = filteredCount;
-            
-            const startItem = (currentPage - 1) * productsPerPage + 1;
-            const endItem = Math.min(currentPage * productsPerPage, filteredCount);
-            const pageInfoEl = document.getElementById('pageInfo');
-            
-            if (filteredCount === 0) {
-                pageInfoEl.textContent = totalProducts === 0 ? 'Loading products...' : 'No products to display';
-            } else {
-                pageInfoEl.textContent = `Page ${currentPage} of ${totalPages} • Showing ${startItem}-${endItem} of ${filteredCount} products`;
-            }
-        }
-
-        function updateProductImages() {
-            if (!imageSystemReady || !driveImageManager) {
-                console.log('🔄 Image system not ready yet, skipping update');
-                return;
-            }
-            
-            console.log('🎨 Updating product images with real photos...');
-            
-            const productImages = document.querySelectorAll('.product-image');
-            let updatedCount = 0;
-            
-            productImages.forEach(img => {
-                try {
-                    const cardId = img.id.replace('img-', '');
-                    const skuFromId = cardId.replace('card-', '');
-                    
-                    const product = allProducts.find(p => {
-                        const normalizedSku = p.sku.replace(/[^a-zA-Z0-9]/g, '');
-                        return normalizedSku === skuFromId;
-                    });
-                    
-                    if (product) {
-                        const newImageUrl = getImageUrl(product.sku);
-                        if (img.src !== newImageUrl && !newImageUrl.includes('data:image/svg')) {
-                            img.src = newImageUrl;
-                            updatedCount++;
-                        }
-                    }
-                } catch (error) {
-                    console.warn('Error updating image:', error);
-                }
-            });
-            
-            console.log(`📸 Updated ${updatedCount} product images`);
         }
 
         function showProductDetails(sku) {
@@ -1482,319 +681,41 @@
             const originalPrice = (product.price * 1.2).toFixed(2);
             const savings = (originalPrice - product.price).toFixed(2);
             const savingsPercent = Math.round(((originalPrice - product.price) / originalPrice) * 100);
-            const imageUrl = getImageUrl(product.sku);
             
-            const modalContent = document.getElementById('modalContent');
-            modalContent.innerHTML = `
-                <div class="grid md:grid-cols-2 gap-8">
-                    <div class="relative">
-                        <div class="modal-image-container" style="position: relative; width: 100%; height: 400px; background: linear-gradient(135deg, #f8fafc 0%, #f1f5f9 100%); border-radius: 12px; overflow: hidden; border: 2px solid #e5e7eb;">
-                            <img src="${imageUrl}" alt="${product.description}" 
-                                 style="width: 100%; height: 100%; object-fit: contain; object-position: center; background: white; transition: all 0.3s ease;"
-                                 id="modal-img-${product.sku}" 
-                                 onload="handleModalImageLoad('${product.sku}')" 
-                                 onerror="handleModalImageError('${product.sku}')">
-                            <div style="position: absolute; bottom: 12px; right: 12px; display: flex; gap: 8px;">
-                                <button onclick="toggleModalImageFit('${product.sku}')" style="background: rgba(0, 0, 0, 0.8); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">
-                                    🔍 Toggle Fit
-                                </button>
-                                <button onclick="openImageFullscreen('${imageUrl}')" style="background: rgba(0, 0, 0, 0.8); color: white; border: none; padding: 8px 12px; border-radius: 6px; font-size: 12px; cursor: pointer;">
-                                    ⛶ Fullscreen
-                                </button>
-                            </div>
-                        </div>
-                        <div style="position: absolute; top: 12px; left: 12px; background: linear-gradient(45deg, #cc0000, #990000); color: white; padding: 8px 16px; border-radius: 20px; font-size: 12px; font-weight: 800; text-transform: uppercase;">
-                            LIMITED TIME
-                        </div>
-                    </div>
-                    <div style="display: flex; flex-direction: column; justify-content: space-between;">
-                        <div>
-                            <div style="margin-bottom: 8px;">
-                                <span style="background: linear-gradient(90deg, #006b6b 0%, #004d4d 100%); color: white; padding: 6px 12px; border-radius: 15px; font-size: 12px; font-weight: 700; text-transform: uppercase;">
-                                    ${product.category}
-                                </span>
-                            </div>
-                            <div style="font-size: 12px; color: #666; margin-bottom: 8px; font-weight: 600;">SKU: ${product.sku}</div>
-                            <h3 style="font-size: 24px; font-weight: 700; color: #1a1a1a; margin-bottom: 24px; line-height: 1.3;">${product.description}</h3>
-                            
-                            <div style="background: linear-gradient(135deg, #fef7f0 0%, #fed7aa 100%); padding: 24px; border-radius: 16px; margin-bottom: 24px; border-left: 4px solid #cc0000;">
-                                <div style="display: flex; items-center; justify-content: space-between; margin-bottom: 12px;">
-                                    <span style="font-size: 14px; color: #666; font-weight: 600;">Regular Price:</span>
-                                    <span style="font-size: 18px; color: #999; text-decoration: line-through;">R${originalPrice}</span>
-                                </div>
-                                <div style="display: flex; items-center; justify-content: space-between; margin-bottom: 16px;">
-                                    <span style="font-size: 20px; font-weight: 700; color: #cc0000;">July Promo Price:</span>
-                                    <span style="font-size: 32px; font-weight: 900; color: #cc0000;">R${product.price.toFixed(2)}</span>
-                                </div>
-                                <div style="text-align: center; background: linear-gradient(135deg, #10b981 0%, #059669 100%); color: white; padding: 12px; border-radius: 12px;">
-                                    <span style="font-size: 16px; font-weight: 800;">
-                                        YOU SAVE: R${savings} (${savingsPercent}% OFF!)
-                                    </span>
-                                </div>
-                            </div>
-                        </div>
-                        
-                        <div>
-                            <button style="width: 100%; background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%); color: white; border: none; padding: 16px 32px; border-radius: 12px; font-size: 16px; font-weight: 700; text-transform: uppercase; cursor: pointer; transition: all 0.3s ease; box-shadow: 0 6px 20px rgba(0, 107, 107, 0.3); margin-bottom: 16px;" onmouseover="this.style.transform='translateY(-2px)'; this.style.boxShadow='0 10px 30px rgba(0, 107, 107, 0.4)'" onmouseout="this.style.transform='translateY(0)'; this.style.boxShadow='0 6px 20px rgba(0, 107, 107, 0.3)'">
-                                🛒 Get This Deal Now!
-                            </button>
-                            <div style="text-align: center; padding: 16px; background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); border-radius: 12px; border: 1px solid #fbbf24;">
-                                <p style="font-size: 14px; color: #92400e; font-weight: 600; margin-bottom: 4px;">⏰ Limited time offer - July 2025 only!</p>
-                                <p style="font-size: 12px; color: #a16207;">Don't miss out on this exclusive promotional price</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            `;
+            alert(`Product Details:
             
-            document.getElementById('productModal').style.display = 'block';
-            document.body.style.overflow = 'hidden';
-        }
+SKU: ${product.sku}
+Product: ${product.description}
+Category: ${product.category}
 
-        function closeModal() {
-            document.getElementById('productModal').style.display = 'none';
-            document.body.style.overflow = 'auto';
-        }
+PROMOTIONAL PRICE: R${product.price.toFixed(2)}
+Regular Price: R${originalPrice}
+YOU SAVE: R${savings} (${savingsPercent}% OFF!)
 
-        async function refreshImageCache() {
-            if (!driveImageManager) {
-                loadImagesInBackground();
-                return;
-            }
-            
-            const refreshBtn = document.getElementById('refreshBtn');
-            refreshBtn.innerHTML = '🔄 Updating...';
-            refreshBtn.disabled = true;
-            
-            try {
-                await driveImageManager.forceRefresh();
-                updateProductImages();
-                updateCounts();
-                
-                refreshBtn.innerHTML = '✅ Updated!';
-                showImageLoadedNotification();
-                
-                setTimeout(() => {
-                    refreshBtn.innerHTML = '🔄 Refresh Images';
-                    refreshBtn.disabled = false;
-                }, 1500);
-            } catch (error) {
-                console.error('Error refreshing image cache:', error);
-                refreshBtn.innerHTML = '🔄 Refresh Images';
-                refreshBtn.disabled = false;
-            }
+Limited time July 2025 offer!
+Call +27 31 332 7192 to order.`);
         }
 
         function showError(message) {
-            const body = document.body;
-            body.innerHTML = `
-                <div style="min-height: 100vh; background: linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); display: flex; align-items: center; justify-content: center; padding: 2rem;">
-                    <div style="text-align: center; max-width: 28rem; margin: 0 auto;">
-                        <div style="font-size: 4rem; margin-bottom: 1.5rem;">🏪</div>
-                        <h1 style="font-size: 2rem; font-weight: 700; color: #1a1a1a; margin-bottom: 1rem;">OZZ Cash & Carry</h1>
-                        <p style="font-size: 1.125rem; color: #4b5563; margin-bottom: 1.5rem;">${message}</p>
-                        <div style="background: linear-gradient(135deg, #dbeafe 0%, #bfdbfe 100%); border: 1px solid #93c5fd; border-radius: 12px; padding: 1rem; margin-bottom: 1.5rem;">
-                            <h3 style="font-weight: 600; color: #1e40af; margin-bottom: 0.5rem;">📞 Contact Us</h3>
-                            <p style="color: #1d4ed8;">Call: <a href="tel:+27313327192" style="font-weight: 700; text-decoration: underline; color: inherit;">+27 31 332 7192</a></p>
-                            <p style="font-size: 0.875rem; color: #3b82f6; margin-top: 0.25rem;">Monday-Friday: 8:00 AM - 5:00 PM</p>
-                        </div>
-                        <button onclick="location.reload()" style="background: linear-gradient(135deg, #cc0000 0%, #990000 100%); color: white; border: none; padding: 0.75rem 1.5rem; border-radius: 12px; font-weight: 600; cursor: pointer; transition: all 0.3s ease;">
-                            🔄 Try Again
-                        </button>
+            const container = document.getElementById('productsContainer');
+            container.innerHTML = `
+                <div style="text-align: center; padding: 60px 20px;">
+                    <div style="font-size: 4rem; margin-bottom: 20px;">⚠️</div>
+                    <h3>Error Loading Catalog</h3>
+                    <p style="color: #666; margin: 20px 0;">${message}</p>
+                    <div style="background: #dbeafe; border: 1px solid #93c5fd; border-radius: 12px; padding: 20px; margin: 20px auto; max-width: 400px;">
+                        <h4 style="color: #1e40af; margin-bottom: 10px;">📞 Contact Us</h4>
+                        <p style="color: #1d4ed8;">Call: <strong>+27 31 332 7192</strong></p>
+                        <p style="font-size: 14px; color: #3b82f6; margin-top: 5px;">Monday-Friday: 8:00 AM - 5:00 PM</p>
                     </div>
+                    <button onclick="location.reload()" style="background: #cc0000; color: white; border: none; padding: 12px 24px; border-radius: 12px; font-weight: 600; cursor: pointer; margin-top: 20px;">
+                        🔄 Try Again
+                    </button>
                 </div>
             `;
         }
 
-        // Image handling functions
-        function handleImageLoad(cardId) {
-            const imgEl = document.getElementById('img-' + cardId);
-            if (imgEl) {
-                imgEl.style.display = 'block';
-                imgEl.style.opacity = '1';
-            }
-        }
-
-        function handleImageError(cardId, sku) {
-            const imgEl = document.getElementById('img-' + cardId);
-            const container = imgEl ? imgEl.parentElement : null;
-            
-            console.log('Image failed to load for SKU:', sku);
-            
-            if (imgEl) {
-                imgEl.style.display = 'none';
-            }
-            
-            if (container && !container.querySelector('.fallback-placeholder')) {
-                const placeholder = document.createElement('div');
-                placeholder.className = 'image-placeholder';
-                placeholder.style.cssText = `
-                    position: absolute;
-                    top: 0;
-                    left: 0;
-                    width: 100%;
-                    height: 100%;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    flex-direction: column;
-                    background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-                    border-radius: 12px;
-                `;
-                placeholder.innerHTML = `
-                    <div style="font-size: 3rem; margin-bottom: 0.5rem; opacity: 0.4;">📦</div>
-                    <div style="font-weight: 600; font-size: 0.875rem; color: #374151;">SKU: ${sku}</div>
-                    <div style="font-size: 0.75rem; color: #6b7280; margin-top: 0.25rem;">Product Image</div>
-                `;
-                container.appendChild(placeholder);
-            }
-            
-            if (imgEl) {
-                setTimeout(() => {
-                    imgEl.src = generatePlaceholderSVG(sku, 'No Image Available');
-                    imgEl.style.display = 'block';
-                }, 100);
-            }
-        }
-
-        function toggleImageFit(cardId) {
-            const imgEl = document.getElementById('img-' + cardId);
-            if (imgEl) {
-                if (imgEl.classList.contains('contain-mode')) {
-                    imgEl.classList.remove('contain-mode');
-                } else {
-                    imgEl.classList.add('contain-mode');
-                }
-            }
-        }
-
-        function handleModalImageLoad(sku) {
-            // Modal image loaded successfully
-        }
-
-        function handleModalImageError(sku) {
-            const imgEl = document.getElementById('modal-img-' + sku);
-            if (imgEl) {
-                imgEl.style.display = 'none';
-                const container = imgEl.parentElement;
-                if (container) {
-                    const placeholder = document.createElement('div');
-                    placeholder.style.cssText = `
-                        position: absolute;
-                        top: 0;
-                        left: 0;
-                        width: 100%;
-                        height: 100%;
-                        display: flex;
-                        align-items: center;
-                        justify-content: center;
-                        flex-direction: column;
-                        background: linear-gradient(135deg, #f1f5f9 0%, #e2e8f0 100%);
-                    `;
-                    placeholder.innerHTML = `
-                        <div style="font-size: 4rem; margin-bottom: 1rem; opacity: 0.4;">📦</div>
-                        <div style="font-weight: 700; font-size: 1.125rem; color: #374151;">${sku}</div>
-                        <div style="font-size: 0.875rem; color: #6b7280;">Image not available</div>
-                    `;
-                    container.appendChild(placeholder);
-                }
-            }
-        }
-
-        function toggleModalImageFit(sku) {
-            const imgEl = document.getElementById('modal-img-' + sku);
-            if (imgEl) {
-                if (imgEl.style.objectFit === 'cover') {
-                    imgEl.style.objectFit = 'contain';
-                    imgEl.style.padding = '12px';
-                } else {
-                    imgEl.style.objectFit = 'cover';
-                    imgEl.style.padding = '0';
-                }
-            }
-        }
-
-        function openImageFullscreen(imageUrl) {
-            const overlay = document.createElement('div');
-            overlay.style.cssText = `
-                position: fixed;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: rgba(0, 0, 0, 0.95);
-                z-index: 10000;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: zoom-out;
-                backdrop-filter: blur(8px);
-            `;
-            
-            const img = document.createElement('img');
-            img.src = imageUrl;
-            img.style.cssText = `
-                max-width: 95%;
-                max-height: 95%;
-                object-fit: contain;
-                border-radius: 12px;
-                box-shadow: 0 25px 80px rgba(0, 0, 0, 0.5);
-            `;
-            
-            const closeBtn = document.createElement('button');
-            closeBtn.innerHTML = '✕';
-            closeBtn.style.cssText = `
-                position: absolute;
-                top: 20px;
-                right: 20px;
-                background: rgba(255, 255, 255, 0.2);
-                border: none;
-                color: white;
-                font-size: 28px;
-                font-weight: bold;
-                width: 50px;
-                height: 50px;
-                border-radius: 50%;
-                cursor: pointer;
-                backdrop-filter: blur(4px);
-                transition: all 0.3s ease;
-            `;
-            
-            overlay.appendChild(img);
-            overlay.appendChild(closeBtn);
-            document.body.appendChild(overlay);
-            
-            const closeFullscreen = () => {
-                document.body.removeChild(overlay);
-                document.body.style.overflow = 'auto';
-            };
-            
-            overlay.addEventListener('click', closeFullscreen);
-            closeBtn.addEventListener('click', closeFullscreen);
-            document.addEventListener('keydown', function(e) {
-                if (e.key === 'Escape') closeFullscreen();
-            });
-            
-            document.body.style.overflow = 'hidden';
-        }
-
-        // Event handlers
-        window.onclick = function(event) {
-            const modal = document.getElementById('productModal');
-            if (event.target === modal) {
-                closeModal();
-            }
-        };
-
-        document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape') {
-                closeModal();
-            }
-        });
-
-        console.log('🎉 OZZ Cash & Carry Enhanced Premium Catalog Loaded');
-        console.log('📊 Debug: Products should load automatically');
-        console.log('🔧 If no products show, check browser console for Excel parsing errors');
+        console.log('🎉 OZZ Cash & Carry Catalog Loaded');
     </script>
 </body>
 </html>
