@@ -672,25 +672,54 @@ Visit our showroom to see the full range!</textarea>
                         }
                     });
                 });
+                
+                // Enhanced debug logging for product 206
+                console.log('🔍 Debug: Checking for product 206...');
+                const product206Variations = ['206', '0206', 'product206', 'item206'];
+                product206Variations.forEach(function(variation) {
+                    if (self.imageCache.has(variation)) {
+                        console.log('✅ Found product 206 with key:', variation, self.imageCache.get(variation));
+                    }
+                });
+                
+                // Log all images that might contain "206"
+                images.forEach(function(image) {
+                    if (image.name.toLowerCase().includes('206')) {
+                        console.log('📸 Image containing "206":', image.name, 'ID:', image.id);
+                        console.log('  Extracted codes:', self.extractProductCodes(image.name));
+                    }
+                });
             }
 
             extractProductCodes(filename) {
                 const codes = [];
                 const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp|bmp|tiff)$/i, '');
-                const numericCodes = nameWithoutExt.match(/\b\d{4,6}\b/g);
+                
+                // Enhanced extraction for product 206 specifically
+                const numericCodes = nameWithoutExt.match(/\b\d{3,6}\b/g); // Changed from 4,6 to 3,6 to catch 206
                 if (numericCodes) codes.push.apply(codes, numericCodes);
-                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{4,8}\b/gi);
+                
+                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{3,8}\b/gi); // Changed from 4,8 to 3,8
                 if (alphanumericCodes) {
                     var lowercaseCodes = alphanumericCodes.map(function(code) { return code.toLowerCase(); });
                     codes.push.apply(codes, lowercaseCodes);
                 }
+                
                 const parts = nameWithoutExt.split(/[-_\s\.]+/);
                 for (var i = 0; i < parts.length; i++) {
                     const cleanPart = parts[i].trim();
-                    if (/^\d{4,6}$/.test(cleanPart) || /^[A-Z0-9]{4,8}$/i.test(cleanPart)) {
+                    if (/^\d{3,6}$/.test(cleanPart) || /^[A-Z0-9]{3,8}$/i.test(cleanPart)) { // Changed from 4,6 and 4,8 to 3,6 and 3,8
                         codes.push(cleanPart.toLowerCase());
                     }
                 }
+                
+                // Special handling for 206 - add zero-padded versions
+                codes.forEach(function(code) {
+                    if (code === '206') {
+                        codes.push('0206');
+                    }
+                });
+                
                 return codes.filter(function(value, index, self) {
                     return self.indexOf(value) === index;
                 });
@@ -698,8 +727,28 @@ Visit our showroom to see the full range!</textarea>
 
             getProductImage(productCode) {
                 const normalizedCode = productCode.toString().toLowerCase().trim();
-                const imageData = this.imageCache.get(normalizedCode);
-                return imageData ? { url: imageData.directLink, found: true } : { url: null, found: false };
+                
+                // Try exact match first
+                let imageData = this.imageCache.get(normalizedCode);
+                if (imageData) {
+                    console.log('✅ Image found for', productCode, ':', imageData.name);
+                    return { url: imageData.directLink, found: true };
+                }
+                
+                // For product 206, try additional variations
+                if (normalizedCode === '206') {
+                    const variations = ['0206', 'product206', 'item206', 'sku206'];
+                    for (let i = 0; i < variations.length; i++) {
+                        imageData = this.imageCache.get(variations[i]);
+                        if (imageData) {
+                            console.log('✅ Image found for 206 using variation', variations[i], ':', imageData.name);
+                            return { url: imageData.directLink, found: true };
+                        }
+                    }
+                    console.log('❌ No image found for product 206 despite variations');
+                }
+                
+                return { url: null, found: false };
             }
 
             getStats() {
@@ -1160,7 +1209,7 @@ Visit our showroom to see the full range!</textarea>
             const promoDetails = document.getElementById('promoDetails').value || '• Valid for July 2025 only\n• Limited quantities available';
             const additionalInfo = document.getElementById('additionalInfo').value || 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM';
             
-            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">JULY 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p><div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(3, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">+27 31 332 7192</div></div><div class="info-card"><div class="info-label">Email</div><div class="info-value">info@ozzsa.com</div></div><div class="info-card"><div class="info-label">Website</div><div class="info-value">www.ozzsa.com</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. Ozz Cash and Carry reserves the right to limit quantities. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span><span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 3.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting www.blackorchid.online</div></div></div>';
+            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">JULY 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p><div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(2, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">+27 31 332 7192</div></div><div class="info-card"><div class="info-label">Email</div><div class="info-value">queries@ozzsa.com</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. Ozz Cash and Carry reserves the right to limit quantities. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span><span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 3.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
             
             return page;
         }
@@ -1191,7 +1240,7 @@ Visit our showroom to see the full range!</textarea>
                 }
             }
             
-            contentHTML += '</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • info@ozzsa.com</span><span class="footer-right">www.ozzsa.com • Version 3.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting www.blackorchid.online</div></div></div>';
+            contentHTML += '</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • queries@ozzsa.com</span><span class="footer-right">Version 3.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
             
             page.innerHTML = contentHTML;
             return page;
@@ -1357,6 +1406,9 @@ Visit our showroom to see the full range!</textarea>
         console.log('✨ NEW: Excel page organization support');
         console.log('📄 NEW: Simplified product cards and consolidated cover page');
         console.log('🔢 NEW: Maximum density layout (24 products per page)');
+        console.log('📧 UPDATED: Email changed to queries@ozzsa.com');
+        console.log('🌐 UPDATED: Website references removed');
+        console.log('🔍 UPDATED: Enhanced image matching for product 206');
     </script>
 </body>
 </html>
