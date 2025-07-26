@@ -24,27 +24,6 @@
         .image-status.error { background: #f8d7da; border-color: #dc3545; }
         #pagePreviewSection .category-item:hover { border-color: #007bff !important; background: #f8f9ff !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: all 0.2s ease; }
         #useExcelPages { transform: scale(1.2); accent-color: #007bff; }
-        @media screen {
-            .product-image:hover {
-                opacity: 0.8;
-                transition: opacity 0.2s ease;
-            }
-            
-            .product-image:hover::after {
-                content: '✏️ Edit';
-                position: absolute;
-                top: 50%;
-                left: 50%;
-                transform: translate(-50%, -50%);
-                background: rgba(0, 0, 0, 0.8);
-                color: white;
-                padding: 8px 16px;
-                border-radius: 4px;
-                font-size: 14px;
-                font-weight: bold;
-                pointer-events: none;
-            }
-        }
         @media print {
             body { margin: 0; padding: 0; background: white; }
             .control-panel { display: none; }
@@ -154,6 +133,7 @@
             .products-grid.dense { --grid-columns: 2; --grid-rows: 5; --grid-gap: 3mm; }
             .products-grid.ultra-compact { --grid-columns: 3; --grid-rows: 5; --grid-gap: 2.5mm; }
             .products-grid.maximum { --grid-columns: 4; --grid-rows: 6; --grid-gap: 2mm; }
+            
             .product-card {
                 background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
                 display: flex;
@@ -301,6 +281,7 @@
             .price-currency { font-size: 10pt; font-weight: 800; color: #ffffff; }
             .price-cents { font-size: 8pt; vertical-align: super; font-weight: 800; margin-left: 0.3mm; color: #ffffff; }
             .price-unit { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.95; font-weight: 700; color: rgba(255,255,255,0.95); }
+            
             .products-grid.maximum .product-card { min-height: 32mm; }
             .products-grid.maximum .product-image { width: 60%; }
             .products-grid.maximum .product-details { width: 40%; }
@@ -310,6 +291,7 @@
             .products-grid.maximum .spec-label, .products-grid.maximum .spec-value { font-size: 5pt; }
             .products-grid.maximum .price-badge { min-height: 15mm; padding: 2mm; }
             .products-grid.maximum .price-amount { font-size: 11pt; }
+            
             .page-footer {
                 border-top: 1px solid #e0e0e0;
                 padding-top: 3mm;
@@ -418,6 +400,7 @@
                 </div>
             </div>
         </div>
+
         <div id="introPageCustomization" class="category-section" style="display: none;">
             <h3>📄 Cover Page Content Customization</h3>
             <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
@@ -455,13 +438,9 @@
                             Additional Information:
                             <textarea id="additionalInfo" rows="3" 
                                       style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">Store Hours:
-Friday	      8 am–12:45 pm, 13:45–16:45 pm
-Saturday      8 am–14:30 pm
-Sunday        9 am–12:00 pm
-Monday        8 am–12:45 pm, 13:45–16:45 pm
-Tuesday       8 am–12:45 pm, 13:45–16:45 pm
-Wednesday     8 am–12:45 pm, 13:45–16:45 pm
-Thursday      8 am–12:45 pm, 13:45–16:45 pm
+Monday - Friday: 8:00 AM - 5:00 PM
+Saturday: 8:00 AM - 1:00 PM
+Sunday: Closed
 
 Visit our showroom to see the full range!</textarea>
                         </label>
@@ -509,56 +488,12 @@ Visit our showroom to see the full range!</textarea>
             <div id="categoryList" class="category-grid"></div>
         </div>
     </div>
-    <!-- Image Edit Modal -->
-    <div id="imageEditModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; overflow: auto;">
-        <div style="background: white; margin: 50px auto; padding: 30px; max-width: 600px; border-radius: 12px; position: relative;">
-            <span onclick="closeImageEditModal()" style="position: absolute; right: 15px; top: 15px; font-size: 30px; cursor: pointer; color: #666;">&times;</span>
-            <h2 style="margin-bottom: 20px; color: #1a1a1a;">Edit Product Image</h2>
-            
-            <div id="currentImagePreview" style="text-align: center; margin-bottom: 20px;">
-                <img id="modalCurrentImage" src="" alt="Current Image" style="max-width: 300px; max-height: 300px; border: 2px solid #ddd; border-radius: 8px; padding: 10px; background: #f8f9fa;">
-            </div>
-            
-            <div style="margin-bottom: 20px;">
-                <h4 style="color: #666; margin-bottom: 10px;">Product: <span id="modalProductName"></span></h4>
-                <h4 style="color: #666; margin-bottom: 10px;">SKU: <span id="modalProductSKU"></span></h4>
-            </div>
-            
-            <div style="display: flex; flex-direction: column; gap: 15px;">
-                <button onclick="replaceWithUpload()" style="background: #007bff; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
-                    📤 Upload New Image
-                </button>
-                
-                <button onclick="replaceWithURL()" style="background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
-                    🔗 Use Image URL
-                </button>
-                
-                <button onclick="removeProductImage()" style="background: #dc3545; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
-                    🗑️ Remove Image
-                </button>
-                
-                <button onclick="resetToOriginalImage()" style="background: #6c757d; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
-                    🔄 Reset to Original
-                </button>
-            </div>
-            
-            <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-            
-            <div id="urlInputSection" style="display: none; margin-top: 15px;">
-                <input type="text" id="imageURLInput" placeholder="Enter image URL..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
-                <button onclick="applyImageURL()" style="background: #17a2b8; color: white; padding: 10px 20px; border: none; border-radius: 4px; margin-right: 10px;">Apply URL</button>
-                <button onclick="cancelURLInput()" style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 4px;">Cancel</button>
-            </div>
-        </div>
-    </div>
     
     <div id="printContent" class="print-preview"></div>
     <script>
         let allProducts = [];
         let categories = [];
         let driveImageManager = null;
-        let imageOverrides = new Map(); // Store custom image overrides
-        let currentEditingSKU = null; // Track which product is being edited
         
         class DriveImageManager {
             constructor() {
@@ -918,6 +853,7 @@ Visit our showroom to see the full range!</textarea>
                 pagePreviewGrid.appendChild(pageCard);
             });
         }
+
         async function initializeImages() {
             const imageBtn = document.getElementById('imageBtn');
             const imageStatus = document.getElementById('imageStatus');
@@ -1020,13 +956,6 @@ Visit our showroom to see the full range!</textarea>
         }
 
         function getImageUrl(sku) {
-            // Check for overrides first
-            if (imageOverrides.has(sku)) {
-                const override = imageOverrides.get(sku);
-                return override === 'REMOVED' ? null : override;
-            }
-            
-            // Otherwise use original logic
             if (!driveImageManager) {
                 return null;
             }
@@ -1044,7 +973,6 @@ Visit our showroom to see the full range!</textarea>
             };
             return configs[layout] || configs['standard'];
         }
-
         function generateCatalog() {
             const useExcelPages = document.getElementById('useExcelPages');
             const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
@@ -1279,138 +1207,13 @@ Visit our showroom to see the full range!</textarea>
             
             const productName = product.description.trim();
             
-            // Add onclick handler to the product-image div
-            return '<div class="product-card"><div class="product-image" onclick="openImageEditModal(\'' + product.sku + '\', \'' + productName.replace(/'/g, "\\'") + '\', \'' + (imageUrl || '') + '\')" style="cursor: pointer;">' + 
+            return '<div class="product-card"><div class="product-image">' + 
                 (imageUrl ? 
                     '<img src="' + imageUrl + '" alt="' + product.description + '">' :
                     '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
                 ) + 
                 '</div><div class="product-details"><div class="product-header"><div class="product-name">' + productName + '</div></div><div class="product-specs"><div class="spec-item"><span class="spec-bullet">•</span><span class="spec-label">SKU:</span><span class="spec-value">' + product.sku + '</span></div></div><div class="price-badge"><div class="price-amount"><span class="price-currency">R</span>' + rands + '<span class="price-cents">' + cents + '</span></div><div class="price-unit">Each</div></div></div></div>';
         }
-        // Image Editing Functions
-        function openImageEditModal(sku, productName, currentImageUrl) {
-            currentEditingSKU = sku;
-            document.getElementById('imageEditModal').style.display = 'block';
-            document.getElementById('modalProductName').textContent = productName;
-            document.getElementById('modalProductSKU').textContent = sku;
-            
-            // Show current image or placeholder
-            const modalImage = document.getElementById('modalCurrentImage');
-            if (currentImageUrl) {
-                modalImage.src = currentImageUrl;
-                modalImage.style.display = 'block';
-            } else {
-                modalImage.style.display = 'none';
-                document.getElementById('currentImagePreview').innerHTML = '<div style="padding: 40px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px;"><div style="font-size: 48px; color: #ccc;">📦</div><div style="color: #999; margin-top: 10px;">No image available</div></div>';
-            }
-        }
-
-        function closeImageEditModal() {
-            document.getElementById('imageEditModal').style.display = 'none';
-            document.getElementById('urlInputSection').style.display = 'none';
-            currentEditingSKU = null;
-        }
-
-        function replaceWithUpload() {
-            document.getElementById('imageUploadInput').click();
-        }
-
-        function handleImageUpload(event) {
-            const file = event.target.files[0];
-            if (file && file.type.startsWith('image/')) {
-                const reader = new FileReader();
-                reader.onload = function(e) {
-                    if (currentEditingSKU) {
-                        imageOverrides.set(currentEditingSKU, e.target.result);
-                        document.getElementById('modalCurrentImage').src = e.target.result;
-                        document.getElementById('modalCurrentImage').style.display = 'block';
-                        showNotification('Image replaced successfully!', 'success');
-                        
-                        // Regenerate catalog if it exists
-                        if (document.getElementById('printContent').innerHTML !== '') {
-                            generateCatalog();
-                        }
-                    }
-                };
-                reader.readAsDataURL(file);
-            }
-        }
-
-        function replaceWithURL() {
-            document.getElementById('urlInputSection').style.display = 'block';
-            document.getElementById('imageURLInput').value = '';
-            document.getElementById('imageURLInput').focus();
-        }
-
-        function applyImageURL() {
-            const url = document.getElementById('imageURLInput').value.trim();
-            if (url && currentEditingSKU) {
-                // Test if URL is valid by creating a temporary image
-                const testImg = new Image();
-                testImg.onload = function() {
-                    imageOverrides.set(currentEditingSKU, url);
-                    document.getElementById('modalCurrentImage').src = url;
-                    document.getElementById('modalCurrentImage').style.display = 'block';
-                    document.getElementById('urlInputSection').style.display = 'none';
-                    showNotification('Image URL applied successfully!', 'success');
-                    
-                    // Regenerate catalog if it exists
-                    if (document.getElementById('printContent').innerHTML !== '') {
-                        generateCatalog();
-                    }
-                };
-                testImg.onerror = function() {
-                    showNotification('Invalid image URL. Please check and try again.', 'error');
-                };
-                testImg.src = url;
-            }
-        }
-
-        function cancelURLInput() {
-            document.getElementById('urlInputSection').style.display = 'none';
-        }
-
-        function removeProductImage() {
-            if (currentEditingSKU) {
-                imageOverrides.set(currentEditingSKU, 'REMOVED');
-                document.getElementById('currentImagePreview').innerHTML = '<div style="padding: 40px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px;"><div style="font-size: 48px; color: #ccc;">🚫</div><div style="color: #999; margin-top: 10px;">Image removed</div></div>';
-                showNotification('Image removed successfully!', 'success');
-                
-                // Regenerate catalog if it exists
-                if (document.getElementById('printContent').innerHTML !== '') {
-                    generateCatalog();
-                }
-            }
-        }
-
-        function resetToOriginalImage() {
-            if (currentEditingSKU) {
-                imageOverrides.delete(currentEditingSKU);
-                const originalUrl = getOriginalImageUrl(currentEditingSKU);
-                
-                if (originalUrl) {
-                    document.getElementById('modalCurrentImage').src = originalUrl;
-                    document.getElementById('modalCurrentImage').style.display = 'block';
-                } else {
-                    document.getElementById('currentImagePreview').innerHTML = '<div style="padding: 40px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px;"><div style="font-size: 48px; color: #ccc;">📦</div><div style="color: #999; margin-top: 10px;">No original image available</div></div>';
-                }
-                
-                showNotification('Reset to original image!', 'info');
-                
-                // Regenerate catalog if it exists
-                if (document.getElementById('printContent').innerHTML !== '') {
-                    generateCatalog();
-                }
-            }
-        }
-
-        function getOriginalImageUrl(sku) {
-            if (!driveImageManager) return null;
-            const imageData = driveImageManager.getProductImage(sku);
-            return imageData.found ? imageData.url : null;
-        }
-
-        // Preview and Customization Functions
         function previewCoverPage() {
             const printContent = document.getElementById('printContent');
             printContent.innerHTML = '';
@@ -1547,18 +1350,6 @@ Visit our showroom to see the full range!</textarea>
             }, 3000);
         }
 
-        // Add click event to modal background to close
-        document.addEventListener('DOMContentLoaded', function() {
-            const modal = document.getElementById('imageEditModal');
-            if (modal) {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === modal) {
-                        closeImageEditModal();
-                    }
-                });
-            }
-        });
-
         console.log('🎉 OZZ Professional Catalog Generator with Excel Page Organization Loaded');
         console.log('🔒 CSP-Safe: No eval() usage - fully secure');
         console.log('🎨 Customization: Colors, fonts, themes, and layouts available');
@@ -1566,7 +1357,6 @@ Visit our showroom to see the full range!</textarea>
         console.log('✨ NEW: Excel page organization support');
         console.log('📄 NEW: Simplified product cards and consolidated cover page');
         console.log('🔢 NEW: Maximum density layout (24 products per page)');
-        console.log('🖼️ NEW: Click-to-edit image functionality');
     </script>
 </body>
 </html>
