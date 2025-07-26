@@ -5,8 +5,6 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OZZ Professional Catalog Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <!-- ONLY ADDITION: html2canvas for image export -->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #1a1a1a; line-height: 1.4; }
@@ -26,22 +24,27 @@
         .image-status.error { background: #f8d7da; border-color: #dc3545; }
         #pagePreviewSection .category-item:hover { border-color: #007bff !important; background: #f8f9ff !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: all 0.2s ease; }
         #useExcelPages { transform: scale(1.2); accent-color: #007bff; }
-        
-        /* ONLY ADDITION: Export modal styles */
-        .export-modal { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; display: none; align-items: center; justify-content: center; }
-        .export-modal-content { background: white; border-radius: 12px; padding: 30px; max-width: 500px; width: 90%; box-shadow: 0 10px 30px rgba(0,0,0,0.3); }
-        .export-modal h3 { margin-bottom: 20px; color: #333; }
-        .export-options { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
-        .export-option { border: 2px solid #ddd; border-radius: 8px; padding: 15px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
-        .export-option:hover, .export-option.selected { border-color: #007bff; background: #f8f9ff; }
-        .format-controls { margin: 15px 0; }
-        .format-buttons { display: flex; gap: 10px; justify-content: center; margin: 10px 0; }
-        .format-btn { padding: 8px 16px; border: 1px solid #ddd; background: white; border-radius: 4px; cursor: pointer; }
-        .format-btn.active { background: #007bff; color: white; border-color: #007bff; }
-        .quality-control { margin: 10px 0; text-align: center; }
-        .export-buttons { display: flex; gap: 10px; justify-content: flex-end; margin-top: 20px; }
-        .progress-bar { background: #f0f0f0; border-radius: 4px; height: 20px; margin: 15px 0; overflow: hidden; display: none; }
-        .progress-fill { background: #28a745; height: 100%; width: 0%; transition: width 0.3s ease; display: flex; align-items: center; justify-content: center; color: white; font-size: 12px; }
+        @media screen {
+            .product-image:hover {
+                opacity: 0.8;
+                transition: opacity 0.2s ease;
+            }
+            
+            .product-image:hover::after {
+                content: '✏️ Edit';
+                position: absolute;
+                top: 50%;
+                left: 50%;
+                transform: translate(-50%, -50%);
+                background: rgba(0, 0, 0, 0.8);
+                color: white;
+                padding: 8px 16px;
+                border-radius: 4px;
+                font-size: 14px;
+                font-weight: bold;
+                pointer-events: none;
+            }
+        }
         @media print {
             body { margin: 0; padding: 0; background: white; }
             .control-panel { display: none; }
@@ -307,7 +310,6 @@
             .products-grid.maximum .spec-label, .products-grid.maximum .spec-value { font-size: 5pt; }
             .products-grid.maximum .price-badge { min-height: 15mm; padding: 2mm; }
             .products-grid.maximum .price-amount { font-size: 11pt; }
-            
             .page-footer {
                 border-top: 1px solid #e0e0e0;
                 padding-top: 3mm;
@@ -358,40 +360,8 @@
             <button onclick="initializeImages()" id="imageBtn" disabled>📸 Initialize Images</button>
             <button onclick="generateCatalog()" id="generateBtn" disabled>📄 Generate Catalog</button>
             <button onclick="window.print()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
-            <!-- ONLY ADDITION: Export button -->
-            <button onclick="showExportModal()" id="exportImagesBtn" disabled>📤 Export Images</button>
         </div>
         
-        <!-- ONLY ADDITION: Export modal -->
-        <div class="export-modal" id="exportModal">
-            <div class="export-modal-content">
-                <h3>📤 Export Catalog as Images</h3>
-                <div class="export-options">
-                    <div class="export-option selected" data-format="png">
-                        <h4>PNG Format</h4>
-                        <p>Best quality, larger files</p>
-                    </div>
-                    <div class="export-option" data-format="jpg">
-                        <h4>JPG Format</h4>
-                        <p>Smaller files, good quality</p>
-                    </div>
-                </div>
-                <div class="format-controls">
-                    <div class="quality-control">
-                        <label>Quality: <span id="qualityDisplay">0.95</span></label>
-                        <input type="range" id="qualitySlider" min="0.1" max="1.0" step="0.05" value="0.95">
-                    </div>
-                </div>
-                <div class="progress-bar" id="exportProgress">
-                    <div class="progress-fill" id="progressFill">0%</div>
-                </div>
-                <div id="exportStatus" style="margin: 10px 0; text-align: center; color: #666;"></div>
-                <div class="export-buttons">
-                    <button onclick="closeExportModal()">Cancel</button>
-                    <button onclick="startImageExport()" id="startExportBtn" style="background: #28a745;">Start Export</button>
-                </div>
-            </div>
-        </div>
         <div class="status-box" id="status">Ready to load catalog data...</div>
         <div class="image-status" id="imageStatus" style="display: none;">
             <div id="imageStatusText">📸 Image system not initialized</div>
@@ -448,7 +418,6 @@
                 </div>
             </div>
         </div>
-
         <div id="introPageCustomization" class="category-section" style="display: none;">
             <h3>📄 Cover Page Content Customization</h3>
             <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
@@ -540,19 +509,57 @@ Visit our showroom to see the full range!</textarea>
             <div id="categoryList" class="category-grid"></div>
         </div>
     </div>
+    <!-- Image Edit Modal -->
+    <div id="imageEditModal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 10000; overflow: auto;">
+        <div style="background: white; margin: 50px auto; padding: 30px; max-width: 600px; border-radius: 12px; position: relative;">
+            <span onclick="closeImageEditModal()" style="position: absolute; right: 15px; top: 15px; font-size: 30px; cursor: pointer; color: #666;">&times;</span>
+            <h2 style="margin-bottom: 20px; color: #1a1a1a;">Edit Product Image</h2>
+            
+            <div id="currentImagePreview" style="text-align: center; margin-bottom: 20px;">
+                <img id="modalCurrentImage" src="" alt="Current Image" style="max-width: 300px; max-height: 300px; border: 2px solid #ddd; border-radius: 8px; padding: 10px; background: #f8f9fa;">
+            </div>
+            
+            <div style="margin-bottom: 20px;">
+                <h4 style="color: #666; margin-bottom: 10px;">Product: <span id="modalProductName"></span></h4>
+                <h4 style="color: #666; margin-bottom: 10px;">SKU: <span id="modalProductSKU"></span></h4>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 15px;">
+                <button onclick="replaceWithUpload()" style="background: #007bff; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
+                    📤 Upload New Image
+                </button>
+                
+                <button onclick="replaceWithURL()" style="background: #28a745; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
+                    🔗 Use Image URL
+                </button>
+                
+                <button onclick="removeProductImage()" style="background: #dc3545; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
+                    🗑️ Remove Image
+                </button>
+                
+                <button onclick="resetToOriginalImage()" style="background: #6c757d; color: white; padding: 12px; border: none; border-radius: 6px; font-size: 16px; cursor: pointer;">
+                    🔄 Reset to Original
+                </button>
+            </div>
+            
+            <input type="file" id="imageUploadInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+            
+            <div id="urlInputSection" style="display: none; margin-top: 15px;">
+                <input type="text" id="imageURLInput" placeholder="Enter image URL..." style="width: 100%; padding: 10px; border: 1px solid #ddd; border-radius: 4px; margin-bottom: 10px;">
+                <button onclick="applyImageURL()" style="background: #17a2b8; color: white; padding: 10px 20px; border: none; border-radius: 4px; margin-right: 10px;">Apply URL</button>
+                <button onclick="cancelURLInput()" style="background: #6c757d; color: white; padding: 10px 20px; border: none; border-radius: 4px;">Cancel</button>
+            </div>
+        </div>
+    </div>
     
     <div id="printContent" class="print-preview"></div>
-    
     <script>
-        // Original variables + image export variables
         let allProducts = [];
         let categories = [];
         let driveImageManager = null;
+        let imageOverrides = new Map(); // Store custom image overrides
+        let currentEditingSKU = null; // Track which product is being edited
         
-        // ONLY ADDITION: Image export variables
-        let selectedImageFormat = 'png';
-        let imageQuality = 0.95;
-        // Original DriveImageManager class (unchanged)
         class DriveImageManager {
             constructor() {
                 this.imageCache = new Map();
@@ -779,126 +786,6 @@ Visit our showroom to see the full range!</textarea>
                 return { mappedProducts: this.imageCache.size, cacheInfo: cacheInfo };
             }
         }
-        // ONLY ADDITIONS: Image export functions
-        function showExportModal() {
-            document.getElementById('exportModal').style.display = 'flex';
-            
-            // Set up format selection
-            document.querySelectorAll('.export-option').forEach(option => {
-                option.onclick = function() {
-                    document.querySelectorAll('.export-option').forEach(o => o.classList.remove('selected'));
-                    this.classList.add('selected');
-                    selectedImageFormat = this.dataset.format;
-                };
-            });
-            
-            // Set up quality slider
-            document.getElementById('qualitySlider').oninput = function() {
-                imageQuality = parseFloat(this.value);
-                document.getElementById('qualityDisplay').textContent = this.value;
-            };
-        }
-        
-        function closeExportModal() {
-            document.getElementById('exportModal').style.display = 'none';
-        }
-        
-        async function startImageExport() {
-            const pages = document.querySelectorAll('.page');
-            if (pages.length === 0) {
-                alert('Please generate the catalog first');
-                return;
-            }
-            
-            const progressBar = document.getElementById('exportProgress');
-            const progressFill = document.getElementById('progressFill');
-            const statusDiv = document.getElementById('exportStatus');
-            const startBtn = document.getElementById('startExportBtn');
-            
-            startBtn.disabled = true;
-            startBtn.textContent = 'Exporting...';
-            progressBar.style.display = 'block';
-            
-            try {
-                for (let i = 0; i < pages.length; i++) {
-                    const page = pages[i];
-                    const progress = ((i + 1) / pages.length) * 100;
-                    
-                    progressFill.style.width = progress + '%';
-                    progressFill.textContent = Math.round(progress) + '%';
-                    statusDiv.textContent = `Exporting page ${i + 1} of ${pages.length}...`;
-                    
-                    // Wait for UI update
-                    await new Promise(resolve => setTimeout(resolve, 100));
-                    
-                    // Hide all pages except current
-                    pages.forEach(p => p.style.display = 'none');
-                    page.style.display = 'block';
-                    
-                    // Wait for page to render
-                    await new Promise(resolve => setTimeout(resolve, 500));
-                    
-                    // Capture page
-                    const canvas = await html2canvas(page, {
-                        scale: 2,
-                        useCORS: true,
-                        allowTaint: true,
-                        backgroundColor: '#ffffff',
-                        width: page.scrollWidth,
-                        height: page.scrollHeight
-                    });
-                    
-                    // Convert and download
-                    const mimeType = selectedImageFormat === 'png' ? 'image/png' : 'image/jpeg';
-                    const dataUrl = canvas.toDataURL(mimeType, imageQuality);
-                    
-                    const timestamp = new Date().toISOString().slice(0, 10);
-                    const pageName = getPageName(page, i + 1);
-                    const filename = `OZZ_Catalog_${timestamp}_${pageName}.${selectedImageFormat}`;
-                    
-                    const link = document.createElement('a');
-                    link.download = filename;
-                    link.href = dataUrl;
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                }
-                
-                // Restore all pages
-                pages.forEach(p => p.style.display = 'block');
-                
-                statusDiv.textContent = `Successfully exported ${pages.length} pages!`;
-                setTimeout(() => {
-                    closeExportModal();
-                }, 2000);
-                
-            } catch (error) {
-                console.error('Export error:', error);
-                statusDiv.textContent = 'Export failed: ' + error.message;
-                pages.forEach(p => p.style.display = 'block');
-            } finally {
-                startBtn.disabled = false;
-                startBtn.textContent = 'Start Export';
-            }
-        }
-        
-        function getPageName(page, pageNumber) {
-            const categoryHeader = page.querySelector('.category-header');
-            if (categoryHeader) {
-                return categoryHeader.textContent.trim()
-                    .replace(/[^a-zA-Z0-9\s]/g, '')
-                    .replace(/\s+/g, '_')
-                    .substring(0, 30) || `Page_${pageNumber}`;
-            }
-            
-            if (page.classList.contains('hero-page')) {
-                return 'Cover_Page';
-            }
-            
-            return `Page_${pageNumber}`;
-        }
-
-        // Original loadCatalog function (unchanged)
         async function loadCatalog() {
             const loadBtn = document.getElementById('loadBtn');
             const status = document.getElementById('status');
@@ -991,7 +878,46 @@ Visit our showroom to see the full range!</textarea>
             }
         }
 
-        // Original initializeImages function (unchanged)
+        function showPagePreview() {
+            const existingPreview = document.getElementById('pagePreviewSection');
+            if (existingPreview) {
+                existingPreview.remove();
+            }
+            
+            if (!window.pageOrganization) return;
+            
+            const pagePreviewSection = document.createElement('div');
+            pagePreviewSection.id = 'pagePreviewSection';
+            pagePreviewSection.className = 'category-section';
+            pagePreviewSection.innerHTML = '<h3>📄 Excel Page Organization Preview</h3><div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;"><p style="margin-bottom: 15px; color: #666; font-size: 14px;">Your Excel file contains products organized in predefined pages. The catalog will be generated according to this arrangement.</p><div id="pagePreviewGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;"></div><div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px;"><label style="display: flex; align-items: center; margin-bottom: 10px;"><input type="checkbox" id="useExcelPages" checked style="margin-right: 8px;"><span style="font-weight: bold;">Use Excel page organization (Recommended)</span></label><p style="font-size: 12px; color: #666; margin: 0;">When checked, products will be arranged exactly as defined in your Excel file. When unchecked, products will be arranged by category as before.</p></div></div>';
+            
+            const layoutOptions = document.getElementById('layoutOptions');
+            layoutOptions.parentNode.insertBefore(pagePreviewSection, layoutOptions.nextSibling);
+            
+            const pagePreviewGrid = document.getElementById('pagePreviewGrid');
+            const sortedPages = Object.keys(window.pageOrganization).sort(function(a, b) {
+                const numA = parseInt(a.replace('PAGE ', ''));
+                const numB = parseInt(b.replace('PAGE ', ''));
+                return numA - numB;
+            });
+            
+            sortedPages.forEach(function(page) {
+                const products = window.pageOrganization[page];
+                const pageCard = document.createElement('div');
+                pageCard.className = 'category-item';
+                pageCard.style.cssText = 'border: 2px solid #ddd; border-radius: 8px; padding: 12px; background: white; flex-direction: column; align-items: flex-start;';
+                
+                const previewProducts = products.slice(0, 3).map(function(p) {
+                    return '• ' + p.description.substring(0, 25) + '...';
+                }).join('<br>');
+                
+                const moreText = products.length > 3 ? '<br>• ... and ' + (products.length - 3) + ' more' : '';
+                
+                pageCard.innerHTML = '<div style="font-weight: bold; color: #333; margin-bottom: 8px;">' + page + '</div><div style="font-size: 12px; color: #666; margin-bottom: 8px;">' + products.length + ' products</div><div style="font-size: 11px; color: #888; line-height: 1.3;">' + previewProducts + moreText + '</div>';
+                
+                pagePreviewGrid.appendChild(pageCard);
+            });
+        }
         async function initializeImages() {
             const imageBtn = document.getElementById('imageBtn');
             const imageStatus = document.getElementById('imageStatus');
@@ -1068,7 +994,57 @@ Visit our showroom to see the full range!</textarea>
             }
         }
 
-        // Original generateCatalog function with ONLY export button enabling added
+        function showImageMappingPreview() {
+            if (!driveImageManager) return;
+            
+            let mappedCount = 0;
+            let unmappedProducts = [];
+            
+            allProducts.forEach(function(product) {
+                const imageData = driveImageManager.getProductImage(product.sku);
+                if (imageData.found) {
+                    mappedCount++;
+                } else {
+                    unmappedProducts.push(product.sku);
+                }
+            });
+            
+            const imageStats = document.getElementById('imageStats');
+            const unmappedPreview = unmappedProducts.slice(0, 10).join(', ');
+            const moreUnmapped = unmappedProducts.length > 10 ? ' and ' + (unmappedProducts.length - 10) + ' more...' : '';
+            const unmappedSection = unmappedProducts.length > 0 ? '<details style="margin-top: 5px;"><summary style="cursor: pointer;">View unmapped SKUs</summary><div style="font-family: monospace; font-size: 12px; margin-top: 5px;">' + unmappedPreview + moreUnmapped + '</div></details>' : '';
+            
+            const mappingInfo = '<div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;"><strong>Image Mapping Results:</strong><br>• ' + mappedCount + ' products with images<br>• ' + unmappedProducts.length + ' products without images<br>' + unmappedSection + '</div>';
+            
+            imageStats.innerHTML += mappingInfo;
+        }
+
+        function getImageUrl(sku) {
+            // Check for overrides first
+            if (imageOverrides.has(sku)) {
+                const override = imageOverrides.get(sku);
+                return override === 'REMOVED' ? null : override;
+            }
+            
+            // Otherwise use original logic
+            if (!driveImageManager) {
+                return null;
+            }
+            const imageData = driveImageManager.getProductImage(sku);
+            return imageData.found ? imageData.url : null;
+        }
+
+        function getLayoutConfig(layout) {
+            const configs = {
+                'standard': { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 },
+                'compact': { productsPerPage: 12, gridClass: 'compact', columns: 3, rows: 4 },
+                'dense': { productsPerPage: 10, gridClass: 'dense', columns: 2, rows: 5 },
+                'ultra-compact': { productsPerPage: 15, gridClass: 'ultra-compact', columns: 3, rows: 5 },
+                'maximum': { productsPerPage: 24, gridClass: 'maximum', columns: 4, rows: 6 }
+            };
+            return configs[layout] || configs['standard'];
+        }
+
         function generateCatalog() {
             const useExcelPages = document.getElementById('useExcelPages');
             const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
@@ -1123,9 +1099,7 @@ Visit our showroom to see the full range!</textarea>
                     totalPagesElements[i].textContent = totalPages;
                 }
                 
-                // ONLY ADDITION: Enable export button along with print button
                 document.getElementById('printBtn').disabled = false;
-                document.getElementById('exportImagesBtn').disabled = false;
                 
                 let imageInfo = '';
                 if (driveImageManager) {
@@ -1183,9 +1157,7 @@ Visit our showroom to see the full range!</textarea>
                     totalPagesElements[i].textContent = totalPages;
                 }
                 
-                // ONLY ADDITION: Enable export button along with print button
                 document.getElementById('printBtn').disabled = false;
-                document.getElementById('exportImagesBtn').disabled = false;
                 
                 let imageInfo = '';
                 if (driveImageManager) {
@@ -1203,72 +1175,6 @@ Visit our showroom to see the full range!</textarea>
             }
             
             printContent.scrollIntoView({ behavior: 'smooth' });
-        }
-        // All remaining original functions (unchanged)
-        function showPagePreview() {
-            const existingPreview = document.getElementById('pagePreviewSection');
-            if (existingPreview) {
-                existingPreview.remove();
-            }
-            
-            if (!window.pageOrganization) return;
-            
-            const pagePreviewSection = document.createElement('div');
-            pagePreviewSection.id = 'pagePreviewSection';
-            pagePreviewSection.className = 'category-section';
-            pagePreviewSection.innerHTML = '<h3>📄 Excel Page Organization Preview</h3><div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;"><p style="margin-bottom: 15px; color: #666; font-size: 14px;">Your Excel file contains products organized in predefined pages. The catalog will be generated according to this arrangement.</p><div id="pagePreviewGrid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); gap: 10px; margin-bottom: 15px;"></div><div style="margin-top: 15px; padding: 10px; background: #f8f9fa; border-radius: 4px;"><label style="display: flex; align-items: center; margin-bottom: 10px;"><input type="checkbox" id="useExcelPages" checked style="margin-right: 8px;"><span style="font-weight: bold;">Use Excel page organization (Recommended)</span></label><p style="font-size: 12px; color: #666; margin: 0;">When checked, products will be arranged exactly as defined in your Excel file. When unchecked, products will be arranged by category as before.</p></div></div>';
-            
-            const layoutOptions = document.getElementById('layoutOptions');
-            layoutOptions.parentNode.insertBefore(pagePreviewSection, layoutOptions.nextSibling);
-            
-            const pagePreviewGrid = document.getElementById('pagePreviewGrid');
-            const sortedPages = Object.keys(window.pageOrganization).sort(function(a, b) {
-                const numA = parseInt(a.replace('PAGE ', ''));
-                const numB = parseInt(b.replace('PAGE ', ''));
-                return numA - numB;
-            });
-            
-            sortedPages.forEach(function(page) {
-                const products = window.pageOrganization[page];
-                const pageCard = document.createElement('div');
-                pageCard.className = 'category-item';
-                pageCard.style.cssText = 'border: 2px solid #ddd; border-radius: 8px; padding: 12px; background: white; flex-direction: column; align-items: flex-start;';
-                
-                const previewProducts = products.slice(0, 3).map(function(p) {
-                    return '• ' + p.description.substring(0, 25) + '...';
-                }).join('<br>');
-                
-                const moreText = products.length > 3 ? '<br>• ... and ' + (products.length - 3) + ' more' : '';
-                
-                pageCard.innerHTML = '<div style="font-weight: bold; color: #333; margin-bottom: 8px;">' + page + '</div><div style="font-size: 12px; color: #666; margin-bottom: 8px;">' + products.length + ' products</div><div style="font-size: 11px; color: #888; line-height: 1.3;">' + previewProducts + moreText + '</div>';
-                
-                pagePreviewGrid.appendChild(pageCard);
-            });
-        }
-
-        function showImageMappingPreview() {
-            if (!driveImageManager) return;
-            
-            let mappedCount = 0;
-            let unmappedProducts = [];
-            
-            allProducts.forEach(function(product) {
-                const imageData = driveImageManager.getProductImage(product.sku);
-                if (imageData.found) {
-                    mappedCount++;
-                } else {
-                    unmappedProducts.push(product.sku);
-                }
-            });
-            
-            const imageStats = document.getElementById('imageStats');
-            const unmappedPreview = unmappedProducts.slice(0, 10).join(', ');
-            const moreUnmapped = unmappedProducts.length > 10 ? ' and ' + (unmappedProducts.length - 10) + ' more...' : '';
-            const unmappedSection = unmappedProducts.length > 0 ? '<details style="margin-top: 5px;"><summary style="cursor: pointer;">View unmapped SKUs</summary><div style="font-family: monospace; font-size: 12px; margin-top: 5px;">' + unmappedPreview + moreUnmapped + '</div></details>' : '';
-            
-            const mappingInfo = '<div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;"><strong>Image Mapping Results:</strong><br>• ' + mappedCount + ' products with images<br>• ' + unmappedProducts.length + ' products without images<br>' + unmappedSection + '</div>';
-            
-            imageStats.innerHTML += mappingInfo;
         }
 
         function showCategories() {
@@ -1316,25 +1222,195 @@ Visit our showroom to see the full range!</textarea>
             }
             showNotification('All categories deselected', 'info');
         }
-
-        function getLayoutConfig(layout) {
-            const configs = {
-                'standard': { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 },
-                'compact': { productsPerPage: 12, gridClass: 'compact', columns: 3, rows: 4 },
-                'dense': { productsPerPage: 10, gridClass: 'dense', columns: 2, rows: 5 },
-                'ultra-compact': { productsPerPage: 15, gridClass: 'ultra-compact', columns: 3, rows: 5 },
-                'maximum': { productsPerPage: 24, gridClass: 'maximum', columns: 4, rows: 6 }
-            };
-            return configs[layout] || configs['standard'];
+        function createHeaderPage() {
+            const page = document.createElement('div');
+            page.className = 'page hero-page';
+            
+            const title = document.getElementById('introTitle').value || 'Welcome to Our July 2025 Promotion';
+            const subtitle = document.getElementById('introSubtitle').value || 'Exclusive deals on premium home & kitchen products';
+            const message = document.getElementById('introMessage').value || 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs.';
+            const promoDetails = document.getElementById('promoDetails').value || '• Valid for July 2025 only\n• Limited quantities available';
+            const additionalInfo = document.getElementById('additionalInfo').value || 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM';
+            
+            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">JULY 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p><div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(3, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">+27 31 332 7192</div></div><div class="info-card"><div class="info-label">Email</div><div class="info-value">info@ozzsa.com</div></div><div class="info-card"><div class="info-label">Website</div><div class="info-value">www.ozzsa.com</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. Ozz Cash and Carry reserves the right to limit quantities. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span><span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 3.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting www.blackorchid.online</div></div></div>';
+            
+            return page;
         }
 
-        function getImageUrl(sku) {
-            if (!driveImageManager) {
-                return null;
+        function createProductPage(products, category, showHeader, pageNum, layoutConfig) {
+            if (!layoutConfig) layoutConfig = { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 };
+            
+            const page = document.createElement('div');
+            page.className = 'page';
+            
+            const isExcelPage = category.startsWith('Excel PAGE');
+            const headerClass = isExcelPage ? 'category-header excel-page' : 'category-header';
+            
+            let contentHTML = '<div class="page-inner"><div class="page-header"><div class="header-left"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ" class="header-logo" onerror="this.style.display=\'none\'"><span class="header-title">July 2025 Promotional Catalog</span></div><span class="page-number">Page ' + pageNum + ' of <span class="total-pages">-</span></span></div><div class="page-content">';
+            
+            if (showHeader) {
+                const headerText = isExcelPage ? category.replace('Excel ', '') : category;
+                contentHTML += '<div class="' + headerClass + '">' + headerText + '</div>';
             }
+            
+            contentHTML += '<div class="products-container"><div class="products-grid ' + layoutConfig.gridClass + '">';
+            
+            for (let i = 0; i < layoutConfig.productsPerPage; i++) {
+                if (i < products.length) {
+                    contentHTML += createProductCard(products[i]);
+                } else {
+                    contentHTML += '<div class="product-card" style="visibility: hidden;"></div>';
+                }
+            }
+            
+            contentHTML += '</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • info@ozzsa.com</span><span class="footer-right">www.ozzsa.com • Version 3.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting www.blackorchid.online</div></div></div>';
+            
+            page.innerHTML = contentHTML;
+            return page;
+        }
+
+        function createProductCard(product) {
+            const imageUrl = getImageUrl(product.sku);
+            
+            const priceStr = product.price.toFixed(2);
+            const priceParts = priceStr.split('.');
+            const rands = priceParts[0];
+            const cents = priceParts[1];
+            
+            const productName = product.description.trim();
+            
+            // Add onclick handler to the product-image div
+            return '<div class="product-card"><div class="product-image" onclick="openImageEditModal(\'' + product.sku + '\', \'' + productName.replace(/'/g, "\\'") + '\', \'' + (imageUrl || '') + '\')" style="cursor: pointer;">' + 
+                (imageUrl ? 
+                    '<img src="' + imageUrl + '" alt="' + product.description + '">' :
+                    '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+                ) + 
+                '</div><div class="product-details"><div class="product-header"><div class="product-name">' + productName + '</div></div><div class="product-specs"><div class="spec-item"><span class="spec-bullet">•</span><span class="spec-label">SKU:</span><span class="spec-value">' + product.sku + '</span></div></div><div class="price-badge"><div class="price-amount"><span class="price-currency">R</span>' + rands + '<span class="price-cents">' + cents + '</span></div><div class="price-unit">Each</div></div></div></div>';
+        }
+        // Image Editing Functions
+        function openImageEditModal(sku, productName, currentImageUrl) {
+            currentEditingSKU = sku;
+            document.getElementById('imageEditModal').style.display = 'block';
+            document.getElementById('modalProductName').textContent = productName;
+            document.getElementById('modalProductSKU').textContent = sku;
+            
+            // Show current image or placeholder
+            const modalImage = document.getElementById('modalCurrentImage');
+            if (currentImageUrl) {
+                modalImage.src = currentImageUrl;
+                modalImage.style.display = 'block';
+            } else {
+                modalImage.style.display = 'none';
+                document.getElementById('currentImagePreview').innerHTML = '<div style="padding: 40px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px;"><div style="font-size: 48px; color: #ccc;">📦</div><div style="color: #999; margin-top: 10px;">No image available</div></div>';
+            }
+        }
+
+        function closeImageEditModal() {
+            document.getElementById('imageEditModal').style.display = 'none';
+            document.getElementById('urlInputSection').style.display = 'none';
+            currentEditingSKU = null;
+        }
+
+        function replaceWithUpload() {
+            document.getElementById('imageUploadInput').click();
+        }
+
+        function handleImageUpload(event) {
+            const file = event.target.files[0];
+            if (file && file.type.startsWith('image/')) {
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    if (currentEditingSKU) {
+                        imageOverrides.set(currentEditingSKU, e.target.result);
+                        document.getElementById('modalCurrentImage').src = e.target.result;
+                        document.getElementById('modalCurrentImage').style.display = 'block';
+                        showNotification('Image replaced successfully!', 'success');
+                        
+                        // Regenerate catalog if it exists
+                        if (document.getElementById('printContent').innerHTML !== '') {
+                            generateCatalog();
+                        }
+                    }
+                };
+                reader.readAsDataURL(file);
+            }
+        }
+
+        function replaceWithURL() {
+            document.getElementById('urlInputSection').style.display = 'block';
+            document.getElementById('imageURLInput').value = '';
+            document.getElementById('imageURLInput').focus();
+        }
+
+        function applyImageURL() {
+            const url = document.getElementById('imageURLInput').value.trim();
+            if (url && currentEditingSKU) {
+                // Test if URL is valid by creating a temporary image
+                const testImg = new Image();
+                testImg.onload = function() {
+                    imageOverrides.set(currentEditingSKU, url);
+                    document.getElementById('modalCurrentImage').src = url;
+                    document.getElementById('modalCurrentImage').style.display = 'block';
+                    document.getElementById('urlInputSection').style.display = 'none';
+                    showNotification('Image URL applied successfully!', 'success');
+                    
+                    // Regenerate catalog if it exists
+                    if (document.getElementById('printContent').innerHTML !== '') {
+                        generateCatalog();
+                    }
+                };
+                testImg.onerror = function() {
+                    showNotification('Invalid image URL. Please check and try again.', 'error');
+                };
+                testImg.src = url;
+            }
+        }
+
+        function cancelURLInput() {
+            document.getElementById('urlInputSection').style.display = 'none';
+        }
+
+        function removeProductImage() {
+            if (currentEditingSKU) {
+                imageOverrides.set(currentEditingSKU, 'REMOVED');
+                document.getElementById('currentImagePreview').innerHTML = '<div style="padding: 40px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px;"><div style="font-size: 48px; color: #ccc;">🚫</div><div style="color: #999; margin-top: 10px;">Image removed</div></div>';
+                showNotification('Image removed successfully!', 'success');
+                
+                // Regenerate catalog if it exists
+                if (document.getElementById('printContent').innerHTML !== '') {
+                    generateCatalog();
+                }
+            }
+        }
+
+        function resetToOriginalImage() {
+            if (currentEditingSKU) {
+                imageOverrides.delete(currentEditingSKU);
+                const originalUrl = getOriginalImageUrl(currentEditingSKU);
+                
+                if (originalUrl) {
+                    document.getElementById('modalCurrentImage').src = originalUrl;
+                    document.getElementById('modalCurrentImage').style.display = 'block';
+                } else {
+                    document.getElementById('currentImagePreview').innerHTML = '<div style="padding: 40px; background: #f8f9fa; border: 2px dashed #ddd; border-radius: 8px;"><div style="font-size: 48px; color: #ccc;">📦</div><div style="color: #999; margin-top: 10px;">No original image available</div></div>';
+                }
+                
+                showNotification('Reset to original image!', 'info');
+                
+                // Regenerate catalog if it exists
+                if (document.getElementById('printContent').innerHTML !== '') {
+                    generateCatalog();
+                }
+            }
+        }
+
+        function getOriginalImageUrl(sku) {
+            if (!driveImageManager) return null;
             const imageData = driveImageManager.getProductImage(sku);
             return imageData.found ? imageData.url : null;
         }
+
+        // Preview and Customization Functions
         function previewCoverPage() {
             const printContent = document.getElementById('printContent');
             printContent.innerHTML = '';
@@ -1348,7 +1424,7 @@ Visit our showroom to see the full range!</textarea>
             document.getElementById('introSubtitle').value = 'Exclusive deals on premium home & kitchen products';
             document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we\'re offering exceptional deals on premium products to help you create the perfect living space.';
             document.getElementById('promoDetails').value = '• Valid for July 2025 only\n• Limited quantities available\n• Collection only at our Durban store\n• Delivery available at additional cost';
-            document.getElementById('additionalInfo').value = 'Store Hours:\nFriday\t      8 am–12:45 pm, 13:45–16:45 pm\nSaturday      8 am–14:30 pm\nSunday        9 am–12:00 pm\nMonday        8 am–12:45 pm, 13:45–16:45 pm\nTuesday       8 am–12:45 pm, 13:45–16:45 pm\nWednesday     8 am–12:45 pm, 13:45–16:45 pm\nThursday      8 am–12:45 pm, 13:45–16:45 pm\n\nVisit our showroom to see the full range!';
+            document.getElementById('additionalInfo').value = 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM\nSaturday: 8:00 AM - 1:00 PM\nSunday: Closed\n\nVisit our showroom to see the full range!';
             showNotification('Cover page reset to default!', 'info');
         }
 
@@ -1446,6 +1522,43 @@ Visit our showroom to see the full range!</textarea>
                 (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
         }
 
+        function showNotification(message, type) {
+            if (!type) type = 'info';
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: ' + (type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8') + '; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; font-size: 14px; font-weight: 500; opacity: 0; transform: translateX(100%); transition: all 0.3s ease;';
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(function() {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(function() {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(function() {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
+
+        // Add click event to modal background to close
+        document.addEventListener('DOMContentLoaded', function() {
+            const modal = document.getElementById('imageEditModal');
+            if (modal) {
+                modal.addEventListener('click', function(e) {
+                    if (e.target === modal) {
+                        closeImageEditModal();
+                    }
+                });
+            }
+        });
+
         console.log('🎉 OZZ Professional Catalog Generator with Excel Page Organization Loaded');
         console.log('🔒 CSP-Safe: No eval() usage - fully secure');
         console.log('🎨 Customization: Colors, fonts, themes, and layouts available');
@@ -1453,8 +1566,7 @@ Visit our showroom to see the full range!</textarea>
         console.log('✨ NEW: Excel page organization support');
         console.log('📄 NEW: Simplified product cards and consolidated cover page');
         console.log('🔢 NEW: Maximum density layout (24 products per page)');
-        console.log('🖼️ NEW: Image export functionality (PNG/JPG) with html2canvas');
-        console.log('📤 NEW: Enhanced export options with progress tracking');
+        console.log('🖼️ NEW: Click-to-edit image functionality');
     </script>
 </body>
 </html>
