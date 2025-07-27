@@ -397,33 +397,40 @@
             .products-grid.high-density .price-badge { min-height: 15mm; padding: 2mm; }
             .products-grid.high-density .price-amount { font-size: 11pt; }
             
-            /* HIGH-DENSITY IMAGE-BOTTOM ADJUSTMENTS */
-            .products-grid.high-density .product-card.image-bottom .product-image { 
-                width: 100% !important; 
-                min-height: 18mm !important;
-                flex: 1 1 45% !important;
-            }
-            .products-grid.high-density .product-card.image-bottom .product-details { 
-                width: 100% !important; 
-                flex: 0 0 auto !important;
-            }
-            .products-grid.high-density .product-card.image-bottom .product-specs { 
-                flex-direction: row !important; 
-                align-items: center !important; 
-                gap: 1mm !important; 
-                min-height: 12mm !important;
-            }
-            .products-grid.high-density .product-card.image-bottom .spec-item { 
-                margin-bottom: 0 !important; 
-                font-size: 5pt !important; 
-            }
-            .products-grid.high-density .product-card.image-bottom .price-badge { 
-                min-height: 12mm !important; 
-                padding: 1.5mm !important; 
-            }
-            .products-grid.high-density .product-card.image-bottom .price-amount { 
-                font-size: 10pt !important; 
-            }
+           /* FIXED: HIGH-DENSITY IMAGE-BOTTOM ADJUSTMENTS */
+.products-grid.high-density .product-card.image-bottom .product-image { 
+    width: 100% !important; 
+    min-height: 22mm !important;
+    flex: 1 1 60% !important;
+    order: 2 !important; /* Move image between header and price */
+}
+.products-grid.high-density .product-card.image-bottom .product-details { 
+    width: 100% !important; 
+    flex: 0 0 auto !important;
+    display: flex !important;
+    flex-direction: column !important;
+}
+.products-grid.high-density .product-card.image-bottom .product-header {
+    order: 1 !important; /* Header first */
+    min-height: 8mm !important;
+    padding: 1mm !important;
+}
+.products-grid.high-density .product-card.image-bottom .product-specs { 
+    display: none !important; /* Hide SKU section to save space */
+}
+.products-grid.high-density .product-card.image-bottom .price-badge { 
+    order: 3 !important; /* Price last */
+    min-height: 8mm !important; 
+    padding: 1mm !important; 
+    flex: 0 0 auto !important;
+}
+.products-grid.high-density .product-card.image-bottom .price-amount { 
+    font-size: 9pt !important; 
+}
+.products-grid.high-density .product-card.image-bottom .product-name {
+    font-size: 5pt !important;
+    -webkit-line-clamp: 2 !important;
+}
             
             /* MAXIMUM LAYOUT ADJUSTMENTS */
             .products-grid.maximum .product-card { min-height: 32mm; }
@@ -1444,34 +1451,35 @@ Visit our showroom to see the full range!</textarea>
             console.log('Creating card for SKU:', product.sku, 'Image URL:', imageUrl, 'Card Style:', cardStyle);
             
             if (cardStyle === 'image-bottom') {
-                // FIXED: Image-bottom layout with correct structure
-                return '<div class="' + cardClass + '">' +
-                    '<div class="product-details">' +
-                        '<div class="product-header">' +
-                            '<div class="product-name">' + productName + '</div>' +
-                        '</div>' +
-                        '<div class="product-specs">' +
-                            '<div class="spec-item">' +
-                                '<span class="spec-bullet">•</span>' +
-                                '<span class="spec-label">SKU:</span>' +
-                                '<span class="spec-value">' + product.sku + '</span>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="price-badge">' +
-                            '<div class="price-amount">' +
-                                '<span class="price-currency">R</span>' + rands + 
-                                '<span class="price-cents">' + cents + '</span>' +
-                            '</div>' +
-                            '<div class="price-unit">Each</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="product-image">' + 
-                        (imageUrl ? 
-                            '<img src="' + imageUrl + '" alt="' + productName + '">' :
-                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
-                        ) + 
-                    '</div>' +
-                '</div>';
+               if (cardStyle === 'image-bottom') {
+    // FIXED: Image-bottom layout - Header, Image, Price order
+    return '<div class="' + cardClass + '">' +
+        '<div class="product-details">' +
+            '<div class="product-header">' +
+                '<div class="product-name">' + productName + '</div>' +
+            '</div>' +
+            '<div class="product-specs">' +
+                '<div class="spec-item">' +
+                    '<span class="spec-bullet">•</span>' +
+                    '<span class="spec-label">SKU:</span>' +
+                    '<span class="spec-value">' + product.sku + '</span>' +
+                '</div>' +
+            '</div>' +
+            '<div class="price-badge">' +
+                '<div class="price-amount">' +
+                    '<span class="price-currency">R</span>' + rands + 
+                    '<span class="price-cents">' + cents + '</span>' +
+                '</div>' +
+                '<div class="price-unit">Each</div>' +
+            '</div>' +
+        '</div>' +
+        '<div class="product-image">' + 
+            (imageUrl ? 
+                '<img src="' + imageUrl + '" alt="' + productName + '">' :
+                '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+            ) + 
+        '</div>' +
+    '</div>';
             } else {
                 // Standard layout: Image left, details right
                 return '<div class="' + cardClass + '">' +
