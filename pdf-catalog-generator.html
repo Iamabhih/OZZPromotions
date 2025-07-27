@@ -228,7 +228,37 @@
             
             .no-image-icon { font-size: 28pt; margin-bottom: 2mm; opacity: 0.4; }
             .no-image-text { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; color: #999; font-weight: 700; }
-            
+            /* SKU Overlay for images */
+.sku-overlay {
+    position: absolute;
+    bottom: 1mm;
+    right: 1mm;
+    background: rgba(0, 107, 107, 0.9);
+    color: white;
+    padding: 1mm 2mm;
+    font-size: 5pt;
+    font-weight: 700;
+    border-radius: 1mm;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    z-index: 3;
+    line-height: 1;
+    letter-spacing: 0.2px;
+}
+
+/* Make sure overlay works for both card styles */
+.product-card.image-bottom .sku-overlay,
+.product-card .sku-overlay {
+    position: absolute;
+    bottom: 1mm;
+    right: 1mm;
+}
+
+/* For high-density layouts, make SKU slightly smaller */
+.products-grid.high-density .sku-overlay,
+.products-grid.maximum .sku-overlay {
+    font-size: 4pt;
+    padding: 0.8mm 1.5mm;
+}
             /* Product Details */
             .product-details {
                 width: 35%;
@@ -1464,8 +1494,8 @@ Visit our showroom to see the full range!</textarea>
                     '</div>' +
                     '<div class="product-image">' + 
                         (imageUrl ? 
-                            '<img src="' + imageUrl + '" alt="' + productName + '">' :
-                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+'<img src="' + imageUrl + '" alt="' + productName + '"><div class="sku-overlay">' + product.sku + '</div>' :
+                         '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
                         ) + 
                     '</div>' +
                 '</div>';
@@ -1474,8 +1504,8 @@ Visit our showroom to see the full range!</textarea>
                 return '<div class="' + cardClass + '">' +
                     '<div class="product-image">' + 
                         (imageUrl ? 
-                            '<img src="' + imageUrl + '" alt="' + productName + '">' :
-                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+'<img src="' + imageUrl + '" alt="' + productName + '"><div class="sku-overlay">' + product.sku + '</div>' :
+                         '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
                         ) + 
                     '</div>' +
                     '<div class="product-details">' +
