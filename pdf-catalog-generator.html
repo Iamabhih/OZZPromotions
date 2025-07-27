@@ -1350,6 +1350,7 @@ Visit our showroom to see the full range!</textarea>
         function createProductCard(product, cardStyle) {
             if (!cardStyle) cardStyle = 'standard';
             
+            // Get image URL - this is the critical part
             const imageUrl = getImageUrl(product.sku);
             
             const priceStr = product.price.toFixed(2);
@@ -1358,13 +1359,10 @@ Visit our showroom to see the full range!</textarea>
             const cents = priceParts[1];
             
             const productName = product.description.trim();
-            
-            // Generate image HTML - same for both layouts
-            const imageHTML = imageUrl ? 
-                '<img src="' + imageUrl + '" alt="' + productName + '" onerror="this.parentNode.innerHTML=\'<div class=&quot;no-image&quot;><div class=&quot;no-image-icon&quot;>📦</div><div class=&quot;no-image-text&quot;>SKU: ' + product.sku + '</div></div>\'">' :
-                '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>';
-            
             const cardClass = cardStyle === 'image-bottom' ? 'product-card image-bottom' : 'product-card';
+            
+            // Debug logging
+            console.log('Creating card for SKU:', product.sku, 'Image URL:', imageUrl, 'Card Style:', cardStyle);
             
             if (cardStyle === 'image-bottom') {
                 // Image-bottom layout: Details top, image bottom
@@ -1388,12 +1386,22 @@ Visit our showroom to see the full range!</textarea>
                             '</div>' +
                         '</div>' +
                     '</div>' +
-                    '<div class="product-image">' + imageHTML + '</div>' +
+                    '<div class="product-image">' + 
+                        (imageUrl ? 
+                            '<img src="' + imageUrl + '" alt="' + productName + '">' :
+                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+                        ) + 
+                    '</div>' +
                 '</div>';
             } else {
                 // Standard layout: Image left, details right
                 return '<div class="' + cardClass + '">' +
-                    '<div class="product-image">' + imageHTML + '</div>' +
+                    '<div class="product-image">' + 
+                        (imageUrl ? 
+                            '<img src="' + imageUrl + '" alt="' + productName + '">' :
+                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+                        ) + 
+                    '</div>' +
                     '<div class="product-details">' +
                         '<div class="product-header">' +
                             '<div class="product-name">' + productName + '</div>' +
