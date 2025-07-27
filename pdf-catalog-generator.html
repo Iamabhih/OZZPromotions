@@ -1401,7 +1401,6 @@ Visit our showroom to see the full range!</textarea>
         function createProductCard(product, cardStyle) {
             if (!cardStyle) cardStyle = 'standard';
             
-            // Get image URL - this is the critical part
             const imageUrl = getImageUrl(product.sku);
             
             const priceStr = product.price.toFixed(2);
@@ -1412,11 +1411,10 @@ Visit our showroom to see the full range!</textarea>
             const productName = product.description.trim();
             const cardClass = cardStyle === 'image-bottom' ? 'product-card image-bottom' : 'product-card';
             
-            // Debug logging
             console.log('Creating card for SKU:', product.sku, 'Image URL:', imageUrl, 'Card Style:', cardStyle);
             
             if (cardStyle === 'image-bottom') {
-                // Image-bottom layout: Details top, image bottom
+                // FIXED: Image-bottom layout with correct structure
                 return '<div class="' + cardClass + '">' +
                     '<div class="product-details">' +
                         '<div class="product-header">' +
@@ -1428,13 +1426,13 @@ Visit our showroom to see the full range!</textarea>
                                 '<span class="spec-label">SKU:</span>' +
                                 '<span class="spec-value">' + product.sku + '</span>' +
                             '</div>' +
-                            '<div class="price-badge">' +
-                                '<div class="price-amount">' +
-                                    '<span class="price-currency">R</span>' + rands + 
-                                    '<span class="price-cents">' + cents + '</span>' +
-                                '</div>' +
-                                '<div class="price-unit">Each</div>' +
+                        '</div>' +
+                        '<div class="price-badge">' +
+                            '<div class="price-amount">' +
+                                '<span class="price-currency">R</span>' + rands + 
+                                '<span class="price-cents">' + cents + '</span>' +
                             '</div>' +
+                            '<div class="price-unit">Each</div>' +
                         '</div>' +
                     '</div>' +
                     '<div class="product-image">' + 
