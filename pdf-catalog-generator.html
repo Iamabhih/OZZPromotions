@@ -24,6 +24,16 @@
         .image-status.error { background: #f8d7da; border-color: #dc3545; }
         #pagePreviewSection .category-item:hover { border-color: #007bff !important; background: #f8f9ff !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: all 0.2s ease; }
         #useExcelPages { transform: scale(1.2); accent-color: #007bff; }
+        
+        /* NEW STYLES FOR LAYOUT AND CARD OPTIONS */
+        .layout-option { border: 2px solid #ddd; border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
+        .layout-option:hover { border-color: #007bff; background: #f8f9ff; }
+        .layout-option input[type="radio"]:checked + div { color: #007bff; font-weight: bold; }
+        .card-style-section { margin-top: 20px; padding: 15px; background: white; border-radius: 8px; border: 1px solid #ddd; }
+        .card-style-option { border: 2px solid #ddd; border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
+        .card-style-option:hover { border-color: #007bff; background: #f8f9ff; }
+        .card-style-option input[type="radio"]:checked + div { color: #007bff; font-weight: bold; }
+        
         @media print {
             body { margin: 0; padding: 0; background: white; }
             .control-panel { display: none; }
@@ -129,9 +139,11 @@
                 height: 100%;
             }
             
+            /* GRID LAYOUT DEFINITIONS */
             .products-grid.compact { --grid-columns: 3; --grid-rows: 4; --grid-gap: 3mm; }
             .products-grid.dense { --grid-columns: 2; --grid-rows: 5; --grid-gap: 3mm; }
             .products-grid.ultra-compact { --grid-columns: 3; --grid-rows: 5; --grid-gap: 2.5mm; }
+            .products-grid.high-density { --grid-columns: 4; --grid-rows: 5; --grid-gap: 2.5mm; }
             .products-grid.maximum { --grid-columns: 4; --grid-rows: 6; --grid-gap: 2mm; }
             
             .product-card {
@@ -146,6 +158,11 @@
                 min-height: 40mm;
             }
             
+            /* IMAGE-BOTTOM CARD LAYOUT */
+            .product-card.image-bottom {
+                flex-direction: column;
+            }
+            
             .product-card::before {
                 content: '';
                 position: absolute;
@@ -157,6 +174,7 @@
                 opacity: 0.6;
             }
             
+            /* PRODUCT IMAGE STYLES */
             .product-image {
                 width: 65%;
                 background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
@@ -167,6 +185,13 @@
                 position: relative;
                 border-right: 1px solid rgba(0,0,0,0.06);
                 overflow: hidden;
+            }
+            
+            .product-card.image-bottom .product-image {
+                width: 100%;
+                flex: 1;
+                border-right: none;
+                border-top: 1px solid rgba(0,0,0,0.06);
             }
             
             .product-image img {
@@ -189,12 +214,19 @@
             
             .no-image-icon { font-size: 28pt; margin-bottom: 2mm; opacity: 0.4; }
             .no-image-text { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; color: #999; font-weight: 700; }
+            
+            /* PRODUCT DETAILS STYLES */
             .product-details {
                 width: 35%;
                 display: flex;
                 flex-direction: column;
                 overflow: hidden;
                 height: 100%;
+            }
+            
+            .product-card.image-bottom .product-details {
+                width: 100%;
+                flex: 0 0 auto;
             }
             
             .product-header {
@@ -238,6 +270,13 @@
                 min-height: 0;
             }
             
+            .product-card.image-bottom .product-specs {
+                flex-direction: row;
+                align-items: center;
+                gap: 2mm;
+                justify-content: space-between;
+            }
+            
             .spec-item {
                 font-size: 6pt;
                 color: #333;
@@ -245,6 +284,12 @@
                 display: flex;
                 align-items: baseline;
                 line-height: 1.1;
+                justify-content: center;
+            }
+            
+            .product-card.image-bottom .spec-item {
+                margin-bottom: 0;
+                flex: 1;
                 justify-content: center;
             }
             
@@ -268,6 +313,11 @@
                 min-height: 18mm;
             }
             
+            .product-card.image-bottom .price-badge {
+                flex: 0 0 auto;
+                min-height: 15mm;
+            }
+            
             .price-amount {
                 font-size: 14pt;
                 font-weight: 900;
@@ -282,6 +332,26 @@
             .price-cents { font-size: 8pt; vertical-align: super; font-weight: 800; margin-left: 0.3mm; color: #ffffff; }
             .price-unit { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.95; font-weight: 700; color: rgba(255,255,255,0.95); }
             
+            /* HIGH-DENSITY LAYOUT ADJUSTMENTS */
+            .products-grid.high-density .product-card { min-height: 35mm; }
+            .products-grid.high-density .product-image { width: 60%; }
+            .products-grid.high-density .product-details { width: 40%; }
+            .products-grid.high-density .product-header { min-height: 12mm; }
+            .products-grid.high-density .product-name { font-size: 6pt; -webkit-line-clamp: 2; }
+            .products-grid.high-density .spec-item { font-size: 5pt; }
+            .products-grid.high-density .spec-label, .products-grid.high-density .spec-value { font-size: 5pt; }
+            .products-grid.high-density .price-badge { min-height: 15mm; padding: 2mm; }
+            .products-grid.high-density .price-amount { font-size: 11pt; }
+            
+            /* HIGH-DENSITY IMAGE-BOTTOM ADJUSTMENTS */
+            .products-grid.high-density .product-card.image-bottom .product-image { width: 100%; }
+            .products-grid.high-density .product-card.image-bottom .product-details { width: 100%; }
+            .products-grid.high-density .product-card.image-bottom .product-specs { flex-direction: row; align-items: center; gap: 1mm; }
+            .products-grid.high-density .product-card.image-bottom .spec-item { margin-bottom: 0; font-size: 5pt; }
+            .products-grid.high-density .product-card.image-bottom .price-badge { min-height: 12mm; padding: 1.5mm; }
+            .products-grid.high-density .product-card.image-bottom .price-amount { font-size: 10pt; }
+            
+            /* MAXIMUM LAYOUT ADJUSTMENTS */
             .products-grid.maximum .product-card { min-height: 32mm; }
             .products-grid.maximum .product-image { width: 60%; }
             .products-grid.maximum .product-details { width: 40%; }
@@ -292,6 +362,11 @@
             .products-grid.maximum .price-badge { min-height: 15mm; padding: 2mm; }
             .products-grid.maximum .price-amount { font-size: 11pt; }
             
+            /* MAXIMUM IMAGE-BOTTOM ADJUSTMENTS */
+            .products-grid.maximum .product-card.image-bottom .product-image { width: 100%; }
+            .products-grid.maximum .product-card.image-bottom .product-details { width: 100%; }
+            
+            /* FOOTER AND PAGE STYLES */
             .page-footer {
                 border-top: 1px solid #e0e0e0;
                 padding-top: 3mm;
@@ -307,6 +382,7 @@
             .footer-left { font-weight: 600; color: #333; }
             .footer-right { text-align: right; }
             
+            /* HERO PAGE STYLES */
             .hero-page .page-inner { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 10mm; }
             .hero-content { text-align: center; flex: 1; }
             .hero-logo { height: 25mm; margin-bottom: 8mm; }
@@ -410,23 +486,6 @@
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
-                            Page Title:
-                            <input type="text" id="introTitle" value="Welcome to Our July 2025 Promotion" 
-                                   style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
-                        </label>
-                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">
-                            Subtitle:
-                            <input type="text" id="introSubtitle" value="Exclusive deals on premium home & kitchen products" 
-                                   style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
-                        </label>
-                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">
-                            Special Message:
-                            <textarea id="introMessage" rows="4" 
-                                      style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we're offering exceptional deals on premium products to help you create the perfect living space.</textarea>
-                        </label>
-                    </div>
-                    <div>
-                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Promotion Details:
                             <textarea id="promoDetails" rows="3" 
                                       style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">• Valid for July 2025 only
@@ -459,27 +518,48 @@ Visit our showroom to see the full range!</textarea>
         
         <div id="layoutOptions" class="category-section" style="display: none;">
             <h3>📐 Page Layout Options:</h3>
-            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center;">
-                <label class="category-item" style="border: 2px solid #ddd; border-radius: 8px; padding: 12px;">
+            <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
+                <label class="layout-option">
                     <input type="radio" name="layout" value="standard" checked>
                     <div><strong>Standard</strong><br><small>2×4 = 8 products/page</small></div>
                 </label>
-                <label class="category-item" style="border: 2px solid #ddd; border-radius: 8px; padding: 12px;">
+                <label class="layout-option">
                     <input type="radio" name="layout" value="compact">
                     <div><strong>Compact</strong><br><small>3×4 = 12 products/page</small></div>
                 </label>
-                <label class="category-item" style="border: 2px solid #ddd; border-radius: 8px; padding: 12px;">
+                <label class="layout-option">
                     <input type="radio" name="layout" value="dense">
                     <div><strong>Dense</strong><br><small>2×5 = 10 products/page</small></div>
                 </label>
-                <label class="category-item" style="border: 2px solid #ddd; border-radius: 8px; padding: 12px;">
+                <label class="layout-option">
                     <input type="radio" name="layout" value="ultra-compact">
                     <div><strong>Ultra Compact</strong><br><small>3×5 = 15 products/page</small></div>
                 </label>
-                <label class="category-item" style="border: 2px solid #ddd; border-radius: 8px; padding: 12px;">
+                <label class="layout-option">
+                    <input type="radio" name="layout" value="high-density">
+                    <div><strong>High Density</strong><br><small>4×5 = 20 products/page</small></div>
+                </label>
+                <label class="layout-option">
                     <input type="radio" name="layout" value="maximum">
                     <div><strong>Maximum</strong><br><small>4×6 = 24 products/page</small></div>
                 </label>
+            </div>
+
+            <div class="card-style-section">
+                <h4 style="margin-bottom: 15px; color: #333;">🃏 Product Card Style:</h4>
+                <div style="display: flex; gap: 15px; justify-content: center;">
+                    <label class="card-style-option">
+                        <input type="radio" name="cardStyle" value="standard" checked>
+                        <div><strong>Standard</strong><br><small>Image left, details right</small></div>
+                    </label>
+                    <label class="card-style-option">
+                        <input type="radio" name="cardStyle" value="image-bottom">
+                        <div><strong>Details Top</strong><br><small>Details top, image bottom</small></div>
+                    </label>
+                </div>
+                <p style="margin-top: 10px; font-size: 12px; color: #666; text-align: center;">
+                    Choose how product information and images are arranged on each card
+                </p>
             </div>
         </div>
         
@@ -490,6 +570,22 @@ Visit our showroom to see the full range!</textarea>
     </div>
     
     <div id="printContent" class="print-preview"></div>
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">
+                            Page Title:
+                            <input type="text" id="introTitle" value="Welcome to Our July 2025 Promotion" 
+                                   style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                        </label>
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">
+                            Subtitle:
+                            <input type="text" id="introSubtitle" value="Exclusive deals on premium home & kitchen products" 
+                                   style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                        </label>
+                        <label style="display: block; margin-bottom: 8px; font-weight: bold;">
+                            Special Message:
+                            <textarea id="introMessage" rows="4" 
+                                      style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we're offering exceptional deals on premium products to help you create the perfect living space.</textarea>
+                        </label>
+                    </div>
     <script>
         let allProducts = [];
         let categories = [];
@@ -1018,13 +1114,16 @@ Visit our showroom to see the full range!</textarea>
                 'compact': { productsPerPage: 12, gridClass: 'compact', columns: 3, rows: 4 },
                 'dense': { productsPerPage: 10, gridClass: 'dense', columns: 2, rows: 5 },
                 'ultra-compact': { productsPerPage: 15, gridClass: 'ultra-compact', columns: 3, rows: 5 },
+                'high-density': { productsPerPage: 20, gridClass: 'high-density', columns: 4, rows: 5 },
                 'maximum': { productsPerPage: 24, gridClass: 'maximum', columns: 4, rows: 6 }
             };
             return configs[layout] || configs['standard'];
         }
+        
         function generateCatalog() {
             const useExcelPages = document.getElementById('useExcelPages');
             const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
+            const selectedCardStyle = document.querySelector('input[name="cardStyle"]:checked').value;
             const layoutConfig = getLayoutConfig(selectedLayout);
             
             const printContent = document.getElementById('printContent');
@@ -1062,7 +1161,8 @@ Visit our showroom to see the full range!</textarea>
                                 'Excel ' + pageKey, 
                                 i === 0,
                                 pageNum++, 
-                                layoutConfig
+                                layoutConfig,
+                                selectedCardStyle
                             ));
                         }
                         
@@ -1090,7 +1190,7 @@ Visit our showroom to see the full range!</textarea>
                 }
                 
                 document.getElementById('status').innerHTML = 
-                    '✅ <strong>Generated ' + totalPages + ' pages with ' + filteredProducts.length + ' products using Excel page organization and ' + selectedLayout + ' layout</strong>';
+                    '✅ <strong>Generated ' + totalPages + ' pages with ' + filteredProducts.length + ' products using Excel page organization and ' + selectedLayout + ' layout (' + selectedCardStyle + ' cards)</strong>';
                     
             } else {
                 const selectedCats = Array.from(document.querySelectorAll('.category-cb:checked')).map(function(cb) {
@@ -1124,7 +1224,7 @@ Visit our showroom to see the full range!</textarea>
                     for (let i = 0; i < products.length; i += layoutConfig.productsPerPage) {
                         const pageProducts = products.slice(i, i + layoutConfig.productsPerPage);
                         const showCategoryHeader = i === 0;
-                        printContent.appendChild(createProductPage(pageProducts, category, showCategoryHeader, pageNum++, layoutConfig));
+                        printContent.appendChild(createProductPage(pageProducts, category, showCategoryHeader, pageNum++, layoutConfig, selectedCardStyle));
                     }
                 });
                 
@@ -1148,7 +1248,7 @@ Visit our showroom to see the full range!</textarea>
                 }
                 
                 document.getElementById('status').innerHTML = 
-                    '✅ <strong>Generated ' + totalPages + ' pages with ' + filteredProducts.length + ' products' + imageInfo + ' using ' + selectedLayout + ' layout (category mode)</strong>';
+                    '✅ <strong>Generated ' + totalPages + ' pages with ' + filteredProducts.length + ' products' + imageInfo + ' using ' + selectedLayout + ' layout (' + selectedCardStyle + ' cards) (category mode)</strong>';
             }
             
             printContent.scrollIntoView({ behavior: 'smooth' });
@@ -1214,8 +1314,9 @@ Visit our showroom to see the full range!</textarea>
             return page;
         }
 
-        function createProductPage(products, category, showHeader, pageNum, layoutConfig) {
+        function createProductPage(products, category, showHeader, pageNum, layoutConfig, cardStyle) {
             if (!layoutConfig) layoutConfig = { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 };
+            if (!cardStyle) cardStyle = 'standard';
             
             const page = document.createElement('div');
             page.className = 'page';
@@ -1234,7 +1335,7 @@ Visit our showroom to see the full range!</textarea>
             
             for (let i = 0; i < layoutConfig.productsPerPage; i++) {
                 if (i < products.length) {
-                    contentHTML += createProductCard(products[i]);
+                    contentHTML += createProductCard(products[i], cardStyle);
                 } else {
                     contentHTML += '<div class="product-card" style="visibility: hidden;"></div>';
                 }
@@ -1246,7 +1347,9 @@ Visit our showroom to see the full range!</textarea>
             return page;
         }
 
-        function createProductCard(product) {
+        function createProductCard(product, cardStyle) {
+            if (!cardStyle) cardStyle = 'standard';
+            
             const imageUrl = getImageUrl(product.sku);
             
             const priceStr = product.price.toFixed(2);
@@ -1256,12 +1359,65 @@ Visit our showroom to see the full range!</textarea>
             
             const productName = product.description.trim();
             
-            return '<div class="product-card"><div class="product-image">' + 
-                (imageUrl ? 
-                    '<img src="' + imageUrl + '" alt="' + product.description + '">' :
-                    '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
-                ) + 
-                '</div><div class="product-details"><div class="product-header"><div class="product-name">' + productName + '</div></div><div class="product-specs"><div class="spec-item"><span class="spec-bullet">•</span><span class="spec-label">SKU:</span><span class="spec-value">' + product.sku + '</span></div></div><div class="price-badge"><div class="price-amount"><span class="price-currency">R</span>' + rands + '<span class="price-cents">' + cents + '</span></div><div class="price-unit">Each</div></div></div></div>';
+            const cardClass = cardStyle === 'image-bottom' ? 'product-card image-bottom' : 'product-card';
+            
+            if (cardStyle === 'image-bottom') {
+                return '<div class="' + cardClass + '">' +
+                    '<div class="product-details">' +
+                        '<div class="product-header">' +
+                            '<div class="product-name">' + productName + '</div>' +
+                        '</div>' +
+                        '<div class="product-specs">' +
+                            '<div class="spec-item">' +
+                                '<span class="spec-bullet">•</span>' +
+                                '<span class="spec-label">SKU:</span>' +
+                                '<span class="spec-value">' + product.sku + '</span>' +
+                            '</div>' +
+                            '<div class="price-badge">' +
+                                '<div class="price-amount">' +
+                                    '<span class="price-currency">R</span>' + rands + 
+                                    '<span class="price-cents">' + cents + '</span>' +
+                                '</div>' +
+                                '<div class="price-unit">Each</div>' +
+                            '</div>' +
+                        '</div>' +
+                    '</div>' +
+                    '<div class="product-image">' + 
+                        (imageUrl ? 
+                            '<img src="' + imageUrl + '" alt="' + product.description + '">' :
+                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+                        ) + 
+                    '</div>' +
+                '</div>';
+            } else {
+                return '<div class="' + cardClass + '">' +
+                    '<div class="product-image">' + 
+                        (imageUrl ? 
+                            '<img src="' + imageUrl + '" alt="' + product.description + '">' :
+                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+                        ) + 
+                    '</div>' +
+                    '<div class="product-details">' +
+                        '<div class="product-header">' +
+                            '<div class="product-name">' + productName + '</div>' +
+                        '</div>' +
+                        '<div class="product-specs">' +
+                            '<div class="spec-item">' +
+                                '<span class="spec-bullet">•</span>' +
+                                '<span class="spec-label">SKU:</span>' +
+                                '<span class="spec-value">' + product.sku + '</span>' +
+                            '</div>' +
+                        '</div>' +
+                        '<div class="price-badge">' +
+                            '<div class="price-amount">' +
+                                '<span class="price-currency">R</span>' + rands + 
+                                '<span class="price-cents">' + cents + '</span>' +
+                            '</div>' +
+                            '<div class="price-unit">Each</div>' +
+                        '</div>' +
+                    '</div>' +
+                '</div>';
+            }
         }
         function previewCoverPage() {
             const printContent = document.getElementById('printContent');
@@ -1406,6 +1562,8 @@ Visit our showroom to see the full range!</textarea>
         console.log('✨ NEW: Excel page organization support');
         console.log('📄 NEW: Simplified product cards and consolidated cover page');
         console.log('🔢 NEW: Maximum density layout (24 products per page)');
+        console.log('⚡ NEW: High-density layout (20 products per page)');
+        console.log('🃏 NEW: Image-bottom card style option');
         console.log('📧 UPDATED: Email changed to queries@ozzsa.com');
         console.log('🌐 UPDATED: Website references removed');
         console.log('🔍 UPDATED: Enhanced image matching for product 206');
