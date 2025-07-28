@@ -25,6 +25,24 @@
         #pagePreviewSection .category-item:hover { border-color: #007bff !important; background: #f8f9ff !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: all 0.2s ease; }
         #useExcelPages { transform: scale(1.2); accent-color: #007bff; }
         
+        /* Image Preview Styles */
+        #imagePreviewSection button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+        }
+        #imagePreviewContainer img {
+            animation: fadeIn 0.3s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: scale(0.95); }
+            to { opacity: 1; transform: scale(1); }
+        }
+        #skuInput:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 2px rgba(0,123,255,0.25);
+        }
+        
         /* Layout and Card Options */
         .layout-option { border: 2px solid #ddd; border-radius: 8px; padding: 12px; text-align: center; cursor: pointer; transition: all 0.2s ease; }
         .layout-option:hover { border-color: #007bff; background: #f8f9ff; }
@@ -535,8 +553,34 @@
             <div id="imageStats" style="margin-top: 10px; font-size: 14px; color: #666;"></div>
         </div>
 
+        <!-- Add this new section after the imageStatus div -->
+        <div id="imagePreviewSection" style="display: none; margin-top: 20px; background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
+            <h3 style="margin-bottom: 15px; color: #333;">🖼️ Product Image Preview</h3>
+            <div style="display: flex; gap: 20px; align-items: flex-start;">
+                <div style="flex: 1;">
+                    <label style="display: block; margin-bottom: 8px; font-weight: bold;">
+                        Enter SKU to preview image:
+                        <input type="text" id="skuInput" placeholder="e.g., 206, 1234" 
+                               style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                    </label>
+                    <button onclick="previewImage()" style="background: #007bff; color: white; margin-right: 10px;">
+                        🔍 Preview Image
+                    </button>
+                    <button onclick="refreshImageCache()" style="background: #28a745; color: white;">
+                        🔄 Refresh Image Cache
+                    </button>
+                </div>
+                <div style="flex: 1; text-align: center;">
+                    <div id="imagePreviewContainer" style="min-height: 200px; border: 2px dashed #ddd; border-radius: 8px; padding: 20px; display: flex; align-items: center; justify-content: center;">
+                        <p style="color: #999;">Enter a SKU and click Preview to see the image</p>
+                    </div>
+                    <div id="imagePreviewInfo" style="margin-top: 10px; font-size: 12px; color: #666;"></div>
+                </div>
+            </div>
+        </div>
+
         <div id="customizationPanel" class="category-section" style="display: none;">
-            <h3>🎨 Catalog Customization</h3>
+          <h3>🎨 Catalog Customization</h3>
             <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
                 <div style="background: white; padding: 15px; border-radius: 8px; border: 1px solid #ddd;">
                     <h4 style="margin-bottom: 10px; color: #333;">🎨 Color Scheme</h4>
@@ -615,9 +659,9 @@
                             Promotion Details:
                             <textarea id="promoDetails" rows="3" 
                                       style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">• Valid for July 2025 only
-• Limited quantities available
-• Collection only at our Durban store
-• Delivery available at additional cost</textarea>
+- Limited quantities available
+- Collection only at our Durban store
+- Delivery available at additional cost</textarea>
                         </label>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Additional Information:
@@ -1118,6 +1162,7 @@ Visit our showroom to see the full range!</textarea>
                 
                 imageBtn.innerHTML = '✅ Images Ready';
                 showImageMappingPreview();
+                document.getElementById('imagePreviewSection').style.display = 'block';
                 showNotification('Found ' + stats.mappedProducts + ' product images!', 'success');
                 
             } catch (error) {
@@ -1143,6 +1188,134 @@ Visit our showroom to see the full range!</textarea>
                 imageBtn.disabled = false;
             }
         }
+        function previewImage() {
+            const skuInput = document.getElementById('skuInput');
+            const sku = skuInput.value.trim();
+            
+            if (!sku) {
+                showNotification('Please enter a SKU', 'error');
+                return;
+            }
+            
+            if (!driveImageManager) {
+                showNotification('Please initialize images first', 'error');
+                return;
+            }
+            
+            const imagePreviewContainer = document.getElementById('imagePreviewContainer');
+            const imagePreviewInfo = document.getElementById('imagePreviewInfo');
+            
+            // Show loading state
+            imagePreviewContainer.innerHTML = '<p style="color: #666;">🔄 Loading image...</p>';
+            imagePreviewInfo.innerHTML = '';
+            
+            // Get image data
+            const imageData = driveImageManager.getProductImage(sku);
+            
+            if (imageData.found) {
+                // Show the image
+                imagePreviewContainer.innerHTML = '<img src="' + imageData.url + '" alt="SKU: ' + sku + '" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">';
+                
+                // Show image info
+                const imageInfo = driveImageManager.imageCache.get(sku.toLowerCase());
+                if (imageInfo) {
+                    imagePreviewInfo.innerHTML = 
+                        '<strong>✅ Image Found</strong><br>' +
+                        'File: ' + imageInfo.name + '<br>' +
+                        'SKU: ' + sku;
+                }
+                
+                showNotification('Image found for SKU: ' + sku, 'success');
+            } else {
+                // Show no image message
+                imagePreviewContainer.innerHTML = 
+                    '<div style="text-align: center; color: #999;">' +
+                    '<div style="font-size: 48px; margin-bottom: 10px;">📦</div>' +
+                    '<p><strong>No image found for SKU: ' + sku + '</strong></p>' +
+                    '<p style="font-size: 12px; margin-top: 10px;">Make sure the image filename contains this SKU</p>' +
+                    '</div>';
+                
+                imagePreviewInfo.innerHTML = '<strong>❌ No image mapping found</strong>';
+                
+                // Try to find similar SKUs
+                const suggestions = findSimilarSKUs(sku);
+                if (suggestions.length > 0) {
+                    imagePreviewInfo.innerHTML += '<br><br>Similar SKUs with images:<br>' + 
+                        suggestions.slice(0, 5).join(', ');
+                }
+                
+                showNotification('No image found for SKU: ' + sku, 'error');
+            }
+        }
+
+        function findSimilarSKUs(searchSKU) {
+            if (!driveImageManager) return [];
+            
+            const searchLower = searchSKU.toLowerCase();
+            const similar = [];
+            
+            driveImageManager.imageCache.forEach(function(value, key) {
+                if (key.includes(searchLower) || searchLower.includes(key)) {
+                    similar.push(key);
+                }
+            });
+            
+            return similar;
+        }
+
+        async function refreshImageCache() {
+            if (!driveImageManager) {
+                showNotification('Please initialize images first', 'error');
+                return;
+            }
+            
+            const refreshBtn = event.target;
+            const originalText = refreshBtn.innerHTML;
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '⏳ Refreshing...';
+            
+            const imageStatusText = document.getElementById('imageStatusText');
+            const originalStatus = imageStatusText.innerHTML;
+            
+            try {
+                // Force refresh the cache
+                await driveImageManager.scanFolderForImages(true);
+                
+                const stats = driveImageManager.getStats();
+                imageStatusText.innerHTML = '✅ Image cache refreshed! Found ' + stats.mappedProducts + ' product images';
+                
+                showNotification('Image cache refreshed successfully!', 'success');
+                
+                // Clear the preview
+                document.getElementById('imagePreviewContainer').innerHTML = 
+                    '<p style="color: #999;">Enter a SKU and click Preview to see the image</p>';
+                document.getElementById('imagePreviewInfo').innerHTML = '';
+                
+                // Update the mapping preview
+                showImageMappingPreview();
+                
+            } catch (error) {
+                console.error('Error refreshing cache:', error);
+                showNotification('Failed to refresh image cache', 'error');
+                imageStatusText.innerHTML = originalStatus;
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = originalText;
+            }
+        }
+
+        // Add enter key support for SKU input
+        document.addEventListener('DOMContentLoaded', function() {
+            const skuInput = document.getElementById('skuInput');
+            if (skuInput) {
+                skuInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        previewImage();
+                    }
+                });
+            }
+        });
+
         function showPagePreview() {
             const existingPreview = document.getElementById('pagePreviewSection');
             if (existingPreview) {
@@ -1407,6 +1580,7 @@ Visit our showroom to see the full range!</textarea>
             
             printContent.scrollIntoView({ behavior: 'smooth' });
         }
+        
         function createHeaderPage() {
             const page = document.createElement('div');
             page.className = 'page hero-page';
@@ -1541,7 +1715,7 @@ Visit our showroom to see the full range!</textarea>
         function resetCoverPage() {
             document.getElementById('introTitle').value = 'Welcome to Our July 2025 Promotion';
             document.getElementById('introSubtitle').value = 'Exclusive deals on premium home & kitchen products';
-            document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we\'re offering exceptional deals on premium products to help you create the perfect living space.';
+document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we\'re offering exceptional deals on premium products to help you create the perfect living space.';
             document.getElementById('promoDetails').value = '• Valid for July 2025 only\n• Limited quantities available\n• Collection only at our Durban store\n• Delivery available at additional cost';
             document.getElementById('additionalInfo').value = 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM\nSaturday: 8:00 AM - 1:00 PM\nSunday: Closed\n\nVisit our showroom to see the full range!';
             showNotification('Cover page reset to default!', 'info');
@@ -1678,6 +1852,7 @@ Visit our showroom to see the full range!</textarea>
         console.log('📧 UPDATED: Email changed to queries@ozzsa.com');
         console.log('🌐 UPDATED: Website references removed');
         console.log('🔍 UPDATED: Enhanced image matching for product 206');
+        console.log('🖼️ NEW: Image preview functionality with refresh button');
     </script>
 </body>
 </html>
