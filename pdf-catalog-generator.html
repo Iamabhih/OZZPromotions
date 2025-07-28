@@ -162,7 +162,6 @@
             .products-grid.ultra-compact { --grid-columns: 3; --grid-rows: 5; --grid-gap: 2.5mm; }
             .products-grid.high-density { --grid-columns: 4; --grid-rows: 5; --grid-gap: 2.5mm; }
             .products-grid.maximum { --grid-columns: 4; --grid-rows: 6; --grid-gap: 2mm; }
-            
             .product-card {
                 background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
                 display: flex;
@@ -191,6 +190,7 @@
                 background: linear-gradient(90deg, #006b6b 0%, #cc0000 50%, #006b6b 100%);
                 opacity: 0.6;
             }
+            
             /* Product Image */
             .product-image {
                 width: 65%;
@@ -246,39 +246,37 @@
             
             .no-image-icon { font-size: 28pt; margin-bottom: 2mm; opacity: 0.4; }
             .no-image-text { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; color: #999; font-weight: 700; }
-            
             /* SKU Overlay for images */
-            .sku-overlay {
-                position: absolute;
-                bottom: 1mm;
-                right: 1mm;
-                background: rgba(0, 107, 107, 0.9);
-                color: white;
-                padding: 1mm 2mm;
-                font-size: 5pt;
-                font-weight: 700;
-                border-radius: 1mm;
-                box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-                z-index: 3;
-                line-height: 1;
-                letter-spacing: 0.2px;
-            }
+.sku-overlay {
+    position: absolute;
+    bottom: 1mm;
+    right: 1mm;
+    background: rgba(0, 107, 107, 0.9);
+    color: white;
+    padding: 1mm 2mm;
+    font-size: 5pt;
+    font-weight: 700;
+    border-radius: 1mm;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+    z-index: 3;
+    line-height: 1;
+    letter-spacing: 0.2px;
+}
 
-            /* Make sure overlay works for both card styles */
-            .product-card.image-bottom .sku-overlay,
-            .product-card .sku-overlay {
-                position: absolute;
-                bottom: 1mm;
-                right: 1mm;
-            }
+/* Make sure overlay works for both card styles */
+.product-card.image-bottom .sku-overlay,
+.product-card .sku-overlay {
+    position: absolute;
+    bottom: 1mm;
+    right: 1mm;
+}
 
-            /* For high-density layouts, make SKU slightly smaller */
-            .products-grid.high-density .sku-overlay,
-            .products-grid.maximum .sku-overlay {
-                font-size: 4pt;
-                padding: 0.8mm 1.5mm;
-            }
-            
+/* For high-density layouts, make SKU slightly smaller */
+.products-grid.high-density .sku-overlay,
+.products-grid.maximum .sku-overlay {
+    font-size: 4pt;
+    padding: 0.8mm 1.5mm;
+}
             /* Product Details */
             .product-details {
                 width: 35%;
@@ -297,7 +295,6 @@
                 display: flex !important;
                 flex-direction: column !important;
             }
-            
             .product-header {
                 background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%);
                 color: white;
@@ -339,6 +336,7 @@
                 text-align: center;
                 margin: 0;
             }
+            
             .product-specs {
                 background: white;
                 padding: 2mm;
@@ -429,7 +427,6 @@
             .price-currency { font-size: 10pt; font-weight: 800; color: #ffffff; }
             .price-cents { font-size: 8pt; vertical-align: super; font-weight: 800; margin-left: 0.3mm; color: #ffffff; }
             .price-unit { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.95; font-weight: 700; color: rgba(255,255,255,0.95); }
-            
             /* High-density layout adjustments */
             .products-grid.high-density .product-card { min-height: 35mm; }
             .products-grid.high-density .product-image { width: 60%; }
@@ -495,6 +492,7 @@
                 width: 100% !important; 
                 flex: 0 0 auto !important;
             }
+            
             /* Footer and Page Styles */
             .page-footer {
                 border-top: 1px solid #e0e0e0;
@@ -541,12 +539,12 @@
             <h1>OZZ Professional Catalog Generator</h1>
             <p>Create beautiful retail-quality promotional catalogs with images</p>
         </div>
+        
         <div class="button-group">
             <button onclick="loadCatalog()" id="loadBtn">📁 Load JULY PROMO.xlsx</button>
             <button onclick="initializeImages()" id="imageBtn" disabled>📸 Initialize Images</button>
             <button onclick="generateCatalog()" id="generateBtn" disabled>📄 Generate Catalog</button>
             <button onclick="window.print()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
-            <button onclick="clearAllCaches()" style="background: #dc3545; color: white;">🗑️ Clear All Caches</button>
         </div>
         
         <div class="status-box" id="status">Ready to load catalog data...</div>
@@ -555,7 +553,7 @@
             <div id="imageStats" style="margin-top: 10px; font-size: 14px; color: #666;"></div>
         </div>
 
-        <!-- Image Preview Section -->
+        <!-- Add this new section after the imageStatus div -->
         <div id="imagePreviewSection" style="display: none; margin-top: 20px; background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
             <h3 style="margin-bottom: 15px; color: #333;">🖼️ Product Image Preview</h3>
             <div style="display: flex; gap: 20px; align-items: flex-start;">
@@ -569,7 +567,7 @@
                         🔍 Preview Image
                     </button>
                     <button onclick="refreshImageCache()" style="background: #28a745; color: white;">
-                        🔄 Force Refresh Cache
+                        🔄 Refresh Image Cache
                     </button>
                 </div>
                 <div style="flex: 1; text-align: center;">
@@ -631,6 +629,7 @@
                 </div>
             </div>
         </div>
+
         <div id="introPageCustomization" class="category-section" style="display: none;">
             <h3>📄 Cover Page Content Customization</h3>
             <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
@@ -750,7 +749,7 @@ Visit our showroom to see the full range!</textarea>
             constructor() {
                 this.imageCache = new Map();
                 this.isInitialized = false;
-                this.cacheVersion = '2.0'; // UPDATED VERSION to force cache refresh
+                this.cacheVersion = '1.0';
                 this.cacheExpiryHours = 1;
                 this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
                 this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
@@ -765,7 +764,7 @@ Visit our showroom to see the full range!</textarea>
                     this.updateProgress('Initializing Drive client...');
                     await this.initializeClient();
                     this.isInitialized = true;
-                    console.log('✅ Google Drive API initialized (CSP-Safe)');
+                    console.log('✅ Google Drive API initialized');
                     return true;
                 } catch (error) {
                     console.error('❌ Failed to initialize Google Drive API:', error);
@@ -810,37 +809,6 @@ Visit our showroom to see the full range!</textarea>
 
             getCacheKey(type) {
                 return 'ozz_pdf_' + type + '_v' + this.cacheVersion;
-            }
-
-            // Enhanced cache clearing method
-            forceClearAllCache() {
-                try {
-                    // Clear all possible cache versions
-                    const versions = ['1.0', '2.0', '3.0'];
-                    const types = ['meta', 'images'];
-                    
-                    versions.forEach(version => {
-                        types.forEach(type => {
-                            const key = 'ozz_pdf_' + type + '_v' + version;
-                            localStorage.removeItem(key);
-                        });
-                    });
-                    
-                    // Also clear any legacy cache keys
-                    for (let i = 0; i < localStorage.length; i++) {
-                        const key = localStorage.key(i);
-                        if (key && key.startsWith('ozz_pdf_')) {
-                            localStorage.removeItem(key);
-                            i--; // Adjust index since we removed an item
-                        }
-                    }
-                    
-                    console.log('✅ All cache versions cleared');
-                    this.updateProgress('🗑️ All cache versions cleared - fresh start guaranteed');
-                    
-                } catch (error) {
-                    console.error('❌ Error clearing cache:', error);
-                }
             }
 
             loadCacheFromStorage() {
@@ -890,6 +858,7 @@ Visit our showroom to see the full range!</textarea>
                     localStorage.removeItem(this.getCacheKey(keys[i]));
                 }
             }
+
             async scanFolderForImages(forceRefresh) {
                 if (forceRefresh === undefined) forceRefresh = false;
                 
@@ -938,12 +907,9 @@ Visit our showroom to see the full range!</textarea>
                 }
             }
 
-            // UPDATED: Enhanced buildImageMapping with cache busting
             buildImageMapping(images) {
                 this.imageCache.clear();
-                const timestamp = Date.now(); // Add timestamp for cache busting
                 var self = this;
-                
                 images.forEach(function(image) {
                     const codes = self.extractProductCodes(image.name);
                     codes.forEach(function(code) {
@@ -951,8 +917,7 @@ Visit our showroom to see the full range!</textarea>
                             self.imageCache.set(code, {
                                 id: image.id,
                                 name: image.name,
-                                // Add cache busting parameter to force refresh
-                                directLink: 'https://lh3.googleusercontent.com/d/' + image.id + '=w800-h800-c&t=' + timestamp
+                                directLink: 'https://lh3.googleusercontent.com/d/' + image.id + '=w800-h800-c'
                             });
                         }
                     });
@@ -1055,97 +1020,6 @@ Visit our showroom to see the full range!</textarea>
                 return { mappedProducts: this.imageCache.size, cacheInfo: cacheInfo };
             }
         }
-        // NEW: Manual cache clear function
-        async function clearAllCaches() {
-            const button = event.target;
-            const originalText = button.innerHTML;
-            button.disabled = true;
-            button.innerHTML = '⏳ Clearing...';
-            
-            try {
-                // Clear localStorage completely
-                const keysToRemove = [];
-                for (let i = 0; i < localStorage.length; i++) {
-                    const key = localStorage.key(i);
-                    if (key && key.startsWith('ozz_pdf_')) {
-                        keysToRemove.push(key);
-                    }
-                }
-                
-                keysToRemove.forEach(key => localStorage.removeItem(key));
-                
-                // Clear the image manager cache
-                if (driveImageManager) {
-                    driveImageManager.imageCache.clear();
-                    driveImageManager.forceClearAllCache();
-                }
-                
-                // Force browser cache refresh by updating the cache version
-                const timestamp = Date.now();
-                localStorage.setItem('ozz_cache_buster', timestamp.toString());
-                
-                showNotification('All caches cleared! Next image refresh will get fresh data.', 'success');
-                
-                // Update status
-                document.getElementById('imageStatus').style.display = 'none';
-                document.getElementById('imageBtn').disabled = false;
-                document.getElementById('imageBtn').innerHTML = '📸 Initialize Images';
-                
-            } catch (error) {
-                console.error('Error clearing caches:', error);
-                showNotification('Error clearing caches: ' + error.message, 'error');
-            } finally {
-                button.disabled = false;
-                button.innerHTML = originalText;
-            }
-        }
-
-        // UPDATED: Enhanced refresh function that forces new image URLs
-        async function refreshImageCache() {
-            if (!driveImageManager) {
-                showNotification('Please initialize images first', 'error');
-                return;
-            }
-            
-            const refreshBtn = event.target;
-            const originalText = refreshBtn.innerHTML;
-            refreshBtn.disabled = true;
-            refreshBtn.innerHTML = '⏳ Force Refreshing...';
-            
-            const imageStatusText = document.getElementById('imageStatusText');
-            const originalStatus = imageStatusText.innerHTML;
-            
-            try {
-                // Force clear all cache first
-                driveImageManager.forceClearAllCache();
-                driveImageManager.imageCache.clear();
-                
-                // Force refresh with new timestamp
-                await driveImageManager.scanFolderForImages(true);
-                
-                const stats = driveImageManager.getStats();
-                imageStatusText.innerHTML = '✅ Force refresh complete! Found ' + stats.mappedProducts + ' fresh images';
-                
-                showNotification('Images force refreshed - all old cached images cleared!', 'success');
-                
-                // Clear the preview
-                document.getElementById('imagePreviewContainer').innerHTML = 
-                    '<p style="color: #999;">Enter a SKU and click Preview to see the image</p>';
-                document.getElementById('imagePreviewInfo').innerHTML = '';
-                
-                // Update the mapping preview
-                showImageMappingPreview();
-                
-            } catch (error) {
-                console.error('Error force refreshing cache:', error);
-                showNotification('Failed to force refresh image cache', 'error');
-                imageStatusText.innerHTML = originalStatus;
-            } finally {
-                refreshBtn.disabled = false;
-                refreshBtn.innerHTML = originalText;
-            }
-        }
-
         async function loadCatalog() {
             const loadBtn = document.getElementById('loadBtn');
             const status = document.getElementById('status');
@@ -1237,6 +1111,7 @@ Visit our showroom to see the full range!</textarea>
                 loadBtn.disabled = false;
             }
         }
+
         async function initializeImages() {
             const imageBtn = document.getElementById('imageBtn');
             const imageStatus = document.getElementById('imageStatus');
@@ -1313,7 +1188,6 @@ Visit our showroom to see the full range!</textarea>
                 imageBtn.disabled = false;
             }
         }
-
         function previewImage() {
             const skuInput = document.getElementById('skuInput');
             const sku = skuInput.value.trim();
@@ -1348,8 +1222,7 @@ Visit our showroom to see the full range!</textarea>
                     imagePreviewInfo.innerHTML = 
                         '<strong>✅ Image Found</strong><br>' +
                         'File: ' + imageInfo.name + '<br>' +
-                        'SKU: ' + sku + '<br>' +
-                        'URL: ' + imageData.url.substring(0, 60) + '...';
+                        'SKU: ' + sku;
                 }
                 
                 showNotification('Image found for SKU: ' + sku, 'success');
@@ -1390,6 +1263,47 @@ Visit our showroom to see the full range!</textarea>
             return similar;
         }
 
+        async function refreshImageCache() {
+            if (!driveImageManager) {
+                showNotification('Please initialize images first', 'error');
+                return;
+            }
+            
+            const refreshBtn = event.target;
+            const originalText = refreshBtn.innerHTML;
+            refreshBtn.disabled = true;
+            refreshBtn.innerHTML = '⏳ Refreshing...';
+            
+            const imageStatusText = document.getElementById('imageStatusText');
+            const originalStatus = imageStatusText.innerHTML;
+            
+            try {
+                // Force refresh the cache
+                await driveImageManager.scanFolderForImages(true);
+                
+                const stats = driveImageManager.getStats();
+                imageStatusText.innerHTML = '✅ Image cache refreshed! Found ' + stats.mappedProducts + ' product images';
+                
+                showNotification('Image cache refreshed successfully!', 'success');
+                
+                // Clear the preview
+                document.getElementById('imagePreviewContainer').innerHTML = 
+                    '<p style="color: #999;">Enter a SKU and click Preview to see the image</p>';
+                document.getElementById('imagePreviewInfo').innerHTML = '';
+                
+                // Update the mapping preview
+                showImageMappingPreview();
+                
+            } catch (error) {
+                console.error('Error refreshing cache:', error);
+                showNotification('Failed to refresh image cache', 'error');
+                imageStatusText.innerHTML = originalStatus;
+            } finally {
+                refreshBtn.disabled = false;
+                refreshBtn.innerHTML = originalText;
+            }
+        }
+
         // Add enter key support for SKU input
         document.addEventListener('DOMContentLoaded', function() {
             const skuInput = document.getElementById('skuInput');
@@ -1401,6 +1315,7 @@ Visit our showroom to see the full range!</textarea>
                 });
             }
         });
+
         function showPagePreview() {
             const existingPreview = document.getElementById('pagePreviewSection');
             if (existingPreview) {
@@ -1467,6 +1382,26 @@ Visit our showroom to see the full range!</textarea>
             imageStats.innerHTML += mappingInfo;
         }
 
+        function getImageUrl(sku) {
+            if (!driveImageManager) {
+                return null;
+            }
+            const imageData = driveImageManager.getProductImage(sku);
+            return imageData.found ? imageData.url : null;
+        }
+
+        function getLayoutConfig(layout) {
+            const configs = {
+                'standard': { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 },
+                'compact': { productsPerPage: 12, gridClass: 'compact', columns: 3, rows: 4 },
+                'dense': { productsPerPage: 10, gridClass: 'dense', columns: 2, rows: 5 },
+                'ultra-compact': { productsPerPage: 15, gridClass: 'ultra-compact', columns: 3, rows: 5 },
+                'high-density': { productsPerPage: 20, gridClass: 'high-density', columns: 4, rows: 5 },
+                'maximum': { productsPerPage: 24, gridClass: 'maximum', columns: 4, rows: 6 }
+            };
+            return configs[layout] || configs['standard'];
+        }
+
         function showCategories() {
             const section = document.getElementById('categorySection');
             const list = document.getElementById('categoryList');
@@ -1496,7 +1431,22 @@ Visit our showroom to see the full range!</textarea>
             buttonDiv.innerHTML = '<button onclick="selectAllCategories()" style="background: #28a745; color: white; margin-right: 10px;">Select All</button><button onclick="selectNoCategories()" style="background: #dc3545; color: white;">Select None</button>';
             list.appendChild(buttonDiv);
         }
-        // COMPLETE generateCatalog function
+
+        function selectAllCategories() {
+            const checkboxes = document.querySelectorAll('.category-cb');
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = true;
+            }
+            showNotification('All categories selected', 'success');
+        }
+
+        function selectNoCategories() {
+            const checkboxes = document.querySelectorAll('.category-cb');
+            for (let i = 0; i < checkboxes.length; i++) {
+                checkboxes[i].checked = false;
+            }
+            showNotification('All categories deselected', 'info');
+        }
         function generateCatalog() {
             const useExcelPages = document.getElementById('useExcelPages');
             const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
@@ -1630,43 +1580,7 @@ Visit our showroom to see the full range!</textarea>
             
             printContent.scrollIntoView({ behavior: 'smooth' });
         }
-
-        // MISSING UTILITY FUNCTIONS - These were referenced but not included
-        function getImageUrl(sku) {
-            if (!driveImageManager) {
-                return null;
-            }
-            const imageData = driveImageManager.getProductImage(sku);
-            return imageData.found ? imageData.url : null;
-        }
-
-        function getLayoutConfig(layout) {
-            const configs = {
-                'standard': { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 },
-                'compact': { productsPerPage: 12, gridClass: 'compact', columns: 3, rows: 4 },
-                'dense': { productsPerPage: 10, gridClass: 'dense', columns: 2, rows: 5 },
-                'ultra-compact': { productsPerPage: 15, gridClass: 'ultra-compact', columns: 3, rows: 5 },
-                'high-density': { productsPerPage: 20, gridClass: 'high-density', columns: 4, rows: 5 },
-                'maximum': { productsPerPage: 24, gridClass: 'maximum', columns: 4, rows: 6 }
-            };
-            return configs[layout] || configs['standard'];
-        }
-
-        function selectAllCategories() {
-            const checkboxes = document.querySelectorAll('.category-cb');
-            for (let i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].checked = true;
-            }
-            showNotification('All categories selected', 'success');
-        }
-
-        function selectNoCategories() {
-            const checkboxes = document.querySelectorAll('.category-cb');
-            for (let i = 0; i < checkboxes.length; i++) {
-                checkboxes[i].checked = false;
-            }
-            showNotification('All categories deselected', 'info');
-        }
+        
         function createHeaderPage() {
             const page = document.createElement('div');
             page.className = 'page hero-page';
@@ -1801,7 +1715,7 @@ Visit our showroom to see the full range!</textarea>
         function resetCoverPage() {
             document.getElementById('introTitle').value = 'Welcome to Our July 2025 Promotion';
             document.getElementById('introSubtitle').value = 'Exclusive deals on premium home & kitchen products';
-            document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we\'re offering exceptional deals on premium products to help you create the perfect living space.';
+document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we\'re offering exceptional deals on premium products to help you create the perfect living space.';
             document.getElementById('promoDetails').value = '• Valid for July 2025 only\n• Limited quantities available\n• Collection only at our Durban store\n• Delivery available at additional cost';
             document.getElementById('additionalInfo').value = 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM\nSaturday: 8:00 AM - 1:00 PM\nSunday: Closed\n\nVisit our showroom to see the full range!';
             showNotification('Cover page reset to default!', 'info');
@@ -1926,7 +1840,7 @@ Visit our showroom to see the full range!</textarea>
             }, 3000);
         }
 
-        console.log('🎉 OZZ Professional Catalog Generator with Cache-Busting Loaded');
+        console.log('🎉 OZZ Professional Catalog Generator with Excel Page Organization Loaded');
         console.log('🔒 CSP-Safe: No eval() usage - fully secure');
         console.log('🎨 Customization: Colors, fonts, themes, and layouts available');
         console.log('📸 Image integration: CSP-compliant Google Drive API');
@@ -1939,9 +1853,6 @@ Visit our showroom to see the full range!</textarea>
         console.log('🌐 UPDATED: Website references removed');
         console.log('🔍 UPDATED: Enhanced image matching for product 206');
         console.log('🖼️ NEW: Image preview functionality with refresh button');
-        console.log('🗑️ NEW: Cache busting functionality - forces fresh images');
-        console.log('💾 UPDATED: Cache version bumped to 2.0 for automatic refresh');
-        console.log('🔄 ENHANCED: Force refresh clears all cached versions');
     </script>
 </body>
 </html>
