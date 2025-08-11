@@ -369,35 +369,35 @@
                 max-width: calc(100% - 4mm);
             }
             
-            /* REFINED: Grey SKU Badge */
-            .luxury-minimal .floating-badge.sku-badge {
-                bottom: 2mm;
-                left: 2mm;
-                background: rgba(128, 128, 128, 0.9);  /* Grey background */
-                color: #FFFFFF;  /* White text for contrast */
-                padding: 0.5mm 1.5mm;  /* Reduced padding */
-                border-radius: 2mm;  /* Slightly rounded */
-                font-size: 4pt;  /* Smaller font */
-                font-weight: 500;
-                letter-spacing: 0.2px;
-                box-shadow: 0 0.5px 2px rgba(0,0,0,0.15);
-            }
-            
-            /* REFINED: Compact Red Price Badge */
-            .luxury-minimal .floating-badge.price-badge {
-                bottom: 2mm;
-                right: 2mm;
-                background: #DC143C;  /* Solid red instead of gradient */
-                color: #FFFFFF;
-                padding: 0.8mm 2mm;  /* Reduced padding for compact look */
-                border-radius: 10mm;  /* Full pill shape */
-                font-size: 6pt;  /* Slightly smaller */
-                font-weight: 700;
-                letter-spacing: 0.2px;
-                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
-                min-width: auto;  /* Remove minimum width */
-                white-space: nowrap;  /* Keep price on one line */
-            }
+           /* REFINED: Grey SKU Badge */
+.luxury-minimal .floating-badge.sku-badge {
+    bottom: 2mm;
+    left: 2mm;
+    background: rgba(128, 128, 128, 0.9);  /* Grey background */
+    color: #FFFFFF;  /* White text for contrast */
+    padding: 0.5mm 1.5mm;  /* Compact padding */
+    border-radius: 2mm;  /* Slightly rounded */
+    font-size: 4pt;  /* Smaller font */
+    font-weight: 500;
+    letter-spacing: 0.2px;
+    box-shadow: 0 0.5px 2px rgba(0,0,0,0.15);
+}
+
+/* REFINED: Compact Red Price Badge - MATCHING SKU DIMENSIONS */
+.luxury-minimal .floating-badge.price-badge {
+    bottom: 2mm;
+    right: 2mm;
+    background: #DC143C;  /* Solid red */
+    color: #FFFFFF;
+    padding: 0.5mm 1.5mm;  /* SAME padding as SKU badge */
+    border-radius: 2mm;  /* SAME radius as SKU badge - rectangular */
+    font-size: 4pt;  /* SAME font size as SKU */
+    font-weight: 600;  /* Slightly bolder for price */
+    letter-spacing: 0.2px;
+    box-shadow: 0 0.5px 2px rgba(0,0,0,0.15);
+    min-width: auto;  /* Remove minimum width */
+    white-space: nowrap;  /* Keep price on one line */
+}
             
             /* Layout variations based on displayed info */
             .luxury-minimal.show-price-only .price-badge {
@@ -415,30 +415,30 @@
                 font-weight: 500;
             }
             
-            /* HIGH DENSITY SPECIFIC ADJUSTMENTS */
-            .products-grid.high-density .luxury-minimal .floating-badge.name-badge {
-                font-size: 4pt;
-                padding: 0.8mm 1.2mm;
-                top: 1.5mm;
-                left: 1.5mm;
-                right: 1.5mm;
-            }
-            
-            .products-grid.high-density .luxury-minimal .floating-badge.price-badge {
-                font-size: 5pt;  /* Smaller for high density */
-                padding: 0.6mm 1.5mm;  /* More compact */
-                bottom: 1.5mm;
-                right: 1.5mm;
-                border-radius: 8mm;
-            }
-            
-            .products-grid.high-density .luxury-minimal .floating-badge.sku-badge {
-                font-size: 3.5pt;  /* Tiny font */
-                padding: 0.4mm 1mm;  /* Minimal padding */
-                bottom: 1.5mm;
-                left: 1.5mm;
-            }
-            
+         /* HIGH DENSITY SPECIFIC ADJUSTMENTS */
+.products-grid.high-density .luxury-minimal .floating-badge.name-badge {
+    font-size: 4pt;
+    padding: 0.8mm 1.2mm;
+    top: 1.5mm;
+    left: 1.5mm;
+    right: 1.5mm;
+}
+
+.products-grid.high-density .luxury-minimal .floating-badge.price-badge {
+    font-size: 3.5pt;  /* Smaller for high density */
+    padding: 0.4mm 1mm;  /* SAME compact padding as SKU */
+    bottom: 1.5mm;
+    right: 1.5mm;
+    border-radius: 1.5mm;  /* Slightly less rounded - rectangular */
+}
+
+.products-grid.high-density .luxury-minimal .floating-badge.sku-badge {
+    font-size: 3.5pt;  /* Matching size with price */
+    padding: 0.4mm 1mm;  /* SAME padding as price */
+    bottom: 1.5mm;
+    left: 1.5mm;
+    border-radius: 1.5mm;  /* Matching radius */
+}
             /* Maximum density adjustments */
             .products-grid.maximum .luxury-minimal .floating-badge.name-badge {
                 display: none; /* Too crowded */
