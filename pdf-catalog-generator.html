@@ -53,7 +53,7 @@
             color: #764ba2; 
         }
         
-        /* NEW: Information Display Controls */
+        /* Information Display Controls */
         .info-display-selector {
             margin-top: 15px;
             padding: 15px;
@@ -315,7 +315,7 @@
                 min-height: 40mm;
             }
             
-            /* NEW: Luxury Minimal Card Style */
+            /* REFINED: Luxury Minimal Card Style */
             .product-card.luxury-minimal {
                 border: none;
                 box-shadow: none;
@@ -331,7 +331,7 @@
                 background: white;
                 border-radius: 2mm;
                 overflow: hidden;
-                box-shadow: 0 1mm 3mm rgba(0,0,0,0.08);
+                box-shadow: 0 0.5mm 2mm rgba(0,0,0,0.08);
             }
             
             .product-card.luxury-minimal .image-container img {
@@ -341,7 +341,7 @@
                 padding: 2mm;
             }
             
-            /* Luxury Floating Badges */
+            /* REFINED: Luxury Floating Badges with Better Sizing */
             .luxury-minimal .floating-badge {
                 position: absolute;
                 z-index: 10;
@@ -355,48 +355,48 @@
                 right: 2mm;
                 background: rgba(255, 255, 255, 0.95);
                 color: #1a1a1a;
-                padding: 1.5mm 2mm;
+                padding: 1mm 1.5mm;
                 border-radius: 1mm;
                 font-size: 5pt;
                 font-weight: 600;
-                letter-spacing: 0.2px;
+                letter-spacing: 0.1px;
                 line-height: 1.2;
                 backdrop-filter: blur(10px);
-                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                box-shadow: 0 0.5px 2px rgba(0,0,0,0.1);
                 overflow: hidden;
                 text-overflow: ellipsis;
                 white-space: nowrap;
                 max-width: calc(100% - 4mm);
             }
             
-            /* SKU Badge */
+            /* REFINED: Grey SKU Badge */
             .luxury-minimal .floating-badge.sku-badge {
                 bottom: 2mm;
                 left: 2mm;
-                background: rgba(0, 0, 0, 0.05);
-                color: rgba(0, 0, 0, 0.5);
-                padding: 0.8mm 2mm;
-                border-radius: 1mm;
-                font-size: 4.5pt;
+                background: rgba(128, 128, 128, 0.9);  /* Grey background */
+                color: #FFFFFF;  /* White text for contrast */
+                padding: 0.5mm 1.5mm;  /* Reduced padding */
+                border-radius: 2mm;  /* Slightly rounded */
+                font-size: 4pt;  /* Smaller font */
                 font-weight: 500;
-                letter-spacing: 0.3px;
+                letter-spacing: 0.2px;
+                box-shadow: 0 0.5px 2px rgba(0,0,0,0.15);
             }
             
-            /* Premium Red Price Badge */
+            /* REFINED: Compact Red Price Badge */
             .luxury-minimal .floating-badge.price-badge {
                 bottom: 2mm;
                 right: 2mm;
-                background: linear-gradient(135deg, #DC143C 0%, #B71C1C 100%);
+                background: #DC143C;  /* Solid red instead of gradient */
                 color: #FFFFFF;
-                padding: 1.5mm 3mm;
-                border-radius: 50px;
-                font-size: 7pt;
+                padding: 0.8mm 2mm;  /* Reduced padding for compact look */
+                border-radius: 10mm;  /* Full pill shape */
+                font-size: 6pt;  /* Slightly smaller */
                 font-weight: 700;
-                letter-spacing: 0.3px;
-                box-shadow: 
-                    0 2px 4px rgba(0,0,0,0.15),
-                    0 1px 2px rgba(0,0,0,0.1),
-                    inset 0 1px 0 rgba(255,255,255,0.1);
+                letter-spacing: 0.2px;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2);
+                min-width: auto;  /* Remove minimum width */
+                white-space: nowrap;  /* Keep price on one line */
             }
             
             /* Layout variations based on displayed info */
@@ -404,31 +404,39 @@
                 bottom: 50%;
                 right: 50%;
                 transform: translate(50%, 50%);
-                font-size: 9pt;
-                padding: 2mm 4mm;
+                font-size: 8pt;
+                padding: 1.5mm 3mm;
             }
             
             .luxury-minimal.show-sku-price .sku-badge {
-                background: rgba(255, 255, 255, 0.9);
-                color: #333;
-                font-size: 5pt;
-                font-weight: 600;
+                background: rgba(100, 100, 100, 0.9);
+                color: #FFFFFF;
+                font-size: 4.5pt;
+                font-weight: 500;
             }
             
-            /* High density adjustments */
+            /* HIGH DENSITY SPECIFIC ADJUSTMENTS */
             .products-grid.high-density .luxury-minimal .floating-badge.name-badge {
                 font-size: 4pt;
-                padding: 1mm 1.5mm;
+                padding: 0.8mm 1.2mm;
+                top: 1.5mm;
+                left: 1.5mm;
+                right: 1.5mm;
             }
             
             .products-grid.high-density .luxury-minimal .floating-badge.price-badge {
-                font-size: 5.5pt;
-                padding: 1mm 2mm;
+                font-size: 5pt;  /* Smaller for high density */
+                padding: 0.6mm 1.5mm;  /* More compact */
+                bottom: 1.5mm;
+                right: 1.5mm;
+                border-radius: 8mm;
             }
             
             .products-grid.high-density .luxury-minimal .floating-badge.sku-badge {
-                font-size: 3.5pt;
-                padding: 0.5mm 1.5mm;
+                font-size: 3.5pt;  /* Tiny font */
+                padding: 0.4mm 1mm;  /* Minimal padding */
+                bottom: 1.5mm;
+                left: 1.5mm;
             }
             
             /* Maximum density adjustments */
@@ -437,13 +445,17 @@
             }
             
             .products-grid.maximum .luxury-minimal .floating-badge.price-badge {
-                font-size: 5pt;
-                padding: 0.8mm 1.8mm;
+                font-size: 4.5pt;
+                padding: 0.5mm 1.2mm;
+                bottom: 1mm;
+                right: 1mm;
             }
             
             .products-grid.maximum .luxury-minimal .floating-badge.sku-badge {
                 font-size: 3pt;
-                padding: 0.3mm 1mm;
+                padding: 0.3mm 0.8mm;
+                bottom: 1mm;
+                left: 1mm;
             }
             
             /* No image placeholder for luxury minimal */
@@ -459,7 +471,7 @@
             }
             
             .luxury-minimal .no-image-icon {
-                font-size: 20pt;
+                font-size: 16pt;
                 margin-bottom: 2mm;
                 opacity: 0.3;
             }
@@ -469,6 +481,15 @@
                 text-transform: uppercase;
                 letter-spacing: 0.5px;
                 opacity: 0.5;
+            }
+            
+            /* High density specific no-image adjustments */
+            .products-grid.high-density .luxury-minimal .no-image-icon {
+                font-size: 12pt;
+            }
+            
+            .products-grid.high-density .luxury-minimal .no-image-text {
+                font-size: 4pt;
             }
             /* Existing overlay styles - keep for compatibility */
             .product-card.overlay-minimal,
@@ -493,11 +514,13 @@
             }
             
             /* Dynamic background for images */
-            .product-image-container.bg-transparent {
+            .product-image-container.bg-transparent,
+            .image-container.bg-transparent {
                 background: transparent !important;
             }
             
-            .product-image-container.bg-subtle {
+            .product-image-container.bg-subtle,
+            .image-container.bg-subtle {
                 background: white !important;
                 box-shadow: inset 0 0 20px rgba(0,0,0,0.03);
             }
@@ -839,7 +862,7 @@
                     </label>
                     <label style="display: block; margin-bottom: 8px;">
                         Price Color:
-                        <input type="color" id="priceColor" value="#cc0000" style="width: 100%; height: 30px; margin-top: 4px;">
+                        <input type="color" id="priceColor" value="#DC143C" style="width: 100%; height: 30px; margin-top: 4px;">
                     </label>
                     <label style="display: block; margin-bottom: 8px;">
                         Accent Color:
@@ -878,7 +901,7 @@
                 </div>
             </div>
             
-            <!-- NEW: Information Display Selector -->
+            <!-- Information Display Selector -->
             <div class="info-display-selector">
                 <h5>📝 Information Display Options:</h5>
                 
@@ -889,7 +912,7 @@
                         <button onclick="applyDisplayPreset('ultra-minimal')" class="preset-btn">
                             💎 Price Only
                         </button>
-                        <button onclick="applyDisplayPreset('sku-price')" class="preset-btn">
+                        <button onclick="applyDisplayPreset('sku-price')" class="preset-btn active">
                             🏷️ SKU + Price
                         </button>
                         <button onclick="applyDisplayPreset('classic')" class="preset-btn">
@@ -904,7 +927,7 @@
                 <!-- Individual Toggles -->
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
                     <label class="toggle-option">
-                        <input type="checkbox" id="showProductName" checked>
+                        <input type="checkbox" id="showProductName">
                         <span>Product Name</span>
                     </label>
                     <label class="toggle-option">
@@ -1000,7 +1023,7 @@ Visit our showroom to see the full range!</textarea>
             <h3>📐 Page Layout Options:</h3>
             <div style="display: flex; gap: 15px; flex-wrap: wrap; justify-content: center; margin-bottom: 20px;">
                 <label class="layout-option">
-                    <input type="radio" name="layout" value="standard" checked>
+                    <input type="radio" name="layout" value="standard">
                     <div><strong>Standard</strong><br><small>2×4 = 8 products/page</small></div>
                 </label>
                 <label class="layout-option">
@@ -1016,7 +1039,7 @@ Visit our showroom to see the full range!</textarea>
                     <div><strong>Ultra Compact</strong><br><small>3×5 = 15 products/page</small></div>
                 </label>
                 <label class="layout-option">
-                    <input type="radio" name="layout" value="high-density">
+                    <input type="radio" name="layout" value="high-density" checked>
                     <div><strong>High Density</strong><br><small>4×5 = 20 products/page</small></div>
                 </label>
                 <label class="layout-option">
@@ -1063,15 +1086,15 @@ Visit our showroom to see the full range!</textarea>
         let categories = [];
         let driveImageManager = null;
         
-        // NEW: Display options state
+        // Display options state - DEFAULT TO SKU+PRICE
         let displayOptions = {
-            showProductName: true,
+            showProductName: false,
             showSKU: true,
             showPrice: true,
             showCurrency: true
         };
         
-        // NEW: Display presets
+        // Display presets
         const displayPresets = {
             'ultra-minimal': {
                 showProductName: false,
@@ -1099,7 +1122,7 @@ Visit our showroom to see the full range!</textarea>
             }
         };
         
-        // NEW: Apply display preset
+        // Apply display preset
         function applyDisplayPreset(presetName) {
             const preset = displayPresets[presetName];
             if (!preset) return;
@@ -1121,7 +1144,7 @@ Visit our showroom to see the full range!</textarea>
             showNotification(`Applied "${presetName}" display preset`, 'success');
         }
         
-        // NEW: Update display options from checkboxes
+        // Update display options from checkboxes
         function updateDisplayOptions() {
             displayOptions.showProductName = document.getElementById('showProductName').checked;
             displayOptions.showSKU = document.getElementById('showSKU').checked;
@@ -1131,6 +1154,9 @@ Visit our showroom to see the full range!</textarea>
         
         // Add event listeners for checkboxes
         document.addEventListener('DOMContentLoaded', function() {
+            // Set SKU+Price as default
+            applyDisplayPreset('sku-price');
+            
             ['showProductName', 'showSKU', 'showPrice', 'showCurrency'].forEach(id => {
                 const element = document.getElementById(id);
                 if (element) {
@@ -2097,7 +2123,7 @@ Visit our showroom to see the full range!</textarea>
             const promoDetails = document.getElementById('promoDetails').value || '• Valid for July 2025 only\n• Limited quantities available';
             const additionalInfo = document.getElementById('additionalInfo').value || 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM';
             
-            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">JULY 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p><div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(2, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">+27 31 332 7192</div></div><div class="info-card"><div class="info-label">Email</div><div class="info-value">queries@ozzsa.com</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. Ozz Cash and Carry reserves the right to limit quantities. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span><span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 4.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
+            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">JULY 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p><div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(2, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">+27 31 332 7192</div></div><div class="info-card"><div class="info-label">Email</div><div class="info-value">queries@ozzsa.com</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. Ozz Cash and Carry reserves the right to limit quantities. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span><span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 5.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
             
             return page;
         }
@@ -2129,13 +2155,13 @@ Visit our showroom to see the full range!</textarea>
                 }
             }
             
-            contentHTML += '</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • queries@ozzsa.com</span><span class="footer-right">Version 4.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
+            contentHTML += '</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • queries@ozzsa.com</span><span class="footer-right">Version 5.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
             
             page.innerHTML = contentHTML;
             return page;
         }
 
-        // NEW: Enhanced createProductCard function with luxury minimal support
+        // Enhanced createProductCard function with refined luxury minimal
         function createProductCard(product, cardStyle) {
             if (!cardStyle) cardStyle = 'standard';
             
@@ -2149,7 +2175,7 @@ Visit our showroom to see the full range!</textarea>
             
             const productName = product.description.trim();
             
-            // NEW: Luxury Minimal Card Style
+            // Luxury Minimal Card Style with refined badges
             if (cardStyle === 'luxury-minimal') {
                 // Determine layout class based on displayed info
                 let layoutClass = '';
@@ -2291,8 +2317,8 @@ Visit our showroom to see the full range!</textarea>
                 document.head.appendChild(styleEl);
             }
             
-            // Include luxury minimal price badge in color updates
-            styleEl.textContent = '.product-header { background: linear-gradient(135deg, ' + headerColor + ' 0%, ' + adjustBrightness(headerColor, -20) + ' 100%) !important; } .price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } .luxury-minimal .floating-badge.price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } .floating-badge.price-badge { background: ' + priceColor + ' !important; } .category-header { background: linear-gradient(90deg, ' + accentColor + ' 0%, ' + adjustBrightness(accentColor, 20) + ' 100%) !important; } .spec-bullet { color: ' + headerColor + ' !important; } .floating-badge.sku-badge { background: ' + headerColor + ' !important; }';
+            // Include refined price badge color
+            styleEl.textContent = '.product-header { background: linear-gradient(135deg, ' + headerColor + ' 0%, ' + adjustBrightness(headerColor, -20) + ' 100%) !important; } .price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } .luxury-minimal .floating-badge.price-badge { background: ' + priceColor + ' !important; } .floating-badge.price-badge { background: ' + priceColor + ' !important; } .category-header { background: linear-gradient(90deg, ' + accentColor + ' 0%, ' + adjustBrightness(accentColor, 20) + ' 100%) !important; } .spec-bullet { color: ' + headerColor + ' !important; }';
             
             showNotification('Color scheme applied!', 'success');
         }
@@ -2325,7 +2351,7 @@ Visit our showroom to see the full range!</textarea>
 
         function applyTheme(themeName) {
             const themes = {
-                'ozz-classic': { header: '#006b6b', price: '#cc0000', accent: '#1a1a1a', font: 'system', transform: 'uppercase' },
+                'ozz-classic': { header: '#006b6b', price: '#DC143C', accent: '#1a1a1a', font: 'system', transform: 'uppercase' },
                 'modern-blue': { header: '#0056b3', price: '#dc3545', accent: '#495057', font: 'helvetica', transform: 'uppercase' },
                 'elegant-black': { header: '#2c3e50', price: '#e74c3c', accent: '#34495e', font: 'georgia', transform: 'capitalize' }
             };
@@ -2347,7 +2373,7 @@ Visit our showroom to see the full range!</textarea>
 
         function resetToDefault() {
             document.getElementById('headerColor').value = '#006b6b';
-            document.getElementById('priceColor').value = '#cc0000';
+            document.getElementById('priceColor').value = '#DC143C';
             document.getElementById('accentColor').value = '#1a1a1a';
             document.getElementById('fontFamily').value = 'system';
             document.getElementById('textStyle').value = 'uppercase';
@@ -2397,14 +2423,13 @@ Visit our showroom to see the full range!</textarea>
             }, 3000);
         }
 
-        console.log('🎉 OZZ Professional Catalog Generator v5.0 Loaded');
-        console.log('✨ NEW: Luxury Minimal card style with floating badges');
-        console.log('✨ NEW: Information display toggles (Name/SKU/Price)');
-        console.log('✨ NEW: Display presets (Price Only, SKU+Price, etc.)');
-        console.log('✨ NEW: Premium red price badges with white text');
+        console.log('🎉 OZZ Professional Catalog Generator v5.1 Loaded');
+        console.log('✨ REFINED: Compact red price badges');
+        console.log('✨ REFINED: Grey SKU badges');
+        console.log('✨ DEFAULT: High-density layout with SKU+Price preset');
+        console.log('✨ Luxury Minimal card style optimized');
+        console.log('✨ Information display toggles (Name/SKU/Price)');
         console.log('✨ Export to PNG/JPG functionality');
-        console.log('✨ Individual page selection for export');
-        console.log('✨ Image background options (White/Transparent/Subtle)');
         console.log('📸 Image integration: CSP-compliant Google Drive API');
         console.log('📄 Excel page organization support');
         console.log('🎨 Customization: Colors, fonts, themes, and layouts');
