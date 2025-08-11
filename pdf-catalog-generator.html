@@ -53,6 +53,56 @@
             color: #764ba2; 
         }
         
+        /* NEW: Information Display Controls */
+        .info-display-selector {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        
+        .info-display-selector h5 {
+            margin-bottom: 10px;
+            color: #333;
+            font-size: 16px;
+        }
+        
+        .preset-btn {
+            padding: 8px 16px;
+            background: #f8f9fa;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            font-size: 13px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .preset-btn:hover {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .preset-btn.active {
+            background: #007bff;
+            color: white;
+            border-color: #007bff;
+        }
+        
+        .toggle-option {
+            display: flex;
+            align-items: center;
+            padding: 8px;
+            background: #f8f9fa;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        
+        .toggle-option input {
+            margin-right: 8px;
+        }
+        
         /* Page Selector Modal */
         .page-selector-modal {
             position: fixed;
@@ -265,7 +315,162 @@
                 min-height: 40mm;
             }
             
-            /* NEW: Overlay Style Cards */
+            /* NEW: Luxury Minimal Card Style */
+            .product-card.luxury-minimal {
+                border: none;
+                box-shadow: none;
+                background: transparent;
+                padding: 0;
+                display: block;
+            }
+            
+            .product-card.luxury-minimal .image-container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                background: white;
+                border-radius: 2mm;
+                overflow: hidden;
+                box-shadow: 0 1mm 3mm rgba(0,0,0,0.08);
+            }
+            
+            .product-card.luxury-minimal .image-container img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                padding: 2mm;
+            }
+            
+            /* Luxury Floating Badges */
+            .luxury-minimal .floating-badge {
+                position: absolute;
+                z-index: 10;
+                transition: all 0.2s ease;
+            }
+            
+            /* Product Name Badge */
+            .luxury-minimal .floating-badge.name-badge {
+                top: 2mm;
+                left: 2mm;
+                right: 2mm;
+                background: rgba(255, 255, 255, 0.95);
+                color: #1a1a1a;
+                padding: 1.5mm 2mm;
+                border-radius: 1mm;
+                font-size: 5pt;
+                font-weight: 600;
+                letter-spacing: 0.2px;
+                line-height: 1.2;
+                backdrop-filter: blur(10px);
+                box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+                max-width: calc(100% - 4mm);
+            }
+            
+            /* SKU Badge */
+            .luxury-minimal .floating-badge.sku-badge {
+                bottom: 2mm;
+                left: 2mm;
+                background: rgba(0, 0, 0, 0.05);
+                color: rgba(0, 0, 0, 0.5);
+                padding: 0.8mm 2mm;
+                border-radius: 1mm;
+                font-size: 4.5pt;
+                font-weight: 500;
+                letter-spacing: 0.3px;
+            }
+            
+            /* Premium Red Price Badge */
+            .luxury-minimal .floating-badge.price-badge {
+                bottom: 2mm;
+                right: 2mm;
+                background: linear-gradient(135deg, #DC143C 0%, #B71C1C 100%);
+                color: #FFFFFF;
+                padding: 1.5mm 3mm;
+                border-radius: 50px;
+                font-size: 7pt;
+                font-weight: 700;
+                letter-spacing: 0.3px;
+                box-shadow: 
+                    0 2px 4px rgba(0,0,0,0.15),
+                    0 1px 2px rgba(0,0,0,0.1),
+                    inset 0 1px 0 rgba(255,255,255,0.1);
+            }
+            
+            /* Layout variations based on displayed info */
+            .luxury-minimal.show-price-only .price-badge {
+                bottom: 50%;
+                right: 50%;
+                transform: translate(50%, 50%);
+                font-size: 9pt;
+                padding: 2mm 4mm;
+            }
+            
+            .luxury-minimal.show-sku-price .sku-badge {
+                background: rgba(255, 255, 255, 0.9);
+                color: #333;
+                font-size: 5pt;
+                font-weight: 600;
+            }
+            
+            /* High density adjustments */
+            .products-grid.high-density .luxury-minimal .floating-badge.name-badge {
+                font-size: 4pt;
+                padding: 1mm 1.5mm;
+            }
+            
+            .products-grid.high-density .luxury-minimal .floating-badge.price-badge {
+                font-size: 5.5pt;
+                padding: 1mm 2mm;
+            }
+            
+            .products-grid.high-density .luxury-minimal .floating-badge.sku-badge {
+                font-size: 3.5pt;
+                padding: 0.5mm 1.5mm;
+            }
+            
+            /* Maximum density adjustments */
+            .products-grid.maximum .luxury-minimal .floating-badge.name-badge {
+                display: none; /* Too crowded */
+            }
+            
+            .products-grid.maximum .luxury-minimal .floating-badge.price-badge {
+                font-size: 5pt;
+                padding: 0.8mm 1.8mm;
+            }
+            
+            .products-grid.maximum .luxury-minimal .floating-badge.sku-badge {
+                font-size: 3pt;
+                padding: 0.3mm 1mm;
+            }
+            
+            /* No image placeholder for luxury minimal */
+            .luxury-minimal .no-image-elegant {
+                width: 100%;
+                height: 100%;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+                color: #adb5bd;
+            }
+            
+            .luxury-minimal .no-image-icon {
+                font-size: 20pt;
+                margin-bottom: 2mm;
+                opacity: 0.3;
+            }
+            
+            .luxury-minimal .no-image-text {
+                font-size: 5pt;
+                text-transform: uppercase;
+                letter-spacing: 0.5px;
+                opacity: 0.5;
+            }
+            /* Existing overlay styles - keep for compatibility */
             .product-card.overlay-minimal,
             .product-card.overlay-corners,
             .product-card.overlay-price-tag {
@@ -304,59 +509,6 @@
                 height: auto;
                 object-fit: contain;
                 display: block;
-            }
-            
-            /* Floating Badges with overflow control */
-            .floating-badge {
-                position: absolute;
-                background: rgba(26, 26, 26, 0.95);
-                color: white;
-                padding: 1.5mm 3mm;
-                border-radius: 10px;
-                font-size: 6pt;
-                font-weight: 700;
-                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
-                max-width: 70%;
-                z-index: 10;
-                backdrop-filter: blur(5px);
-            }
-            
-            .floating-badge.name-badge {
-                top: 2mm;
-                left: 2mm;
-                background: rgba(26, 26, 26, 0.9);
-                font-size: 5.5pt;
-                text-transform: uppercase;
-                letter-spacing: 0.3px;
-                overflow: hidden;
-                text-overflow: ellipsis;
-                white-space: nowrap;
-            }
-            
-            .floating-badge.sku-badge {
-                bottom: 2mm;
-                left: 2mm;
-                background: rgba(0, 107, 107, 0.95);
-                font-size: 5pt;
-                border-radius: 5px;
-                padding: 1mm 2mm;
-            }
-            
-            .floating-badge.price-badge {
-                bottom: 2mm;
-                right: 2mm;
-                background: rgba(204, 0, 0, 0.95);
-                font-size: 8pt;
-                padding: 2mm 3mm;
-                font-weight: 900;
-                border-radius: 8px;
-            }
-            
-            /* Price Tag Style Specific */
-            .overlay-price-tag .price-badge {
-                clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
-                border-radius: 0;
-                padding-right: 4mm;
             }
             
             /* Standard and image-bottom layouts remain unchanged */
@@ -398,6 +550,7 @@
                 background: white !important;
                 box-shadow: inset 0 0 20px rgba(0,0,0,0.03);
             }
+            
             /* Image-bottom layout adjustments */
             .product-card.image-bottom .product-image {
                 width: 100% !important;
@@ -457,35 +610,6 @@
                 letter-spacing: 0.2px;
             }
 
-            /* Make sure overlay works for both card styles */
-            .product-card.image-bottom .sku-overlay,
-            .product-card .sku-overlay {
-                position: absolute;
-                bottom: 1mm;
-                right: 1mm;
-            }
-
-            /* For high-density layouts, make SKU slightly smaller */
-            .products-grid.high-density .sku-overlay,
-            .products-grid.maximum .sku-overlay {
-                font-size: 4pt;
-                padding: 0.8mm 1.5mm;
-            }
-            
-            /* Adjustments for overlay styles in high-density */
-            .products-grid.high-density .floating-badge {
-                font-size: 5pt;
-                padding: 1mm 2mm;
-            }
-            
-            .products-grid.high-density .floating-badge.price-badge {
-                font-size: 7pt;
-            }
-            
-            .products-grid.high-density .floating-badge.name-badge {
-                font-size: 4.5pt;
-            }
-            
             /* Product Details */
             .product-details {
                 width: 35%;
@@ -557,17 +681,6 @@
                 min-height: 0;
             }
             
-            .product-card.image-bottom .product-specs {
-                flex-direction: column !important;
-                align-items: stretch !important;
-                gap: 0 !important;
-                justify-content: flex-start !important;
-                flex: 0 0 auto !important;
-                min-height: auto !important;
-                padding: 1mm !important;
-                background: #f8f9fa !important;
-            }
-            
             .spec-item {
                 font-size: 6pt;
                 color: #333;
@@ -576,15 +689,6 @@
                 align-items: baseline;
                 line-height: 1.1;
                 justify-content: center;
-            }
-            
-            .product-card.image-bottom .spec-item {
-                margin-bottom: 0 !important;
-                flex: 0 0 auto !important;
-                justify-content: flex-start !important;
-                font-size: 5pt !important;
-                line-height: 1.2 !important;
-                padding: 0.5mm 0 !important;
             }
             
             .spec-item:last-child { margin-bottom: 0; }
@@ -607,23 +711,6 @@
                 min-height: 18mm;
             }
             
-            .product-card.image-bottom .price-badge {
-                flex: 0 0 auto !important;
-                min-height: 10mm !important;
-                max-height: 10mm !important;
-                padding: 1mm !important;
-                margin: 0 !important;
-            }
-
-            .product-card.image-bottom .price-amount {
-                font-size: 10pt !important;
-                margin-bottom: 0.5mm !important;
-            }
-
-            .product-card.image-bottom .price-unit {
-                font-size: 5pt !important;
-            }
-            
             .price-amount {
                 font-size: 14pt;
                 font-weight: 900;
@@ -637,17 +724,6 @@
             .price-currency { font-size: 10pt; font-weight: 800; color: #ffffff; }
             .price-cents { font-size: 8pt; vertical-align: super; font-weight: 800; margin-left: 0.3mm; color: #ffffff; }
             .price-unit { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.95; font-weight: 700; color: rgba(255,255,255,0.95); }
-            
-            /* High-density layout adjustments - keep existing */
-            .products-grid.high-density .product-card { min-height: 35mm; }
-            .products-grid.high-density .product-image { width: 60%; }
-            .products-grid.high-density .product-details { width: 40%; }
-            .products-grid.high-density .product-header { min-height: 12mm; }
-            .products-grid.high-density .product-name { font-size: 6pt; -webkit-line-clamp: 2; }
-            .products-grid.high-density .spec-item { font-size: 5pt; }
-            .products-grid.high-density .spec-label, .products-grid.high-density .spec-value { font-size: 5pt; }
-            .products-grid.high-density .price-badge { min-height: 15mm; padding: 2mm; }
-            .products-grid.high-density .price-amount { font-size: 11pt; }
             
             /* Footer and Page Styles */
             .page-footer {
@@ -665,7 +741,7 @@
             .footer-left { font-weight: 600; color: #333; }
             .footer-right { text-align: right; }
             
-            /* Hero page styles - keep existing */
+            /* Hero page styles */
             .hero-page .page-inner { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 10mm; }
             .hero-content { text-align: center; flex: 1; }
             .hero-logo { height: 25mm; margin-bottom: 8mm; }
@@ -703,7 +779,7 @@
             <button onclick="window.print()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
         </div>
         
-        <!-- NEW: Export Section -->
+        <!-- Export Section -->
         <div class="export-section" style="display: none;" id="exportSection">
             <h4>📸 Export Options</h4>
             <div class="export-controls">
@@ -720,12 +796,12 @@
                 </select>
             </div>
         </div>
+
         <div class="status-box" id="status">Ready to load catalog data...</div>
         <div class="image-status" id="imageStatus" style="display: none;">
             <div id="imageStatusText">📸 Image system not initialized</div>
             <div id="imageStats" style="margin-top: 10px; font-size: 14px; color: #666;"></div>
         </div>
-
         <!-- Image Preview Section -->
         <div id="imagePreviewSection" style="display: none; margin-top: 20px; background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
             <h3 style="margin-bottom: 15px; color: #333;">🖼️ Product Image Preview</h3>
@@ -802,7 +878,51 @@
                 </div>
             </div>
             
-            <!-- NEW: Image Background Options -->
+            <!-- NEW: Information Display Selector -->
+            <div class="info-display-selector">
+                <h5>📝 Information Display Options:</h5>
+                
+                <!-- Quick Presets -->
+                <div style="margin-bottom: 15px;">
+                    <label style="font-weight: bold; display: block; margin-bottom: 8px;">Quick Presets:</label>
+                    <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                        <button onclick="applyDisplayPreset('ultra-minimal')" class="preset-btn">
+                            💎 Price Only
+                        </button>
+                        <button onclick="applyDisplayPreset('sku-price')" class="preset-btn">
+                            🏷️ SKU + Price
+                        </button>
+                        <button onclick="applyDisplayPreset('classic')" class="preset-btn">
+                            📦 Name + Price
+                        </button>
+                        <button onclick="applyDisplayPreset('full-info')" class="preset-btn">
+                            📋 All Info
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Individual Toggles -->
+                <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
+                    <label class="toggle-option">
+                        <input type="checkbox" id="showProductName" checked>
+                        <span>Product Name</span>
+                    </label>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="showSKU" checked>
+                        <span>SKU Number</span>
+                    </label>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="showPrice" checked>
+                        <span>Price</span>
+                    </label>
+                    <label class="toggle-option">
+                        <input type="checkbox" id="showCurrency" checked>
+                        <span>Currency Symbol (R)</span>
+                    </label>
+                </div>
+            </div>
+            
+            <!-- Image Background Options -->
             <div class="image-bg-selector">
                 <h5>🖼️ Product Image Background:</h5>
                 <div class="bg-option">
@@ -909,7 +1029,7 @@ Visit our showroom to see the full range!</textarea>
                 <h4 style="margin-bottom: 15px; color: #333;">🃏 Product Card Style:</h4>
                 <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
                     <label class="card-style-option">
-                        <input type="radio" name="cardStyle" value="standard" checked>
+                        <input type="radio" name="cardStyle" value="standard">
                         <div><strong>Standard</strong><br><small>Image left, details right</small></div>
                     </label>
                     <label class="card-style-option">
@@ -921,8 +1041,8 @@ Visit our showroom to see the full range!</textarea>
                         <div><strong>Minimal Corners</strong><br><small>Name top, SKU & price bottom</small></div>
                     </label>
                     <label class="card-style-option">
-                        <input type="radio" name="cardStyle" value="overlay-price-tag">
-                        <div><strong>Price Tag</strong><br><small>Price tag style badge</small></div>
+                        <input type="radio" name="cardStyle" value="luxury-minimal" checked>
+                        <div><strong>Luxury Minimal</strong><br><small>Clean with floating badges</small></div>
                     </label>
                 </div>
                 <p style="margin-top: 10px; font-size: 12px; color: #666; text-align: center;">
@@ -942,6 +1062,91 @@ Visit our showroom to see the full range!</textarea>
         let allProducts = [];
         let categories = [];
         let driveImageManager = null;
+        
+        // NEW: Display options state
+        let displayOptions = {
+            showProductName: true,
+            showSKU: true,
+            showPrice: true,
+            showCurrency: true
+        };
+        
+        // NEW: Display presets
+        const displayPresets = {
+            'ultra-minimal': {
+                showProductName: false,
+                showSKU: false,
+                showPrice: true,
+                showCurrency: true
+            },
+            'sku-price': {
+                showProductName: false,
+                showSKU: true,
+                showPrice: true,
+                showCurrency: true
+            },
+            'classic': {
+                showProductName: true,
+                showSKU: false,
+                showPrice: true,
+                showCurrency: true
+            },
+            'full-info': {
+                showProductName: true,
+                showSKU: true,
+                showPrice: true,
+                showCurrency: true
+            }
+        };
+        
+        // NEW: Apply display preset
+        function applyDisplayPreset(presetName) {
+            const preset = displayPresets[presetName];
+            if (!preset) return;
+            
+            displayOptions = { ...preset };
+            
+            // Update checkboxes
+            document.getElementById('showProductName').checked = preset.showProductName;
+            document.getElementById('showSKU').checked = preset.showSKU;
+            document.getElementById('showPrice').checked = preset.showPrice;
+            document.getElementById('showCurrency').checked = preset.showCurrency;
+            
+            // Update button states
+            document.querySelectorAll('.preset-btn').forEach(btn => {
+                btn.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            showNotification(`Applied "${presetName}" display preset`, 'success');
+        }
+        
+        // NEW: Update display options from checkboxes
+        function updateDisplayOptions() {
+            displayOptions.showProductName = document.getElementById('showProductName').checked;
+            displayOptions.showSKU = document.getElementById('showSKU').checked;
+            displayOptions.showPrice = document.getElementById('showPrice').checked;
+            displayOptions.showCurrency = document.getElementById('showCurrency').checked;
+        }
+        
+        // Add event listeners for checkboxes
+        document.addEventListener('DOMContentLoaded', function() {
+            ['showProductName', 'showSKU', 'showPrice', 'showCurrency'].forEach(id => {
+                const element = document.getElementById(id);
+                if (element) {
+                    element.addEventListener('change', updateDisplayOptions);
+                }
+            });
+            
+            const skuInput = document.getElementById('skuInput');
+            if (skuInput) {
+                skuInput.addEventListener('keypress', function(e) {
+                    if (e.key === 'Enter') {
+                        previewImage();
+                    }
+                });
+            }
+        });
         
         class DriveImageManager {
             constructor() {
@@ -1081,7 +1286,7 @@ Visit our showroom to see the full range!</textarea>
                     throw error;
                 }
             }
-        async fetchImagesFromFolder(pageToken, allFiles) {
+            async fetchImagesFromFolder(pageToken, allFiles) {
                 if (pageToken === undefined) pageToken = null;
                 if (allFiles === undefined) allFiles = [];
                 
@@ -1118,21 +1323,6 @@ Visit our showroom to see the full range!</textarea>
                             });
                         }
                     });
-                });
-                
-                console.log('🔍 Debug: Checking for product 206...');
-                const product206Variations = ['206', '0206', 'product206', 'item206'];
-                product206Variations.forEach(function(variation) {
-                    if (self.imageCache.has(variation)) {
-                        console.log('✅ Found product 206 with key:', variation, self.imageCache.get(variation));
-                    }
-                });
-                
-                images.forEach(function(image) {
-                    if (image.name.toLowerCase().includes('206')) {
-                        console.log('📸 Image containing "206":', image.name, 'ID:', image.id);
-                        console.log('  Extracted codes:', self.extractProductCodes(image.name));
-                    }
                 });
             }
 
@@ -1186,7 +1376,6 @@ Visit our showroom to see the full range!</textarea>
                             return { url: imageData.directLink, found: true };
                         }
                     }
-                    console.log('❌ No image found for product 206 despite variations');
                 }
                 
                 return { url: null, found: false };
@@ -1212,7 +1401,7 @@ Visit our showroom to see the full range!</textarea>
             }
         }
 
-        // NEW: Export Functions with error handling
+        // Export Functions with error handling
         async function exportAllPages() {
             if (typeof html2canvas === 'undefined') {
                 showNotification('Export library not loaded. Please refresh the page.', 'error');
@@ -1629,17 +1818,6 @@ Visit our showroom to see the full range!</textarea>
             }
         }
 
-        document.addEventListener('DOMContentLoaded', function() {
-            const skuInput = document.getElementById('skuInput');
-            if (skuInput) {
-                skuInput.addEventListener('keypress', function(e) {
-                    if (e.key === 'Enter') {
-                        previewImage();
-                    }
-                });
-            }
-        });
-
         function showPagePreview() {
             const existingPreview = document.getElementById('pagePreviewSection');
             if (existingPreview) {
@@ -1785,6 +1963,9 @@ Visit our showroom to see the full range!</textarea>
         }
 
         function generateCatalog() {
+            // Update display options before generating
+            updateDisplayOptions();
+            
             const useExcelPages = document.getElementById('useExcelPages');
             const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
             const selectedCardStyle = document.querySelector('input[name="cardStyle"]:checked').value;
@@ -1819,7 +2000,6 @@ Visit our showroom to see the full range!</textarea>
                         for (let i = 0; i < productsToShow.length; i += layoutConfig.productsPerPage) {
                             const pageProductSlice = productsToShow.slice(i, i + layoutConfig.productsPerPage);
                             
-                            const excelPageNum = parseInt(pageKey.replace('PAGE ', ''));
                             printContent.appendChild(createProductPage(
                                 pageProductSlice, 
                                 'Excel ' + pageKey, 
@@ -1900,19 +2080,8 @@ Visit our showroom to see the full range!</textarea>
                 
                 document.getElementById('printBtn').disabled = false;
                 
-                let imageInfo = '';
-                if (driveImageManager) {
-                    const stats = driveImageManager.getStats();
-                    let mappedCount = 0;
-                    filteredProducts.forEach(function(product) {
-                        const imageData = driveImageManager.getProductImage(product.sku);
-                        if (imageData.found) mappedCount++;
-                    });
-                    imageInfo = ' (' + mappedCount + ' with images)';
-                }
-                
                 document.getElementById('status').innerHTML = 
-                    '✅ <strong>Generated ' + totalPages + ' pages with ' + filteredProducts.length + ' products' + imageInfo + ' using ' + selectedLayout + ' layout (' + selectedCardStyle + ' cards) (category mode)</strong>';
+                    '✅ <strong>Generated ' + totalPages + ' pages with ' + filteredProducts.length + ' products using ' + selectedLayout + ' layout (' + selectedCardStyle + ' cards)</strong>';
             }
             
             printContent.scrollIntoView({ behavior: 'smooth' });
@@ -1928,7 +2097,7 @@ Visit our showroom to see the full range!</textarea>
             const promoDetails = document.getElementById('promoDetails').value || '• Valid for July 2025 only\n• Limited quantities available';
             const additionalInfo = document.getElementById('additionalInfo').value || 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM';
             
-            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">JULY 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p><div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(2, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">+27 31 332 7192</div></div><div class="info-card"><div class="info-label">Email</div><div class="info-value">queries@ozzsa.com</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. Ozz Cash and Carry reserves the right to limit quantities. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span><span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 3.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
+            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">JULY 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p><div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(2, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">+27 31 332 7192</div></div><div class="info-card"><div class="info-label">Email</div><div class="info-value">queries@ozzsa.com</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. Ozz Cash and Carry reserves the right to limit quantities. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span><span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 4.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
             
             return page;
         }
@@ -1960,12 +2129,13 @@ Visit our showroom to see the full range!</textarea>
                 }
             }
             
-            contentHTML += '</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • queries@ozzsa.com</span><span class="footer-right">Version 3.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
+            contentHTML += '</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • queries@ozzsa.com</span><span class="footer-right">Version 4.0</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
             
             page.innerHTML = contentHTML;
             return page;
         }
 
+        // NEW: Enhanced createProductCard function with luxury minimal support
         function createProductCard(product, cardStyle) {
             if (!cardStyle) cardStyle = 'standard';
             
@@ -1979,9 +2149,41 @@ Visit our showroom to see the full range!</textarea>
             
             const productName = product.description.trim();
             
-            console.log('Creating card for SKU:', product.sku, 'Image URL:', imageUrl, 'Card Style:', cardStyle);
+            // NEW: Luxury Minimal Card Style
+            if (cardStyle === 'luxury-minimal') {
+                // Determine layout class based on displayed info
+                let layoutClass = '';
+                if (!displayOptions.showProductName && !displayOptions.showSKU && displayOptions.showPrice) {
+                    layoutClass = 'show-price-only';
+                } else if (!displayOptions.showProductName && displayOptions.showSKU && displayOptions.showPrice) {
+                    layoutClass = 'show-sku-price';
+                }
+                
+                return '<div class="product-card luxury-minimal ' + layoutClass + '">' +
+                    '<div class="image-container ' + bgClass + '">' + 
+                        (imageUrl ? 
+                            '<img src="' + imageUrl + '" alt="' + productName + '">' :
+                            '<div class="no-image-elegant">' +
+                                '<div class="no-image-icon">📦</div>' +
+                                '<div class="no-image-text">SKU: ' + product.sku + '</div>' +
+                            '</div>'
+                        ) +
+                        (displayOptions.showProductName ? 
+                            '<div class="floating-badge name-badge">' + productName + '</div>' : ''
+                        ) +
+                        (displayOptions.showSKU ? 
+                            '<div class="floating-badge sku-badge">' + product.sku + '</div>' : ''
+                        ) +
+                        (displayOptions.showPrice ? 
+                            '<div class="floating-badge price-badge">' +
+                                (displayOptions.showCurrency ? 'R' : '') + priceStr +
+                            '</div>' : ''
+                        ) +
+                    '</div>' +
+                '</div>';
+            }
             
-            // NEW: Overlay card styles with background class
+            // Overlay minimal style
             if (cardStyle === 'overlay-minimal' || cardStyle === 'overlay-price-tag') {
                 const priceTagClass = cardStyle === 'overlay-price-tag' ? ' overlay-price-tag' : '';
                 return '<div class="product-card overlay-minimal' + priceTagClass + '">' +
@@ -1997,7 +2199,7 @@ Visit our showroom to see the full range!</textarea>
                 '</div>';
             }
             
-            // Keep existing card styles with background class
+            // Keep existing card styles
             if (cardStyle === 'image-bottom') {
                 return '<div class="product-card image-bottom">' +
                     '<div class="product-details">' +
@@ -2027,7 +2229,7 @@ Visit our showroom to see the full range!</textarea>
                     '</div>' +
                 '</div>';
             } else {
-                // Standard layout with background class
+                // Standard layout
                 return '<div class="product-card">' +
                     '<div class="product-image ' + bgClass + '">' + 
                         (imageUrl ? 
@@ -2089,7 +2291,8 @@ Visit our showroom to see the full range!</textarea>
                 document.head.appendChild(styleEl);
             }
             
-            styleEl.textContent = '.product-header { background: linear-gradient(135deg, ' + headerColor + ' 0%, ' + adjustBrightness(headerColor, -20) + ' 100%) !important; } .price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } .floating-badge.price-badge { background: ' + priceColor + ' !important; } .category-header { background: linear-gradient(90deg, ' + accentColor + ' 0%, ' + adjustBrightness(accentColor, 20) + ' 100%) !important; } .spec-bullet { color: ' + headerColor + ' !important; } .floating-badge.sku-badge { background: ' + headerColor + ' !important; }';
+            // Include luxury minimal price badge in color updates
+            styleEl.textContent = '.product-header { background: linear-gradient(135deg, ' + headerColor + ' 0%, ' + adjustBrightness(headerColor, -20) + ' 100%) !important; } .price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } .luxury-minimal .floating-badge.price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } .floating-badge.price-badge { background: ' + priceColor + ' !important; } .category-header { background: linear-gradient(90deg, ' + accentColor + ' 0%, ' + adjustBrightness(accentColor, 20) + ' 100%) !important; } .spec-bullet { color: ' + headerColor + ' !important; } .floating-badge.sku-badge { background: ' + headerColor + ' !important; }';
             
             showNotification('Color scheme applied!', 'success');
         }
@@ -2194,18 +2397,17 @@ Visit our showroom to see the full range!</textarea>
             }, 3000);
         }
 
-        console.log('🎉 OZZ Professional Catalog Generator v4.0 Loaded');
-        console.log('✨ NEW: Export to PNG/JPG functionality');
-        console.log('✨ NEW: Individual page selection for export');
-        console.log('✨ NEW: Overlay card styles (Minimal Corners & Price Tag)');
-        console.log('✨ NEW: Image background options (White/Transparent/Subtle)');
-        console.log('✨ FIXED: html2canvas error handling');
-        console.log('✨ FIXED: Background class implementation');
-        console.log('✨ FIXED: Floating badge text overflow');
+        console.log('🎉 OZZ Professional Catalog Generator v5.0 Loaded');
+        console.log('✨ NEW: Luxury Minimal card style with floating badges');
+        console.log('✨ NEW: Information display toggles (Name/SKU/Price)');
+        console.log('✨ NEW: Display presets (Price Only, SKU+Price, etc.)');
+        console.log('✨ NEW: Premium red price badges with white text');
+        console.log('✨ Export to PNG/JPG functionality');
+        console.log('✨ Individual page selection for export');
+        console.log('✨ Image background options (White/Transparent/Subtle)');
         console.log('📸 Image integration: CSP-compliant Google Drive API');
         console.log('📄 Excel page organization support');
         console.log('🎨 Customization: Colors, fonts, themes, and layouts');
-        console.log('🖼️ Image preview functionality with refresh');
     </script>
 </body>
 </html>
