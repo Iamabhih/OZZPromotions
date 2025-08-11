@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>OZZ Professional Catalog Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Arial, sans-serif; background: #f0f2f5; color: #1a1a1a; line-height: 1.4; }
@@ -24,6 +25,93 @@
         .image-status.error { background: #f8d7da; border-color: #dc3545; }
         #pagePreviewSection .category-item:hover { border-color: #007bff !important; background: #f8f9ff !important; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); transition: all 0.2s ease; }
         #useExcelPages { transform: scale(1.2); accent-color: #007bff; }
+        
+        /* Export Section Styles */
+        .export-section { 
+            margin-top: 20px; 
+            padding: 20px; 
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); 
+            border-radius: 8px; 
+            color: white; 
+        }
+        .export-section h4 { margin-bottom: 15px; font-size: 18px; }
+        .export-controls { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; }
+        .export-controls select { 
+            padding: 10px; 
+            border: none; 
+            border-radius: 4px; 
+            background: white; 
+            color: #333; 
+            font-size: 14px; 
+        }
+        .export-controls button { 
+            background: rgba(255,255,255,0.2); 
+            border: 2px solid white; 
+        }
+        .export-controls button:hover { 
+            background: white; 
+            color: #764ba2; 
+        }
+        
+        /* Page Selector Modal */
+        .page-selector-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0,0,0,0.8);
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .page-selector-content {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            max-width: 90%;
+            max-height: 90%;
+            overflow: auto;
+        }
+        .page-thumbnails {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 20px;
+        }
+        .page-thumbnail {
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            padding: 10px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .page-thumbnail:hover {
+            border-color: #007bff;
+            transform: scale(1.05);
+        }
+        .page-thumbnail.selected {
+            border-color: #28a745;
+            background: #f0fff4;
+        }
+        
+        /* Image Background Options */
+        .image-bg-selector {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .image-bg-selector h5 { margin-bottom: 10px; color: #333; }
+        .bg-option {
+            display: inline-block;
+            margin-right: 15px;
+        }
+        .bg-option input[type="radio"] {
+            margin-right: 5px;
+        }
         
         /* Image Preview Styles */
         #imagePreviewSection button:hover {
@@ -162,6 +250,8 @@
             .products-grid.ultra-compact { --grid-columns: 3; --grid-rows: 5; --grid-gap: 2.5mm; }
             .products-grid.high-density { --grid-columns: 4; --grid-rows: 5; --grid-gap: 2.5mm; }
             .products-grid.maximum { --grid-columns: 4; --grid-rows: 6; --grid-gap: 2mm; }
+            
+            /* Base Product Card */
             .product-card {
                 background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%);
                 display: flex;
@@ -175,7 +265,101 @@
                 min-height: 40mm;
             }
             
-            /* Image-bottom layout fix */
+            /* NEW: Overlay Style Cards */
+            .product-card.overlay-minimal,
+            .product-card.overlay-corners,
+            .product-card.overlay-price-tag {
+                flex-direction: column;
+                padding: 0;
+                background: white;
+            }
+            
+            .product-card.overlay-minimal .product-image-container,
+            .product-card.overlay-corners .product-image-container,
+            .product-card.overlay-price-tag .product-image-container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                background: white;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                padding: 3mm;
+            }
+            
+            /* Dynamic background for images */
+            .product-image-container.bg-transparent {
+                background: transparent !important;
+            }
+            
+            .product-image-container.bg-subtle {
+                background: white !important;
+                box-shadow: inset 0 0 20px rgba(0,0,0,0.03);
+            }
+            
+            .product-card .product-image-container img {
+                max-width: 100%;
+                max-height: 100%;
+                width: auto;
+                height: auto;
+                object-fit: contain;
+                display: block;
+            }
+            
+            /* Floating Badges with overflow control */
+            .floating-badge {
+                position: absolute;
+                background: rgba(26, 26, 26, 0.95);
+                color: white;
+                padding: 1.5mm 3mm;
+                border-radius: 10px;
+                font-size: 6pt;
+                font-weight: 700;
+                box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+                max-width: 70%;
+                z-index: 10;
+                backdrop-filter: blur(5px);
+            }
+            
+            .floating-badge.name-badge {
+                top: 2mm;
+                left: 2mm;
+                background: rgba(26, 26, 26, 0.9);
+                font-size: 5.5pt;
+                text-transform: uppercase;
+                letter-spacing: 0.3px;
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
+            }
+            
+            .floating-badge.sku-badge {
+                bottom: 2mm;
+                left: 2mm;
+                background: rgba(0, 107, 107, 0.95);
+                font-size: 5pt;
+                border-radius: 5px;
+                padding: 1mm 2mm;
+            }
+            
+            .floating-badge.price-badge {
+                bottom: 2mm;
+                right: 2mm;
+                background: rgba(204, 0, 0, 0.95);
+                font-size: 8pt;
+                padding: 2mm 3mm;
+                font-weight: 900;
+                border-radius: 8px;
+            }
+            
+            /* Price Tag Style Specific */
+            .overlay-price-tag .price-badge {
+                clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 50%, calc(100% - 8px) 100%, 0 100%);
+                border-radius: 0;
+                padding-right: 4mm;
+            }
+            
+            /* Standard and image-bottom layouts remain unchanged */
             .product-card.image-bottom {
                 flex-direction: column !important;
             }
@@ -191,10 +375,10 @@
                 opacity: 0.6;
             }
             
-            /* Product Image */
+            /* Product Image for standard layouts */
             .product-image {
                 width: 65%;
-                background: linear-gradient(135deg, #fafafa 0%, #f0f0f0 100%);
+                background: white;
                 display: flex;
                 align-items: center;
                 justify-content: center;
@@ -205,6 +389,15 @@
                 flex-shrink: 0;
             }
             
+            /* Dynamic backgrounds for standard layout */
+            .product-image.bg-transparent {
+                background: transparent !important;
+            }
+            
+            .product-image.bg-subtle {
+                background: white !important;
+                box-shadow: inset 0 0 20px rgba(0,0,0,0.03);
+            }
             /* Image-bottom layout adjustments */
             .product-card.image-bottom .product-image {
                 width: 100% !important;
@@ -246,37 +439,53 @@
             
             .no-image-icon { font-size: 28pt; margin-bottom: 2mm; opacity: 0.4; }
             .no-image-text { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; color: #999; font-weight: 700; }
+            
             /* SKU Overlay for images */
-.sku-overlay {
-    position: absolute;
-    bottom: 1mm;
-    right: 1mm;
-    background: rgba(0, 107, 107, 0.9);
-    color: white;
-    padding: 1mm 2mm;
-    font-size: 5pt;
-    font-weight: 700;
-    border-radius: 1mm;
-    box-shadow: 0 1px 2px rgba(0,0,0,0.3);
-    z-index: 3;
-    line-height: 1;
-    letter-spacing: 0.2px;
-}
+            .sku-overlay {
+                position: absolute;
+                bottom: 1mm;
+                right: 1mm;
+                background: rgba(0, 107, 107, 0.9);
+                color: white;
+                padding: 1mm 2mm;
+                font-size: 5pt;
+                font-weight: 700;
+                border-radius: 1mm;
+                box-shadow: 0 1px 2px rgba(0,0,0,0.3);
+                z-index: 3;
+                line-height: 1;
+                letter-spacing: 0.2px;
+            }
 
-/* Make sure overlay works for both card styles */
-.product-card.image-bottom .sku-overlay,
-.product-card .sku-overlay {
-    position: absolute;
-    bottom: 1mm;
-    right: 1mm;
-}
+            /* Make sure overlay works for both card styles */
+            .product-card.image-bottom .sku-overlay,
+            .product-card .sku-overlay {
+                position: absolute;
+                bottom: 1mm;
+                right: 1mm;
+            }
 
-/* For high-density layouts, make SKU slightly smaller */
-.products-grid.high-density .sku-overlay,
-.products-grid.maximum .sku-overlay {
-    font-size: 4pt;
-    padding: 0.8mm 1.5mm;
-}
+            /* For high-density layouts, make SKU slightly smaller */
+            .products-grid.high-density .sku-overlay,
+            .products-grid.maximum .sku-overlay {
+                font-size: 4pt;
+                padding: 0.8mm 1.5mm;
+            }
+            
+            /* Adjustments for overlay styles in high-density */
+            .products-grid.high-density .floating-badge {
+                font-size: 5pt;
+                padding: 1mm 2mm;
+            }
+            
+            .products-grid.high-density .floating-badge.price-badge {
+                font-size: 7pt;
+            }
+            
+            .products-grid.high-density .floating-badge.name-badge {
+                font-size: 4.5pt;
+            }
+            
             /* Product Details */
             .product-details {
                 width: 35%;
@@ -295,6 +504,7 @@
                 display: flex !important;
                 flex-direction: column !important;
             }
+            
             .product-header {
                 background: linear-gradient(135deg, #006b6b 0%, #004d4d 100%);
                 color: white;
@@ -427,7 +637,8 @@
             .price-currency { font-size: 10pt; font-weight: 800; color: #ffffff; }
             .price-cents { font-size: 8pt; vertical-align: super; font-weight: 800; margin-left: 0.3mm; color: #ffffff; }
             .price-unit { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.95; font-weight: 700; color: rgba(255,255,255,0.95); }
-            /* High-density layout adjustments */
+            
+            /* High-density layout adjustments - keep existing */
             .products-grid.high-density .product-card { min-height: 35mm; }
             .products-grid.high-density .product-image { width: 60%; }
             .products-grid.high-density .product-details { width: 40%; }
@@ -437,61 +648,6 @@
             .products-grid.high-density .spec-label, .products-grid.high-density .spec-value { font-size: 5pt; }
             .products-grid.high-density .price-badge { min-height: 15mm; padding: 2mm; }
             .products-grid.high-density .price-amount { font-size: 11pt; }
-            
-            .products-grid.high-density .product-card.image-bottom .product-image { 
-                width: 100% !important; 
-                min-height: 22mm !important;
-                flex: 1 1 60% !important;
-                order: 2 !important;
-            }
-            .products-grid.high-density .product-card.image-bottom .product-details { 
-                width: 100% !important; 
-                flex: 0 0 auto !important;
-                display: flex !important;
-                flex-direction: column !important;
-            }
-            .products-grid.high-density .product-card.image-bottom .product-header {
-                order: 1 !important;
-                min-height: 8mm !important;
-                padding: 1mm !important;
-            }
-            .products-grid.high-density .product-card.image-bottom .product-specs { 
-                display: none !important;
-            }
-            .products-grid.high-density .product-card.image-bottom .price-badge { 
-                order: 3 !important;
-                min-height: 8mm !important; 
-                padding: 1mm !important; 
-                flex: 0 0 auto !important;
-            }
-            .products-grid.high-density .product-card.image-bottom .price-amount { 
-                font-size: 9pt !important; 
-            }
-            .products-grid.high-density .product-card.image-bottom .product-name {
-                font-size: 5pt !important;
-                -webkit-line-clamp: 2 !important;
-            }
-            
-            /* Maximum layout adjustments */
-            .products-grid.maximum .product-card { min-height: 32mm; }
-            .products-grid.maximum .product-image { width: 60%; }
-            .products-grid.maximum .product-details { width: 40%; }
-            .products-grid.maximum .product-header { min-height: 12mm; }
-            .products-grid.maximum .product-name { font-size: 6pt; -webkit-line-clamp: 2; }
-            .products-grid.maximum .spec-item { font-size: 5pt; }
-            .products-grid.maximum .spec-label, .products-grid.maximum .spec-value { font-size: 5pt; }
-            .products-grid.maximum .price-badge { min-height: 15mm; padding: 2mm; }
-            .products-grid.maximum .price-amount { font-size: 11pt; }
-            
-            .products-grid.maximum .product-card.image-bottom .product-image { 
-                width: 100% !important; 
-                min-height: 15mm !important;
-                flex: 1 1 40% !important;
-            }
-            .products-grid.maximum .product-card.image-bottom .product-details { 
-                width: 100% !important; 
-                flex: 0 0 auto !important;
-            }
             
             /* Footer and Page Styles */
             .page-footer {
@@ -509,7 +665,7 @@
             .footer-left { font-weight: 600; color: #333; }
             .footer-right { text-align: right; }
             
-            /* Hero page styles */
+            /* Hero page styles - keep existing */
             .hero-page .page-inner { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 10mm; }
             .hero-content { text-align: center; flex: 1; }
             .hero-logo { height: 25mm; margin-bottom: 8mm; }
@@ -547,13 +703,30 @@
             <button onclick="window.print()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
         </div>
         
+        <!-- NEW: Export Section -->
+        <div class="export-section" style="display: none;" id="exportSection">
+            <h4>📸 Export Options</h4>
+            <div class="export-controls">
+                <button onclick="exportAllPages()" id="exportAllBtn">📦 Export All Pages</button>
+                <button onclick="showPageSelector()" id="exportIndividualBtn">📄 Select Pages to Export</button>
+                <select id="exportFormat">
+                    <option value="png">PNG (Best Quality)</option>
+                    <option value="jpg">JPG (Smaller Size)</option>
+                </select>
+                <select id="exportQuality">
+                    <option value="3">High (300 DPI)</option>
+                    <option value="2">Medium (200 DPI)</option>
+                    <option value="4">Ultra (400 DPI)</option>
+                </select>
+            </div>
+        </div>
         <div class="status-box" id="status">Ready to load catalog data...</div>
         <div class="image-status" id="imageStatus" style="display: none;">
             <div id="imageStatusText">📸 Image system not initialized</div>
             <div id="imageStats" style="margin-top: 10px; font-size: 14px; color: #666;"></div>
         </div>
 
-        <!-- Add this new section after the imageStatus div -->
+        <!-- Image Preview Section -->
         <div id="imagePreviewSection" style="display: none; margin-top: 20px; background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
             <h3 style="margin-bottom: 15px; color: #333;">🖼️ Product Image Preview</h3>
             <div style="display: flex; gap: 20px; align-items: flex-start;">
@@ -626,6 +799,23 @@
                     <button onclick="applyTheme('modern-blue')" style="width: 100%; margin-bottom: 8px; background: #0056b3; color: white;">Modern Blue</button>
                     <button onclick="applyTheme('elegant-black')" style="width: 100%; margin-bottom: 8px; background: #2c3e50; color: white;">Elegant Black</button>
                     <button onclick="resetToDefault()" style="width: 100%; background: #6c757d; color: white;">Reset to Default</button>
+                </div>
+            </div>
+            
+            <!-- NEW: Image Background Options -->
+            <div class="image-bg-selector">
+                <h5>🖼️ Product Image Background:</h5>
+                <div class="bg-option">
+                    <input type="radio" name="imageBg" value="white" id="bgWhite" checked>
+                    <label for="bgWhite">Pure White</label>
+                </div>
+                <div class="bg-option">
+                    <input type="radio" name="imageBg" value="transparent" id="bgTransparent">
+                    <label for="bgTransparent">Transparent</label>
+                </div>
+                <div class="bg-option">
+                    <input type="radio" name="imageBg" value="subtle" id="bgSubtle">
+                    <label for="bgSubtle">Subtle Shadow</label>
                 </div>
             </div>
         </div>
@@ -717,7 +907,7 @@ Visit our showroom to see the full range!</textarea>
 
             <div class="card-style-section">
                 <h4 style="margin-bottom: 15px; color: #333;">🃏 Product Card Style:</h4>
-                <div style="display: flex; gap: 15px; justify-content: center;">
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
                     <label class="card-style-option">
                         <input type="radio" name="cardStyle" value="standard" checked>
                         <div><strong>Standard</strong><br><small>Image left, details right</small></div>
@@ -725,6 +915,14 @@ Visit our showroom to see the full range!</textarea>
                     <label class="card-style-option">
                         <input type="radio" name="cardStyle" value="image-bottom">
                         <div><strong>Details Top</strong><br><small>Details top, image bottom</small></div>
+                    </label>
+                    <label class="card-style-option">
+                        <input type="radio" name="cardStyle" value="overlay-minimal">
+                        <div><strong>Minimal Corners</strong><br><small>Name top, SKU & price bottom</small></div>
+                    </label>
+                    <label class="card-style-option">
+                        <input type="radio" name="cardStyle" value="overlay-price-tag">
+                        <div><strong>Price Tag</strong><br><small>Price tag style badge</small></div>
                     </label>
                 </div>
                 <p style="margin-top: 10px; font-size: 12px; color: #666; text-align: center;">
@@ -883,8 +1081,7 @@ Visit our showroom to see the full range!</textarea>
                     throw error;
                 }
             }
-
-            async fetchImagesFromFolder(pageToken, allFiles) {
+        async fetchImagesFromFolder(pageToken, allFiles) {
                 if (pageToken === undefined) pageToken = null;
                 if (allFiles === undefined) allFiles = [];
                 
@@ -923,7 +1120,6 @@ Visit our showroom to see the full range!</textarea>
                     });
                 });
                 
-                // Enhanced debug logging for product 206
                 console.log('🔍 Debug: Checking for product 206...');
                 const product206Variations = ['206', '0206', 'product206', 'item206'];
                 product206Variations.forEach(function(variation) {
@@ -932,7 +1128,6 @@ Visit our showroom to see the full range!</textarea>
                     }
                 });
                 
-                // Log all images that might contain "206"
                 images.forEach(function(image) {
                     if (image.name.toLowerCase().includes('206')) {
                         console.log('📸 Image containing "206":', image.name, 'ID:', image.id);
@@ -945,11 +1140,10 @@ Visit our showroom to see the full range!</textarea>
                 const codes = [];
                 const nameWithoutExt = filename.replace(/\.(jpg|jpeg|png|gif|webp|bmp|tiff)$/i, '');
                 
-                // Enhanced extraction for product 206 specifically
-                const numericCodes = nameWithoutExt.match(/\b\d{3,6}\b/g); // Changed from 4,6 to 3,6 to catch 206
+                const numericCodes = nameWithoutExt.match(/\b\d{3,6}\b/g);
                 if (numericCodes) codes.push.apply(codes, numericCodes);
                 
-                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{3,8}\b/gi); // Changed from 4,8 to 3,8
+                const alphanumericCodes = nameWithoutExt.match(/\b[A-Z0-9]{3,8}\b/gi);
                 if (alphanumericCodes) {
                     var lowercaseCodes = alphanumericCodes.map(function(code) { return code.toLowerCase(); });
                     codes.push.apply(codes, lowercaseCodes);
@@ -958,12 +1152,11 @@ Visit our showroom to see the full range!</textarea>
                 const parts = nameWithoutExt.split(/[-_\s\.]+/);
                 for (var i = 0; i < parts.length; i++) {
                     const cleanPart = parts[i].trim();
-                    if (/^\d{3,6}$/.test(cleanPart) || /^[A-Z0-9]{3,8}$/i.test(cleanPart)) { // Changed from 4,6 and 4,8 to 3,6 and 3,8
+                    if (/^\d{3,6}$/.test(cleanPart) || /^[A-Z0-9]{3,8}$/i.test(cleanPart)) {
                         codes.push(cleanPart.toLowerCase());
                     }
                 }
                 
-                // Special handling for 206 - add zero-padded versions
                 codes.forEach(function(code) {
                     if (code === '206') {
                         codes.push('0206');
@@ -978,14 +1171,12 @@ Visit our showroom to see the full range!</textarea>
             getProductImage(productCode) {
                 const normalizedCode = productCode.toString().toLowerCase().trim();
                 
-                // Try exact match first
                 let imageData = this.imageCache.get(normalizedCode);
                 if (imageData) {
                     console.log('✅ Image found for', productCode, ':', imageData.name);
                     return { url: imageData.directLink, found: true };
                 }
                 
-                // For product 206, try additional variations
                 if (normalizedCode === '206') {
                     const variations = ['0206', 'product206', 'item206', 'sku206'];
                     for (let i = 0; i < variations.length; i++) {
@@ -1020,6 +1211,147 @@ Visit our showroom to see the full range!</textarea>
                 return { mappedProducts: this.imageCache.size, cacheInfo: cacheInfo };
             }
         }
+
+        // NEW: Export Functions with error handling
+        async function exportAllPages() {
+            if (typeof html2canvas === 'undefined') {
+                showNotification('Export library not loaded. Please refresh the page.', 'error');
+                return;
+            }
+            
+            const format = document.getElementById('exportFormat').value;
+            const scale = parseInt(document.getElementById('exportQuality').value);
+            const pages = document.querySelectorAll('.page');
+            
+            if (pages.length === 0) {
+                showNotification('Please generate catalog first', 'error');
+                return;
+            }
+            
+            showNotification(`Exporting ${pages.length} pages as ${format.toUpperCase()}...`, 'info');
+            
+            for (let i = 0; i < pages.length; i++) {
+                await exportSinglePage(pages[i], i + 1, format, scale);
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            showNotification(`Successfully exported ${pages.length} pages!`, 'success');
+        }
+
+        async function exportSinglePage(pageElement, pageNum, format, scale) {
+            if (typeof html2canvas === 'undefined') {
+                showNotification('Export library not loaded. Please refresh the page.', 'error');
+                return;
+            }
+            
+            try {
+                const canvas = await html2canvas(pageElement, {
+                    scale: scale,
+                    backgroundColor: format === 'png' ? null : '#ffffff',
+                    logging: false,
+                    useCORS: true,
+                    allowTaint: true,
+                    imageTimeout: 15000
+                });
+                
+                const link = document.createElement('a');
+                link.download = `OZZ-catalog-page-${pageNum}.${format}`;
+                link.href = canvas.toDataURL(`image/${format === 'png' ? 'png' : 'jpeg'}`, format === 'jpg' ? 0.95 : 1.0);
+                link.click();
+            } catch (error) {
+                console.error('Error exporting page:', error);
+                showNotification(`Error exporting page ${pageNum}`, 'error');
+            }
+        }
+
+        function showPageSelector() {
+            const pages = document.querySelectorAll('.page');
+            if (pages.length === 0) {
+                showNotification('Please generate catalog first', 'error');
+                return;
+            }
+            
+            const modal = document.createElement('div');
+            modal.className = 'page-selector-modal';
+            modal.innerHTML = `
+                <div class="page-selector-content">
+                    <h3>Select Pages to Export</h3>
+                    <div style="margin: 15px 0;">
+                        <button onclick="selectAllPages()" style="margin-right: 10px;">Select All</button>
+                        <button onclick="selectNoPages()">Select None</button>
+                    </div>
+                    <div class="page-thumbnails" id="pageThumbnails"></div>
+                    <div style="margin-top: 20px; text-align: center;">
+                        <button onclick="exportSelectedPages()" style="background: #28a745; color: white; margin-right: 10px;">
+                            Export Selected
+                        </button>
+                        <button onclick="closePageSelector()" style="background: #6c757d; color: white;">
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            
+            const thumbnailsContainer = document.getElementById('pageThumbnails');
+            pages.forEach((page, index) => {
+                const thumbnail = document.createElement('div');
+                thumbnail.className = 'page-thumbnail';
+                thumbnail.dataset.pageIndex = index;
+                thumbnail.innerHTML = `
+                    <input type="checkbox" id="page-${index}" checked>
+                    <label for="page-${index}">Page ${index + 1}</label>
+                `;
+                thumbnailsContainer.appendChild(thumbnail);
+            });
+        }
+
+        function selectAllPages() {
+            document.querySelectorAll('.page-thumbnail input').forEach(cb => cb.checked = true);
+        }
+
+        function selectNoPages() {
+            document.querySelectorAll('.page-thumbnail input').forEach(cb => cb.checked = false);
+        }
+
+        async function exportSelectedPages() {
+            if (typeof html2canvas === 'undefined') {
+                showNotification('Export library not loaded. Please refresh the page.', 'error');
+                closePageSelector();
+                return;
+            }
+            
+            const format = document.getElementById('exportFormat').value;
+            const scale = parseInt(document.getElementById('exportQuality').value);
+            const pages = document.querySelectorAll('.page');
+            const selected = [];
+            
+            document.querySelectorAll('.page-thumbnail input:checked').forEach(cb => {
+                const index = parseInt(cb.id.replace('page-', ''));
+                selected.push(index);
+            });
+            
+            if (selected.length === 0) {
+                showNotification('Please select at least one page', 'error');
+                return;
+            }
+            
+            closePageSelector();
+            showNotification(`Exporting ${selected.length} pages...`, 'info');
+            
+            for (const index of selected) {
+                await exportSinglePage(pages[index], index + 1, format, scale);
+                await new Promise(resolve => setTimeout(resolve, 500));
+            }
+            
+            showNotification(`Successfully exported ${selected.length} pages!`, 'success');
+        }
+
+        function closePageSelector() {
+            const modal = document.querySelector('.page-selector-modal');
+            if (modal) modal.remove();
+        }
+
         async function loadCatalog() {
             const loadBtn = document.getElementById('loadBtn');
             const status = document.getElementById('status');
@@ -1097,6 +1429,7 @@ Visit our showroom to see the full range!</textarea>
                 document.getElementById('customizationPanel').style.display = 'block';
                 document.getElementById('introPageCustomization').style.display = 'block';
                 document.getElementById('layoutOptions').style.display = 'block';
+                document.getElementById('exportSection').style.display = 'block';
                 
                 document.getElementById('imageBtn').disabled = false;
                 document.getElementById('generateBtn').disabled = false;
@@ -1188,6 +1521,7 @@ Visit our showroom to see the full range!</textarea>
                 imageBtn.disabled = false;
             }
         }
+
         function previewImage() {
             const skuInput = document.getElementById('skuInput');
             const sku = skuInput.value.trim();
@@ -1205,18 +1539,14 @@ Visit our showroom to see the full range!</textarea>
             const imagePreviewContainer = document.getElementById('imagePreviewContainer');
             const imagePreviewInfo = document.getElementById('imagePreviewInfo');
             
-            // Show loading state
             imagePreviewContainer.innerHTML = '<p style="color: #666;">🔄 Loading image...</p>';
             imagePreviewInfo.innerHTML = '';
             
-            // Get image data
             const imageData = driveImageManager.getProductImage(sku);
             
             if (imageData.found) {
-                // Show the image
                 imagePreviewContainer.innerHTML = '<img src="' + imageData.url + '" alt="SKU: ' + sku + '" style="max-width: 100%; max-height: 300px; border-radius: 8px; box-shadow: 0 2px 8px rgba(0,0,0,0.1);">';
                 
-                // Show image info
                 const imageInfo = driveImageManager.imageCache.get(sku.toLowerCase());
                 if (imageInfo) {
                     imagePreviewInfo.innerHTML = 
@@ -1227,7 +1557,6 @@ Visit our showroom to see the full range!</textarea>
                 
                 showNotification('Image found for SKU: ' + sku, 'success');
             } else {
-                // Show no image message
                 imagePreviewContainer.innerHTML = 
                     '<div style="text-align: center; color: #999;">' +
                     '<div style="font-size: 48px; margin-bottom: 10px;">📦</div>' +
@@ -1237,7 +1566,6 @@ Visit our showroom to see the full range!</textarea>
                 
                 imagePreviewInfo.innerHTML = '<strong>❌ No image mapping found</strong>';
                 
-                // Try to find similar SKUs
                 const suggestions = findSimilarSKUs(sku);
                 if (suggestions.length > 0) {
                     imagePreviewInfo.innerHTML += '<br><br>Similar SKUs with images:<br>' + 
@@ -1278,7 +1606,6 @@ Visit our showroom to see the full range!</textarea>
             const originalStatus = imageStatusText.innerHTML;
             
             try {
-                // Force refresh the cache
                 await driveImageManager.scanFolderForImages(true);
                 
                 const stats = driveImageManager.getStats();
@@ -1286,12 +1613,10 @@ Visit our showroom to see the full range!</textarea>
                 
                 showNotification('Image cache refreshed successfully!', 'success');
                 
-                // Clear the preview
                 document.getElementById('imagePreviewContainer').innerHTML = 
                     '<p style="color: #999;">Enter a SKU and click Preview to see the image</p>';
                 document.getElementById('imagePreviewInfo').innerHTML = '';
                 
-                // Update the mapping preview
                 showImageMappingPreview();
                 
             } catch (error) {
@@ -1304,7 +1629,6 @@ Visit our showroom to see the full range!</textarea>
             }
         }
 
-        // Add enter key support for SKU input
         document.addEventListener('DOMContentLoaded', function() {
             const skuInput = document.getElementById('skuInput');
             if (skuInput) {
@@ -1390,6 +1714,18 @@ Visit our showroom to see the full range!</textarea>
             return imageData.found ? imageData.url : null;
         }
 
+        function getImageBackground() {
+            const selectedBg = document.querySelector('input[name="imageBg"]:checked');
+            if (!selectedBg) return '';
+            
+            switch(selectedBg.value) {
+                case 'transparent': return 'bg-transparent';
+                case 'subtle': return 'bg-subtle';
+                case 'white': 
+                default: return '';
+            }
+        }
+
         function getLayoutConfig(layout) {
             const configs = {
                 'standard': { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 },
@@ -1447,6 +1783,7 @@ Visit our showroom to see the full range!</textarea>
             }
             showNotification('All categories deselected', 'info');
         }
+
         function generateCatalog() {
             const useExcelPages = document.getElementById('useExcelPages');
             const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
@@ -1633,6 +1970,7 @@ Visit our showroom to see the full range!</textarea>
             if (!cardStyle) cardStyle = 'standard';
             
             const imageUrl = getImageUrl(product.sku);
+            const bgClass = getImageBackground();
             
             const priceStr = product.price.toFixed(2);
             const priceParts = priceStr.split('.');
@@ -1640,13 +1978,28 @@ Visit our showroom to see the full range!</textarea>
             const cents = priceParts[1];
             
             const productName = product.description.trim();
-            const cardClass = cardStyle === 'image-bottom' ? 'product-card image-bottom' : 'product-card';
             
             console.log('Creating card for SKU:', product.sku, 'Image URL:', imageUrl, 'Card Style:', cardStyle);
             
+            // NEW: Overlay card styles with background class
+            if (cardStyle === 'overlay-minimal' || cardStyle === 'overlay-price-tag') {
+                const priceTagClass = cardStyle === 'overlay-price-tag' ? ' overlay-price-tag' : '';
+                return '<div class="product-card overlay-minimal' + priceTagClass + '">' +
+                    '<div class="product-image-container ' + bgClass + '">' + 
+                        (imageUrl ? 
+                            '<img src="' + imageUrl + '" alt="' + productName + '">' :
+                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+                        ) +
+                        '<div class="floating-badge name-badge">' + productName + '</div>' +
+                        '<div class="floating-badge sku-badge">SKU: ' + product.sku + '</div>' +
+                        '<div class="floating-badge price-badge">R' + priceStr + '</div>' +
+                    '</div>' +
+                '</div>';
+            }
+            
+            // Keep existing card styles with background class
             if (cardStyle === 'image-bottom') {
-                // Image-bottom layout: Header, Image, Price order
-                return '<div class="' + cardClass + '">' +
+                return '<div class="product-card image-bottom">' +
                     '<div class="product-details">' +
                         '<div class="product-header">' +
                             '<div class="product-name">' + productName + '</div>' +
@@ -1666,20 +2019,20 @@ Visit our showroom to see the full range!</textarea>
                             '<div class="price-unit">Each</div>' +
                         '</div>' +
                     '</div>' +
-                    '<div class="product-image">' + 
+                    '<div class="product-image ' + bgClass + '">' + 
                         (imageUrl ? 
-'<img src="' + imageUrl + '" alt="' + productName + '"><div class="sku-overlay">' + product.sku + '</div>' :
-                         '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+                            '<img src="' + imageUrl + '" alt="' + productName + '"><div class="sku-overlay">' + product.sku + '</div>' :
+                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
                         ) + 
                     '</div>' +
                 '</div>';
             } else {
-                // Standard layout: Image left, details right
-                return '<div class="' + cardClass + '">' +
-                    '<div class="product-image">' + 
+                // Standard layout with background class
+                return '<div class="product-card">' +
+                    '<div class="product-image ' + bgClass + '">' + 
                         (imageUrl ? 
-'<img src="' + imageUrl + '" alt="' + productName + '"><div class="sku-overlay">' + product.sku + '</div>' :
-                         '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
+                            '<img src="' + imageUrl + '" alt="' + productName + '"><div class="sku-overlay">' + product.sku + '</div>' :
+                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
                         ) + 
                     '</div>' +
                     '<div class="product-details">' +
@@ -1704,6 +2057,7 @@ Visit our showroom to see the full range!</textarea>
                 '</div>';
             }
         }
+
         function previewCoverPage() {
             const printContent = document.getElementById('printContent');
             printContent.innerHTML = '';
@@ -1715,7 +2069,7 @@ Visit our showroom to see the full range!</textarea>
         function resetCoverPage() {
             document.getElementById('introTitle').value = 'Welcome to Our July 2025 Promotion';
             document.getElementById('introSubtitle').value = 'Exclusive deals on premium home & kitchen products';
-document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we\'re offering exceptional deals on premium products to help you create the perfect living space.';
+            document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we\'re offering exceptional deals on premium products to help you create the perfect living space.';
             document.getElementById('promoDetails').value = '• Valid for July 2025 only\n• Limited quantities available\n• Collection only at our Durban store\n• Delivery available at additional cost';
             document.getElementById('additionalInfo').value = 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM\nSaturday: 8:00 AM - 1:00 PM\nSunday: Closed\n\nVisit our showroom to see the full range!';
             showNotification('Cover page reset to default!', 'info');
@@ -1735,7 +2089,7 @@ document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash
                 document.head.appendChild(styleEl);
             }
             
-            styleEl.textContent = '.product-header { background: linear-gradient(135deg, ' + headerColor + ' 0%, ' + adjustBrightness(headerColor, -20) + ' 100%) !important; } .price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } .category-header { background: linear-gradient(90deg, ' + accentColor + ' 0%, ' + adjustBrightness(accentColor, 20) + ' 100%) !important; } .spec-bullet { color: ' + headerColor + ' !important; }';
+            styleEl.textContent = '.product-header { background: linear-gradient(135deg, ' + headerColor + ' 0%, ' + adjustBrightness(headerColor, -20) + ' 100%) !important; } .price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } .floating-badge.price-badge { background: ' + priceColor + ' !important; } .category-header { background: linear-gradient(90deg, ' + accentColor + ' 0%, ' + adjustBrightness(accentColor, 20) + ' 100%) !important; } .spec-bullet { color: ' + headerColor + ' !important; } .floating-badge.sku-badge { background: ' + headerColor + ' !important; }';
             
             showNotification('Color scheme applied!', 'success');
         }
@@ -1761,7 +2115,7 @@ document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash
                 document.head.appendChild(styleEl);
             }
             
-            styleEl.textContent = '.product-name { font-family: ' + fontMap[fontFamily] + ' !important; text-transform: ' + textStyle + ' !important; }';
+            styleEl.textContent = '.product-name, .floating-badge.name-badge { font-family: ' + fontMap[fontFamily] + ' !important; text-transform: ' + textStyle + ' !important; }';
             
             showNotification('Typography applied!', 'success');
         }
@@ -1840,19 +2194,18 @@ document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash
             }, 3000);
         }
 
-        console.log('🎉 OZZ Professional Catalog Generator with Excel Page Organization Loaded');
-        console.log('🔒 CSP-Safe: No eval() usage - fully secure');
-        console.log('🎨 Customization: Colors, fonts, themes, and layouts available');
+        console.log('🎉 OZZ Professional Catalog Generator v4.0 Loaded');
+        console.log('✨ NEW: Export to PNG/JPG functionality');
+        console.log('✨ NEW: Individual page selection for export');
+        console.log('✨ NEW: Overlay card styles (Minimal Corners & Price Tag)');
+        console.log('✨ NEW: Image background options (White/Transparent/Subtle)');
+        console.log('✨ FIXED: html2canvas error handling');
+        console.log('✨ FIXED: Background class implementation');
+        console.log('✨ FIXED: Floating badge text overflow');
         console.log('📸 Image integration: CSP-compliant Google Drive API');
-        console.log('✨ NEW: Excel page organization support');
-        console.log('📄 NEW: Simplified product cards and consolidated cover page');
-        console.log('🔢 NEW: Maximum density layout (24 products per page)');
-        console.log('⚡ NEW: High-density layout (20 products per page)');
-        console.log('🃏 NEW: Image-bottom card style option');
-        console.log('📧 UPDATED: Email changed to queries@ozzsa.com');
-        console.log('🌐 UPDATED: Website references removed');
-        console.log('🔍 UPDATED: Enhanced image matching for product 206');
-        console.log('🖼️ NEW: Image preview functionality with refresh button');
+        console.log('📄 Excel page organization support');
+        console.log('🎨 Customization: Colors, fonts, themes, and layouts');
+        console.log('🖼️ Image preview functionality with refresh');
     </script>
 </body>
 </html>
