@@ -315,7 +315,7 @@
                 min-height: 40mm;
             }
             
-            /* REFINED: Luxury Minimal Card Style */
+            /* ENHANCED: Luxury Minimal Card Style with Larger Price */
             .product-card.luxury-minimal {
                 border: none;
                 box-shadow: none;
@@ -341,7 +341,7 @@
                 padding: 2mm;
             }
             
-            /* REFINED: Luxury Floating Badges with Better Sizing */
+            /* ENHANCED: Luxury Floating Badges with Better Sizing */
             .luxury-minimal .floating-badge {
                 position: absolute;
                 z-index: 10;
@@ -369,7 +369,7 @@
                 max-width: calc(100% - 4mm);
             }
             
-            /* CORRECTED: Grey SKU Badge */
+            /* ENHANCED: Grey SKU Badge - Smaller */
             .luxury-minimal .floating-badge.sku-badge {
                 bottom: 2mm !important;
                 left: 2mm !important;
@@ -385,18 +385,18 @@
                 display: inline-block !important;
             }
             
-            /* CORRECTED: Red Price Badge - NOW MATCHING SKU EXACTLY */
+            /* ENHANCED: Red Price Badge - LARGER AND MORE PROMINENT */
             .luxury-minimal .floating-badge.price-badge {
                 bottom: 2mm !important;
                 right: 2mm !important;
                 background: #DC143C !important;
                 color: #FFFFFF !important;
-                padding: 0.5mm 1.5mm !important;  /* EXACT same as SKU */
-                border-radius: 2mm !important;  /* EXACT same as SKU - rectangular */
-                font-size: 4pt !important;  /* EXACT same as SKU */
-                font-weight: 600 !important;
-                letter-spacing: 0.2px !important;
-                box-shadow: 0 0.5px 2px rgba(0,0,0,0.15) !important;
+                padding: 0.8mm 2mm !important;  /* Larger padding for bigger badge */
+                border-radius: 2.5mm !important;  /* Slightly more rounded for prominence */
+                font-size: 6pt !important;  /* 2 sizes larger than SKU (4pt -> 6pt) */
+                font-weight: 700 !important;  /* Bolder weight */
+                letter-spacing: 0.1px !important;
+                box-shadow: 0 1px 3px rgba(0,0,0,0.2) !important;  /* Stronger shadow */
                 line-height: 1.2 !important;
                 display: inline-block !important;
                 min-width: auto !important;
@@ -408,18 +408,25 @@
                 bottom: 50%;
                 right: 50%;
                 transform: translate(50%, 50%);
-                font-size: 8pt !important;
-                padding: 1.5mm 3mm !important;
+                font-size: 10pt !important;  /* Even larger when price only */
+                padding: 2mm 3.5mm !important;
+                border-radius: 3mm !important;
+                font-weight: 800 !important;
             }
             
             .luxury-minimal.show-sku-price .sku-badge {
                 background: rgba(100, 100, 100, 0.9) !important;
                 color: #FFFFFF !important;
-                font-size: 4.5pt !important;
+                font-size: 4pt !important;  /* Keep SKU small */
                 font-weight: 500 !important;
             }
             
-            /* HIGH DENSITY SPECIFIC ADJUSTMENTS - BOTH BADGES MATCH */
+            .luxury-minimal.show-sku-price .price-badge {
+                font-size: 6.5pt !important;  /* Slightly larger in this layout */
+                padding: 1mm 2.2mm !important;
+            }
+            
+            /* HIGH DENSITY SPECIFIC ADJUSTMENTS - ENHANCED PRICE */
             .products-grid.high-density .luxury-minimal .floating-badge.name-badge {
                 font-size: 4pt !important;
                 padding: 0.8mm 1.2mm !important;
@@ -429,40 +436,90 @@
             }
             
             .products-grid.high-density .luxury-minimal .floating-badge.price-badge {
-                font-size: 3.5pt !important;
-                padding: 0.4mm 1mm !important;  /* Compact and same as SKU */
+                font-size: 5pt !important;  /* Larger than SKU even in high density */
+                padding: 0.6mm 1.5mm !important;  /* Proportionally larger */
                 bottom: 1.5mm !important;
                 right: 1.5mm !important;
-                border-radius: 1.5mm !important;  /* Rectangular */
+                border-radius: 2mm !important;
+                font-weight: 700 !important;
             }
             
             .products-grid.high-density .luxury-minimal .floating-badge.sku-badge {
-                font-size: 3.5pt !important;
-                padding: 0.4mm 1mm !important;  /* Same as price */
+                font-size: 3.5pt !important;  /* Keep SKU smaller */
+                padding: 0.4mm 1mm !important;
                 bottom: 1.5mm !important;
                 left: 1.5mm !important;
-                border-radius: 1.5mm !important;  /* Same as price */
+                border-radius: 1.5mm !important;
             }
             
-            /* Maximum density adjustments */
+            /* Maximum density adjustments - ENHANCED */
             .products-grid.maximum .luxury-minimal .floating-badge.name-badge {
                 display: none; /* Too crowded */
             }
             
             .products-grid.maximum .luxury-minimal .floating-badge.price-badge {
-                font-size: 4.5pt !important;
-                padding: 0.5mm 1.2mm !important;
+                font-size: 4.5pt !important;  /* Still prominent even in maximum density */
+                padding: 0.5mm 1.3mm !important;
                 bottom: 1mm !important;
                 right: 1mm !important;
-                border-radius: 1mm !important;
+                border-radius: 1.5mm !important;
+                font-weight: 700 !important;
             }
             
             .products-grid.maximum .luxury-minimal .floating-badge.sku-badge {
-                font-size: 3pt !important;
+                font-size: 3pt !important;  /* Minimal SKU size */
                 padding: 0.3mm 0.8mm !important;
                 bottom: 1mm !important;
                 left: 1mm !important;
                 border-radius: 1mm !important;
+            }
+            
+            /* Ultra-compact adjustments - ENHANCED */
+            .products-grid.ultra-compact .luxury-minimal .floating-badge.price-badge {
+                font-size: 5.5pt !important;
+                padding: 0.7mm 1.8mm !important;
+                font-weight: 700 !important;
+            }
+            
+            .products-grid.ultra-compact .luxury-minimal .floating-badge.sku-badge {
+                font-size: 3.8pt !important;
+                padding: 0.4mm 1.1mm !important;
+            }
+            
+            /* Compact adjustments - ENHANCED */
+            .products-grid.compact .luxury-minimal .floating-badge.price-badge {
+                font-size: 6pt !important;
+                padding: 0.8mm 2mm !important;
+                font-weight: 700 !important;
+            }
+            
+            .products-grid.compact .luxury-minimal .floating-badge.sku-badge {
+                font-size: 4pt !important;
+                padding: 0.5mm 1.3mm !important;
+            }
+/* Dense adjustments - ENHANCED (continued) */
+            .products-grid.dense .luxury-minimal .floating-badge.price-badge {
+                font-size: 5.8pt !important;
+                padding: 0.7mm 1.9mm !important;
+                font-weight: 700 !important;
+            }
+            
+            .products-grid.dense .luxury-minimal .floating-badge.sku-badge {
+                font-size: 3.9pt !important;
+                padding: 0.5mm 1.2mm !important;
+            }
+            
+            /* Standard layout adjustments - ENHANCED */
+            .products-grid:not(.compact):not(.dense):not(.ultra-compact):not(.high-density):not(.maximum) .luxury-minimal .floating-badge.price-badge {
+                font-size: 7pt !important;
+                padding: 1mm 2.5mm !important;
+                font-weight: 700 !important;
+                border-radius: 2.5mm !important;
+            }
+            
+            .products-grid:not(.compact):not(.dense):not(.ultra-compact):not(.high-density):not(.maximum) .luxury-minimal .floating-badge.sku-badge {
+                font-size: 4.5pt !important;
+                padding: 0.6mm 1.8mm !important;
             }
             
             /* No image placeholder for luxury minimal */
@@ -498,6 +555,7 @@
             .products-grid.high-density .luxury-minimal .no-image-text {
                 font-size: 4pt;
             }
+            
             /* Existing overlay styles - keep for compatibility */
             .product-card.overlay-minimal,
             .product-card.overlay-corners,
@@ -970,7 +1028,6 @@
                 </div>
             </div>
         </div>
-
         <div id="introPageCustomization" class="category-section" style="display: none;">
             <h3>📄 Cover Page Content Customization</h3>
             <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
@@ -1000,9 +1057,9 @@
                             Promotion Details:
                             <textarea id="promoDetails" rows="3" 
                                       style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">• Valid for July 2025 only
-- Limited quantities available
-- Collection only at our Durban store
-- Delivery available at additional cost</textarea>
+• Limited quantities available
+• Collection only at our Durban store
+• Delivery available at additional cost</textarea>
                         </label>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Additional Information:
@@ -1181,7 +1238,158 @@ Visit our showroom to see the full range!</textarea>
                 });
             }
         });
-        
+
+        // FIXED applyColorScheme function that preserves badge shapes
+        function applyColorScheme() {
+            const headerColor = document.getElementById('headerColor').value;
+            const priceColor = document.getElementById('priceColor').value;
+            const accentColor = document.getElementById('accentColor').value;
+            
+            const styleId = 'dynamic-colors';
+            let styleEl = document.getElementById(styleId);
+            
+            if (!styleEl) {
+                styleEl = document.createElement('style');
+                styleEl.id = styleId;
+                document.head.appendChild(styleEl);
+            }
+            
+            // FIXED: Preserve the rectangular shape and enhanced size for price badge
+            styleEl.textContent = 
+                '.product-header { background: linear-gradient(135deg, ' + headerColor + ' 0%, ' + adjustBrightness(headerColor, -20) + ' 100%) !important; } ' +
+                '.product-card:not(.luxury-minimal) .price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } ' +
+                // Luxury minimal price badge - preserve enhanced size and shape
+                '.luxury-minimal .floating-badge.price-badge { ' +
+                    'background: ' + priceColor + ' !important; ' +
+                    'border-radius: 2.5mm !important; ' +  /* Keep rectangular shape */
+                    'padding: 0.8mm 2mm !important; ' +    /* Keep enhanced padding */
+                    'font-size: 6pt !important; ' +         /* Keep larger font size */
+                    'font-weight: 700 !important; ' +       /* Keep bold weight */
+                '} ' +
+                // High density specific
+                '.products-grid.high-density .luxury-minimal .floating-badge.price-badge { ' +
+                    'font-size: 5pt !important; ' +
+                    'padding: 0.6mm 1.5mm !important; ' +
+                    'border-radius: 2mm !important; ' +
+                '} ' +
+                // Maximum density specific
+                '.products-grid.maximum .luxury-minimal .floating-badge.price-badge { ' +
+                    'font-size: 4.5pt !important; ' +
+                    'padding: 0.5mm 1.3mm !important; ' +
+                    'border-radius: 1.5mm !important; ' +
+                '} ' +
+                // SKU badge - keep smaller
+                '.luxury-minimal .floating-badge.sku-badge { ' +
+                    'border-radius: 2mm !important; ' +
+                    'padding: 0.5mm 1.5mm !important; ' +
+                    'font-size: 4pt !important; ' +
+                '} ' +
+                '.floating-badge.price-badge { background: ' + priceColor + ' !important; } ' +
+                '.category-header { background: linear-gradient(90deg, ' + accentColor + ' 0%, ' + adjustBrightness(accentColor, 20) + ' 100%) !important; } ' +
+                '.spec-bullet { color: ' + headerColor + ' !important; }';
+            
+            showNotification('Color scheme applied!', 'success');
+        }
+
+        function applyTypography() {
+            const fontFamily = document.getElementById('fontFamily').value;
+            const textStyle = document.getElementById('textStyle').value;
+            
+            const fontMap = {
+                'system': '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
+                'arial': 'Arial, sans-serif',
+                'helvetica': 'Helvetica, Arial, sans-serif',
+                'times': '"Times New Roman", Times, serif',
+                'georgia': 'Georgia, serif'
+            };
+            
+            const styleId = 'dynamic-typography';
+            let styleEl = document.getElementById(styleId);
+            
+            if (!styleEl) {
+                styleEl = document.createElement('style');
+                styleEl.id = styleId;
+                document.head.appendChild(styleEl);
+            }
+            
+            styleEl.textContent = '.product-name, .floating-badge.name-badge { font-family: ' + fontMap[fontFamily] + ' !important; text-transform: ' + textStyle + ' !important; }';
+            
+            showNotification('Typography applied!', 'success');
+        }
+
+        function applyTheme(themeName) {
+            const themes = {
+                'ozz-classic': { header: '#006b6b', price: '#DC143C', accent: '#1a1a1a', font: 'system', transform: 'uppercase' },
+                'modern-blue': { header: '#0056b3', price: '#dc3545', accent: '#495057', font: 'helvetica', transform: 'uppercase' },
+                'elegant-black': { header: '#2c3e50', price: '#e74c3c', accent: '#34495e', font: 'georgia', transform: 'capitalize' }
+            };
+            
+            const theme = themes[themeName];
+            if (!theme) return;
+            
+            document.getElementById('headerColor').value = theme.header;
+            document.getElementById('priceColor').value = theme.price;
+            document.getElementById('accentColor').value = theme.accent;
+            document.getElementById('fontFamily').value = theme.font;
+            document.getElementById('textStyle').value = theme.transform;
+            
+            applyColorScheme();
+            applyTypography();
+            
+            showNotification(themeName.replace('-', ' ') + ' theme applied!', 'success');
+        }
+
+        function resetToDefault() {
+            document.getElementById('headerColor').value = '#006b6b';
+            document.getElementById('priceColor').value = '#DC143C';
+            document.getElementById('accentColor').value = '#1a1a1a';
+            document.getElementById('fontFamily').value = 'system';
+            document.getElementById('textStyle').value = 'uppercase';
+            
+            const dynamicStyles = ['dynamic-colors', 'dynamic-typography'];
+            for (let i = 0; i < dynamicStyles.length; i++) {
+                const el = document.getElementById(dynamicStyles[i]);
+                if (el) el.remove();
+            }
+            
+            showNotification('Reset to default styling!', 'info');
+        }
+
+        function adjustBrightness(hex, percent) {
+            const num = parseInt(hex.replace("#", ""), 16);
+            const amt = Math.round(2.55 * percent);
+            const R = (num >> 16) + amt;
+            const G = (num >> 8 & 0x00FF) + amt;
+            const B = (num & 0x0000FF) + amt;
+            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
+                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
+                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
+        }
+
+        function showNotification(message, type) {
+            if (!type) type = 'info';
+            
+            const notification = document.createElement('div');
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: ' + (type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8') + '; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; font-size: 14px; font-weight: 500; opacity: 0; transform: translateX(100%); transition: all 0.3s ease;';
+            
+            notification.textContent = message;
+            document.body.appendChild(notification);
+            
+            setTimeout(function() {
+                notification.style.opacity = '1';
+                notification.style.transform = 'translateX(0)';
+            }, 100);
+            
+            setTimeout(function() {
+                notification.style.opacity = '0';
+                notification.style.transform = 'translateX(100%)';
+                setTimeout(function() {
+                    if (notification.parentNode) {
+                        notification.parentNode.removeChild(notification);
+                    }
+                }, 300);
+            }, 3000);
+        }
         class DriveImageManager {
             constructor() {
                 this.imageCache = new Map();
@@ -1320,6 +1528,7 @@ Visit our showroom to see the full range!</textarea>
                     throw error;
                 }
             }
+            
             async fetchImagesFromFolder(pageToken, allFiles) {
                 if (pageToken === undefined) pageToken = null;
                 if (allFiles === undefined) allFiles = [];
@@ -1435,7 +1644,7 @@ Visit our showroom to see the full range!</textarea>
             }
         }
 
-        // Export Functions with error handling
+        // Export Functions
         async function exportAllPages() {
             if (typeof html2canvas === 'undefined') {
                 showNotification('Export library not loaded. Please refresh the page.', 'error');
@@ -1537,7 +1746,7 @@ Visit our showroom to see the full range!</textarea>
             document.querySelectorAll('.page-thumbnail input').forEach(cb => cb.checked = false);
         }
 
-        async function exportSelectedPages() {
+async function exportSelectedPages() {
             if (typeof html2canvas === 'undefined') {
                 showNotification('Export library not loaded. Please refresh the page.', 'error');
                 closePageSelector();
@@ -1995,303 +2204,6 @@ Visit our showroom to see the full range!</textarea>
             }
             showNotification('All categories deselected', 'info');
         }
-        function generateCatalog() {
-            // Update display options before generating
-            updateDisplayOptions();
-            
-            const useExcelPages = document.getElementById('useExcelPages');
-            const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
-            const selectedCardStyle = document.querySelector('input[name="cardStyle"]:checked').value;
-            const layoutConfig = getLayoutConfig(selectedLayout);
-            
-            const printContent = document.getElementById('printContent');
-            printContent.innerHTML = '';
-            
-            printContent.appendChild(createHeaderPage());
-            let pageNum = 2;
-            
-            if (useExcelPages && useExcelPages.checked && window.pageOrganization) {
-                const sortedPages = Object.keys(window.pageOrganization).sort(function(a, b) {
-                    const numA = parseInt(a.replace('PAGE ', ''));
-                    const numB = parseInt(b.replace('PAGE ', ''));
-                    return numA - numB;
-                });
-                
-                let filteredProducts = [];
-                
-                sortedPages.forEach(function(pageKey) {
-                    const pageProducts = window.pageOrganization[pageKey];
-                    
-                    const selectedCats = Array.from(document.querySelectorAll('.category-cb:checked')).map(function(cb) {
-                        return cb.value;
-                    });
-                    const productsToShow = selectedCats.length > 0 
-                        ? pageProducts.filter(function(p) { return selectedCats.includes(p.category); })
-                        : pageProducts;
-                    
-                    if (productsToShow.length > 0) {
-                        for (let i = 0; i < productsToShow.length; i += layoutConfig.productsPerPage) {
-                            const pageProductSlice = productsToShow.slice(i, i + layoutConfig.productsPerPage);
-                            
-                            printContent.appendChild(createProductPage(
-                                pageProductSlice, 
-                                'Excel ' + pageKey, 
-                                i === 0,
-                                pageNum++, 
-                                layoutConfig,
-                                selectedCardStyle
-                            ));
-                        }
-                        
-                        filteredProducts.push.apply(filteredProducts, productsToShow);
-                    }
-                });
-                
-                const totalPages = printContent.querySelectorAll('.page').length;
-                const totalPagesElements = printContent.querySelectorAll('.total-pages');
-                for (let i = 0; i < totalPagesElements.length; i++) {
-                    totalPagesElements[i].textContent = totalPages;
-                }
-                
-                document.getElementById('printBtn').disabled = false;
-                
-                let imageInfo = '';
-                if (driveImageManager) {
-                    const stats = driveImageManager.getStats();
-                    let mappedCount = 0;
-                    filteredProducts.forEach(function(product) {
-                        const imageData = driveImageManager.getProductImage(product.sku);
-                        if (imageData.found) mappedCount++;
-                    });
-                    imageInfo = ' (' + mappedCount + ' with images)';
-                }
-                
-                document.getElementById('status').innerHTML = 
-                    '✅ <strong>Generated ' + totalPages + ' pages with ' + filteredProducts.length + ' products using Excel page organization and ' + selectedLayout + ' layout (' + selectedCardStyle + ' cards)</strong>';
-                    
-            } else {
-                const selectedCats = Array.from(document.querySelectorAll('.category-cb:checked')).map(function(cb) {
-                    return cb.value;
-                });
-                
-                if (selectedCats.length === 0) {
-                    alert('Please select at least one category or enable Excel page organization');
-                    return;
-                }
-                
-                const filteredProducts = allProducts.filter(function(p) {
-                    return selectedCats.includes(p.category);
-                });
-                filteredProducts.sort(function(a, b) {
-                    if (a.category !== b.category) {
-                        return a.category.localeCompare(b.category);
-                    }
-                    return a.description.localeCompare(b.description);
-                });
-                
-                const grouped = {};
-                filteredProducts.forEach(function(p) {
-                    if (!grouped[p.category]) grouped[p.category] = [];
-                    grouped[p.category].push(p);
-                });
-                
-                Object.entries(grouped).forEach(function(entry) {
-                    const category = entry[0];
-                    const products = entry[1];
-                    for (let i = 0; i < products.length; i += layoutConfig.productsPerPage) {
-                        const pageProducts = products.slice(i, i + layoutConfig.productsPerPage);
-                        const showCategoryHeader = i === 0;
-                        printContent.appendChild(createProductPage(pageProducts, category, showCategoryHeader, pageNum++, layoutConfig, selectedCardStyle));
-                    }
-                });
-                
-                const totalPages = printContent.querySelectorAll('.page').length;
-                const totalPagesElements = printContent.querySelectorAll('.total-pages');
-                for (let i = 0; i < totalPagesElements.length; i++) {
-                    totalPagesElements[i].textContent = totalPages;
-                }
-                
-                document.getElementById('printBtn').disabled = false;
-                
-                document.getElementById('status').innerHTML = 
-                    '✅ <strong>Generated ' + totalPages + ' pages with ' + filteredProducts.length + ' products using ' + selectedLayout + ' layout (' + selectedCardStyle + ' cards)</strong>';
-            }
-            
-            printContent.scrollIntoView({ behavior: 'smooth' });
-        }
-        
-        function createHeaderPage() {
-            const page = document.createElement('div');
-            page.className = 'page hero-page';
-            
-            const title = document.getElementById('introTitle').value || 'Welcome to Our July 2025 Promotion';
-            const subtitle = document.getElementById('introSubtitle').value || 'Exclusive deals on premium home & kitchen products';
-            const message = document.getElementById('introMessage').value || 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs.';
-            const promoDetails = document.getElementById('promoDetails').value || '• Valid for July 2025 only\n• Limited quantities available';
-            const additionalInfo = document.getElementById('additionalInfo').value || 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM';
-            
-            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">JULY 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p><div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(2, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">+27 31 332 7192</div></div><div class="info-card"><div class="info-label">Email</div><div class="info-value">queries@ozzsa.com</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. Ozz Cash and Carry reserves the right to limit quantities. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span><span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 5.2</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
-            
-            return page;
-        }
-
-        function createProductPage(products, category, showHeader, pageNum, layoutConfig, cardStyle) {
-            if (!layoutConfig) layoutConfig = { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 };
-            if (!cardStyle) cardStyle = 'standard';
-            
-            const page = document.createElement('div');
-            page.className = 'page';
-            
-            const isExcelPage = category.startsWith('Excel PAGE');
-            const headerClass = isExcelPage ? 'category-header excel-page' : 'category-header';
-            
-            let contentHTML = '<div class="page-inner"><div class="page-header"><div class="header-left"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ" class="header-logo" onerror="this.style.display=\'none\'"><span class="header-title">July 2025 Promotional Catalog</span></div><span class="page-number">Page ' + pageNum + ' of <span class="total-pages">-</span></span></div><div class="page-content">';
-            
-            if (showHeader) {
-                const headerText = isExcelPage ? category.replace('Excel ', '') : category;
-                contentHTML += '<div class="' + headerClass + '">' + headerText + '</div>';
-            }
-            
-            contentHTML += '<div class="products-container"><div class="products-grid ' + layoutConfig.gridClass + '">';
-            
-            for (let i = 0; i < layoutConfig.productsPerPage; i++) {
-                if (i < products.length) {
-                    contentHTML += createProductCard(products[i], cardStyle);
-                } else {
-                    contentHTML += '<div class="product-card" style="visibility: hidden;"></div>';
-                }
-            }
-            
-            contentHTML += '</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • queries@ozzsa.com</span><span class="footer-right">Version 5.2</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
-            
-            page.innerHTML = contentHTML;
-            return page;
-        }
-
-        // CORRECTED createProductCard function with properly sized badges
-        function createProductCard(product, cardStyle) {
-            if (!cardStyle) cardStyle = 'standard';
-            
-            const imageUrl = getImageUrl(product.sku);
-            const bgClass = getImageBackground();
-            
-            const priceStr = product.price.toFixed(2);
-            const priceParts = priceStr.split('.');
-            const rands = priceParts[0];
-            const cents = priceParts[1];
-            
-            const productName = product.description.trim();
-            
-            // Luxury Minimal Card Style with CORRECTED badges
-            if (cardStyle === 'luxury-minimal') {
-                // Determine layout class based on displayed info
-                let layoutClass = '';
-                if (!displayOptions.showProductName && !displayOptions.showSKU && displayOptions.showPrice) {
-                    layoutClass = 'show-price-only';
-                } else if (!displayOptions.showProductName && displayOptions.showSKU && displayOptions.showPrice) {
-                    layoutClass = 'show-sku-price';
-                }
-                
-                return '<div class="product-card luxury-minimal ' + layoutClass + '">' +
-                    '<div class="image-container ' + bgClass + '">' + 
-                        (imageUrl ? 
-                            '<img src="' + imageUrl + '" alt="' + productName + '">' :
-                            '<div class="no-image-elegant">' +
-                                '<div class="no-image-icon">📦</div>' +
-                                '<div class="no-image-text">SKU: ' + product.sku + '</div>' +
-                            '</div>'
-                        ) +
-                        (displayOptions.showProductName ? 
-                            '<div class="floating-badge name-badge">' + productName + '</div>' : ''
-                        ) +
-                        (displayOptions.showSKU ? 
-                            '<div class="floating-badge sku-badge">' + product.sku + '</div>' : ''
-                        ) +
-                        (displayOptions.showPrice ? 
-                            '<div class="floating-badge price-badge">' +
-                                (displayOptions.showCurrency ? 'R' : '') + priceStr +
-                            '</div>' : ''
-                        ) +
-                    '</div>' +
-                '</div>';
-            }
-            
-            // Overlay minimal style
-            if (cardStyle === 'overlay-minimal' || cardStyle === 'overlay-price-tag') {
-                const priceTagClass = cardStyle === 'overlay-price-tag' ? ' overlay-price-tag' : '';
-                return '<div class="product-card overlay-minimal' + priceTagClass + '">' +
-                    '<div class="product-image-container ' + bgClass + '">' + 
-                        (imageUrl ? 
-                            '<img src="' + imageUrl + '" alt="' + productName + '">' :
-                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
-                        ) +
-                        '<div class="floating-badge name-badge">' + productName + '</div>' +
-                        '<div class="floating-badge sku-badge">SKU: ' + product.sku + '</div>' +
-                        '<div class="floating-badge price-badge">R' + priceStr + '</div>' +
-                    '</div>' +
-                '</div>';
-            }
-            
-            // Keep existing card styles
-            if (cardStyle === 'image-bottom') {
-                return '<div class="product-card image-bottom">' +
-                    '<div class="product-details">' +
-                        '<div class="product-header">' +
-                            '<div class="product-name">' + productName + '</div>' +
-                        '</div>' +
-                        '<div class="product-specs">' +
-                            '<div class="spec-item">' +
-                                '<span class="spec-bullet">•</span>' +
-                                '<span class="spec-label">SKU:</span>' +
-                                '<span class="spec-value">' + product.sku + '</span>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="price-badge">' +
-                            '<div class="price-amount">' +
-                                '<span class="price-currency">R</span>' + rands + 
-                                '<span class="price-cents">' + cents + '</span>' +
-                            '</div>' +
-                            '<div class="price-unit">Each</div>' +
-                        '</div>' +
-                    '</div>' +
-                    '<div class="product-image ' + bgClass + '">' + 
-                        (imageUrl ? 
-                            '<img src="' + imageUrl + '" alt="' + productName + '"><div class="sku-overlay">' + product.sku + '</div>' :
-                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
-                        ) + 
-                    '</div>' +
-                '</div>';
-            } else {
-                // Standard layout
-                return '<div class="product-card">' +
-                    '<div class="product-image ' + bgClass + '">' + 
-                        (imageUrl ? 
-                            '<img src="' + imageUrl + '" alt="' + productName + '"><div class="sku-overlay">' + product.sku + '</div>' :
-                            '<div class="no-image"><div class="no-image-icon">📦</div><div class="no-image-text">SKU: ' + product.sku + '</div></div>'
-                        ) + 
-                    '</div>' +
-                    '<div class="product-details">' +
-                        '<div class="product-header">' +
-                            '<div class="product-name">' + productName + '</div>' +
-                        '</div>' +
-                        '<div class="product-specs">' +
-                            '<div class="spec-item">' +
-                                '<span class="spec-bullet">•</span>' +
-                                '<span class="spec-label">SKU:</span>' +
-                                '<span class="spec-value">' + product.sku + '</span>' +
-                            '</div>' +
-                        '</div>' +
-                        '<div class="price-badge">' +
-                            '<div class="price-amount">' +
-                                '<span class="price-currency">R</span>' + rands + 
-                                '<span class="price-cents">' + cents + '</span>' +
-                            '</div>' +
-                            '<div class="price-unit">Each</div>' +
-                        '</div>' +
-                    '</div>' +
-                '</div>';
-            }
-        }
 
         function previewCoverPage() {
             const printContent = document.getElementById('printContent');
@@ -2310,142 +2222,15 @@ Visit our showroom to see the full range!</textarea>
             showNotification('Cover page reset to default!', 'info');
         }
 
-        function applyColorScheme() {
-            const headerColor = document.getElementById('headerColor').value;
-            const priceColor = document.getElementById('priceColor').value;
-            const accentColor = document.getElementById('accentColor').value;
-            
-            const styleId = 'dynamic-colors';
-            let styleEl = document.getElementById(styleId);
-            
-            if (!styleEl) {
-                styleEl = document.createElement('style');
-                styleEl.id = styleId;
-                document.head.appendChild(styleEl);
-            }
-            
-            // Include refined price badge color - IMPORTANT: Force rectangular badges
-            styleEl.textContent = '.product-header { background: linear-gradient(135deg, ' + headerColor + ' 0%, ' + adjustBrightness(headerColor, -20) + ' 100%) !important; } ' +
-                '.price-badge { background: linear-gradient(135deg, ' + priceColor + ' 0%, ' + adjustBrightness(priceColor, -20) + ' 100%) !important; } ' +
-                '.luxury-minimal .floating-badge.price-badge { background: ' + priceColor + ' !important; border-radius: 2mm !important; } ' +
-                '.floating-badge.price-badge { background: ' + priceColor + ' !important; } ' +
-                '.category-header { background: linear-gradient(90deg, ' + accentColor + ' 0%, ' + adjustBrightness(accentColor, 20) + ' 100%) !important; } ' +
-                '.spec-bullet { color: ' + headerColor + ' !important; }';
-            
-            showNotification('Color scheme applied!', 'success');
-        }
-
-        function applyTypography() {
-            const fontFamily = document.getElementById('fontFamily').value;
-            const textStyle = document.getElementById('textStyle').value;
-            
-            const fontMap = {
-                'system': '-apple-system, BlinkMacSystemFont, "Segoe UI", "Helvetica Neue", Arial, sans-serif',
-                'arial': 'Arial, sans-serif',
-                'helvetica': 'Helvetica, Arial, sans-serif',
-                'times': '"Times New Roman", Times, serif',
-                'georgia': 'Georgia, serif'
-            };
-            
-            const styleId = 'dynamic-typography';
-            let styleEl = document.getElementById(styleId);
-            
-            if (!styleEl) {
-                styleEl = document.createElement('style');
-                styleEl.id = styleId;
-                document.head.appendChild(styleEl);
-            }
-            
-            styleEl.textContent = '.product-name, .floating-badge.name-badge { font-family: ' + fontMap[fontFamily] + ' !important; text-transform: ' + textStyle + ' !important; }';
-            
-            showNotification('Typography applied!', 'success');
-        }
-
-        function applyTheme(themeName) {
-            const themes = {
-                'ozz-classic': { header: '#006b6b', price: '#DC143C', accent: '#1a1a1a', font: 'system', transform: 'uppercase' },
-                'modern-blue': { header: '#0056b3', price: '#dc3545', accent: '#495057', font: 'helvetica', transform: 'uppercase' },
-                'elegant-black': { header: '#2c3e50', price: '#e74c3c', accent: '#34495e', font: 'georgia', transform: 'capitalize' }
-            };
-            
-            const theme = themes[themeName];
-            if (!theme) return;
-            
-            document.getElementById('headerColor').value = theme.header;
-            document.getElementById('priceColor').value = theme.price;
-            document.getElementById('accentColor').value = theme.accent;
-            document.getElementById('fontFamily').value = theme.font;
-            document.getElementById('textStyle').value = theme.transform;
-            
-            applyColorScheme();
-            applyTypography();
-            
-            showNotification(themeName.replace('-', ' ') + ' theme applied!', 'success');
-        }
-
-        function resetToDefault() {
-            document.getElementById('headerColor').value = '#006b6b';
-            document.getElementById('priceColor').value = '#DC143C';
-            document.getElementById('accentColor').value = '#1a1a1a';
-            document.getElementById('fontFamily').value = 'system';
-            document.getElementById('textStyle').value = 'uppercase';
-            
-            const dynamicStyles = ['dynamic-colors', 'dynamic-typography'];
-            for (let i = 0; i < dynamicStyles.length; i++) {
-                const el = document.getElementById(dynamicStyles[i]);
-                if (el) el.remove();
-            }
-            
-            showNotification('Reset to default styling!', 'info');
-        }
-
-        function adjustBrightness(hex, percent) {
-            const num = parseInt(hex.replace("#", ""), 16);
-            const amt = Math.round(2.55 * percent);
-            const R = (num >> 16) + amt;
-            const G = (num >> 8 & 0x00FF) + amt;
-            const B = (num & 0x0000FF) + amt;
-            return "#" + (0x1000000 + (R < 255 ? R < 1 ? 0 : R : 255) * 0x10000 +
-                (G < 255 ? G < 1 ? 0 : G : 255) * 0x100 +
-                (B < 255 ? B < 1 ? 0 : B : 255)).toString(16).slice(1);
-        }
-
-        function showNotification(message, type) {
-            if (!type) type = 'info';
-            
-            const notification = document.createElement('div');
-            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: ' + (type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8') + '; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; font-size: 14px; font-weight: 500; opacity: 0; transform: translateX(100%); transition: all 0.3s ease;';
-            
-            notification.textContent = message;
-            document.body.appendChild(notification);
-            
-            setTimeout(function() {
-                notification.style.opacity = '1';
-                notification.style.transform = 'translateX(0)';
-            }, 100);
-            
-            setTimeout(function() {
-                notification.style.opacity = '0';
-                notification.style.transform = 'translateX(100%)';
-                setTimeout(function() {
-                    if (notification.parentNode) {
-                        notification.parentNode.removeChild(notification);
-                    }
-                }, 300);
-            }, 3000);
-        }
-
-        console.log('🎉 OZZ Professional Catalog Generator v5.2 Loaded');
-        console.log('✨ FIXED: Price badge now matches SKU badge dimensions');
-        console.log('✨ Both badges use 2mm border-radius (rectangular)');
-        console.log('✨ Both badges use same padding and font size');
-        console.log('✨ DEFAULT: High-density layout with SKU+Price preset');
-        console.log('✨ Luxury Minimal card style optimized');
-        console.log('✨ Information display toggles (Name/SKU/Price)');
-        console.log('✨ Export to PNG/JPG functionality');
+        console.log('🎉 OZZ Professional Catalog Generator v5.3 Loaded');
+        console.log('✨ ENHANCED: Price badge now 2 sizes larger than SKU badge');
+        console.log('✨ Price badge: 6pt font, 0.8mm x 2mm padding, 2.5mm border-radius');
+        console.log('✨ SKU badge: 4pt font, 0.5mm x 1.5mm padding, 2mm border-radius');
+        console.log('✨ Dynamic sizing adjusts proportionally for different layouts');
+        console.log('✨ Color scheme function preserves enhanced badge dimensions');
         console.log('📸 Image integration: CSP-compliant Google Drive API');
         console.log('📄 Excel page organization support');
-        console.log('🎨 Customization: Colors, fonts, themes, and layouts');
+        console.log('🎨 Full customization with preserved badge ratios');
     </script>
 </body>
 </html>
