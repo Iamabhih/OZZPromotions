@@ -1129,98 +1129,216 @@ Visit our showroom to see the full range!</textarea>
         }
 
        async function exportPageAsImage(pageElement, pageNumber, format, quality) {
-            try {
-                // Clone the page element
-                const clone = pageElement.cloneNode(true);
-                
-                // Create a temporary container
-                const tempContainer = document.createElement('div');
-                tempContainer.style.position = 'absolute';
-                tempContainer.style.left = '-9999px';
-                tempContainer.style.top = '0';
-                document.body.appendChild(tempContainer);
-                
-                // Apply A4 dimensions and styles directly to the clone
-                // Using pixels for better compatibility (A4 at 96 DPI)
-                clone.style.width = '794px';
-                clone.style.height = '1123px';
-                clone.style.padding = '0';
-                clone.style.margin = '0';
-                clone.style.background = 'white';
-                clone.style.position = 'relative';
-                clone.style.boxSizing = 'border-box';
-                clone.style.overflow = 'hidden';
-                
-                // Apply styles to page-inner if it exists
-                const pageInner = clone.querySelector('.page-inner');
-                if (pageInner) {
-                    pageInner.style.position = 'absolute';
-                    pageInner.style.top = '56px';  // 15mm
-                    pageInner.style.left = '56px';  // 15mm
-                    pageInner.style.right = '56px';  // 15mm
-                    pageInner.style.bottom = '56px';  // 15mm
-                    pageInner.style.width = 'calc(100% - 112px)';
-                    pageInner.style.height = 'calc(100% - 112px)';
-                    pageInner.style.display = 'flex';
-                    pageInner.style.flexDirection = 'column';
-                }
-                
-                // Ensure all images are visible
-                const images = clone.querySelectorAll('img');
-                images.forEach(img => {
-                    if (img.src && !img.style.width) {
-                        img.style.maxWidth = '100%';
-                        img.style.height = 'auto';
-                    }
-                });
-                
-                tempContainer.appendChild(clone);
-                
-                // Wait for images to load
-                await waitForImages(clone);
-                
-                // Small delay to ensure rendering is complete
-                await new Promise(resolve => setTimeout(resolve, 200));
-                
-                // Configure html2canvas for high quality
-                const scale = quality || 3; // Default to 3 for good quality
-                const canvas = await html2canvas(clone, {
-                    scale: scale,
-                    useCORS: true,
-                    allowTaint: true,
-                    backgroundColor: '#ffffff',
-                    logging: false,
-                    letterRendering: true,
-                    imageTimeout: 15000,
-                    width: 794,
-                    height: 1123
-                });
-                
-                // Remove temporary container
-                document.body.removeChild(tempContainer);
-                
-                // Convert to blob and download
-                canvas.toBlob(function(blob) {
-                    if (!blob) {
-                        throw new Error('Failed to create image blob');
-                    }
-                    
-                    const link = document.createElement('a');
-                    link.download = `OZZ-catalog-page-${pageNumber}.${format}`;
-                    link.href = URL.createObjectURL(blob);
-                    document.body.appendChild(link);
-                    link.click();
-                    document.body.removeChild(link);
-                    
-                    // Clean up
-                    setTimeout(() => URL.revokeObjectURL(link.href), 100);
-                }, format === 'png' ? 'image/png' : 'image/jpeg', format === 'jpg' ? 0.92 : 1.0);
-                
-            } catch (error) {
-                console.error(`Error exporting page ${pageNumber}:`, error);
-                throw error;
-            }
+    try {
+        // Clone the page element
+        const clone = pageElement.cloneNode(true);
+        
+        // Create a temporary container
+        const tempContainer = document.createElement('div');
+        tempContainer.style.cssText = `
+            position: fixed;
+            left: -9999px;
+            top: 0;
+            width: 794px;
+            height: 1123px;
+            background: white;
+            z-index: -1;
+        `;
+        document.body.appendChild(tempContainer);
+        
+        // Force print styles by applying them directly to the clone
+        clone.style.cssText = `
+            width: 794px !important;
+            height: 1123px !important;
+            margin: 0 !important;
+            padding: 0 !important;
+            background: white !important;
+            position: relative !important;
+            overflow: hidden !important;
+            box-shadow: none !important;
+        `;
+        
+        // Apply print styles to page-inner
+        const pageInner = clone.querySelector('.page-inner');
+        if (pageInner) {
+            pageInner.style.cssText = `
+                position: absolute !important;
+                top: 56px !important;
+                left: 56px !important;
+                right: 56px !important;
+                bottom: 56px !important;
+                width: calc(100% - 112px) !important;
+                height: calc(100% - 112px) !important;
+                display: flex !important;
+                flex-direction: column !important;
+                padding: 0 !important;
+            `;
         }
+        
+        // Apply print styles to all product grids
+        const grids = clone.querySelectorAll('.products-grid');
+        grids.forEach(grid => {
+            if (grid.classList.contains('high-density')) {
+                grid.style.cssText = `
+                    display: grid !important;
+                    grid-template-columns: repeat(4, 1fr) !important;
+                    grid-template-rows: repeat(5, 1fr) !important;
+                    gap: 9px !important;
+                    width: 100% !important;
+                    height: 100% !important;
+                `;
+            }
+        });
+        
+        // Apply print styles to product cards
+        const productCards = clone.querySelectorAll('.product-card');
+        productCards.forEach(card => {
+            if (card.classList.contains('luxury-minimal')) {
+                card.style.cssText = `
+                    border: none !important;
+                    box-shadow: none !important;
+                    background: transparent !important;
+                    padding: 0 !important;
+                    display: block !important;
+                    height: 100% !important;
+                `;
+                
+                const imageContainer = card.querySelector('.image-container');
+                if (imageContainer) {
+                    imageContainer.style.cssText = `
+                        position: relative !important;
+                        width: 100% !important;
+                        height: 100% !important;
+                        background: white !important;
+                        border-radius: 7px !important;
+                        overflow: hidden !important;
+                        box-shadow: 0 2px 7px rgba(0,0,0,0.08) !important;
+                    `;
+                }
+            }
+        });
+        
+        // Fix category headers
+        const categoryHeaders = clone.querySelectorAll('.category-header');
+        categoryHeaders.forEach(header => {
+            header.style.cssText = `
+                background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+                color: white !important;
+                padding: 15px 22px !important;
+                margin: 0 -19px 19px -19px !important;
+                font-size: 18px !important;
+                font-weight: 800 !important;
+                letter-spacing: 1px !important;
+                text-transform: uppercase !important;
+                display: flex !important;
+                align-items: center !important;
+                box-shadow: 0 4px 11px rgba(0,0,0,0.15) !important;
+                height: 45px !important;
+            `;
+        });
+        
+        // Fix page headers
+        const pageHeader = clone.querySelector('.page-header');
+        if (pageHeader) {
+            pageHeader.style.cssText = `
+                display: flex !important;
+                justify-content: space-between !important;
+                align-items: center !important;
+                padding-bottom: 11px !important;
+                margin-bottom: 11px !important;
+                border-bottom: 2px solid #1a1a1a !important;
+                height: 45px !important;
+            `;
+        }
+        
+        // Fix page footers
+        const pageFooter = clone.querySelector('.page-footer');
+        if (pageFooter) {
+            pageFooter.style.cssText = `
+                border-top: 1px solid #e0e0e0 !important;
+                padding-top: 11px !important;
+                font-size: 10px !important;
+                color: #666 !important;
+                line-height: 1.4 !important;
+                height: 75px !important;
+            `;
+        }
+        
+        // Ensure images are properly sized
+        const images = clone.querySelectorAll('img');
+        images.forEach(img => {
+            if (img.closest('.image-container')) {
+                img.style.cssText = `
+                    width: 100% !important;
+                    height: 100% !important;
+                    object-fit: contain !important;
+                    padding: 7px !important;
+                `;
+            }
+        });
+        
+        // Fix badge positions in luxury minimal style
+        const badges = clone.querySelectorAll('[style*="position: absolute"]');
+        badges.forEach(badge => {
+            // Keep inline styles but ensure they're visible
+            const currentStyle = badge.getAttribute('style');
+            if (currentStyle && currentStyle.includes('bottom:')) {
+                badge.setAttribute('style', currentStyle.replace(/bottom:\s*\d+mm/g, 'bottom: 7px'));
+            }
+        });
+        
+        tempContainer.appendChild(clone);
+        
+        // Wait for images to load
+        await waitForImages(clone);
+        
+        // Small delay to ensure rendering is complete
+        await new Promise(resolve => setTimeout(resolve, 300));
+        
+        // Configure html2canvas for high quality
+        const scale = quality || 3; // Default to 3 for good quality
+        const canvas = await html2canvas(clone, {
+            scale: scale,
+            useCORS: true,
+            allowTaint: true,
+            backgroundColor: '#ffffff',
+            logging: false,
+            letterRendering: true,
+            imageTimeout: 15000,
+            width: 794,
+            height: 1123,
+            onclone: (clonedDoc, element) => {
+                // Additional style fixes if needed
+                element.style.width = '794px';
+                element.style.height = '1123px';
+            }
+        });
+        
+        // Remove temporary container
+        document.body.removeChild(tempContainer);
+        
+        // Convert to blob and download
+        canvas.toBlob(function(blob) {
+            if (!blob) {
+                throw new Error('Failed to create image blob');
+            }
+            
+            const link = document.createElement('a');
+            link.download = `OZZ-catalog-page-${pageNumber}.${format}`;
+            link.href = URL.createObjectURL(blob);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            
+            // Clean up
+            setTimeout(() => URL.revokeObjectURL(link.href), 100);
+        }, format === 'png' ? 'image/png' : 'image/jpeg', format === 'jpg' ? 0.95 : 1.0);
+        
+    } catch (error) {
+        console.error(`Error exporting page ${pageNumber}:`, error);
+        throw error;
+    }
+}
 
         // Helper function to wait for all images in an element to load
         function waitForImages(element) {
