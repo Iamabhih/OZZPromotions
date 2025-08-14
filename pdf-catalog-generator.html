@@ -2404,30 +2404,33 @@ Visit our showroom to see the full range!</textarea>
                     layoutClass = 'show-price-only';
                 }
                 
-                // Define badge styles with price slightly larger than SKU
-                const skuBadgeStyle = 'position: absolute; z-index: 10; bottom: 2mm; left: 2mm; ' +
-                    'background: rgba(128, 128, 128, 0.9); color: #FFFFFF; ' +
-                    'border-radius: 2mm; padding: 0.5mm 1.5mm; ' +
-                    'font-size: 4pt; font-weight: 500; letter-spacing: 0.2px; ' +
-                    'box-shadow: 0 0.5px 2px rgba(0,0,0,0.15); line-height: 1.2; ' +
-                    'display: inline-block; white-space: nowrap;';
-                
-                const priceBadgeStyle = 'position: absolute; z-index: 10; bottom: 2mm; right: 2mm; ' +
-                    'background: #DC143C; color: #FFFFFF; ' +
-                    'border-radius: 2mm; padding: 0.6mm 1.8mm; ' +  // Slightly more padding
-                    'font-size: 5pt; font-weight: 700; letter-spacing: 0.2px; ' +  // 5pt instead of 4pt
-                    'box-shadow: 0 0.5px 2px rgba(0,0,0,0.15); line-height: 1.2; ' +
-                    'display: inline-block; white-space: nowrap;';
-                
-                // Product name badge - now positioned at BOTTOM spanning full width
-                const nameBadgeStyle = 'position: absolute; z-index: 10; bottom: 0; left: 0; right: 0; ' +
-                    'background: rgba(255, 255, 255, 0.95); color: #1a1a1a; ' +
-                    'padding: 1mm 2mm; ' +
-                    'font-size: 4pt; font-weight: 600; letter-spacing: 0.1px; line-height: 1.2; ' +
-                    'text-align: center; ' +
-                    'box-shadow: 0 -1px 2px rgba(0,0,0,0.1); ' +
-                    'overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ' +
-                    'border-radius: 0 0 2mm 2mm;';  // Only bottom corners rounded
+                // FIXED: Higher z-index and stronger shadows for better visibility
+const skuBadgeStyle = 'position: absolute; z-index: 25; bottom: 2mm; left: 2mm; ' +
+    'background: rgba(64, 64, 64, 0.95); color: #FFFFFF; ' +
+    'border-radius: 2mm; padding: 0.5mm 1.5mm; ' +
+    'font-size: 4pt; font-weight: 600; letter-spacing: 0.2px; ' +
+    'box-shadow: 0 2px 4px rgba(0,0,0,0.4); line-height: 1.2; ' +
+    'display: inline-block; white-space: nowrap; ' +
+    'border: 1px solid rgba(255,255,255,0.2);';
+
+const priceBadgeStyle = 'position: absolute; z-index: 25; bottom: 2mm; right: 2mm; ' +
+    'background: #DC143C; color: #FFFFFF; ' +
+    'border-radius: 2mm; padding: 0.6mm 1.8mm; ' +
+    'font-size: 5pt; font-weight: 700; letter-spacing: 0.2px; ' +
+    'box-shadow: 0 2px 4px rgba(0,0,0,0.4); line-height: 1.2; ' +
+    'display: inline-block; white-space: nowrap; ' +
+    'border: 1px solid rgba(255,255,255,0.2);';
+
+// Product name badge - reduced opacity for better badge visibility
+const nameBadgeStyle = 'position: absolute; z-index: 15; bottom: 0; left: 0; right: 0; ' +
+    'background: rgba(255, 255, 255, 0.8); color: #1a1a1a; ' +
+    'padding: 1mm 2mm; ' +
+    'font-size: 4pt; font-weight: 700; letter-spacing: 0.1px; line-height: 1.2; ' +
+    'text-align: center; ' +
+    'backdrop-filter: blur(1px); ' +
+    'box-shadow: 0 -1px 2px rgba(0,0,0,0.1); ' +
+    'overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ' +
+    'border-radius: 0 0 2mm 2mm;';
                 
                 // Special style for price-only mode (centered and larger)
                 const priceCenteredStyle = layoutClass === 'show-price-only' ? 
@@ -2440,7 +2443,7 @@ Visit our showroom to see the full range!</textarea>
                     'display: inline-block; white-space: nowrap;' : priceBadgeStyle;
                 
                 // Adjust SKU/Price bottom position when name is shown
-                const badgeBottom = displayOptions.showProductName ? '6mm' : '2mm';
+const badgeBottom = displayOptions.showProductName ? '8mm' : '2mm';
                 const skuStyleAdjusted = skuBadgeStyle.replace('bottom: 2mm', 'bottom: ' + badgeBottom);
                 const priceStyleAdjusted = priceBadgeStyle.replace('bottom: 2mm', 'bottom: ' + badgeBottom);
                 const priceCenteredAdjusted = layoutClass === 'show-price-only' ? priceCenteredStyle : priceStyleAdjusted;
