@@ -363,6 +363,32 @@
                 min-height: 40mm;
             }
             
+            /* NEW: Floating Badges Card Style - Web Minimal */
+            .product-card.floating-badges {
+                border: none;
+                box-shadow: none;
+                background: transparent;
+                padding: 0;
+                display: block;
+                position: relative;
+            }
+
+            .product-card.floating-badges .image-container {
+                position: relative;
+                width: 100%;
+                height: 100%;
+                background: white !important;
+                border-radius: 2mm;
+                overflow: hidden;
+                box-shadow: 0 0.5mm 2mm rgba(0,0,0,0.08);
+            }
+
+            .product-card.floating-badges img {
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+            }
+            
             /* REFINED: Luxury Minimal Card Style */
             .product-card.luxury-minimal {
                 border: none;
@@ -915,13 +941,13 @@
                         <button onclick="applyDisplayPreset('ultra-minimal')" class="preset-btn">
                             💎 Price Only
                         </button>
-                        <button onclick="applyDisplayPreset('sku-price')" class="preset-btn active">
+                        <button onclick="applyDisplayPreset('sku-price')" class="preset-btn">
                             🏷️ SKU + Price
                         </button>
                         <button onclick="applyDisplayPreset('classic')" class="preset-btn">
                             📦 Name + Price
                         </button>
-                        <button onclick="applyDisplayPreset('full-info')" class="preset-btn">
+                        <button onclick="applyDisplayPreset('full-info')" class="preset-btn active">
                             📋 All Info
                         </button>
                     </div>
@@ -930,7 +956,7 @@
                 <!-- Individual Toggles -->
                 <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px;">
                     <label class="toggle-option">
-                        <input type="checkbox" id="showProductName">
+                        <input type="checkbox" id="showProductName" checked>
                         <span>Product Name</span>
                     </label>
                     <label class="toggle-option">
@@ -1067,8 +1093,13 @@ Visit our showroom to see the full range!</textarea>
                         <div><strong>Minimal Corners</strong><br><small>Name top, SKU & price bottom</small></div>
                     </label>
                     <label class="card-style-option">
-                        <input type="radio" name="cardStyle" value="luxury-minimal" checked>
+                        <input type="radio" name="cardStyle" value="luxury-minimal">
                         <div><strong>Luxury Minimal</strong><br><small>Clean with floating badges</small></div>
+                    </label>
+                    <!-- NEW FLOATING BADGES OPTION -->
+                    <label class="card-style-option">
+                        <input type="radio" name="cardStyle" value="floating-badges" checked>
+                        <div><strong>Floating Badges</strong><br><small>Web-style minimal cards</small></div>
                     </label>
                 </div>
                 <p style="margin-top: 10px; font-size: 12px; color: #666; text-align: center;">
@@ -1089,9 +1120,9 @@ Visit our showroom to see the full range!</textarea>
         let categories = [];
         let driveImageManager = null;
         
-        // Display options state - DEFAULT TO SKU+PRICE
+        // Display options state - DEFAULT TO FULL INFO for floating-badges
         let displayOptions = {
-            showProductName: false,
+            showProductName: true,
             showSKU: true,
             showPrice: true,
             showCurrency: true
@@ -1157,8 +1188,8 @@ Visit our showroom to see the full range!</textarea>
         
         // Add event listeners for checkboxes
         document.addEventListener('DOMContentLoaded', function() {
-            // Set SKU+Price as default
-            applyDisplayPreset('sku-price');
+            // Set full-info as default for floating-badges style
+            applyDisplayPreset('full-info');
             
             ['showProductName', 'showSKU', 'showPrice', 'showCurrency'].forEach(id => {
                 const element = document.getElementById(id);
@@ -1313,7 +1344,29 @@ Visit our showroom to see the full range!</textarea>
                 // Apply print styles to product cards
                 const productCards = clone.querySelectorAll('.product-card');
                 productCards.forEach(card => {
-                    if (card.classList.contains('luxury-minimal')) {
+                    if (card.classList.contains('floating-badges')) {
+                        card.style.cssText = `
+                            border: none !important;
+                            box-shadow: none !important;
+                            background: transparent !important;
+                            padding: 0 !important;
+                            display: block !important;
+                            height: 100% !important;
+                        `;
+                        
+                        const imageContainer = card.querySelector('.image-container');
+                        if (imageContainer) {
+                            imageContainer.style.cssText = `
+                                position: relative !important;
+                                width: 100% !important;
+                                height: 100% !important;
+                                background: white !important;
+                                border-radius: 7px !important;
+                                overflow: hidden !important;
+                                box-shadow: 0 2px 7px rgba(0,0,0,0.08) !important;
+                            `;
+                        }
+                    } else if (card.classList.contains('luxury-minimal')) {
                         card.style.cssText = `
                             border: none !important;
                             box-shadow: none !important;
@@ -2504,7 +2557,7 @@ Visit our showroom to see the full range!</textarea>
             page.innerHTML = contentHTML;
             return page;
         }
-        // UPDATED createProductCard with Product Name BELOW SKU and Price
+        // UPDATED createProductCard with NEW FLOATING-BADGES style
         function createProductCard(product, cardStyle) {
             if (!cardStyle) cardStyle = 'standard';
             
@@ -2517,6 +2570,53 @@ Visit our showroom to see the full range!</textarea>
             const cents = priceParts[1];
             
             const productName = product.description.trim();
+            
+            // NEW FLOATING-BADGES STYLE - WEB MINIMAL
+            if (cardStyle === 'floating-badges') {
+                // Web-style minimal card with floating badges matching index.html
+                const skuBadgeStyle = 'position: absolute; z-index: 20; bottom: 14mm; left: 3mm; ' +
+                    'background: rgba(128, 128, 128, 0.9); color: white; ' +
+                    'padding: 1.5mm 3mm; border-radius: 1.5mm; ' +
+                    'font-size: 4pt; font-weight: 600; letter-spacing: 0.3px; ' +
+                    'box-shadow: 0 1px 3px rgba(0,0,0,0.15); line-height: 1;';
+
+                const priceBadgeStyle = 'position: absolute; z-index: 20; bottom: 14mm; right: 3mm; ' +
+                    'background: #DC143C; color: white; ' +
+                    'padding: 2mm 3.5mm; border-radius: 1.5mm; ' +
+                    'font-size: 5pt; font-weight: 700; ' +
+                    'box-shadow: 0 1px 3px rgba(0,0,0,0.15); line-height: 1;';
+
+                const nameBarStyle = 'position: absolute; z-index: 10; bottom: 0; left: 0; right: 0; ' +
+                    'background: rgba(255, 255, 255, 0.95); color: #1a1a1a; ' +
+                    'padding: 2.5mm 3mm; font-size: 4pt; font-weight: 600; ' +
+                    'text-align: center; backdrop-filter: blur(10px); ' +
+                    'box-shadow: 0 -1px 3px rgba(0,0,0,0.08); ' +
+                    'overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ' +
+                    'border-top: 0.5px solid rgba(0,0,0,0.05);';
+
+                return '<div class="product-card floating-badges">' +
+                    '<div class="image-container" style="position: relative; width: 100%; height: 100%; background: white; border-radius: 2mm; overflow: hidden; box-shadow: 0 0.5mm 2mm rgba(0,0,0,0.08);">' + 
+                        (imageUrl ? 
+                            '<img src="' + imageUrl + '" alt="' + productName + '" style="width: 100%; height: 100%; object-fit: contain; padding: 3mm; padding-bottom: 12mm;">' :
+                            '<div style="width: 100%; height: 100%; display: flex; flex-direction: column; align-items: center; justify-content: center; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding-bottom: 12mm;">' +
+                                '<div style="font-size: 14pt; margin-bottom: 2mm; opacity: 0.3;">📦</div>' +
+                                '<div style="font-size: 4pt; text-transform: uppercase; letter-spacing: 0.5px; opacity: 0.5;">Product Image</div>' +
+                            '</div>'
+                        ) +
+                        (displayOptions.showSKU ? 
+                            '<div style="' + skuBadgeStyle + '">SKU: ' + product.sku + '</div>' : ''
+                        ) +
+                        (displayOptions.showPrice ? 
+                            '<div style="' + priceBadgeStyle + '">' +
+                                (displayOptions.showCurrency ? 'R' : '') + priceStr +
+                            '</div>' : ''
+                        ) +
+                        (displayOptions.showProductName ? 
+                            '<div style="' + nameBarStyle + '">' + productName + '</div>' : ''
+                        ) +
+                    '</div>' +
+                '</div>';
+            }
             
             // Luxury Minimal Card Style with Product Name at BOTTOM
             if (cardStyle === 'luxury-minimal') {
@@ -2810,9 +2910,10 @@ Visit our showroom to see the full range!</textarea>
             }, 3000);
         }
 
-        console.log('🎉 OZZ Professional Catalog Generator v5.5 Loaded');
-        console.log('✨ Updated with new footer format and promo validity dates');
-        console.log('✨ Footer now matches client requirements exactly');
+        console.log('🎉 OZZ Professional Catalog Generator v5.6 Loaded');
+        console.log('✨ NEW: Floating Badges card style added - matches web catalog design');
+        console.log('✨ Web-minimal style with clean floating badges');
+        console.log('✨ Footer matches client requirements exactly');
         console.log('✨ Promo dates: 15 August - 15 September 2025');
         console.log('✨ All existing features preserved and working');
     </script>
