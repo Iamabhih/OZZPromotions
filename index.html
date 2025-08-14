@@ -19,11 +19,28 @@
             line-height: 1.6;
         }
 
+        /* New Banner Styles */
+        .heritage-banner {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0;
+            padding: 0;
+        }
+        
+        .banner-container {
+            width: 100%;
+            background: #ffffff;
+            border-bottom: 4px solid #006b6b;
+            margin: 0;
+            padding: 0;
+        }
+
         .header-section {
             background: linear-gradient(135deg, #006b6b 0%, #004d4d 25%, #cc0000 75%, #990000 100%);
             color: white;
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px 60px 20px;
             position: relative;
             overflow: hidden;
         }
@@ -233,95 +250,7 @@
             opacity: 0.8;
         }
 
-        .category-btn {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 2px solid #e5e7eb;
-            padding: 12px 24px;
-            border-radius: 25px;
-            font-weight: 700;
-            text-transform: uppercase;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            margin: 5px;
-            font-size: 13px;
-            letter-spacing: 0.5px;
-        }
-
-        .category-btn.active {
-            background: linear-gradient(135deg, #cc0000 0%, #990000 100%);
-            color: white;
-            border-color: #cc0000;
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(204, 0, 0, 0.3);
-        }
-
-        .mode-toggle {
-            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
-            border: 2px solid #e5e7eb;
-            border-radius: 16px;
-            padding: 20px;
-            margin: 25px 0;
-            text-align: center;
-        }
-
-        .mode-toggle h3 {
-            font-size: 20px;
-            color: #1e293b;
-            margin-bottom: 15px;
-            font-weight: 800;
-        }
-
-        .toggle-container {
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 15px;
-            margin: 15px 0;
-        }
-
-        .toggle-switch {
-            position: relative;
-            width: 60px;
-            height: 30px;
-            background: #e5e7eb;
-            border-radius: 15px;
-            cursor: pointer;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-switch.active {
-            background: #2196f3;
-        }
-
-        .toggle-switch::before {
-            content: '';
-            position: absolute;
-            top: 3px;
-            left: 3px;
-            width: 24px;
-            height: 24px;
-            background: white;
-            border-radius: 12px;
-            transition: all 0.3s ease;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-        }
-
-        .toggle-switch.active::before {
-            transform: translateX(30px);
-        }
-
-        .toggle-label {
-            font-weight: 600;
-            color: #64748b;
-            transition: all 0.3s ease;
-        }
-
-        .toggle-label.active {
-            color: #2196f3;
-            font-weight: 800;
-        }
-
-        /* Minimal Product Card Styles Only */
+        /* Product Card Styles */
         .products-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
@@ -359,10 +288,9 @@
             height: 100%;
             object-fit: contain;
             padding: 12px;
-            padding-bottom: 60px; /* Space for name bar */
+            padding-bottom: 60px;
         }
 
-        /* Floating SKU Badge - Bottom Left */
         .badge-sku {
             position: absolute;
             bottom: 55px;
@@ -379,7 +307,6 @@
             animation: slideIn 0.4s ease;
         }
 
-        /* Floating Price Badge - Bottom Right */
         .badge-price {
             position: absolute;
             bottom: 55px;
@@ -395,7 +322,6 @@
             animation: slideIn 0.4s ease 0.1s both;
         }
 
-        /* Product Name Bar - Full Width Bottom */
         .product-name-bar {
             position: absolute;
             bottom: 0;
@@ -416,7 +342,6 @@
             border-top: 1px solid rgba(0, 0, 0, 0.05);
         }
 
-        /* Page Badge - Top Right */
         .badge-page {
             position: absolute;
             top: 12px;
@@ -433,7 +358,6 @@
             animation: slideIn 0.4s ease 0.2s both;
         }
 
-        /* Trade/Wholesale Badge - Top Left */
         .badge-trade {
             position: absolute;
             top: 12px;
@@ -449,7 +373,7 @@
             z-index: 2;
             animation: slideIn 0.4s ease 0.15s both;
         }
-        /* Placeholder styling */
+
         .image-placeholder-minimal {
             width: 100%;
             height: 100%;
@@ -475,7 +399,6 @@
             font-weight: 600;
         }
 
-        /* Quick View Overlay */
         .product-card-minimal::after {
             content: 'QUICK VIEW';
             position: absolute;
@@ -499,7 +422,6 @@
             opacity: 1;
         }
 
-        /* Animation for badges */
         @keyframes slideIn {
             from {
                 opacity: 0;
@@ -582,6 +504,13 @@
     </style>
 </head>
 <body>
+    <!-- Heritage Banner -->
+    <div class="banner-container">
+        <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/heritage%20banner.png" 
+             alt="Heritage Day Banner" 
+             class="heritage-banner">
+    </div>
+
     <!-- Header -->
     <header class="header-section">
         <img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" 
@@ -603,7 +532,7 @@
     <!-- Search Section -->
     <div class="search-section">
         <h2 style="text-align: center; font-size: 2.5rem; margin-bottom: 15px; color: #1a1a1a; font-weight: 800;">🔍 Search Wholesale Catalog</h2>
-        <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 18px;">Browse our current wholesale products</p>
+        <p style="text-align: center; color: #666; margin-bottom: 30px; font-size: 18px;">Browse our current wholesale products by page</p>
         
         <div style="position: relative; max-width: 500px; margin: 0 auto 30px auto;">
             <svg style="position: absolute; left: 16px; top: 50%; transform: translateY(-50%); color: #006b6b;" width="20" height="20" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -614,32 +543,15 @@
         
         <div class="controls">
             <select id="sortBy" class="btn">
+                <option value="page">📋 Sort by Page</option>
                 <option value="name">📝 Sort by Name</option>
                 <option value="price">💰 Sort by Price</option>
-                <option value="category">🏷️ Sort by Category</option>
-                <option value="page">📋 Sort by Page</option>
             </select>
             <button id="sortOrderBtn" class="btn">↑ A-Z</button>
         </div>
 
-        <!-- Mode Toggle -->
-        <div class="mode-toggle">
-            <h3>📋 View By</h3>
-            <p style="color: #64748b; margin-bottom: 15px; font-size: 14px;">
-                Choose how you want to browse the wholesale catalog
-            </p>
-            <div class="toggle-container">
-                <span class="toggle-label active" id="categoryModeLabel">Category View</span>
-                <div class="toggle-switch" id="modeToggle" onclick="toggleBrowseMode()"></div>
-                <span class="toggle-label" id="pageModeLabel">Page View</span>
-            </div>
-            <p style="color: #64748b; font-size: 12px; margin-top: 10px;" id="modeDescription">
-                Browse products organized by categories
-            </p>
-        </div>
-        
-        <!-- Page Navigation -->
-        <div id="pageNavigation" class="page-navigation" style="display: none;">
+        <!-- Page Navigation (Always Visible) -->
+        <div id="pageNavigation" class="page-navigation" style="display: block;">
             <div class="page-nav-title">📋 Product Pages</div>
             <div class="page-nav-subtitle">
                 Products are organized by catalog pages.<br>
@@ -650,18 +562,11 @@
             </div>
         </div>
         
-        <!-- Category Buttons -->
-        <div style="text-align: center; margin: 30px 0;" id="categorySection">
-            <div id="categoryButtons">
-                <!-- Categories will be populated here -->
-            </div>
-        </div>
-        
-        <div style="text-align: center; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 20px; border-radius: 16px; border: 1px solid #e5e7eb;">
+        <div style="text-align: center; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 20px; border-radius: 16px; border: 1px solid #e5e7eb; margin-top: 30px;">
             <p style="font-size: 24px; font-weight: 800; color: #cc0000; margin-bottom: 8px;">
                 🏷️ <span id="filteredCount">0</span> wholesale products found!
             </p>
-            <p style="font-size: 14px; color: #2196f3; margin-top: 5px;" id="currentViewMode">Category browsing mode</p>
+            <p style="font-size: 14px; color: #2196f3; margin-top: 5px;" id="currentViewMode">Page browsing mode</p>
         </div>
     </div>
 
@@ -681,12 +586,11 @@
     <div id="noResults" style="display: none; text-align: center; padding: 60px 20px; background: linear-gradient(145deg, #ffffff 0%, #fafafa 100%); margin: 20px; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);">
         <div style="font-size: 5rem; margin-bottom: 20px;">🔍</div>
         <h3 style="font-size: 2rem; margin-bottom: 15px; color: #1a1a1a;">No products found</h3>
-        <p style="font-size: 18px; color: #666; margin-bottom: 30px;">Try adjusting your search terms or browse all categories!</p>
+        <p style="font-size: 18px; color: #666; margin-bottom: 30px;">Try adjusting your search terms or browse all pages!</p>
         <button onclick="clearFilters()" style="background: linear-gradient(135deg, #cc0000 0%, #990000 100%); color: white; border: none; padding: 16px 32px; border-radius: 25px; font-weight: 700; cursor: pointer; font-size: 16px; text-transform: uppercase; letter-spacing: 0.5px; box-shadow: 0 6px 20px rgba(204, 0, 0, 0.3); transition: all 0.3s ease;">
             Show All Products
         </button>
     </div>
-
     <!-- Footer -->
     <footer style="background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%); color: white; padding: 60px 20px; text-align: center; margin-top: 60px; position: relative;">
         <div style="content: ''; position: absolute; top: 0; left: 0; right: 0; height: 4px; background: linear-gradient(90deg, #006b6b 0%, #cc0000 50%, #006b6b 100%);"></div>
@@ -760,13 +664,13 @@
             edition: "15",
             startDate: "15 August 2025",
             endDate: "15 September 2025",
-            fileName: "WHOLESALE PROMO.xlsx", // Or "CURRENT PROMO.xlsx" or "JULY PROMO.xlsx"
+            fileName: "WHOLESALE PROMO.xlsx",
             businessType: "WHOLESALE",
             updateFrequency: "Bi-Weekly",
             targetAudience: "Trade Customers"
         };
 
-        // Silent Google Drive Image Manager (no status messages to user)
+        // Silent Google Drive Image Manager
         class SilentGoogleDriveImageManager {
             constructor() {
                 this.imageCache = new Map();
@@ -964,13 +868,11 @@
         // Global variables
         let allProducts = [];
         let filteredProducts = [];
-        let currentCategory = 'ALL';
-        let currentPage = 'ALL'; // Changed from currentCollection
-        let sortBy = 'name';
+        let currentPage = 'ALL';
+        let sortBy = 'page';
         let sortOrder = 'asc';
         let imageManager = null;
-        let browseMode = 'category';
-        let pageData = {}; // Changed from collectionData
+        let pageData = {};
 
         // Initialize when page loads
         document.addEventListener('DOMContentLoaded', function() {
@@ -980,13 +882,11 @@
 
         // Update promo information dynamically
         function updatePromoInfo() {
-            // Update promo validity badge
             const validityBadge = document.getElementById('promoValidity');
             if (validityBadge) {
                 validityBadge.innerHTML = `✅ EDITION ${PROMO_CONFIG.edition} | Valid until ${PROMO_CONFIG.endDate}`;
             }
 
-            // Update footer text
             const footerPromoText = document.getElementById('footerPromoText');
             if (footerPromoText) {
                 footerPromoText.textContent = `Wholesale prices valid until ${PROMO_CONFIG.endDate}`;
@@ -997,7 +897,6 @@
                 footerValidityText.textContent = `© 2025 OZZ Cash & Carry. Prices valid until ${PROMO_CONFIG.endDate}. Trade customers only.`;
             }
 
-            // Check if promo is expired
             const endDate = new Date(PROMO_CONFIG.endDate);
             const today = new Date();
             if (today > endDate) {
@@ -1040,7 +939,6 @@
             try {
                 console.log('🚀 Loading products from ' + PROMO_CONFIG.fileName);
                 
-                // Try multiple file names for backward compatibility
                 const fileNames = [PROMO_CONFIG.fileName, 'JULY PROMO.xlsx', 'WHOLESALE PROMO.xlsx', 'CURRENT PROMO.xlsx'];
                 let response = null;
                 let loadedFileName = null;
@@ -1096,7 +994,7 @@
                             description: String(row[2]).trim(),
                             price: parseFloat(row[3]) || 0,
                             category: String(row[4] || 'UNCATEGORIZED').trim().toUpperCase(),
-                            page: currentPageName ? currentPageName : 'PAGE 1' // Changed from collection
+                            page: currentPageName ? currentPageName : 'PAGE 1'
                         };
                         
                         if (product.price > 0 && product.description) {
@@ -1124,8 +1022,7 @@
                 console.log('✅ Processed products:', allProducts.length);
                 console.log('📋 Pages found:', Object.keys(tempPageData).length);
                 
-                setupCategories();
-                setupPages(); // Changed from setupCollections
+                setupPages();
                 applyFilters();
                 updateCounts();
                 
@@ -1135,31 +1032,7 @@
             }
         }
 
-        function setupCategories() {
-            const categories = ['ALL'];
-            const categorySet = new Set();
-            
-            allProducts.forEach(function(product) {
-                if (!categorySet.has(product.category)) {
-                    categorySet.add(product.category);
-                    categories.push(product.category);
-                }
-            });
-            
-            categories.sort();
-            
-            const categoryButtons = document.getElementById('categoryButtons');
-            categoryButtons.innerHTML = '';
-            
-            categories.forEach(function(category) {
-                const button = document.createElement('button');
-                button.className = 'category-btn' + (category === 'ALL' ? ' active' : '');
-                button.textContent = category;
-                button.addEventListener('click', function() { filterByCategory(category); });
-                categoryButtons.appendChild(button);
-            });
-        }
-        function setupPages() { // Changed from setupCollections
+        function setupPages() {
             const pageButtons = document.getElementById('pageButtons');
             pageButtons.innerHTML = '';
             
@@ -1185,72 +1058,13 @@
             });
         }
 
-        function toggleBrowseMode() {
-            const toggle = document.getElementById('modeToggle');
-            const categoryModeLabel = document.getElementById('categoryModeLabel');
-            const pageModeLabel = document.getElementById('pageModeLabel');
-            const modeDescription = document.getElementById('modeDescription');
-            const categorySection = document.getElementById('categorySection');
-            const pageNavigation = document.getElementById('pageNavigation');
-            const currentViewMode = document.getElementById('currentViewMode');
-            
-            if (browseMode === 'category') {
-                // Switch to page mode
-                browseMode = 'page';
-                toggle.classList.add('active');
-                categoryModeLabel.classList.remove('active');
-                pageModeLabel.classList.add('active');
-                modeDescription.textContent = 'Browse products organized by catalog pages';
-                categorySection.style.display = 'none';
-                pageNavigation.style.display = 'block';
-                currentViewMode.textContent = 'Page browsing mode';
-                
-                // Reset to show all pages
-                currentPage = 'ALL';
-                updatePageButtons();
-                
-            } else {
-                // Switch to category mode
-                browseMode = 'category';
-                toggle.classList.remove('active');
-                categoryModeLabel.classList.add('active');
-                pageModeLabel.classList.remove('active');
-                modeDescription.textContent = 'Browse products organized by categories';
-                categorySection.style.display = 'block';
-                pageNavigation.style.display = 'none';
-                currentViewMode.textContent = 'Category browsing mode';
-                
-                // Reset to show all categories
-                currentCategory = 'ALL';
-                updateCategoryButtons();
-            }
-            
-            applyFilters();
-        }
-
-        function filterByCategory(category) {
-            if (browseMode !== 'category') return;
-            
-            currentCategory = category;
-            updateCategoryButtons();
-            applyFilters();
-        }
-
-        function filterByPage(page) { // Changed from filterByCollection
-            if (browseMode !== 'page') return;
-            
+        function filterByPage(page) {
             currentPage = page;
             updatePageButtons();
             applyFilters();
         }
 
-        function updateCategoryButtons() {
-            document.querySelectorAll('.category-btn').forEach(function(btn) {
-                btn.className = 'category-btn' + (btn.textContent === currentCategory ? ' active' : '');
-            });
-        }
-
-        function updatePageButtons() { // Changed from updateCollectionButtons
+        function updatePageButtons() {
             document.querySelectorAll('.page-btn').forEach(function(btn) {
                 const pageText = btn.querySelector('.page-number').textContent;
                 const isActive = (currentPage === 'ALL' && pageText === 'ALL PAGES') || 
@@ -1271,13 +1085,8 @@
 
         function clearFilters() {
             document.getElementById('searchInput').value = '';
-            if (browseMode === 'category') {
-                currentCategory = 'ALL';
-                updateCategoryButtons();
-            } else {
-                currentPage = 'ALL';
-                updatePageButtons();
-            }
+            currentPage = 'ALL';
+            updatePageButtons();
             applyFilters();
         }
 
@@ -1288,20 +1097,11 @@
             // Start with all products
             filteredProducts = allProducts.slice();
             
-            // Apply mode-specific filtering
-            if (browseMode === 'category') {
-                // Category mode filtering
-                filteredProducts = filteredProducts.filter(function(product) {
-                    const matchesCategory = currentCategory === 'ALL' || product.category === currentCategory;
-                    return matchesCategory;
-                });
-            } else {
-                // Page mode filtering
-                filteredProducts = filteredProducts.filter(function(product) {
-                    const matchesPage = currentPage === 'ALL' || product.page === currentPage;
-                    return matchesPage;
-                });
-            }
+            // Apply page filtering
+            filteredProducts = filteredProducts.filter(function(product) {
+                const matchesPage = currentPage === 'ALL' || product.page === currentPage;
+                return matchesPage;
+            });
             
             // Apply search filtering
             filteredProducts = filteredProducts.filter(function(product) {
@@ -1318,10 +1118,6 @@
                     case 'price':
                         aVal = a.price;
                         bVal = b.price;
-                        break;
-                    case 'category':
-                        aVal = a.category;
-                        bVal = b.category;
                         break;
                     case 'page':
                         aVal = parseInt(a.page.replace('PAGE ', ''));
@@ -1362,10 +1158,9 @@
             const grid = document.createElement('div');
             grid.className = 'products-grid';
             
-            // Only minimal card layout
             grid.innerHTML = filteredProducts.map(function(product) {
                 const imageUrl = imageManager ? imageManager.getImageUrl(product.sku) : null;
-                const pageName = product.page; // Already says "PAGE X"
+                const pageName = product.page;
                 
                 return '<div class="product-card-minimal" onclick="showProductDetails(\'' + product.sku + '\')">' +
                     '<div class="product-image-wrapper">' +
@@ -1379,7 +1174,7 @@
                         '<div class="badge-trade">WHOLESALE</div>' +
                         '<div class="badge-sku">' + product.sku + '</div>' +
                         '<div class="badge-price">R' + product.price.toFixed(2) + '</div>' +
-                        (browseMode === 'page' ? '<div class="badge-page">' + pageName + '</div>' : '') +
+                        '<div class="badge-page">' + pageName + '</div>' +
                         '<div class="product-name-bar">' + product.description + '</div>' +
                     '</div>' +
                 '</div>';
@@ -1388,7 +1183,6 @@
             container.innerHTML = '';
             container.appendChild(grid);
             
-            // Update images for newly created products
             if (imageManager && imageManager.imageCache.size > 0) {
                 setTimeout(function() { imageManager.updateAllProductImages(); }, 200);
             }
@@ -1406,12 +1200,11 @@
             const product = allProducts.find(function(p) { return p.sku === sku; });
             if (!product) return;
             
-            const pageInfo = browseMode === 'page' ? '\n📋 ' + product.page : '';
-            
             alert('💼 WHOLESALE PRODUCT DETAILS 💼\n\n' +
                 '📦 Product: ' + product.description + '\n' +
                 '🏷️ SKU: ' + product.sku + '\n' +
-                '📂 Category: ' + product.category + pageInfo + '\n\n' +
+                '📂 Category: ' + product.category + '\n' +
+                '📋 ' + product.page + '\n\n' +
                 '💰 WHOLESALE PRICE: R' + product.price.toFixed(2) + '\n\n' +
                 '📅 Valid until ' + PROMO_CONFIG.endDate + '\n' +
                 '📞 Call +27 31 332 7192 to order!\n\n' +
@@ -1438,9 +1231,8 @@
 
         console.log('💼 OZZ Cash & Carry Wholesale Catalog Loaded');
         console.log('📋 Edition ' + PROMO_CONFIG.edition + ' - Valid until ' + PROMO_CONFIG.endDate);
-        console.log('💎 Minimal view with floating badges');
-        console.log('📄 Page-based organization');
-        console.log('🔄 Dual browse modes: Category and Page');
+        console.log('📄 Page-based organization (Default View)');
+        console.log('🎯 Heritage Day Banner Added');
         console.log('✨ Dynamic configuration for bi-weekly updates');
     </script>
 </body>
