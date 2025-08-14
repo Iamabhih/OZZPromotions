@@ -272,6 +272,15 @@
             .header-left { display: flex; align-items: center; gap: 3mm; }
             .header-logo { height: 8mm; width: auto; }
             .header-title { font-size: 12pt; font-weight: 700; color: #1a1a1a; }
+            .header-promo-validity { 
+                font-size: 9pt; 
+                color: #DC143C; 
+                font-weight: 600; 
+                margin-left: 5mm;
+                padding: 1mm 3mm;
+                background: rgba(220, 20, 60, 0.1);
+                border-radius: 2mm;
+            }
             .page-number { font-size: 10pt; color: #666; font-weight: 500; }
             
             .page-content {
@@ -671,21 +680,64 @@
             .price-cents { font-size: 8pt; vertical-align: super; font-weight: 800; margin-left: 0.3mm; color: #ffffff; }
             .price-unit { font-size: 6pt; text-transform: uppercase; letter-spacing: 0.8px; opacity: 0.95; font-weight: 700; color: rgba(255,255,255,0.95); }
             
-            /* Footer and Page Styles */
+            /* UPDATED Footer Styles */
             .page-footer {
                 border-top: 1px solid #e0e0e0;
-                padding-top: 3mm;
-                font-size: 7pt;
+                padding-top: 2mm;
+                font-size: 6.5pt;
                 color: #666;
-                line-height: 1.4;
+                line-height: 1.3;
                 flex-shrink: 0;
-                height: 20mm;
+                height: 22mm;
             }
             
-            .disclaimer { margin-bottom: 2mm; text-align: justify; }
-            .footer-info { display: flex; justify-content: space-between; align-items: center; font-size: 8pt; }
-            .footer-left { font-weight: 600; color: #333; }
-            .footer-right { text-align: right; }
+            .disclaimer { 
+                margin-bottom: 1.5mm; 
+                text-align: center; 
+                font-size: 6pt;
+                color: #888;
+            }
+            
+            .footer-contact-row {
+                display: flex;
+                justify-content: center;
+                align-items: center;
+                gap: 3mm;
+                margin-bottom: 1.5mm;
+                font-size: 7pt;
+                color: #333;
+                font-weight: 600;
+            }
+            
+            .footer-contact-row span {
+                display: flex;
+                align-items: center;
+                gap: 1mm;
+            }
+            
+            .footer-bottom-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                padding-top: 1.5mm;
+                border-top: 1px solid #e0e0e0;
+                font-size: 6pt;
+            }
+            
+            .footer-promo-expiry {
+                color: #DC143C;
+                font-weight: 700;
+            }
+            
+            .footer-credit {
+                color: #999;
+                text-align: right;
+            }
+            
+            .footer-credit a {
+                color: #999;
+                text-decoration: none;
+            }
             
             /* Hero page styles */
             .hero-page .page-inner { display: flex; flex-direction: column; justify-content: flex-start; padding-top: 10mm; }
@@ -693,6 +745,34 @@
             .hero-logo { height: 25mm; margin-bottom: 8mm; }
             .hero-title { font-size: 36pt; font-weight: 900; color: #cc0000; margin-bottom: 4mm; letter-spacing: -1.5px; }
             .hero-subtitle { font-size: 14pt; color: #444; margin-bottom: 8mm; font-weight: 300; letter-spacing: 0.5px; }
+            
+            /* Promo Validity Box */
+            .promo-validity-box {
+                background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
+                border: 2px solid #DC143C;
+                border-radius: 4mm;
+                padding: 4mm 6mm;
+                margin: 4mm auto;
+                max-width: 150mm;
+                box-shadow: 0 2mm 5mm rgba(220, 20, 60, 0.15);
+            }
+            
+            .promo-validity-title {
+                font-size: 12pt;
+                font-weight: 800;
+                color: #DC143C;
+                margin-bottom: 2mm;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 2mm;
+            }
+            
+            .promo-validity-dates {
+                font-size: 14pt;
+                font-weight: 700;
+                color: #1a1a1a;
+            }
             
             .info-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 4mm; margin: 5mm 0; }
             .info-card { background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 4mm; border-radius: 3mm; text-align: center; box-shadow: 0 1mm 3mm rgba(0,0,0,0.05); }
@@ -896,7 +976,7 @@
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Page Title:
-                            <input type="text" id="introTitle" value="Welcome to Our July 2025 Promotion" 
+                            <input type="text" id="introTitle" value="Welcome to Our August-September 2025 Promotion" 
                                    style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
                         </label>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
@@ -907,14 +987,14 @@
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Special Message:
                             <textarea id="introMessage" rows="4" 
-                                      style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we're offering exceptional deals on premium products to help you create the perfect living space.</textarea>
+                                      style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This promotion offers exceptional deals on premium products to help you create the perfect living space.</textarea>
                         </label>
                     </div>
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Promotion Details:
                             <textarea id="promoDetails" rows="3" 
-                                      style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">• Valid for July 2025 only
+                                      style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">• Valid from 15 August to 15 September 2025
 - Limited quantities available
 - Collection only at our Durban store
 - Delivery available at additional cost</textarea>
@@ -1096,7 +1176,6 @@ Visit our showroom to see the full range!</textarea>
                 });
             }
         });
-
         // FIXED EXPORT FUNCTIONS
         async function exportAllPages() {
             const pages = document.querySelectorAll('.page');
@@ -1128,273 +1207,273 @@ Visit our showroom to see the full range!</textarea>
             }
         }
 
-       async function exportPageAsImage(pageElement, pageNumber, format, quality) {
-    try {
-        // Clone the page element
-        const clone = pageElement.cloneNode(true);
-        
-        // Create a temporary container with white background
-        const tempContainer = document.createElement('div');
-        tempContainer.style.cssText = `
-            position: fixed;
-            left: -9999px;
-            top: 0;
-            width: 794px;
-            height: 1123px;
-            background: white !important;
-            z-index: -1;
-            isolation: isolate;
-        `;
-        document.body.appendChild(tempContainer);
-        
-        // Create a white background div to ensure no bleed-through
-        const whiteBackground = document.createElement('div');
-        whiteBackground.style.cssText = `
-            position: absolute;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            background: white !important;
-            z-index: 0;
-        `;
-        tempContainer.appendChild(whiteBackground);
-        
-        // Force print styles and clean background on the clone
-        clone.style.cssText = `
-            width: 794px !important;
-            height: 1123px !important;
-            margin: 0 !important;
-            padding: 0 !important;
-            background: white !important;
-            background-image: none !important;
-            position: relative !important;
-            overflow: hidden !important;
-            box-shadow: none !important;
-            z-index: 1;
-        `;
-        
-        // Remove any background images or patterns from all elements
-        const allElements = clone.querySelectorAll('*');
-        allElements.forEach(el => {
-            const style = window.getComputedStyle(el);
-            if (style.backgroundImage && style.backgroundImage !== 'none' && !el.tagName.match(/IMG/i)) {
-                el.style.backgroundImage = 'none !important';
-            }
-        });
-        
-        // Apply print styles to page-inner
-        const pageInner = clone.querySelector('.page-inner');
-        if (pageInner) {
-            pageInner.style.cssText = `
-                position: absolute !important;
-                top: 56px !important;
-                left: 56px !important;
-                right: 56px !important;
-                bottom: 56px !important;
-                width: calc(100% - 112px) !important;
-                height: calc(100% - 112px) !important;
-                display: flex !important;
-                flex-direction: column !important;
-                padding: 0 !important;
-                background: white !important;
-                background-image: none !important;
-            `;
-        }
-        
-        // Hide any hero/background elements that might be bleeding through
-        const heroElements = clone.querySelectorAll('.hero-logo, .logo-header, [class*="logo"]');
-        heroElements.forEach(el => {
-            // Only hide if it's a background element, not product images
-            if (!el.closest('.product-card') && !el.closest('.header-logo')) {
-                const rect = el.getBoundingClientRect();
-                // If it's unusually large, it's probably a background element
-                if (rect && (rect.width > 400 || rect.height > 400)) {
-                    el.style.display = 'none !important';
-                }
-            }
-        });
-        
-        // Apply print styles to all product grids
-        const grids = clone.querySelectorAll('.products-grid');
-        grids.forEach(grid => {
-            if (grid.classList.contains('high-density')) {
-                grid.style.cssText = `
-                    display: grid !important;
-                    grid-template-columns: repeat(4, 1fr) !important;
-                    grid-template-rows: repeat(5, 1fr) !important;
-                    gap: 9px !important;
-                    width: 100% !important;
-                    height: 100% !important;
-                    background: transparent !important;
+        async function exportPageAsImage(pageElement, pageNumber, format, quality) {
+            try {
+                // Clone the page element
+                const clone = pageElement.cloneNode(true);
+                
+                // Create a temporary container with white background
+                const tempContainer = document.createElement('div');
+                tempContainer.style.cssText = `
+                    position: fixed;
+                    left: -9999px;
+                    top: 0;
+                    width: 794px;
+                    height: 1123px;
+                    background: white !important;
+                    z-index: -1;
+                    isolation: isolate;
                 `;
-            }
-        });
-        
-        // Apply print styles to product cards
-        const productCards = clone.querySelectorAll('.product-card');
-        productCards.forEach(card => {
-            if (card.classList.contains('luxury-minimal')) {
-                card.style.cssText = `
-                    border: none !important;
-                    box-shadow: none !important;
-                    background: transparent !important;
+                document.body.appendChild(tempContainer);
+                
+                // Create a white background div to ensure no bleed-through
+                const whiteBackground = document.createElement('div');
+                whiteBackground.style.cssText = `
+                    position: absolute;
+                    top: 0;
+                    left: 0;
+                    width: 100%;
+                    height: 100%;
+                    background: white !important;
+                    z-index: 0;
+                `;
+                tempContainer.appendChild(whiteBackground);
+                
+                // Force print styles and clean background on the clone
+                clone.style.cssText = `
+                    width: 794px !important;
+                    height: 1123px !important;
+                    margin: 0 !important;
                     padding: 0 !important;
-                    display: block !important;
-                    height: 100% !important;
+                    background: white !important;
+                    background-image: none !important;
+                    position: relative !important;
+                    overflow: hidden !important;
+                    box-shadow: none !important;
+                    z-index: 1;
                 `;
                 
-                const imageContainer = card.querySelector('.image-container');
-                if (imageContainer) {
-                    imageContainer.style.cssText = `
-                        position: relative !important;
-                        width: 100% !important;
-                        height: 100% !important;
+                // Remove any background images or patterns from all elements
+                const allElements = clone.querySelectorAll('*');
+                allElements.forEach(el => {
+                    const style = window.getComputedStyle(el);
+                    if (style.backgroundImage && style.backgroundImage !== 'none' && !el.tagName.match(/IMG/i)) {
+                        el.style.backgroundImage = 'none !important';
+                    }
+                });
+                
+                // Apply print styles to page-inner
+                const pageInner = clone.querySelector('.page-inner');
+                if (pageInner) {
+                    pageInner.style.cssText = `
+                        position: absolute !important;
+                        top: 56px !important;
+                        left: 56px !important;
+                        right: 56px !important;
+                        bottom: 56px !important;
+                        width: calc(100% - 112px) !important;
+                        height: calc(100% - 112px) !important;
+                        display: flex !important;
+                        flex-direction: column !important;
+                        padding: 0 !important;
                         background: white !important;
-                        border-radius: 7px !important;
-                        overflow: hidden !important;
-                        box-shadow: 0 2px 7px rgba(0,0,0,0.08) !important;
+                        background-image: none !important;
                     `;
                 }
+                
+                // Hide any hero/background elements that might be bleeding through
+                const heroElements = clone.querySelectorAll('.hero-logo, .logo-header, [class*="logo"]');
+                heroElements.forEach(el => {
+                    // Only hide if it's a background element, not product images
+                    if (!el.closest('.product-card') && !el.closest('.header-logo')) {
+                        const rect = el.getBoundingClientRect();
+                        // If it's unusually large, it's probably a background element
+                        if (rect && (rect.width > 400 || rect.height > 400)) {
+                            el.style.display = 'none !important';
+                        }
+                    }
+                });
+                
+                // Apply print styles to all product grids
+                const grids = clone.querySelectorAll('.products-grid');
+                grids.forEach(grid => {
+                    if (grid.classList.contains('high-density')) {
+                        grid.style.cssText = `
+                            display: grid !important;
+                            grid-template-columns: repeat(4, 1fr) !important;
+                            grid-template-rows: repeat(5, 1fr) !important;
+                            gap: 9px !important;
+                            width: 100% !important;
+                            height: 100% !important;
+                            background: transparent !important;
+                        `;
+                    }
+                });
+                
+                // Apply print styles to product cards
+                const productCards = clone.querySelectorAll('.product-card');
+                productCards.forEach(card => {
+                    if (card.classList.contains('luxury-minimal')) {
+                        card.style.cssText = `
+                            border: none !important;
+                            box-shadow: none !important;
+                            background: transparent !important;
+                            padding: 0 !important;
+                            display: block !important;
+                            height: 100% !important;
+                        `;
+                        
+                        const imageContainer = card.querySelector('.image-container');
+                        if (imageContainer) {
+                            imageContainer.style.cssText = `
+                                position: relative !important;
+                                width: 100% !important;
+                                height: 100% !important;
+                                background: white !important;
+                                border-radius: 7px !important;
+                                overflow: hidden !important;
+                                box-shadow: 0 2px 7px rgba(0,0,0,0.08) !important;
+                            `;
+                        }
+                    }
+                });
+                
+                // Fix category headers
+                const categoryHeaders = clone.querySelectorAll('.category-header');
+                categoryHeaders.forEach(header => {
+                    header.style.cssText = `
+                        background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%) !important;
+                        color: white !important;
+                        padding: 15px 22px !important;
+                        margin: 0 -19px 19px -19px !important;
+                        font-size: 18px !important;
+                        font-weight: 800 !important;
+                        letter-spacing: 1px !important;
+                        text-transform: uppercase !important;
+                        display: flex !important;
+                        align-items: center !important;
+                        box-shadow: 0 4px 11px rgba(0,0,0,0.15) !important;
+                        height: 45px !important;
+                    `;
+                });
+                
+                // Fix page headers
+                const pageHeader = clone.querySelector('.page-header');
+                if (pageHeader) {
+                    pageHeader.style.cssText = `
+                        display: flex !important;
+                        justify-content: space-between !important;
+                        align-items: center !important;
+                        padding-bottom: 11px !important;
+                        margin-bottom: 11px !important;
+                        border-bottom: 2px solid #1a1a1a !important;
+                        height: 45px !important;
+                        background: white !important;
+                    `;
+                }
+                
+                // Fix page footers
+                const pageFooter = clone.querySelector('.page-footer');
+                if (pageFooter) {
+                    pageFooter.style.cssText = `
+                        border-top: 1px solid #e0e0e0 !important;
+                        padding-top: 11px !important;
+                        font-size: 10px !important;
+                        color: #666 !important;
+                        line-height: 1.4 !important;
+                        height: 75px !important;
+                        background: white !important;
+                    `;
+                }
+                
+                // Ensure images are properly sized
+                const images = clone.querySelectorAll('img');
+                images.forEach(img => {
+                    if (img.closest('.image-container')) {
+                        img.style.cssText = `
+                            width: 100% !important;
+                            height: 100% !important;
+                            object-fit: contain !important;
+                            padding: 7px !important;
+                        `;
+                    }
+                });
+                
+                // Fix badge positions in luxury minimal style
+                const badges = clone.querySelectorAll('[style*="position: absolute"]');
+                badges.forEach(badge => {
+                    const currentStyle = badge.getAttribute('style');
+                    if (currentStyle && currentStyle.includes('bottom:')) {
+                        badge.setAttribute('style', currentStyle.replace(/bottom:\s*\d+mm/g, 'bottom: 7px'));
+                    }
+                });
+                
+                tempContainer.appendChild(clone);
+                
+                // Wait for images to load
+                await waitForImages(clone);
+                
+                // Small delay to ensure rendering is complete
+                await new Promise(resolve => setTimeout(resolve, 300));
+                
+                // Configure html2canvas for high quality with white background
+                const scale = quality || 3;
+                const canvas = await html2canvas(clone, {
+                    scale: scale,
+                    useCORS: true,
+                    allowTaint: true,
+                    backgroundColor: '#ffffff',
+                    logging: false,
+                    letterRendering: true,
+                    imageTimeout: 15000,
+                    width: 794,
+                    height: 1123,
+                    removeContainer: false,
+                    onclone: (clonedDoc, element) => {
+                        element.style.width = '794px';
+                        element.style.height = '1123px';
+                        element.style.background = 'white';
+                    }
+                });
+                
+                // Remove temporary container
+                document.body.removeChild(tempContainer);
+                
+                // Convert to blob and download
+                canvas.toBlob(function(blob) {
+                    if (!blob) {
+                        throw new Error('Failed to create image blob');
+                    }
+                    
+                    const link = document.createElement('a');
+                    link.download = `OZZ-catalog-page-${pageNumber}.${format}`;
+                    link.href = URL.createObjectURL(blob);
+                    document.body.appendChild(link);
+                    link.click();
+                    document.body.removeChild(link);
+                    
+                    // Clean up
+                    setTimeout(() => URL.revokeObjectURL(link.href), 100);
+                }, format === 'png' ? 'image/png' : 'image/jpeg', format === 'jpg' ? 0.95 : 1.0);
+                
+            } catch (error) {
+                console.error(`Error exporting page ${pageNumber}:`, error);
+                throw error;
+            } finally {
+                // ADDED: Force cleanup to prevent reload issues
+                if (tempContainer && tempContainer.parentNode) {
+                    tempContainer.parentNode.removeChild(tempContainer);
+                }
+                // Clear any lingering references
+                clone = null;
+                whiteBackground = null;
+                tempContainer = null;
+                // Force garbage collection hint
+                if (window.gc) {
+                    window.gc();
+                }
             }
-        });
-        
-        // Fix category headers
-        const categoryHeaders = clone.querySelectorAll('.category-header');
-        categoryHeaders.forEach(header => {
-            header.style.cssText = `
-                background: linear-gradient(90deg, #1a1a1a 0%, #2d2d2d 100%) !important;
-                color: white !important;
-                padding: 15px 22px !important;
-                margin: 0 -19px 19px -19px !important;
-                font-size: 18px !important;
-                font-weight: 800 !important;
-                letter-spacing: 1px !important;
-                text-transform: uppercase !important;
-                display: flex !important;
-                align-items: center !important;
-                box-shadow: 0 4px 11px rgba(0,0,0,0.15) !important;
-                height: 45px !important;
-            `;
-        });
-        
-        // Fix page headers
-        const pageHeader = clone.querySelector('.page-header');
-        if (pageHeader) {
-            pageHeader.style.cssText = `
-                display: flex !important;
-                justify-content: space-between !important;
-                align-items: center !important;
-                padding-bottom: 11px !important;
-                margin-bottom: 11px !important;
-                border-bottom: 2px solid #1a1a1a !important;
-                height: 45px !important;
-                background: white !important;
-            `;
         }
-        
-        // Fix page footers
-        const pageFooter = clone.querySelector('.page-footer');
-        if (pageFooter) {
-            pageFooter.style.cssText = `
-                border-top: 1px solid #e0e0e0 !important;
-                padding-top: 11px !important;
-                font-size: 10px !important;
-                color: #666 !important;
-                line-height: 1.4 !important;
-                height: 75px !important;
-                background: white !important;
-            `;
-        }
-        
-        // Ensure images are properly sized
-        const images = clone.querySelectorAll('img');
-        images.forEach(img => {
-            if (img.closest('.image-container')) {
-                img.style.cssText = `
-                    width: 100% !important;
-                    height: 100% !important;
-                    object-fit: contain !important;
-                    padding: 7px !important;
-                `;
-            }
-        });
-        
-        // Fix badge positions in luxury minimal style
-        const badges = clone.querySelectorAll('[style*="position: absolute"]');
-        badges.forEach(badge => {
-            const currentStyle = badge.getAttribute('style');
-            if (currentStyle && currentStyle.includes('bottom:')) {
-                badge.setAttribute('style', currentStyle.replace(/bottom:\s*\d+mm/g, 'bottom: 7px'));
-            }
-        });
-        
-        tempContainer.appendChild(clone);
-        
-        // Wait for images to load
-        await waitForImages(clone);
-        
-        // Small delay to ensure rendering is complete
-        await new Promise(resolve => setTimeout(resolve, 300));
-        
-        // Configure html2canvas for high quality with white background
-        const scale = quality || 3;
-        const canvas = await html2canvas(clone, {
-            scale: scale,
-            useCORS: true,
-            allowTaint: true,
-            backgroundColor: '#ffffff',
-            logging: false,
-            letterRendering: true,
-            imageTimeout: 15000,
-            width: 794,
-            height: 1123,
-            removeContainer: false,
-            onclone: (clonedDoc, element) => {
-                element.style.width = '794px';
-                element.style.height = '1123px';
-                element.style.background = 'white';
-            }
-        });
-        
-        // Remove temporary container
-        document.body.removeChild(tempContainer);
-        
-        // Convert to blob and download
-        canvas.toBlob(function(blob) {
-            if (!blob) {
-                throw new Error('Failed to create image blob');
-            }
-            
-            const link = document.createElement('a');
-            link.download = `OZZ-catalog-page-${pageNumber}.${format}`;
-            link.href = URL.createObjectURL(blob);
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            
-            // Clean up
-            setTimeout(() => URL.revokeObjectURL(link.href), 100);
-        }, format === 'png' ? 'image/png' : 'image/jpeg', format === 'jpg' ? 0.95 : 1.0);
-        
-    } catch (error) {
-        console.error(`Error exporting page ${pageNumber}:`, error);
-        throw error;
-    } finally {
-        // ADDED: Force cleanup to prevent reload issues
-        if (tempContainer && tempContainer.parentNode) {
-            tempContainer.parentNode.removeChild(tempContainer);
-        }
-        // Clear any lingering references
-        clone = null;
-        whiteBackground = null;
-        tempContainer = null;
-        // Force garbage collection hint
-        if (window.gc) {
-            window.gc();
-        }
-    }
-}
 
         // Helper function to wait for all images in an element to load
         function waitForImages(element) {
@@ -1803,6 +1882,7 @@ Visit our showroom to see the full range!</textarea>
                 return { mappedProducts: this.imageCache.size, cacheInfo: cacheInfo };
             }
         }
+        
         async function loadCatalog() {
             const loadBtn = document.getElementById('loadBtn');
             const status = document.getElementById('status');
@@ -2079,7 +2159,6 @@ Visit our showroom to see the full range!</textarea>
                 refreshBtn.innerHTML = originalText;
             }
         }
-
         function showPagePreview() {
             const existingPreview = document.getElementById('pagePreviewSection');
             if (existingPreview) {
@@ -2223,6 +2302,7 @@ Visit our showroom to see the full range!</textarea>
             }
             showNotification('All categories deselected', 'info');
         }
+        
         function generateCatalog() {
             // Update display options before generating
             updateDisplayOptions();
@@ -2352,13 +2432,30 @@ Visit our showroom to see the full range!</textarea>
             const page = document.createElement('div');
             page.className = 'page hero-page';
             
-            const title = document.getElementById('introTitle').value || 'Welcome to Our July 2025 Promotion';
+            const title = document.getElementById('introTitle').value || 'Welcome to Our August-September 2025 Promotion';
             const subtitle = document.getElementById('introSubtitle').value || 'Exclusive deals on premium home & kitchen products';
             const message = document.getElementById('introMessage').value || 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs.';
-            const promoDetails = document.getElementById('promoDetails').value || '• Valid for July 2025 only\n• Limited quantities available';
+            const promoDetails = document.getElementById('promoDetails').value || '• Valid from 15 August to 15 September 2025\n• Limited quantities available';
             const additionalInfo = document.getElementById('additionalInfo').value || 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM';
             
-            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">JULY 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p><div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(2, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">+27 31 332 7192</div></div><div class="info-card"><div class="info-label">Email</div><div class="info-value">queries@ozzsa.com</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Mazeppa Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. Ozz Cash and Carry reserves the right to limit quantities. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • July 2025 Catalog</span><span class="footer-right">Page 1 of <span class="total-pages">-</span> • Version 5.4</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
+            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">AUGUST-SEPTEMBER 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p>' +
+                '<div class="promo-validity-box">' +
+                    '<div class="promo-validity-title">⏰ PROMOTION PERIOD</div>' +
+                    '<div class="promo-validity-dates">15 August - 15 September 2025</div>' +
+                '</div>' +
+                '<div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(2, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">031 332 7192</div></div><div class="info-card"><div class="info-label">WhatsApp</div><div class="info-value">072 663 3544</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Cnr Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Cnr Mazeppa & Gull Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div>' +
+                '<div class="page-footer">' +
+                    '<div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div>' +
+                    '<div class="footer-contact-row">' +
+                        '<span>📞 Call us 031 332 7192</span>' +
+                        '<span>💬 WhatsApp us 072 663 3544</span>' +
+                        '<span>📍 Visit us 40 Cnr Mazeppa & Gull St, Durban, 4001</span>' +
+                    '</div>' +
+                    '<div class="footer-bottom-row">' +
+                        '<span class="footer-promo-expiry">⏰ Promo ends: 15 September 2025</span>' +
+                        '<span class="footer-credit">Designed and Managed by Black Orchid Consulting <a href="https://www.blackorchid.online">www.blackorchid.online</a></span>' +
+                    '</div>' +
+                '</div></div>';
             
             return page;
         }
@@ -2373,7 +2470,7 @@ Visit our showroom to see the full range!</textarea>
             const isExcelPage = category.startsWith('Excel PAGE');
             const headerClass = isExcelPage ? 'category-header excel-page' : 'category-header';
             
-            let contentHTML = '<div class="page-inner"><div class="page-header"><div class="header-left"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ" class="header-logo" onerror="this.style.display=\'none\'"><span class="header-title">July 2025 Promotional Catalog</span></div><span class="page-number">Page ' + pageNum + ' of <span class="total-pages">-</span></span></div><div class="page-content">';
+            let contentHTML = '<div class="page-inner"><div class="page-header"><div class="header-left"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ" class="header-logo" onerror="this.style.display=\'none\'"><span class="header-title">Promotional Catalog</span><span class="header-promo-validity">Valid: Aug 15 - Sept 15, 2025</span></div><span class="page-number">Page ' + pageNum + ' of <span class="total-pages">-</span></span></div><div class="page-content">';
             
             if (showHeader) {
                 const headerText = isExcelPage ? category.replace('Excel ', '') : category;
@@ -2390,12 +2487,24 @@ Visit our showroom to see the full range!</textarea>
                 }
             }
             
-            contentHTML += '</div></div></div><div class="page-footer"><div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div><div class="footer-info"><span class="footer-left">OZZ Cash & Carry • +27 31 332 7192 • queries@ozzsa.com</span><span class="footer-right">Version 5.4</span></div><div style="text-align: center; margin-top: 3mm; padding-top: 2mm; border-top: 1px solid #e0e0e0; font-size: 6pt; color: #999; opacity: 0.8;">Designed and managed by Black Orchid Consulting</div></div></div>';
+            contentHTML += '</div></div></div>' +
+                '<div class="page-footer">' +
+                    '<div class="disclaimer">While Ozz Cash and Carry will always attempt to have sufficient stock available, the above prices are valid till stocks last. All items include VAT where applicable. Images are for illustrative purposes only.</div>' +
+                    '<div class="footer-contact-row">' +
+                        '<span>📞 Call us 031 332 7192</span>' +
+                        '<span>💬 WhatsApp us 072 663 3544</span>' +
+                        '<span>📍 Visit us 40 Cnr Mazeppa & Gull St, Durban, 4001</span>' +
+                    '</div>' +
+                    '<div class="footer-bottom-row">' +
+                        '<span class="footer-promo-expiry">⏰ Promo ends: 15 September 2025</span>' +
+                        '<span class="footer-credit">Designed and Managed by Black Orchid Consulting • www.blackorchid.online</span>' +
+                    '</div>' +
+                '</div></div>';
             
             page.innerHTML = contentHTML;
             return page;
         }
-            // UPDATED createProductCard with Product Name BELOW SKU and Price
+        // UPDATED createProductCard with Product Name BELOW SKU and Price
         function createProductCard(product, cardStyle) {
             if (!cardStyle) cardStyle = 'standard';
             
@@ -2418,32 +2527,32 @@ Visit our showroom to see the full range!</textarea>
                 }
                 
                 // FIXED: Higher z-index and stronger shadows for better visibility
-const skuBadgeStyle = 'position: absolute; z-index: 25; bottom: 2mm; left: 2mm; ' +
-    'background: rgba(64, 64, 64, 0.95); color: #FFFFFF; ' +
-    'border-radius: 2mm; padding: 0.5mm 1.5mm; ' +
-    'font-size: 4pt; font-weight: 600; letter-spacing: 0.2px; ' +
-    'box-shadow: 0 2px 4px rgba(0,0,0,0.4); line-height: 1.2; ' +
-    'display: inline-block; white-space: nowrap; ' +
-    'border: 1px solid rgba(255,255,255,0.2);';
+                const skuBadgeStyle = 'position: absolute; z-index: 25; bottom: 2mm; left: 2mm; ' +
+                    'background: rgba(64, 64, 64, 0.95); color: #FFFFFF; ' +
+                    'border-radius: 2mm; padding: 0.5mm 1.5mm; ' +
+                    'font-size: 4pt; font-weight: 600; letter-spacing: 0.2px; ' +
+                    'box-shadow: 0 2px 4px rgba(0,0,0,0.4); line-height: 1.2; ' +
+                    'display: inline-block; white-space: nowrap; ' +
+                    'border: 1px solid rgba(255,255,255,0.2);';
 
-const priceBadgeStyle = 'position: absolute; z-index: 25; bottom: 2mm; right: 2mm; ' +
-    'background: #DC143C; color: #FFFFFF; ' +
-    'border-radius: 2mm; padding: 0.6mm 1.8mm; ' +
-    'font-size: 5pt; font-weight: 700; letter-spacing: 0.2px; ' +
-    'box-shadow: 0 2px 4px rgba(0,0,0,0.4); line-height: 1.2; ' +
-    'display: inline-block; white-space: nowrap; ' +
-    'border: 1px solid rgba(255,255,255,0.2);';
+                const priceBadgeStyle = 'position: absolute; z-index: 25; bottom: 2mm; right: 2mm; ' +
+                    'background: #DC143C; color: #FFFFFF; ' +
+                    'border-radius: 2mm; padding: 0.6mm 1.8mm; ' +
+                    'font-size: 5pt; font-weight: 700; letter-spacing: 0.2px; ' +
+                    'box-shadow: 0 2px 4px rgba(0,0,0,0.4); line-height: 1.2; ' +
+                    'display: inline-block; white-space: nowrap; ' +
+                    'border: 1px solid rgba(255,255,255,0.2);';
 
-// Product name badge - reduced opacity for better badge visibility
-const nameBadgeStyle = 'position: absolute; z-index: 15; bottom: 0; left: 0; right: 0; ' +
-    'background: rgba(255, 255, 255, 0.8); color: #1a1a1a; ' +
-    'padding: 1mm 2mm; ' +
-    'font-size: 4pt; font-weight: 700; letter-spacing: 0.1px; line-height: 1.2; ' +
-    'text-align: center; ' +
-    'backdrop-filter: blur(1px); ' +
-    'box-shadow: 0 -1px 2px rgba(0,0,0,0.1); ' +
-    'overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ' +
-    'border-radius: 0 0 2mm 2mm;';
+                // Product name badge - reduced opacity for better badge visibility
+                const nameBadgeStyle = 'position: absolute; z-index: 15; bottom: 0; left: 0; right: 0; ' +
+                    'background: rgba(255, 255, 255, 0.8); color: #1a1a1a; ' +
+                    'padding: 1mm 2mm; ' +
+                    'font-size: 4pt; font-weight: 700; letter-spacing: 0.1px; line-height: 1.2; ' +
+                    'text-align: center; ' +
+                    'backdrop-filter: blur(1px); ' +
+                    'box-shadow: 0 -1px 2px rgba(0,0,0,0.1); ' +
+                    'overflow: hidden; text-overflow: ellipsis; white-space: nowrap; ' +
+                    'border-radius: 0 0 2mm 2mm;';
                 
                 // Special style for price-only mode (centered and larger)
                 const priceCenteredStyle = layoutClass === 'show-price-only' ? 
@@ -2456,7 +2565,7 @@ const nameBadgeStyle = 'position: absolute; z-index: 15; bottom: 0; left: 0; rig
                     'display: inline-block; white-space: nowrap;' : priceBadgeStyle;
                 
                 // Adjust SKU/Price bottom position when name is shown
-const badgeBottom = displayOptions.showProductName ? '10mm' : '2mm';
+                const badgeBottom = displayOptions.showProductName ? '10mm' : '2mm';
                 const skuStyleAdjusted = skuBadgeStyle.replace('bottom: 2mm', 'bottom: ' + badgeBottom);
                 const priceStyleAdjusted = priceBadgeStyle.replace('bottom: 2mm', 'bottom: ' + badgeBottom);
                 const priceCenteredAdjusted = layoutClass === 'show-price-only' ? priceCenteredStyle : priceStyleAdjusted;
@@ -2571,10 +2680,10 @@ const badgeBottom = displayOptions.showProductName ? '10mm' : '2mm';
         }
 
         function resetCoverPage() {
-            document.getElementById('introTitle').value = 'Welcome to Our July 2025 Promotion';
+            document.getElementById('introTitle').value = 'Welcome to Our August-September 2025 Promotion';
             document.getElementById('introSubtitle').value = 'Exclusive deals on premium home & kitchen products';
-            document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This July, we\'re offering exceptional deals on premium products to help you create the perfect living space.';
-            document.getElementById('promoDetails').value = '• Valid for July 2025 only\n• Limited quantities available\n• Collection only at our Durban store\n• Delivery available at additional cost';
+            document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This promotion offers exceptional deals on premium products to help you create the perfect living space.';
+            document.getElementById('promoDetails').value = '• Valid from 15 August to 15 September 2025\n• Limited quantities available\n• Collection only at our Durban store\n• Delivery available at additional cost';
             document.getElementById('additionalInfo').value = 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM\nSaturday: 8:00 AM - 1:00 PM\nSunday: Closed\n\nVisit our showroom to see the full range!';
             showNotification('Cover page reset to default!', 'info');
         }
@@ -2701,11 +2810,11 @@ const badgeBottom = displayOptions.showProductName ? '10mm' : '2mm';
             }, 3000);
         }
 
-        console.log('🎉 OZZ Professional Catalog Generator v5.4 Loaded - Export Fixed');
-        console.log('✨ Export functionality has been completely rewritten for better reliability');
-        console.log('✨ Added progress tracking for exports');
-        console.log('✨ Improved image loading and rendering in exports');
-        console.log('✨ All existing features preserved');
+        console.log('🎉 OZZ Professional Catalog Generator v5.5 Loaded');
+        console.log('✨ Updated with new footer format and promo validity dates');
+        console.log('✨ Footer now matches client requirements exactly');
+        console.log('✨ Promo dates: 15 August - 15 September 2025');
+        console.log('✨ All existing features preserved and working');
     </script>
 </body>
 </html>
