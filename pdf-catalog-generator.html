@@ -1128,26 +1128,51 @@ Visit our showroom to see the full range!</textarea>
             }
         }
 
-        async function exportPageAsImage(pageElement, pageNumber, format, quality) {
+       async function exportPageAsImage(pageElement, pageNumber, format, quality) {
             try {
-                // Clone the page element to avoid modifying the original
+                // Clone the page element
                 const clone = pageElement.cloneNode(true);
                 
-                // Create a temporary container with proper dimensions
+                // Create a temporary container
                 const tempContainer = document.createElement('div');
                 tempContainer.style.position = 'absolute';
                 tempContainer.style.left = '-9999px';
-                tempContainer.style.width = '794px'; // A4 width in pixels at 96dpi
-                tempContainer.style.background = 'white';
+                tempContainer.style.top = '0';
                 document.body.appendChild(tempContainer);
                 
-                // Apply inline styles to ensure proper rendering
+                // Apply A4 dimensions and styles directly to the clone
+                // Using pixels for better compatibility (A4 at 96 DPI)
                 clone.style.width = '794px';
-                clone.style.height = '1123px'; // A4 height in pixels at 96dpi
-                clone.style.padding = '56px'; // 15mm in pixels
-                clone.style.boxSizing = 'border-box';
+                clone.style.height = '1123px';
+                clone.style.padding = '0';
+                clone.style.margin = '0';
                 clone.style.background = 'white';
                 clone.style.position = 'relative';
+                clone.style.boxSizing = 'border-box';
+                clone.style.overflow = 'hidden';
+                
+                // Apply styles to page-inner if it exists
+                const pageInner = clone.querySelector('.page-inner');
+                if (pageInner) {
+                    pageInner.style.position = 'absolute';
+                    pageInner.style.top = '56px';  // 15mm
+                    pageInner.style.left = '56px';  // 15mm
+                    pageInner.style.right = '56px';  // 15mm
+                    pageInner.style.bottom = '56px';  // 15mm
+                    pageInner.style.width = 'calc(100% - 112px)';
+                    pageInner.style.height = 'calc(100% - 112px)';
+                    pageInner.style.display = 'flex';
+                    pageInner.style.flexDirection = 'column';
+                }
+                
+                // Ensure all images are visible
+                const images = clone.querySelectorAll('img');
+                images.forEach(img => {
+                    if (img.src && !img.style.width) {
+                        img.style.maxWidth = '100%';
+                        img.style.height = 'auto';
+                    }
+                });
                 
                 tempContainer.appendChild(clone);
                 
@@ -1155,20 +1180,20 @@ Visit our showroom to see the full range!</textarea>
                 await waitForImages(clone);
                 
                 // Small delay to ensure rendering is complete
-                await new Promise(resolve => setTimeout(resolve, 100));
+                await new Promise(resolve => setTimeout(resolve, 200));
                 
-                // Configure html2canvas options for better quality
-                const scale = quality || 2; // Default scale of 2 for good quality
+                // Configure html2canvas for high quality
+                const scale = quality || 3; // Default to 3 for good quality
                 const canvas = await html2canvas(clone, {
                     scale: scale,
                     useCORS: true,
                     allowTaint: true,
                     backgroundColor: '#ffffff',
                     logging: false,
+                    letterRendering: true,
+                    imageTimeout: 15000,
                     width: 794,
-                    height: 1123,
-                    windowWidth: 794,
-                    windowHeight: 1123
+                    height: 1123
                 });
                 
                 // Remove temporary container
@@ -1176,14 +1201,20 @@ Visit our showroom to see the full range!</textarea>
                 
                 // Convert to blob and download
                 canvas.toBlob(function(blob) {
+                    if (!blob) {
+                        throw new Error('Failed to create image blob');
+                    }
+                    
                     const link = document.createElement('a');
                     link.download = `OZZ-catalog-page-${pageNumber}.${format}`;
                     link.href = URL.createObjectURL(blob);
+                    document.body.appendChild(link);
                     link.click();
+                    document.body.removeChild(link);
                     
                     // Clean up
                     setTimeout(() => URL.revokeObjectURL(link.href), 100);
-                }, format === 'png' ? 'image/png' : 'image/jpeg', format === 'jpg' ? 0.95 : 1.0);
+                }, format === 'png' ? 'image/png' : 'image/jpeg', format === 'jpg' ? 0.92 : 1.0);
                 
             } catch (error) {
                 console.error(`Error exporting page ${pageNumber}:`, error);
