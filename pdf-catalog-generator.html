@@ -1133,7 +1133,7 @@ Visit our showroom to see the full range!</textarea>
         // Clone the page element
         const clone = pageElement.cloneNode(true);
         
-        // Create a temporary container
+        // Create a temporary container with white background
         const tempContainer = document.createElement('div');
         tempContainer.style.cssText = `
             position: fixed;
@@ -1141,22 +1141,47 @@ Visit our showroom to see the full range!</textarea>
             top: 0;
             width: 794px;
             height: 1123px;
-            background: white;
+            background: white !important;
             z-index: -1;
+            isolation: isolate;
         `;
         document.body.appendChild(tempContainer);
         
-        // Force print styles by applying them directly to the clone
+        // Create a white background div to ensure no bleed-through
+        const whiteBackground = document.createElement('div');
+        whiteBackground.style.cssText = `
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: white !important;
+            z-index: 0;
+        `;
+        tempContainer.appendChild(whiteBackground);
+        
+        // Force print styles and clean background on the clone
         clone.style.cssText = `
             width: 794px !important;
             height: 1123px !important;
             margin: 0 !important;
             padding: 0 !important;
             background: white !important;
+            background-image: none !important;
             position: relative !important;
             overflow: hidden !important;
             box-shadow: none !important;
+            z-index: 1;
         `;
+        
+        // Remove any background images or patterns from all elements
+        const allElements = clone.querySelectorAll('*');
+        allElements.forEach(el => {
+            const style = window.getComputedStyle(el);
+            if (style.backgroundImage && style.backgroundImage !== 'none' && !el.tagName.match(/IMG/i)) {
+                el.style.backgroundImage = 'none !important';
+            }
+        });
         
         // Apply print styles to page-inner
         const pageInner = clone.querySelector('.page-inner');
@@ -1172,8 +1197,23 @@ Visit our showroom to see the full range!</textarea>
                 display: flex !important;
                 flex-direction: column !important;
                 padding: 0 !important;
+                background: white !important;
+                background-image: none !important;
             `;
         }
+        
+        // Hide any hero/background elements that might be bleeding through
+        const heroElements = clone.querySelectorAll('.hero-logo, .logo-header, [class*="logo"]');
+        heroElements.forEach(el => {
+            // Only hide if it's a background element, not product images
+            if (!el.closest('.product-card') && !el.closest('.header-logo')) {
+                const rect = el.getBoundingClientRect();
+                // If it's unusually large, it's probably a background element
+                if (rect && (rect.width > 400 || rect.height > 400)) {
+                    el.style.display = 'none !important';
+                }
+            }
+        });
         
         // Apply print styles to all product grids
         const grids = clone.querySelectorAll('.products-grid');
@@ -1186,6 +1226,7 @@ Visit our showroom to see the full range!</textarea>
                     gap: 9px !important;
                     width: 100% !important;
                     height: 100% !important;
+                    background: transparent !important;
                 `;
             }
         });
@@ -1248,6 +1289,7 @@ Visit our showroom to see the full range!</textarea>
                 margin-bottom: 11px !important;
                 border-bottom: 2px solid #1a1a1a !important;
                 height: 45px !important;
+                background: white !important;
             `;
         }
         
@@ -1261,6 +1303,7 @@ Visit our showroom to see the full range!</textarea>
                 color: #666 !important;
                 line-height: 1.4 !important;
                 height: 75px !important;
+                background: white !important;
             `;
         }
         
@@ -1280,7 +1323,6 @@ Visit our showroom to see the full range!</textarea>
         // Fix badge positions in luxury minimal style
         const badges = clone.querySelectorAll('[style*="position: absolute"]');
         badges.forEach(badge => {
-            // Keep inline styles but ensure they're visible
             const currentStyle = badge.getAttribute('style');
             if (currentStyle && currentStyle.includes('bottom:')) {
                 badge.setAttribute('style', currentStyle.replace(/bottom:\s*\d+mm/g, 'bottom: 7px'));
@@ -1295,8 +1337,8 @@ Visit our showroom to see the full range!</textarea>
         // Small delay to ensure rendering is complete
         await new Promise(resolve => setTimeout(resolve, 300));
         
-        // Configure html2canvas for high quality
-        const scale = quality || 3; // Default to 3 for good quality
+        // Configure html2canvas for high quality with white background
+        const scale = quality || 3;
         const canvas = await html2canvas(clone, {
             scale: scale,
             useCORS: true,
@@ -1307,10 +1349,11 @@ Visit our showroom to see the full range!</textarea>
             imageTimeout: 15000,
             width: 794,
             height: 1123,
+            removeContainer: false,
             onclone: (clonedDoc, element) => {
-                // Additional style fixes if needed
                 element.style.width = '794px';
                 element.style.height = '1123px';
+                element.style.background = 'white';
             }
         });
         
