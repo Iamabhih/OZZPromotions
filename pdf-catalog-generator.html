@@ -2443,7 +2443,7 @@ const nameBadgeStyle = 'position: absolute; z-index: 15; bottom: 0; left: 0; rig
                     'display: inline-block; white-space: nowrap;' : priceBadgeStyle;
                 
                 // Adjust SKU/Price bottom position when name is shown
-const badgeBottom = displayOptions.showProductName ? '8mm' : '2mm';
+const badgeBottom = displayOptions.showProductName ? '10mm' : '2mm';
                 const skuStyleAdjusted = skuBadgeStyle.replace('bottom: 2mm', 'bottom: ' + badgeBottom);
                 const priceStyleAdjusted = priceBadgeStyle.replace('bottom: 2mm', 'bottom: ' + badgeBottom);
                 const priceCenteredAdjusted = layoutClass === 'show-price-only' ? priceCenteredStyle : priceStyleAdjusted;
