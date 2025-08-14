@@ -1380,6 +1380,19 @@ Visit our showroom to see the full range!</textarea>
     } catch (error) {
         console.error(`Error exporting page ${pageNumber}:`, error);
         throw error;
+    } finally {
+        // ADDED: Force cleanup to prevent reload issues
+        if (tempContainer && tempContainer.parentNode) {
+            tempContainer.parentNode.removeChild(tempContainer);
+        }
+        // Clear any lingering references
+        clone = null;
+        whiteBackground = null;
+        tempContainer = null;
+        // Force garbage collection hint
+        if (window.gc) {
+            window.gc();
+        }
     }
 }
 
