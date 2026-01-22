@@ -823,9 +823,25 @@
             <h1>OZZ Professional Catalog Generator</h1>
             <p>Create beautiful retail-quality promotional catalogs with images</p>
         </div>
-        
+
+        <div style="max-width: 600px; margin: 20px auto; padding: 20px; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+            <h4 style="margin-bottom: 15px; color: #333;">📂 Load Product Data</h4>
+            <div style="display: flex; gap: 15px; align-items: center; flex-wrap: wrap;">
+                <label style="flex: 1; min-width: 200px;">
+                    <span style="display: block; margin-bottom: 8px; font-weight: 600; color: #555;">Upload Excel File:</span>
+                    <input type="file" id="fileUpload" accept=".xlsx,.xls"
+                           style="width: 100%; padding: 8px; border: 2px solid #ddd; border-radius: 4px; cursor: pointer;"
+                           onchange="handleFileUpload(event)">
+                </label>
+                <span style="color: #999; font-weight: 600;">OR</span>
+                <button onclick="loadCatalog()" id="loadBtn" style="flex-shrink: 0;">📁 Load Default File</button>
+            </div>
+            <p style="margin-top: 10px; font-size: 12px; color: #666;">
+                Upload your own Excel file or load the default JULY PROMO.xlsx from the server
+            </p>
+        </div>
+
         <div class="button-group">
-            <button onclick="loadCatalog()" id="loadBtn">📁 Load JULY PROMO.xlsx</button>
             <button onclick="initializeImages()" id="imageBtn" disabled>📸 Initialize Images</button>
             <button onclick="generateCatalog()" id="generateBtn" disabled>📄 Generate Catalog</button>
             <button onclick="window.print()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
@@ -1000,7 +1016,7 @@
             <h3>📄 Cover Page Content Customization</h3>
             <div style="background: white; padding: 20px; border-radius: 8px; border: 1px solid #ddd;">
                 <p style="margin-bottom: 15px; color: #666; font-size: 14px;">
-                    Customize the content that appears on the cover page of your catalog.
+                    <strong>Edit the fields below</strong> to customize the cover page content. Changes are applied when you generate the catalog or use the preview button.
                 </p>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div>
@@ -1946,93 +1962,145 @@ Visit our showroom to see the full range!</textarea>
                 return { mappedProducts: this.imageCache.size, cacheInfo: cacheInfo };
             }
         }
-        
+
+        // Process Excel data into products
+        function processExcelData(data) {
+            const workbook = XLSX.read(data);
+            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+            const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+            const pageData = {};
+            let currentPage = null;
+            let pageProducts = [];
+
+            rawData.forEach(function(row, index) {
+                if (!row || row.length === 0) return;
+
+                const pageMatch = row.find(function(cell) {
+                    return cell && String(cell).toUpperCase().includes('PAGE');
+                });
+
+                if (pageMatch) {
+                    if (currentPage && pageProducts.length > 0) {
+                        pageData[currentPage] = pageProducts.slice();
+                    }
+
+                    currentPage = String(pageMatch).toUpperCase();
+                    pageProducts = [];
+                }
+                else if (row[1] && typeof row[1] === 'number' && row[2] && row[3]) {
+                    const product = {
+                        barcode: row[0] ? String(row[0]).trim() : '',
+                        sku: String(row[1]).trim(),
+                        description: String(row[2]).trim(),
+                        price: parseFloat(row[3]) || 0,
+                        category: String(row[4] || 'UNCATEGORIZED').trim().toUpperCase(),
+                        pageNumber: currentPage ? parseInt(currentPage.replace('PAGE ', '')) : 1
+                    };
+
+                    if (product.price > 0 && product.description) {
+                        pageProducts.push(product);
+                    }
+                }
+            });
+
+            if (currentPage && pageProducts.length > 0) {
+                pageData[currentPage] = pageProducts.slice();
+            }
+
+            return pageData;
+        }
+
+        // Finish loading products and update UI
+        function finishLoadingProducts(pageData) {
+            allProducts = [];
+            Object.keys(pageData).sort(function(a, b) {
+                const numA = parseInt(a.replace('PAGE ', ''));
+                const numB = parseInt(b.replace('PAGE ', ''));
+                return numA - numB;
+            }).forEach(function(page) {
+                allProducts.push.apply(allProducts, pageData[page]);
+            });
+
+            window.pageOrganization = pageData;
+
+            categories = allProducts.map(function(p) { return p.category; })
+                .filter(function(value, index, self) { return self.indexOf(value) === index; })
+                .sort();
+
+            showCategories();
+            showPagePreview();
+            document.getElementById('customizationPanel').style.display = 'block';
+            document.getElementById('introPageCustomization').style.display = 'block';
+            document.getElementById('layoutOptions').style.display = 'block';
+            document.getElementById('exportSection').style.display = 'block';
+
+            document.getElementById('imageBtn').disabled = false;
+            document.getElementById('generateBtn').disabled = false;
+
+            const pageCount = Object.keys(pageData).length;
+            const status = document.getElementById('status');
+            status.innerHTML = '✅ <strong>Loaded ' + allProducts.length + ' products organized in ' + pageCount + ' predefined pages</strong>';
+        }
+
+        // Handle manual file upload
+        async function handleFileUpload(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+
+            const status = document.getElementById('status');
+            const loadBtn = document.getElementById('loadBtn');
+
+            loadBtn.disabled = true;
+            status.innerHTML = '⏳ Loading uploaded Excel file...';
+
+            try {
+                const reader = new FileReader();
+
+                reader.onload = function(e) {
+                    try {
+                        const data = e.target.result;
+                        const pageData = processExcelData(data);
+                        finishLoadingProducts(pageData);
+                    } catch (error) {
+                        status.innerHTML = '❌ <strong style="color: #dc3545;">Error processing file: ' + error.message + '</strong>';
+                        console.error(error);
+                        loadBtn.disabled = false;
+                    }
+                };
+
+                reader.onerror = function() {
+                    status.innerHTML = '❌ <strong style="color: #dc3545;">Error reading file</strong>';
+                    loadBtn.disabled = false;
+                };
+
+                reader.readAsArrayBuffer(file);
+
+            } catch (error) {
+                status.innerHTML = '❌ <strong style="color: #dc3545;">Error: ' + error.message + '</strong>';
+                console.error(error);
+                loadBtn.disabled = false;
+            }
+        }
+
+        // Load catalog from default file
         async function loadCatalog() {
             const loadBtn = document.getElementById('loadBtn');
             const status = document.getElementById('status');
-            
+
             loadBtn.disabled = true;
             status.innerHTML = '⏳ Loading Excel file with page organization...';
-            
+
             try {
                 const response = await fetch('./JULY PROMO.xlsx');
                 if (!response.ok) {
                     throw new Error('Could not find JULY PROMO.xlsx in the same folder');
                 }
-                
+
                 const data = await response.arrayBuffer();
-                const workbook = XLSX.read(data);
-                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-                
-                const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-                
-                const pageData = {};
-                let currentPage = null;
-                let pageProducts = [];
-                
-                rawData.forEach(function(row, index) {
-                    if (!row || row.length === 0) return;
-                    
-                    const pageMatch = row.find(function(cell) {
-                        return cell && String(cell).toUpperCase().includes('PAGE');
-                    });
-                    
-                    if (pageMatch) {
-                        if (currentPage && pageProducts.length > 0) {
-                            pageData[currentPage] = pageProducts.slice();
-                        }
-                        
-                        currentPage = String(pageMatch).toUpperCase();
-                        pageProducts = [];
-                    }
-                    else if (row[1] && typeof row[1] === 'number' && row[2] && row[3]) {
-                        const product = {
-                            barcode: row[0] ? String(row[0]).trim() : '',
-                            sku: String(row[1]).trim(),
-                            description: String(row[2]).trim(),
-                            price: parseFloat(row[3]) || 0,
-                            category: String(row[4] || 'UNCATEGORIZED').trim().toUpperCase(),
-                            pageNumber: currentPage ? parseInt(currentPage.replace('PAGE ', '')) : 1
-                        };
-                        
-                        if (product.price > 0 && product.description) {
-                            pageProducts.push(product);
-                        }
-                    }
-                });
-                
-                if (currentPage && pageProducts.length > 0) {
-                    pageData[currentPage] = pageProducts.slice();
-                }
-                
-                allProducts = [];
-                Object.keys(pageData).sort(function(a, b) {
-                    const numA = parseInt(a.replace('PAGE ', ''));
-                    const numB = parseInt(b.replace('PAGE ', ''));
-                    return numA - numB;
-                }).forEach(function(page) {
-                    allProducts.push.apply(allProducts, pageData[page]);
-                });
-                
-                window.pageOrganization = pageData;
-                
-                categories = allProducts.map(function(p) { return p.category; })
-                    .filter(function(value, index, self) { return self.indexOf(value) === index; })
-                    .sort();
-                
-                showCategories();
-                showPagePreview();
-                document.getElementById('customizationPanel').style.display = 'block';
-                document.getElementById('introPageCustomization').style.display = 'block';
-                document.getElementById('layoutOptions').style.display = 'block';
-                document.getElementById('exportSection').style.display = 'block';
-                
-                document.getElementById('imageBtn').disabled = false;
-                document.getElementById('generateBtn').disabled = false;
-                
-                const pageCount = Object.keys(pageData).length;
-                status.innerHTML = '✅ <strong>Loaded ' + allProducts.length + ' products organized in ' + pageCount + ' predefined pages</strong>';
-                
+                const pageData = processExcelData(data);
+                finishLoadingProducts(pageData);
+
             } catch (error) {
                 status.innerHTML = '❌ <strong style="color: #dc3545;">Error: ' + error.message + '</strong>';
                 console.error(error);
