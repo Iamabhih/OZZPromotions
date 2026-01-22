@@ -1137,7 +1137,7 @@
         <div class="button-group">
             <button onclick="initializeImages()" id="imageBtn" disabled>📸 Initialize Images</button>
             <button onclick="generateCatalog()" id="generateBtn" disabled>📄 Generate Catalog</button>
-            <button onclick="window.print()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
+            <button onclick="preparePrint()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
             <button onclick="showKeyboardShortcuts()" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">⌨️ Shortcuts</button>
         </div>
         
@@ -2861,27 +2861,78 @@ Visit our showroom to see the full range!</textarea>
 
         function showImageMappingPreview() {
             if (!driveImageManager) return;
-            
+
             let mappedCount = 0;
             let unmappedProducts = [];
-            
+
             allProducts.forEach(function(product) {
                 const imageData = driveImageManager.getProductImage(product.sku);
                 if (imageData.found) {
                     mappedCount++;
                 } else {
-                    unmappedProducts.push(product.sku);
+                    unmappedProducts.push({
+                        sku: product.sku,
+                        description: product.description,
+                        barcode: product.barcode || ''
+                    });
                 }
             });
-            
+
+            // Store unmapped products globally for export
+            window.unmappedProducts = unmappedProducts;
+
             const imageStats = document.getElementById('imageStats');
-            const unmappedPreview = unmappedProducts.slice(0, 10).join(', ');
+            const unmappedPreview = unmappedProducts.slice(0, 10).map(p => p.sku).join(', ');
             const moreUnmapped = unmappedProducts.length > 10 ? ' and ' + (unmappedProducts.length - 10) + ' more...' : '';
-            const unmappedSection = unmappedProducts.length > 0 ? '<details style="margin-top: 5px;"><summary style="cursor: pointer;">View unmapped SKUs</summary><div style="font-family: monospace; font-size: 12px; margin-top: 5px;">' + unmappedPreview + moreUnmapped + '</div></details>' : '';
-            
-            const mappingInfo = '<div style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 4px;"><strong>Image Mapping Results:</strong><br>• ' + mappedCount + ' products with images<br>• ' + unmappedProducts.length + ' products without images<br>' + unmappedSection + '</div>';
-            
+
+            const exportButton = unmappedProducts.length > 0 ?
+                '<button onclick="exportUnmappedSKUs()" style="margin-top: 10px; padding: 8px 16px; background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%); color: white; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; font-size: 13px;">📥 Export Unmatched SKUs</button>' : '';
+
+            const unmappedSection = unmappedProducts.length > 0 ?
+                '<details style="margin-top: 5px;"><summary style="cursor: pointer; font-weight: 600; color: #dc3545;">View unmapped SKUs (' + unmappedProducts.length + ')</summary><div style="font-family: monospace; font-size: 12px; margin-top: 5px; max-height: 150px; overflow-y: auto; background: white; padding: 8px; border-radius: 4px;">' +
+                unmappedProducts.slice(0, 20).map(p => p.sku + ' - ' + p.description.substring(0, 40)).join('<br>') +
+                (unmappedProducts.length > 20 ? '<br><em>... and ' + (unmappedProducts.length - 20) + ' more</em>' : '') +
+                '</div>' + exportButton + '</details>' : '';
+
+            const mappingInfo = '<div style="margin-top: 10px; padding: 10px; background: ' +
+                (unmappedProducts.length > 0 ? '#fff3cd' : '#d4edda') +
+                '; border-radius: 4px; border-left: 4px solid ' +
+                (unmappedProducts.length > 0 ? '#ffc107' : '#28a745') + ';"><strong>Image Mapping Results:</strong><br>• ' + mappedCount + ' products with images ✅<br>• ' + unmappedProducts.length + ' products without images ' + (unmappedProducts.length > 0 ? '⚠️' : '✅') + '<br>' + unmappedSection + '</div>';
+
             imageStats.innerHTML += mappingInfo;
+        }
+
+        // Export unmatched SKUs to CSV
+        function exportUnmappedSKUs() {
+            if (!window.unmappedProducts || window.unmappedProducts.length === 0) {
+                showNotification('No unmatched SKUs to export', 'info');
+                return;
+            }
+
+            // Create CSV content
+            let csvContent = 'SKU,Description,Barcode\n';
+            window.unmappedProducts.forEach(function(product) {
+                const sku = product.sku.replace(/"/g, '""');
+                const description = product.description.replace(/"/g, '""');
+                const barcode = (product.barcode || '').replace(/"/g, '""');
+                csvContent += '"' + sku + '","' + description + '","' + barcode + '"\n';
+            });
+
+            // Create download
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement('a');
+            const url = URL.createObjectURL(blob);
+
+            const timestamp = new Date().toISOString().slice(0, 10);
+            link.setAttribute('href', url);
+            link.setAttribute('download', 'unmatched-skus-' + timestamp + '.csv');
+            link.style.visibility = 'hidden';
+
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+
+            showNotification('Exported ' + window.unmappedProducts.length + ' unmatched SKUs to CSV', 'success');
         }
 
         function getImageUrl(sku) {
@@ -3633,6 +3684,117 @@ Visit our showroom to see the full range!</textarea>
                     }
                 }, 300);
             }, dismissTime);
+        }
+
+        // Prepare print with loading indicator
+        function preparePrint() {
+            const totalPages = document.querySelectorAll('.page').length;
+
+            if (totalPages === 0) {
+                showNotification('No pages to print! Generate catalog first.', 'error');
+                return;
+            }
+
+            // For large catalogs, show options modal
+            if (totalPages > 20) {
+                showPrintOptionsModal(totalPages);
+            } else {
+                // For small catalogs, print directly with loading indicator
+                executePrint(totalPages);
+            }
+        }
+
+        // Show print options modal for large catalogs
+        function showPrintOptionsModal(totalPages) {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 10002; display: flex; align-items: center; justify-content: center;';
+
+            const content = document.createElement('div');
+            content.style.cssText = 'background: white; padding: 40px; border-radius: 16px; max-width: 600px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
+
+            content.innerHTML = '<h2 style="margin: 0 0 20px 0; font-size: 26px; color: #333; text-align: center;">🖨️ Print Options</h2>' +
+                '<div style="background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); padding: 15px; border-radius: 10px; margin-bottom: 25px; border-left: 4px solid #ffc107;">' +
+                    '<p style="margin: 0; color: #856404; font-weight: 600; font-size: 14px;">⚠️ Large Catalog Detected</p>' +
+                    '<p style="margin: 8px 0 0 0; color: #856404; font-size: 13px; line-height: 1.6;">You have <strong>' + totalPages + ' pages</strong>. Printing may take a few moments. Your browser might show "Page Unresponsive" - this is normal, click "Wait" if it appears.</p>' +
+                '</div>' +
+                '<div style="margin-bottom: 25px;">' +
+                    '<h3 style="margin: 0 0 15px 0; font-size: 18px; color: #333;">💡 Recommendations:</h3>' +
+                    '<ul style="margin: 0; padding-left: 20px; color: #666; font-size: 14px; line-height: 1.8;">' +
+                        '<li><strong>Chrome/Edge:</strong> Best for large PDFs (recommended)</li>' +
+                        '<li><strong>Print to PDF:</strong> Select "Save as PDF" in print dialog</li>' +
+                        '<li><strong>Be patient:</strong> Processing may take 30-60 seconds</li>' +
+                        '<li><strong>Don\'t close:</strong> Wait for print dialog to appear</li>' +
+                    '</ul>' +
+                '</div>' +
+                '<div style="display: flex; gap: 15px; justify-content: center;">' +
+                    '<button onclick="this.closest(\'div[style*=\\\'position: fixed\\\']\').remove(); executePrint(' + totalPages + ');" style="flex: 1; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 16px 24px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;">Continue to Print</button>' +
+                    '<button onclick="this.closest(\'div[style*=\\\'position: fixed\\\']\').remove();" style="flex: 1; background: #6c757d; color: white; border: none; padding: 16px 24px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer;">Cancel</button>' +
+                '</div>';
+
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+        }
+
+        // Execute print with loading indicator
+        function executePrint(totalPages) {
+            // Show loading modal
+            const loadingModal = document.createElement('div');
+            loadingModal.id = 'printLoadingModal';
+            loadingModal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.9); z-index: 10003; display: flex; align-items: center; justify-content: center;';
+
+            const loadingContent = document.createElement('div');
+            loadingContent.style.cssText = 'background: white; padding: 40px 50px; border-radius: 16px; text-align: center; max-width: 500px;';
+
+            loadingContent.innerHTML = '<div style="font-size: 48px; margin-bottom: 20px;">🖨️</div>' +
+                '<h3 style="margin: 0 0 15px 0; font-size: 22px; color: #333;">Preparing Print...</h3>' +
+                '<p style="margin: 0 0 20px 0; color: #666; font-size: 14px; line-height: 1.6;">Processing <strong>' + totalPages + ' pages</strong><br>This may take 30-60 seconds</p>' +
+                '<div style="width: 100%; height: 8px; background: #e0e0e0; border-radius: 10px; overflow: hidden; margin-bottom: 15px;">' +
+                    '<div id="printProgress" style="width: 0%; height: 100%; background: linear-gradient(90deg, #667eea, #764ba2); transition: width 0.3s ease;"></div>' +
+                '</div>' +
+                '<p style="margin: 0; color: #999; font-size: 12px;">Please wait... Do not close this window</p>';
+
+            loadingModal.appendChild(loadingContent);
+            document.body.appendChild(loadingModal);
+
+            // Animate progress bar
+            let progress = 0;
+            const progressBar = document.getElementById('printProgress');
+            const progressInterval = setInterval(function() {
+                progress += 2;
+                if (progress <= 90) {
+                    progressBar.style.width = progress + '%';
+                }
+            }, 100);
+
+            // Small delay to ensure modal renders
+            setTimeout(function() {
+                try {
+                    // Complete progress
+                    clearInterval(progressInterval);
+                    progressBar.style.width = '100%';
+
+                    // Small delay before opening print dialog
+                    setTimeout(function() {
+                        window.print();
+
+                        // Remove loading modal after print dialog opens
+                        setTimeout(function() {
+                            const modal = document.getElementById('printLoadingModal');
+                            if (modal) {
+                                modal.remove();
+                            }
+                        }, 500);
+                    }, 300);
+
+                } catch (error) {
+                    clearInterval(progressInterval);
+                    const modal = document.getElementById('printLoadingModal');
+                    if (modal) {
+                        modal.remove();
+                    }
+                    showNotification('Print error: ' + error.message, 'error');
+                }
+            }, 200);
         }
 
         // Show keyboard shortcuts modal
