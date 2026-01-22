@@ -1069,6 +1069,7 @@
             <button onclick="initializeImages()" id="imageBtn" disabled>📸 Initialize Images</button>
             <button onclick="generateCatalog()" id="generateBtn" disabled>📄 Generate Catalog</button>
             <button onclick="window.print()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
+            <button onclick="showKeyboardShortcuts()" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">⌨️ Shortcuts</button>
         </div>
         
         <!-- Export Section -->
@@ -2187,82 +2188,173 @@ Visit our showroom to see the full range!</textarea>
             }
         }
 
-        // Process Excel data into products
+        // Process Excel data into products with comprehensive validation
         function processExcelData(data) {
-            const workbook = XLSX.read(data);
-            const worksheet = workbook.Sheets[workbook.SheetNames[0]];
-            const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+            try {
+                const workbook = XLSX.read(data);
+                const worksheet = workbook.Sheets[workbook.SheetNames[0]];
+                const rawData = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
 
-            const pageData = {};
-            let currentPage = null;
-            let pageProducts = [];
+                // Statistics for user feedback
+                const stats = {
+                    totalRows: rawData.length,
+                    processedProducts: 0,
+                    skippedRows: 0,
+                    headerRowsSkipped: 0,
+                    invalidRows: [],
+                    duplicateSKUs: [],
+                    pagesFound: 0
+                };
 
-            rawData.forEach(function(row, index) {
-                if (!row || row.length === 0) return;
+                const pageData = {};
+                let currentPage = null;
+                let pageProducts = [];
+                const seenSKUs = new Set();
 
-                const pageMatch = row.find(function(cell) {
-                    return cell && String(cell).toUpperCase().includes('PAGE');
+                // Detect and skip header row
+                let startIndex = 0;
+                if (rawData.length > 0 && rawData[0]) {
+                    const firstRow = rawData[0].map(cell => String(cell).toUpperCase());
+                    if (firstRow.some(cell => cell.includes('SKU') || cell.includes('BARCODE') || cell.includes('DESCRIPTION') || cell.includes('PRICE'))) {
+                        startIndex = 1;
+                        stats.headerRowsSkipped = 1;
+                    }
+                }
+
+                rawData.forEach(function(row, index) {
+                    // Skip header row
+                    if (index < startIndex) return;
+
+                    // Skip empty rows
+                    if (!row || row.length === 0 || row.every(cell => !cell)) {
+                        return;
+                    }
+
+                    // Check for PAGE marker
+                    const pageMatch = row.find(function(cell) {
+                        return cell && String(cell).toUpperCase().includes('PAGE');
+                    });
+
+                    if (pageMatch) {
+                        // Save current page products
+                        if (currentPage && pageProducts.length > 0) {
+                            pageData[currentPage] = pageProducts.slice();
+                        }
+
+                        currentPage = String(pageMatch).toUpperCase();
+                        pageProducts = [];
+                        stats.pagesFound++;
+                        return;
+                    }
+
+                    // Process product row
+                    if (row[0] && row[2]) {
+                        try {
+                            let sku, barcode, description, price, category;
+
+                            // Check if first column is SKU (number) or BARCODE (could be long string)
+                            const firstCol = String(row[0]).trim();
+                            const secondCol = row[1] ? String(row[1]).trim() : '';
+
+                            // Smart column detection
+                            if (firstCol.length <= 7 && !isNaN(firstCol)) {
+                                // Format 1: SKU, BARCODE, DESCRIPTION, PRICE, CATEGORY
+                                sku = firstCol;
+                                barcode = secondCol;
+                            } else {
+                                // Format 2: BARCODE, SKU, DESCRIPTION, PRICE, CATEGORY
+                                barcode = firstCol;
+                                sku = secondCol;
+                            }
+
+                            description = row[2] ? String(row[2]).trim() : '';
+                            price = parseFloat(row[3]) || 0;
+                            category = String(row[4] || 'UNCATEGORIZED').trim().toUpperCase();
+
+                            // Validation
+                            if (!sku || !description) {
+                                stats.skippedRows++;
+                                stats.invalidRows.push({
+                                    row: index + 1,
+                                    reason: 'Missing SKU or Description',
+                                    data: { sku, description }
+                                });
+                                return;
+                            }
+
+                            // Check for negative prices
+                            if (price < 0) {
+                                price = 0;
+                            }
+
+                            // Check for duplicate SKUs
+                            if (seenSKUs.has(sku)) {
+                                stats.duplicateSKUs.push({ sku, row: index + 1 });
+                            } else {
+                                seenSKUs.add(sku);
+                            }
+
+                            const product = {
+                                barcode: barcode,
+                                sku: sku,
+                                description: description,
+                                price: price,
+                                category: category,
+                                pageNumber: currentPage ? parseInt(currentPage.replace('PAGE ', '')) : 1,
+                                rowNumber: index + 1
+                            };
+
+                            pageProducts.push(product);
+                            stats.processedProducts++;
+
+                        } catch (error) {
+                            stats.skippedRows++;
+                            stats.invalidRows.push({
+                                row: index + 1,
+                                reason: 'Error processing row: ' + error.message
+                            });
+                        }
+                    } else {
+                        // Row doesn't have minimum required columns
+                        if (row.some(cell => cell)) {  // Only count if row has any data
+                            stats.skippedRows++;
+                        }
+                    }
                 });
 
-                if (pageMatch) {
-                    if (currentPage && pageProducts.length > 0) {
-                        pageData[currentPage] = pageProducts.slice();
-                    }
-
-                    currentPage = String(pageMatch).toUpperCase();
-                    pageProducts = [];
+                // Save final page
+                if (currentPage && pageProducts.length > 0) {
+                    pageData[currentPage] = pageProducts.slice();
                 }
-                else if (row[0] && row[2]) {
-                    // Support both formats:
-                    // Format 1: SKU, BARCODE, DESCRIPTION, PRICE, CATEGORY
-                    // Format 2: BARCODE, SKU, DESCRIPTION, PRICE, CATEGORY
 
-                    let sku, barcode, description, price, category;
-
-                    // Check if first column is SKU (number) or BARCODE (could be long string)
-                    const firstCol = String(row[0]).trim();
-                    const secondCol = row[1] ? String(row[1]).trim() : '';
-
-                    // If first column is a short number (typical SKU), use Format 1
-                    if (firstCol.length <= 7 && !isNaN(firstCol)) {
-                        sku = firstCol;
-                        barcode = secondCol;
-                        description = row[2] ? String(row[2]).trim() : '';
-                        price = parseFloat(row[3]) || 0;
-                        category = String(row[4] || 'UNCATEGORIZED').trim().toUpperCase();
-                    } else {
-                        // Otherwise use Format 2 (barcode first)
-                        barcode = firstCol;
-                        sku = secondCol;
-                        description = row[2] ? String(row[2]).trim() : '';
-                        price = parseFloat(row[3]) || 0;
-                        category = String(row[4] || 'UNCATEGORIZED').trim().toUpperCase();
-                    }
-
-                    const product = {
-                        barcode: barcode,
-                        sku: sku,
-                        description: description,
-                        price: price,
-                        category: category,
-                        pageNumber: currentPage ? parseInt(currentPage.replace('PAGE ', '')) : 1
-                    };
-
-                    if (description && sku) {
-                        pageProducts.push(product);
-                    }
+                // If no pages found, create a default page with all products
+                if (Object.keys(pageData).length === 0 && pageProducts.length > 0) {
+                    pageData['PAGE 1'] = pageProducts;
+                    stats.pagesFound = 1;
                 }
-            });
 
-            if (currentPage && pageProducts.length > 0) {
-                pageData[currentPage] = pageProducts.slice();
+                // Store stats for later use
+                window.excelProcessingStats = stats;
+
+                return pageData;
+
+            } catch (error) {
+                console.error('Error processing Excel data:', error);
+                throw new Error('Failed to process Excel file: ' + error.message);
             }
-
-            return pageData;
         }
 
-        // Finish loading products and update UI
+        // Finish loading products and update UI with comprehensive validation
         function finishLoadingProducts(pageData) {
+            // Validate pageData
+            if (!pageData || Object.keys(pageData).length === 0) {
+                const status = document.getElementById('status');
+                status.innerHTML = '❌ <strong style="color: #dc3545;">No valid products found in Excel file. Please check your file format.</strong>';
+                showNotification('No products found! Check file format', 'error');
+                return;
+            }
+
+            // Build products array
             allProducts = [];
             Object.keys(pageData).sort(function(a, b) {
                 const numA = parseInt(a.replace('PAGE ', ''));
@@ -2272,12 +2364,22 @@ Visit our showroom to see the full range!</textarea>
                 allProducts.push.apply(allProducts, pageData[page]);
             });
 
+            // Additional validation
+            if (allProducts.length === 0) {
+                const status = document.getElementById('status');
+                status.innerHTML = '❌ <strong style="color: #dc3545;">No products loaded. Please check your Excel file.</strong>';
+                showNotification('No products loaded!', 'error');
+                return;
+            }
+
             window.pageOrganization = pageData;
 
+            // Extract categories
             categories = allProducts.map(function(p) { return p.category; })
                 .filter(function(value, index, self) { return self.indexOf(value) === index; })
                 .sort();
 
+            // Update UI
             showCategories();
             showPagePreview();
             document.getElementById('customizationPanel').style.display = 'block';
@@ -2288,72 +2390,167 @@ Visit our showroom to see the full range!</textarea>
             document.getElementById('imageBtn').disabled = false;
             document.getElementById('generateBtn').disabled = false;
 
+            // Build detailed status message
             const pageCount = Object.keys(pageData).length;
+            const stats = window.excelProcessingStats || {};
             const status = document.getElementById('status');
-            status.innerHTML = '✅ <strong>Loaded ' + allProducts.length + ' products organized in ' + pageCount + ' predefined pages</strong>';
+
+            let statusHTML = '✅ <strong>Loaded ' + allProducts.length + ' products in ' + pageCount + ' pages</strong>';
+
+            // Add warnings if any
+            const warnings = [];
+            if (stats.skippedRows > 0) {
+                warnings.push(stats.skippedRows + ' rows skipped');
+            }
+            if (stats.duplicateSKUs && stats.duplicateSKUs.length > 0) {
+                warnings.push(stats.duplicateSKUs.length + ' duplicate SKUs found');
+            }
+
+            if (warnings.length > 0) {
+                statusHTML += '<br><span style="color: #856404; font-size: 13px;">⚠️ ' + warnings.join(', ') + '</span>';
+            }
+
+            // Add detailed stats in expandable section
+            if (stats.totalRows) {
+                statusHTML += '<details style="margin-top: 10px; font-size: 12px; color: #666;">' +
+                    '<summary style="cursor: pointer; font-weight: 600;">📊 Import Statistics</summary>' +
+                    '<div style="margin-top: 8px; padding: 10px; background: #f8f9fa; border-radius: 6px;">' +
+                    '<div>• Total rows processed: ' + stats.totalRows + '</div>' +
+                    '<div>• Products imported: ' + stats.processedProducts + '</div>' +
+                    '<div>• Pages found: ' + stats.pagesFound + '</div>' +
+                    '<div>• Categories: ' + categories.length + '</div>' +
+                    '<div>• Header rows skipped: ' + stats.headerRowsSkipped + '</div>' +
+                    (stats.skippedRows > 0 ? '<div style="color: #856404;">• Invalid rows skipped: ' + stats.skippedRows + '</div>' : '') +
+                    (stats.duplicateSKUs && stats.duplicateSKUs.length > 0 ?
+                        '<div style="color: #856404;">• Duplicate SKUs: ' + stats.duplicateSKUs.length + '</div>' : '') +
+                    '</div></details>';
+            }
+
+            status.innerHTML = statusHTML;
+
+            // Show success notification
+            showNotification('Successfully loaded ' + allProducts.length + ' products!', 'success');
+
+            // Show warning notification if there are issues
+            if (warnings.length > 0) {
+                setTimeout(function() {
+                    showNotification('⚠️ ' + warnings.join(', '), 'warning');
+                }, 500);
+            }
         }
 
-        // Handle manual file upload
+        // Handle manual file upload with comprehensive validation
         async function handleFileUpload(event) {
             const file = event.target.files[0];
             if (!file) return;
 
             const status = document.getElementById('status');
             const loadBtn = document.getElementById('loadBtn');
+            const fileInput = event.target;
+
+            // Validate file type
+            const validExtensions = ['.xlsx', '.xls'];
+            const fileName = file.name.toLowerCase();
+            const isValidType = validExtensions.some(ext => fileName.endsWith(ext));
+
+            if (!isValidType) {
+                status.innerHTML = '❌ <strong style="color: #dc3545;">Invalid file type. Please upload .xlsx or .xls files only.</strong>';
+                showNotification('Invalid file type! Use .xlsx or .xls', 'error');
+                fileInput.value = ''; // Reset file input
+                return;
+            }
+
+            // Validate file size (max 10MB)
+            const maxSize = 10 * 1024 * 1024;
+            if (file.size > maxSize) {
+                status.innerHTML = '❌ <strong style="color: #dc3545;">File too large. Maximum size is 10MB.</strong>';
+                showNotification('File too large! Max 10MB', 'error');
+                fileInput.value = ''; // Reset file input
+                return;
+            }
+
+            if (file.size === 0) {
+                status.innerHTML = '❌ <strong style="color: #dc3545;">File is empty.</strong>';
+                showNotification('File is empty!', 'error');
+                fileInput.value = ''; // Reset file input
+                return;
+            }
 
             loadBtn.disabled = true;
-            status.innerHTML = '⏳ Loading uploaded Excel file...';
+            status.innerHTML = '⏳ Loading ' + file.name + '...';
 
             try {
                 const reader = new FileReader();
 
                 reader.onload = function(e) {
                     try {
+                        status.innerHTML = '⏳ Processing Excel data...';
                         const data = e.target.result;
+
+                        if (!data || data.byteLength === 0) {
+                            throw new Error('File read resulted in empty data');
+                        }
+
                         const pageData = processExcelData(data);
                         finishLoadingProducts(pageData);
+                        loadBtn.disabled = false;
+
                     } catch (error) {
                         status.innerHTML = '❌ <strong style="color: #dc3545;">Error processing file: ' + error.message + '</strong>';
-                        console.error(error);
+                        showNotification('Processing error: ' + error.message, 'error');
+                        console.error('File processing error:', error);
                         loadBtn.disabled = false;
+                        fileInput.value = ''; // Reset file input
                     }
                 };
 
-                reader.onerror = function() {
-                    status.innerHTML = '❌ <strong style="color: #dc3545;">Error reading file</strong>';
+                reader.onerror = function(error) {
+                    status.innerHTML = '❌ <strong style="color: #dc3545;">Error reading file. Please try again.</strong>';
+                    showNotification('File read error!', 'error');
+                    console.error('FileReader error:', error);
                     loadBtn.disabled = false;
+                    fileInput.value = ''; // Reset file input
                 };
 
                 reader.readAsArrayBuffer(file);
 
             } catch (error) {
                 status.innerHTML = '❌ <strong style="color: #dc3545;">Error: ' + error.message + '</strong>';
-                console.error(error);
+                showNotification('Upload error: ' + error.message, 'error');
+                console.error('File upload error:', error);
                 loadBtn.disabled = false;
+                fileInput.value = ''; // Reset file input
             }
         }
 
-        // Load catalog from default file
+        // Load catalog from default file with comprehensive error handling
         async function loadCatalog() {
             const loadBtn = document.getElementById('loadBtn');
             const status = document.getElementById('status');
 
             loadBtn.disabled = true;
-            status.innerHTML = '⏳ Loading Excel file with page organization...';
+            status.innerHTML = '⏳ Loading default Excel file...';
 
             try {
                 const response = await fetch('./JULY PROMO.xlsx');
                 if (!response.ok) {
-                    throw new Error('Could not find JULY PROMO.xlsx in the same folder');
+                    throw new Error('Default file (JULY PROMO.xlsx) not found. Please upload your own file instead.');
                 }
 
+                status.innerHTML = '⏳ Processing Excel data...';
                 const data = await response.arrayBuffer();
+
+                if (!data || data.byteLength === 0) {
+                    throw new Error('File is empty or corrupted');
+                }
+
                 const pageData = processExcelData(data);
                 finishLoadingProducts(pageData);
 
             } catch (error) {
                 status.innerHTML = '❌ <strong style="color: #dc3545;">Error: ' + error.message + '</strong>';
-                console.error(error);
+                showNotification('Failed to load file: ' + error.message, 'error');
+                console.error('Load catalog error:', error);
             } finally {
                 loadBtn.disabled = false;
             }
@@ -2687,13 +2884,32 @@ Visit our showroom to see the full range!</textarea>
         }
         
         function generateCatalog() {
+            // Validation: Check if products are loaded
+            if (!allProducts || allProducts.length === 0) {
+                showNotification('No products loaded! Please load an Excel file first.', 'error');
+                document.getElementById('status').innerHTML = '❌ <strong style="color: #dc3545;">No products loaded. Load an Excel file first.</strong>';
+                return;
+            }
+
             // Update display options before generating
             updateDisplayOptions();
-            
+
             const useExcelPages = document.getElementById('useExcelPages');
-            const selectedLayout = document.querySelector('input[name="layout"]:checked').value;
-            const selectedCardStyle = document.querySelector('input[name="cardStyle"]:checked').value;
-            const layoutConfig = getLayoutConfig(selectedLayout);
+            const selectedLayout = document.querySelector('input[name="layout"]:checked');
+            const selectedCardStyle = document.querySelector('input[name="cardStyle"]:checked');
+
+            // Validation: Check if layout and card style are selected
+            if (!selectedLayout) {
+                showNotification('Please select a page layout', 'error');
+                return;
+            }
+
+            if (!selectedCardStyle) {
+                showNotification('Please select a card style', 'error');
+                return;
+            }
+
+            const layoutConfig = getLayoutConfig(selectedLayout.value);
             
             const printContent = document.getElementById('printContent');
             printContent.innerHTML = '';
@@ -3270,18 +3486,31 @@ Visit our showroom to see the full range!</textarea>
 
         function showNotification(message, type) {
             if (!type) type = 'info';
-            
+
+            // Color mapping for notification types
+            const colorMap = {
+                'success': '#28a745',
+                'error': '#dc3545',
+                'warning': '#ffc107',
+                'info': '#17a2b8'
+            };
+
+            const bgColor = colorMap[type] || colorMap.info;
+            const textColor = type === 'warning' ? '#333' : 'white';
+
             const notification = document.createElement('div');
-            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: ' + (type === 'success' ? '#28a745' : type === 'error' ? '#dc3545' : '#17a2b8') + '; color: white; padding: 12px 20px; border-radius: 8px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); z-index: 1000; font-size: 14px; font-weight: 500; opacity: 0; transform: translateX(100%); transition: all 0.3s ease;';
-            
+            notification.style.cssText = 'position: fixed; top: 20px; right: 20px; background: ' + bgColor + '; color: ' + textColor + '; padding: 14px 24px; border-radius: 10px; box-shadow: 0 6px 20px rgba(0,0,0,0.2); z-index: 10000; font-size: 14px; font-weight: 600; opacity: 0; transform: translateX(100%); transition: all 0.3s ease; max-width: 400px; word-wrap: break-word;';
+
             notification.textContent = message;
             document.body.appendChild(notification);
-            
+
             setTimeout(function() {
                 notification.style.opacity = '1';
                 notification.style.transform = 'translateX(0)';
             }, 100);
-            
+
+            // Auto-dismiss (longer for warnings)
+            const dismissTime = type === 'warning' ? 5000 : 3000;
             setTimeout(function() {
                 notification.style.opacity = '0';
                 notification.style.transform = 'translateX(100%)';
@@ -3290,15 +3519,142 @@ Visit our showroom to see the full range!</textarea>
                         notification.parentNode.removeChild(notification);
                     }
                 }, 300);
-            }, 3000);
+            }, dismissTime);
         }
 
-        console.log('🎉 OZZ Professional Catalog Generator v5.6 Loaded');
-        console.log('✨ NEW: Floating Badges card style added - matches web catalog design');
-        console.log('✨ Web-minimal style with clean floating badges');
-        console.log('✨ Footer matches client requirements exactly');
-        console.log('✨ Promo dates: 15 August - 15 September 2025');
-        console.log('✨ All existing features preserved and working');
+        // Show keyboard shortcuts modal
+        function showKeyboardShortcuts() {
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10001; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s;';
+
+            const content = document.createElement('div');
+            content.style.cssText = 'background: white; padding: 40px; border-radius: 16px; max-width: 500px; box-shadow: 0 20px 60px rgba(0,0,0,0.3);';
+
+            content.innerHTML = '<h2 style="margin: 0 0 25px 0; font-size: 24px; color: #333; text-align: center;">⌨️ Keyboard Shortcuts</h2>' +
+                '<div style="display: grid; gap: 15px;">' +
+                    '<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px;">' +
+                        '<span style="font-weight: 600; color: #333;">Generate Catalog</span>' +
+                        '<kbd style="background: #667eea; color: white; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Ctrl + G</kbd>' +
+                    '</div>' +
+                    '<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px;">' +
+                        '<span style="font-weight: 600; color: #333;">Print / Save PDF</span>' +
+                        '<kbd style="background: #667eea; color: white; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Ctrl + P</kbd>' +
+                    '</div>' +
+                    '<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px;">' +
+                        '<span style="font-weight: 600; color: #333;">Initialize Images</span>' +
+                        '<kbd style="background: #667eea; color: white; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Ctrl + I</kbd>' +
+                    '</div>' +
+                    '<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px;">' +
+                        '<span style="font-weight: 600; color: #333;">Upload File</span>' +
+                        '<kbd style="background: #667eea; color: white; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">Ctrl + U</kbd>' +
+                    '</div>' +
+                    '<div style="display: flex; justify-content: space-between; align-items: center; padding: 12px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 8px;">' +
+                        '<span style="font-weight: 600; color: #333;">Clear File Selection</span>' +
+                        '<kbd style="background: #667eea; color: white; padding: 6px 12px; border-radius: 6px; font-weight: 600; font-size: 13px; box-shadow: 0 2px 4px rgba(0,0,0,0.2);">ESC</kbd>' +
+                    '</div>' +
+                '</div>' +
+                '<button onclick="this.closest(\'div[style*=\\\'position: fixed\\\']\').remove()" style="width: 100%; margin-top: 25px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s;">Close</button>';
+
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+
+            // Close on background click
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+
+            // Close on Escape key
+            const escHandler = function(e) {
+                if (e.key === 'Escape') {
+                    modal.remove();
+                    document.removeEventListener('keydown', escHandler);
+                }
+            };
+            document.addEventListener('keydown', escHandler);
+        }
+
+        // Keyboard shortcuts for better UX
+        document.addEventListener('keydown', function(e) {
+            // Ctrl/Cmd + G: Generate Catalog
+            if ((e.ctrlKey || e.metaKey) && e.key === 'g') {
+                e.preventDefault();
+                const generateBtn = document.getElementById('generateBtn');
+                if (generateBtn && !generateBtn.disabled) {
+                    generateCatalog();
+                    showNotification('Generating catalog... (Ctrl+G)', 'info');
+                }
+            }
+
+            // Ctrl/Cmd + P: Print/Save PDF
+            if ((e.ctrlKey || e.metaKey) && e.key === 'p') {
+                const printBtn = document.getElementById('printBtn');
+                if (printBtn && !printBtn.disabled) {
+                    // Let default Ctrl+P behavior work
+                    showNotification('Opening print dialog... (Ctrl+P)', 'info');
+                }
+            }
+
+            // Ctrl/Cmd + I: Initialize Images
+            if ((e.ctrlKey || e.metaKey) && e.key === 'i') {
+                e.preventDefault();
+                const imageBtn = document.getElementById('imageBtn');
+                if (imageBtn && !imageBtn.disabled) {
+                    initializeImages();
+                    showNotification('Initializing images... (Ctrl+I)', 'info');
+                }
+            }
+
+            // Ctrl/Cmd + U: Upload File (focus file input)
+            if ((e.ctrlKey || e.metaKey) && e.key === 'u') {
+                e.preventDefault();
+                const fileUpload = document.getElementById('fileUpload');
+                if (fileUpload) {
+                    fileUpload.click();
+                    showNotification('Select Excel file... (Ctrl+U)', 'info');
+                }
+            }
+
+            // Escape: Clear file selection
+            if (e.key === 'Escape') {
+                const fileUpload = document.getElementById('fileUpload');
+                if (fileUpload && fileUpload.value) {
+                    fileUpload.value = '';
+                    showNotification('File selection cleared', 'info');
+                }
+            }
+        });
+
+        // Display keyboard shortcuts help on page load
+        setTimeout(function() {
+            console.log('⌨️  Keyboard Shortcuts:');
+            console.log('  Ctrl+G - Generate Catalog');
+            console.log('  Ctrl+P - Print/Save PDF');
+            console.log('  Ctrl+I - Initialize Images');
+            console.log('  Ctrl+U - Upload File');
+            console.log('  ESC    - Clear file selection');
+        }, 1000);
+
+        console.log('🎉 OZZ Professional Catalog Generator v6.0 Loaded');
+        console.log('');
+        console.log('✨ NEW FEATURES:');
+        console.log('  • Smart Excel column detection (auto-detects SKU vs BARCODE)');
+        console.log('  • Comprehensive data validation');
+        console.log('  • Header row auto-detection');
+        console.log('  • Duplicate SKU detection');
+        console.log('  • File size & type validation');
+        console.log('  • Detailed import statistics');
+        console.log('  • Keyboard shortcuts (see above)');
+        console.log('  • Enhanced error handling');
+        console.log('  • World-class UI design');
+        console.log('');
+        console.log('📊 SUPPORTED FORMATS:');
+        console.log('  Format 1: SKU, BARCODE, DESCRIPTION, PRICE, CATEGORY');
+        console.log('  Format 2: BARCODE, SKU, DESCRIPTION, PRICE, CATEGORY');
+        console.log('');
+        console.log('🎨 5 Card Styles | 6 Layout Options | Smart Validation');
+        console.log('---');
     </script>
 </body>
 </html>
