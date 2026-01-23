@@ -1319,28 +1319,56 @@
                 <p style="margin-bottom: 15px; color: #666; font-size: 14px;">
                     <strong>Edit the fields below</strong> to customize the cover page content. Changes are applied when you generate the catalog or use the preview button.
                 </p>
+
+                <!-- Promotion Date Settings -->
+                <div style="background: #fff3cd; padding: 15px; border-radius: 6px; margin-bottom: 20px; border-left: 4px solid #ff6b35;">
+                    <h4 style="margin: 0 0 12px 0; color: #d84315;">⏰ Promotion Period Settings</h4>
+                    <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 15px;">
+                        <label style="display: block; font-weight: bold;">
+                            Promo Title (e.g., "AUGUST-SEPTEMBER 2025 PROMO"):
+                            <input type="text" id="promoTitle" value="AUGUST-SEPTEMBER 2025 PROMO"
+                                   style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                        </label>
+                        <label style="display: block; font-weight: bold;">
+                            Short Date Range (e.g., "Aug 15 - Sept 15, 2025"):
+                            <input type="text" id="promoShortDates" value="Aug 15 - Sept 15, 2025"
+                                   style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                        </label>
+                        <label style="display: block; font-weight: bold;">
+                            Start Date (e.g., "15 August 2025"):
+                            <input type="text" id="promoStartDate" value="15 August 2025"
+                                   style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                        </label>
+                        <label style="display: block; font-weight: bold;">
+                            End Date (e.g., "15 September 2025"):
+                            <input type="text" id="promoEndDate" value="15 September 2025"
+                                   style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
+                        </label>
+                    </div>
+                </div>
+
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Page Title:
-                            <input type="text" id="introTitle" value="Welcome to Our August-September 2025 Promotion" 
+                            <input type="text" id="introTitle" value="Welcome to Our August-September 2025 Promotion"
                                    style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
                         </label>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Subtitle:
-                            <input type="text" id="introSubtitle" value="Exclusive deals on premium home & kitchen products" 
+                            <input type="text" id="introSubtitle" value="Exclusive deals on premium home & kitchen products"
                                    style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">
                         </label>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Special Message:
-                            <textarea id="introMessage" rows="4" 
+                            <textarea id="introMessage" rows="4"
                                       style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This promotion offers exceptional deals on premium products to help you create the perfect living space.</textarea>
                         </label>
                     </div>
                     <div>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Promotion Details:
-                            <textarea id="promoDetails" rows="3" 
+                            <textarea id="promoDetails" rows="3"
                                       style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">• Valid from 15 August to 15 September 2025
 - Limited quantities available
 - Collection only at our Durban store
@@ -1348,7 +1376,7 @@
                         </label>
                         <label style="display: block; margin-bottom: 8px; font-weight: bold;">
                             Additional Information:
-                            <textarea id="additionalInfo" rows="3" 
+                            <textarea id="additionalInfo" rows="3"
                                       style="width: 100%; padding: 8px; margin-top: 4px; border: 1px solid #ddd; border-radius: 4px;">Store Hours:
 Monday - Friday: 8:00 AM - 5:00 PM
 Saturday: 8:00 AM - 1:00 PM
@@ -3310,17 +3338,24 @@ Visit our showroom to see the full range!</textarea>
         function createHeaderPage() {
             const page = document.createElement('div');
             page.className = 'page hero-page';
-            
+
+            // Read all customization inputs
             const title = document.getElementById('introTitle').value || 'Welcome to Our August-September 2025 Promotion';
             const subtitle = document.getElementById('introSubtitle').value || 'Exclusive deals on premium home & kitchen products';
             const message = document.getElementById('introMessage').value || 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs.';
             const promoDetails = document.getElementById('promoDetails').value || '• Valid from 15 August to 15 September 2025\n• Limited quantities available';
             const additionalInfo = document.getElementById('additionalInfo').value || 'Store Hours:\nMonday - Friday: 8:00 AM - 5:00 PM';
-            
-            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">AUGUST-SEPTEMBER 2025 PROMO</h1><p class="hero-subtitle">' + subtitle + '</p>' +
+
+            // Read promotion date settings
+            const promoTitle = document.getElementById('promoTitle').value || 'AUGUST-SEPTEMBER 2025 PROMO';
+            const promoStartDate = document.getElementById('promoStartDate').value || '15 August 2025';
+            const promoEndDate = document.getElementById('promoEndDate').value || '15 September 2025';
+            const promoDateRange = promoStartDate + ' - ' + promoEndDate;
+
+            page.innerHTML = '<div class="page-inner"><div class="hero-content"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ Cash & Carry" class="hero-logo" onerror="this.style.display=\'none\'"><h1 class="hero-title">' + promoTitle + '</h1><p class="hero-subtitle">' + subtitle + '</p>' +
                 '<div class="promo-validity-box">' +
                     '<div class="promo-validity-title">⏰ PROMOTION PERIOD</div>' +
-                    '<div class="promo-validity-dates">15 August - 15 September 2025</div>' +
+                    '<div class="promo-validity-dates">' + promoDateRange + '</div>' +
                 '</div>' +
                 '<div style="background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); padding: 6mm; border-radius: 4mm; margin: 5mm 0; border-left: 4mm solid #006b6b;"><p style="font-size: 10pt; line-height: 1.5; color: #333; text-align: center; margin: 0;">' + message.replace(/\n/g, '<br>') + '</p></div><div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 4mm; margin: 5mm 0;"><div style="background: linear-gradient(135deg, #fff8dc 0%, #ffedd5 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #ff6b35;"><h3 style="font-size: 12pt; font-weight: 800; color: #d84315; margin-bottom: 2mm;">🎯 Promotion Details</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + promoDetails.replace(/\n/g, '<br>') + '</div></div><div style="background: linear-gradient(135deg, #e8f5e8 0%, #d4edda 100%); padding: 4mm; border-radius: 3mm; border-left: 3mm solid #28a745;"><h3 style="font-size: 12pt; font-weight: 800; color: #155724; margin-bottom: 2mm;">ℹ️ Store Information</h3><div style="font-size: 9pt; line-height: 1.4; color: #333;">' + additionalInfo.replace(/\n/g, '<br>') + '</div></div></div><div class="info-grid" style="grid-template-columns: repeat(2, 1fr); gap: 3mm; margin: 5mm 0;"><div class="info-card"><div class="info-label">Phone</div><div class="info-value">031 332 7192</div></div><div class="info-card"><div class="info-label">WhatsApp</div><div class="info-value">072 663 3544</div></div></div><div class="address-section" style="padding: 6mm; margin: 5mm 0;"><div class="address-title">OZZ CASH & CARRY</div><div>40 Cnr Mazeppa & Gull Street</div><div>Durban, KwaZulu-Natal 4001</div><div>South Africa</div><div style="margin-top: 2mm;"><strong>Hours:</strong> Mon-Fri: 8AM-5PM | Sat: 8AM-1PM</div></div><div class="collection-notice" style="padding: 4mm 6mm; margin: 3mm 0;"><div class="notice-title">📍 COLLECTION & DELIVERY</div><div>Promotional prices are valid for collection only at 40 Cnr Mazeppa & Gull Street, Durban.</div><div>Delivery is available at an additional charge.</div></div></div>' +
                 '<div class="page-footer">' +
@@ -3331,25 +3366,29 @@ Visit our showroom to see the full range!</textarea>
                         '<span>📍 Visit us 40 Cnr Mazeppa & Gull St, Durban, 4001</span>' +
                     '</div>' +
                     '<div class="footer-bottom-row">' +
-                        '<span class="footer-promo-expiry">⏰ Promo ends: 15 September 2025</span>' +
+                        '<span class="footer-promo-expiry">⏰ Promo ends: ' + promoEndDate + '</span>' +
                         '<span class="footer-credit">Designed and Managed by Black Orchid Consulting <a href="https://www.blackorchid.online">www.blackorchid.online</a></span>' +
                     '</div>' +
                 '</div></div>';
-            
+
             return page;
         }
 
         function createProductPage(products, category, showHeader, pageNum, layoutConfig, cardStyle) {
             if (!layoutConfig) layoutConfig = { productsPerPage: 8, gridClass: '', columns: 2, rows: 4 };
             if (!cardStyle) cardStyle = 'standard';
-            
+
+            // Read promotion date settings for headers and footers
+            const promoShortDates = document.getElementById('promoShortDates').value || 'Aug 15 - Sept 15, 2025';
+            const promoEndDate = document.getElementById('promoEndDate').value || '15 September 2025';
+
             const page = document.createElement('div');
             page.className = 'page';
-            
+
             const isExcelPage = category.startsWith('Excel PAGE');
             const headerClass = isExcelPage ? 'category-header excel-page' : 'category-header';
-            
-            let contentHTML = '<div class="page-inner"><div class="page-header"><div class="header-left"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ" class="header-logo" onerror="this.style.display=\'none\'"><span class="header-title">Promotional Catalog</span><span class="header-promo-validity">Valid: Aug 15 - Sept 15, 2025</span></div><span class="page-number">Page ' + pageNum + ' of <span class="total-pages">-</span></span></div><div class="page-content">';
+
+            let contentHTML = '<div class="page-inner"><div class="page-header"><div class="header-left"><img src="https://raw.githubusercontent.com/Iamabhih/OZZPromotions/main/OZZ-logo-transparent-1-1.png" alt="OZZ" class="header-logo" onerror="this.style.display=\'none\'"><span class="header-title">Promotional Catalog</span><span class="header-promo-validity">Valid: ' + promoShortDates + '</span></div><span class="page-number">Page ' + pageNum + ' of <span class="total-pages">-</span></span></div><div class="page-content">';
             
             if (showHeader) {
                 const headerText = isExcelPage ? category.replace('Excel ', '') : category;
@@ -3375,11 +3414,11 @@ Visit our showroom to see the full range!</textarea>
                         '<span>📍 Visit us 40 Cnr Mazeppa & Gull St, Durban, 4001</span>' +
                     '</div>' +
                     '<div class="footer-bottom-row">' +
-                        '<span class="footer-promo-expiry">⏰ Promo ends: 15 September 2025</span>' +
+                        '<span class="footer-promo-expiry">⏰ Promo ends: ' + promoEndDate + '</span>' +
                         '<span class="footer-credit">Designed and Managed by Black Orchid Consulting • www.blackorchid.online</span>' +
                     '</div>' +
                 '</div></div>';
-            
+
             page.innerHTML = contentHTML;
             return page;
         }
@@ -3676,6 +3715,13 @@ Visit our showroom to see the full range!</textarea>
         }
 
         function resetCoverPage() {
+            // Reset promotion date settings
+            document.getElementById('promoTitle').value = 'AUGUST-SEPTEMBER 2025 PROMO';
+            document.getElementById('promoShortDates').value = 'Aug 15 - Sept 15, 2025';
+            document.getElementById('promoStartDate').value = '15 August 2025';
+            document.getElementById('promoEndDate').value = '15 September 2025';
+
+            // Reset cover page content
             document.getElementById('introTitle').value = 'Welcome to Our August-September 2025 Promotion';
             document.getElementById('introSubtitle').value = 'Exclusive deals on premium home & kitchen products';
             document.getElementById('introMessage').value = 'Thank you for choosing OZZ Cash & Carry for your home and kitchen needs. This promotion offers exceptional deals on premium products to help you create the perfect living space.';
