@@ -6,6 +6,7 @@
     <title>OZZ Professional Catalog Generator</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
+    <script src="./config.js"></script>
     <style>
         * { margin: 0; padding: 0; box-sizing: border-box; }
         body {
@@ -1138,6 +1139,7 @@
             <button onclick="initializeImages()" id="imageBtn" disabled>📸 Initialize Images</button>
             <button onclick="generateCatalog()" id="generateBtn" disabled>📄 Generate Catalog</button>
             <button onclick="preparePrint()" id="printBtn" disabled>🖨️ Print / Save PDF</button>
+            <button onclick="showSetupGuide()" style="background: linear-gradient(135deg, #28a745 0%, #218838 100%);">🔧 Setup Guide</button>
             <button onclick="showKeyboardShortcuts()" style="background: linear-gradient(135deg, #17a2b8 0%, #138496 100%);">⌨️ Shortcuts</button>
         </div>
         
@@ -1794,11 +1796,13 @@ Visit our showroom to see the full range!</textarea>
                 
                 tempContainer.appendChild(clone);
                 
-                // Wait for images to load
-                await waitForImages(clone);
-                
+                // Wait for images to load with extended timeout for slow connections
+                console.log(`📸 Waiting for images to load for page ${pageNumber}...`);
+                await waitForImages(clone, 15000); // 15 second timeout per image
+
                 // Small delay to ensure rendering is complete
-                await new Promise(resolve => setTimeout(resolve, 300));
+                console.log(`⏳ Finalizing page ${pageNumber} for export...`);
+                await new Promise(resolve => setTimeout(resolve, 500));
                 
                 // Configure html2canvas for high quality with white background
                 const scale = quality || 3;
@@ -1844,33 +1848,82 @@ Visit our showroom to see the full range!</textarea>
                 console.error(`Error exporting page ${pageNumber}:`, error);
                 throw error;
             } finally {
-                // ADDED: Force cleanup to prevent reload issues
-                if (tempContainer && tempContainer.parentNode) {
-                    tempContainer.parentNode.removeChild(tempContainer);
-                }
-                // Clear any lingering references
-                clone = null;
-                whiteBackground = null;
-                tempContainer = null;
-                // Force garbage collection hint
-                if (window.gc) {
-                    window.gc();
+                // IMPROVED: Comprehensive cleanup to prevent memory leaks and reload issues
+                try {
+                    // Remove temporary container from DOM
+                    if (tempContainer && tempContainer.parentNode) {
+                        // First remove all event listeners by cloning and replacing
+                        const cleanContainer = tempContainer.cloneNode(false);
+                        tempContainer.parentNode.replaceChild(cleanContainer, tempContainer);
+                        cleanContainer.parentNode.removeChild(cleanContainer);
+                    }
+
+                    // Clear all references
+                    if (clone) {
+                        const cloneImages = clone.querySelectorAll('img');
+                        cloneImages.forEach(img => {
+                            img.src = '';
+                            img.removeAttribute('src');
+                        });
+                    }
+
+                    // Nullify references to allow garbage collection
+                    clone = null;
+                    whiteBackground = null;
+                    tempContainer = null;
+
+                    // Force garbage collection if available (Chrome with --js-flags=--expose-gc)
+                    if (window.gc) {
+                        window.gc();
+                    }
+                } catch (cleanupError) {
+                    console.warn('Cleanup warning:', cleanupError);
                 }
             }
         }
 
-        // Helper function to wait for all images in an element to load
-        function waitForImages(element) {
+        // IMPROVED: Helper function to wait for all images in an element to load
+        function waitForImages(element, timeoutMs = 10000) {
             const images = element.querySelectorAll('img');
-            const promises = Array.from(images).map(img => {
-                if (img.complete) return Promise.resolve();
-                return new Promise((resolve, reject) => {
-                    img.onload = resolve;
-                    img.onerror = resolve; // Resolve even on error to continue export
-                    // Timeout after 5 seconds
-                    setTimeout(resolve, 5000);
+            if (images.length === 0) return Promise.resolve();
+
+            const promises = Array.from(images).map((img, index) => {
+                if (img.complete && img.naturalHeight !== 0) {
+                    console.log(`✅ Image ${index + 1}/${images.length} already loaded`);
+                    return Promise.resolve();
+                }
+
+                return new Promise((resolve) => {
+                    const onLoad = () => {
+                        console.log(`✅ Image ${index + 1}/${images.length} loaded successfully`);
+                        cleanup();
+                        resolve();
+                    };
+
+                    const onError = () => {
+                        console.warn(`⚠️ Image ${index + 1}/${images.length} failed to load, continuing anyway`);
+                        cleanup();
+                        resolve(); // Resolve even on error to continue export
+                    };
+
+                    const onTimeout = () => {
+                        console.warn(`⏱️ Image ${index + 1}/${images.length} timeout after ${timeoutMs}ms`);
+                        cleanup();
+                        resolve();
+                    };
+
+                    const cleanup = () => {
+                        img.removeEventListener('load', onLoad);
+                        img.removeEventListener('error', onError);
+                        clearTimeout(timeoutId);
+                    };
+
+                    img.addEventListener('load', onLoad);
+                    img.addEventListener('error', onError);
+                    const timeoutId = setTimeout(onTimeout, timeoutMs);
                 });
             });
+
             return Promise.all(promises);
         }
 
@@ -2019,25 +2072,73 @@ Visit our showroom to see the full range!</textarea>
                 this.isInitialized = false;
                 this.cacheVersion = '1.0';
                 this.cacheExpiryHours = 1;
-                this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
-                this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
+
+                // Load config from config.js if available, otherwise use defaults
+                if (window.CONFIG && window.CONFIG.GOOGLE_DRIVE) {
+                    this.folderId = window.CONFIG.GOOGLE_DRIVE.FOLDER_ID;
+                    this.apiKey = window.CONFIG.GOOGLE_DRIVE.API_KEY;
+                    this.cacheExpiryHours = window.CONFIG.GOOGLE_DRIVE.CACHE_TTL / (60 * 60 * 1000);
+                } else {
+                    // Fallback to hardcoded values
+                    this.folderId = '1tG66zQTXGR-BQwjYZheRHVQ7s4n6-Jan';
+                    this.apiKey = 'AIzaSyDHKDrY2UUT9_HZhBY6GMAkyHYHIdv7OsA';
+                }
+
                 this.progressCallback = null;
+                this.retryAttempts = 3;
+                this.retryDelay = 1000;
             }
 
             async initializeGAPI() {
                 if (this.isInitialized) return true;
+
+                // Validate API key and folder ID before attempting to initialize
+                if (!this.apiKey || this.apiKey === 'YOUR_API_KEY_HERE') {
+                    const errorMsg = 'Google Drive API key not configured. Please update config.js with your API key.';
+                    console.error('❌ ' + errorMsg);
+                    this.updateProgress('❌ ' + errorMsg);
+                    showNotification(errorMsg, 'error');
+                    return false;
+                }
+
+                if (!this.folderId || this.folderId === 'YOUR_FOLDER_ID_HERE') {
+                    const errorMsg = 'Google Drive folder ID not configured. Please update config.js with your folder ID.';
+                    console.error('❌ ' + errorMsg);
+                    this.updateProgress('❌ ' + errorMsg);
+                    showNotification(errorMsg, 'error');
+                    return false;
+                }
+
                 try {
                     this.updateProgress('Loading Google APIs...');
                     await this.loadGoogleAPISafe();
                     this.updateProgress('Initializing Drive client...');
                     await this.initializeClient();
                     this.isInitialized = true;
-                    console.log('✅ Google Drive API initialized');
+                    console.log('✅ Google Drive API initialized successfully');
+                    this.updateProgress('✅ Google Drive connected');
                     return true;
                 } catch (error) {
                     console.error('❌ Failed to initialize Google Drive API:', error);
-                    this.updateProgress('❌ API Error: ' + error.message);
+                    const userMessage = this.getUserFriendlyError(error);
+                    this.updateProgress('❌ ' + userMessage);
+                    showNotification(userMessage, 'error');
                     return false;
+                }
+            }
+
+            getUserFriendlyError(error) {
+                const errorStr = error.toString().toLowerCase();
+                if (errorStr.includes('api key')) {
+                    return 'Invalid API key. Please check your Google Drive API key in config.js';
+                } else if (errorStr.includes('quota')) {
+                    return 'API quota exceeded. Please try again later or check your Google Cloud quotas.';
+                } else if (errorStr.includes('network') || errorStr.includes('failed to fetch')) {
+                    return 'Network error. Please check your internet connection and try again.';
+                } else if (errorStr.includes('permission') || errorStr.includes('403')) {
+                    return 'Permission denied. Make sure your Google Drive folder is shared with "Anyone with the link".';
+                } else {
+                    return 'Failed to connect to Google Drive: ' + error.message;
                 }
             }
 
@@ -2611,9 +2712,20 @@ Visit our showroom to see the full range!</textarea>
             status.innerHTML = '⏳ Loading default Excel file...';
 
             try {
-                const response = await fetch('./JULY PROMO.xlsx');
+                // Get file path from config.js if available
+                let excelFilePath = './JULY PROMO.xlsx';
+                if (window.CONFIG && window.CONFIG.DATA_SOURCES && window.CONFIG.DATA_SOURCES.EXCEL_FILE) {
+                    excelFilePath = window.CONFIG.DATA_SOURCES.EXCEL_FILE;
+                    console.log('📁 Using Excel file from config:', excelFilePath);
+                }
+
+                const response = await fetch(excelFilePath);
                 if (!response.ok) {
-                    throw new Error('Default file (JULY PROMO.xlsx) not found. Please upload your own file instead.');
+                    if (response.status === 404) {
+                        throw new Error(`Default file (${excelFilePath}) not found. Please upload your own file instead.`);
+                    } else {
+                        throw new Error(`Failed to load file: HTTP ${response.status}`);
+                    }
                 }
 
                 status.innerHTML = '⏳ Processing Excel data...';
@@ -2623,6 +2735,7 @@ Visit our showroom to see the full range!</textarea>
                     throw new Error('File is empty or corrupted');
                 }
 
+                console.log(`✅ Excel file loaded: ${(data.byteLength / 1024).toFixed(2)} KB`);
                 const pageData = processExcelData(data);
                 finishLoadingProducts(pageData);
 
@@ -2630,6 +2743,13 @@ Visit our showroom to see the full range!</textarea>
                 status.innerHTML = '❌ <strong style="color: #dc3545;">Error: ' + error.message + '</strong>';
                 showNotification('Failed to load file: ' + error.message, 'error');
                 console.error('Load catalog error:', error);
+
+                // Show helpful hint if file not found
+                if (error.message.includes('not found')) {
+                    setTimeout(function() {
+                        showNotification('💡 Tip: Use the "Upload Excel File" button above to load your catalog', 'info');
+                    }, 2000);
+                }
             } finally {
                 loadBtn.disabled = false;
             }
@@ -3798,6 +3918,157 @@ Visit our showroom to see the full range!</textarea>
         }
 
         // Show keyboard shortcuts modal
+        // NEW: Configuration checker to help users identify setup issues
+        function checkConfiguration() {
+            const issues = [];
+            const warnings = [];
+            const success = [];
+
+            // Check config.js loaded
+            if (!window.CONFIG) {
+                issues.push('❌ config.js not loaded - using fallback settings');
+            } else {
+                success.push('✅ config.js loaded successfully');
+
+                // Check Google Drive configuration
+                if (window.CONFIG.GOOGLE_DRIVE) {
+                    const apiKey = window.CONFIG.GOOGLE_DRIVE.API_KEY;
+                    const folderId = window.CONFIG.GOOGLE_DRIVE.FOLDER_ID;
+
+                    if (!apiKey || apiKey === 'YOUR_API_KEY_HERE') {
+                        warnings.push('⚠️ Google Drive API key not configured');
+                    } else if (apiKey.length < 30) {
+                        warnings.push('⚠️ API key looks invalid (too short)');
+                    } else {
+                        success.push('✅ Google Drive API key configured');
+                    }
+
+                    if (!folderId || folderId === 'YOUR_FOLDER_ID_HERE') {
+                        warnings.push('⚠️ Google Drive folder ID not configured');
+                    } else {
+                        success.push('✅ Google Drive folder ID configured');
+                    }
+                }
+
+                // Check data source configuration
+                if (window.CONFIG.DATA_SOURCES && window.CONFIG.DATA_SOURCES.EXCEL_FILE) {
+                    success.push('✅ Excel file path configured: ' + window.CONFIG.DATA_SOURCES.EXCEL_FILE);
+                }
+            }
+
+            // Check if products are loaded
+            if (allProducts.length > 0) {
+                success.push('✅ ' + allProducts.length + ' products loaded');
+            } else {
+                warnings.push('⚠️ No products loaded yet - click "Load Default File" or upload Excel');
+            }
+
+            // Check if images are initialized
+            if (driveImageManager && driveImageManager.isInitialized) {
+                const imageCount = driveImageManager.imageCache ? driveImageManager.imageCache.size : 0;
+                success.push('✅ Image system initialized (' + imageCount + ' images mapped)');
+            } else {
+                warnings.push('⚠️ Image system not initialized - click "Initialize Images"');
+            }
+
+            return { issues, warnings, success };
+        }
+
+        // NEW: Show setup guide and configuration status
+        function showSetupGuide() {
+            const config = checkConfiguration();
+
+            const modal = document.createElement('div');
+            modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.85); z-index: 10002; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s; overflow-y: auto; padding: 20px;';
+
+            const content = document.createElement('div');
+            content.style.cssText = 'background: white; padding: 40px; border-radius: 16px; max-width: 700px; box-shadow: 0 20px 60px rgba(0,0,0,0.3); max-height: 90vh; overflow-y: auto;';
+
+            let statusHTML = '<h2 style="margin: 0 0 10px 0; font-size: 28px; color: #333; text-align: center;">🔧 PDF Generator Setup Guide</h2>';
+            statusHTML += '<p style="text-align: center; color: #666; margin-bottom: 25px;">Configuration Status & Quick Start</p>';
+
+            // Configuration Status
+            statusHTML += '<div style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%); border-radius: 12px;">';
+            statusHTML += '<h3 style="margin: 0 0 15px 0; font-size: 18px; color: #333;">📊 Configuration Status</h3>';
+
+            if (config.success.length > 0) {
+                statusHTML += '<div style="margin-bottom: 10px;">';
+                config.success.forEach(msg => {
+                    statusHTML += '<div style="padding: 8px; margin-bottom: 5px; background: rgba(40, 167, 69, 0.1); border-left: 3px solid #28a745; border-radius: 4px; font-size: 13px; color: #155724;">' + msg + '</div>';
+                });
+                statusHTML += '</div>';
+            }
+
+            if (config.warnings.length > 0) {
+                statusHTML += '<div style="margin-bottom: 10px;">';
+                config.warnings.forEach(msg => {
+                    statusHTML += '<div style="padding: 8px; margin-bottom: 5px; background: rgba(255, 193, 7, 0.1); border-left: 3px solid #ffc107; border-radius: 4px; font-size: 13px; color: #856404;">' + msg + '</div>';
+                });
+                statusHTML += '</div>';
+            }
+
+            if (config.issues.length > 0) {
+                statusHTML += '<div>';
+                config.issues.forEach(msg => {
+                    statusHTML += '<div style="padding: 8px; margin-bottom: 5px; background: rgba(220, 53, 69, 0.1); border-left: 3px solid #dc3545; border-radius: 4px; font-size: 13px; color: #721c24;">' + msg + '</div>';
+                });
+                statusHTML += '</div>';
+            }
+            statusHTML += '</div>';
+
+            // Quick Start Steps
+            statusHTML += '<div style="margin-bottom: 25px;">';
+            statusHTML += '<h3 style="margin: 0 0 15px 0; font-size: 18px; color: #333;">🚀 Quick Start Steps</h3>';
+            statusHTML += '<ol style="padding-left: 20px; color: #555; line-height: 1.8;">';
+            statusHTML += '<li><strong>Load Product Data:</strong> Click "Load Default File" or upload your Excel file (.xlsx)</li>';
+            statusHTML += '<li><strong>Initialize Images:</strong> (Optional) Click "Initialize Images" to load product images from Google Drive</li>';
+            statusHTML += '<li><strong>Customize:</strong> Choose layout, card style, colors, and display options</li>';
+            statusHTML += '<li><strong>Generate:</strong> Click "Generate Catalog" to create the preview</li>';
+            statusHTML += '<li><strong>Export:</strong> Click "Print / Save PDF" to download or print your catalog</li>';
+            statusHTML += '</ol>';
+            statusHTML += '</div>';
+
+            // Google Drive Setup (if not configured)
+            if (config.warnings.some(w => w.includes('Google Drive'))) {
+                statusHTML += '<div style="margin-bottom: 25px; padding: 20px; background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%); border-radius: 12px;">';
+                statusHTML += '<h3 style="margin: 0 0 10px 0; font-size: 16px; color: #0d47a1;">📸 Google Drive Setup (Optional)</h3>';
+                statusHTML += '<p style="font-size: 13px; color: #1565c0; margin-bottom: 10px;">To enable automatic image loading:</p>';
+                statusHTML += '<ol style="padding-left: 20px; font-size: 13px; color: #1976d2; line-height: 1.6;">';
+                statusHTML += '<li>Get a Google Drive API key from <a href="https://console.cloud.google.com" target="_blank" style="color: #1565c0;">Google Cloud Console</a></li>';
+                statusHTML += '<li>Create a Google Drive folder and set permissions to "Anyone with the link can view"</li>';
+                statusHTML += '<li>Upload product images named with SKU numbers (e.g., 455641.jpg)</li>';
+                statusHTML += '<li>Update <code>config.js</code> with your API key and folder ID</li>';
+                statusHTML += '</ol>';
+                statusHTML += '<p style="font-size: 12px; color: #0277bd; margin: 10px 0 0 0;"><strong>Note:</strong> Images are optional. The catalog will generate without them.</p>';
+                statusHTML += '</div>';
+            }
+
+            // Best Practices
+            statusHTML += '<div style="margin-bottom: 20px; padding: 15px; background: linear-gradient(135deg, #fff3cd 0%, #ffeaa7 100%); border-radius: 8px;">';
+            statusHTML += '<h4 style="margin: 0 0 10px 0; font-size: 14px; color: #856404;">💡 Best Practices for Great Catalogs</h4>';
+            statusHTML += '<ul style="padding-left: 20px; font-size: 12px; color: #856404; line-height: 1.6; margin: 0;">';
+            statusHTML += '<li>Use high-quality product images (minimum 800x800px)</li>';
+            statusHTML += '<li>Keep product descriptions concise and clear</li>';
+            statusHTML += '<li>Choose "Floating Badges" or "Luxury Minimal" for modern look</li>';
+            statusHTML += '<li>Use "High Density" layout (20 products/page) for full catalogs</li>';
+            statusHTML += '<li>Test print one page first before exporting all pages</li>';
+            statusHTML += '</ul>';
+            statusHTML += '</div>';
+
+            statusHTML += '<button onclick="this.closest(\'div[style*=\\\'position: fixed\\\']\').remove()" style="width: 100%; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: white; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.3s;">Got It! Let\'s Start</button>';
+
+            content.innerHTML = statusHTML;
+            modal.appendChild(content);
+            document.body.appendChild(modal);
+
+            // Close on click outside
+            modal.addEventListener('click', function(e) {
+                if (e.target === modal) {
+                    modal.remove();
+                }
+            });
+        }
+
         function showKeyboardShortcuts() {
             const modal = document.createElement('div');
             modal.style.cssText = 'position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.8); z-index: 10001; display: flex; align-items: center; justify-content: center; animation: fadeIn 0.3s;';
