@@ -3204,12 +3204,12 @@ Visit our showroom to see the full range!</textarea>
                             const pageProductSlice = productsToShow.slice(i, i + layoutConfig.productsPerPage);
                             
                             printContent.appendChild(createProductPage(
-                                pageProductSlice, 
-                                'Excel ' + pageKey, 
+                                pageProductSlice,
+                                'Excel ' + pageKey,
                                 i === 0,
-                                pageNum++, 
+                                pageNum++,
                                 layoutConfig,
-                                selectedCardStyle
+                                selectedCardStyle.value
                             ));
                         }
                         
@@ -3271,7 +3271,7 @@ Visit our showroom to see the full range!</textarea>
                     for (let i = 0; i < products.length; i += layoutConfig.productsPerPage) {
                         const pageProducts = products.slice(i, i + layoutConfig.productsPerPage);
                         const showCategoryHeader = i === 0;
-                        printContent.appendChild(createProductPage(pageProducts, category, showCategoryHeader, pageNum++, layoutConfig, selectedCardStyle));
+                        printContent.appendChild(createProductPage(pageProducts, category, showCategoryHeader, pageNum++, layoutConfig, selectedCardStyle.value));
                     }
                 });
                 
